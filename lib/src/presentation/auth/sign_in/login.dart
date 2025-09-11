@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
-import 'widgets/login_body_widget.dart';
+import 'widgets/join_organization.dart';
 
 @RoutePage()
 class LoginPage extends StatefulWidget {
@@ -15,6 +15,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: LoginBodyWidget());
+    return const Scaffold(body: JoinOrganization());
   }
 }
