@@ -126,7 +126,8 @@ class _JoinOrganizationState extends State<JoinOrganization> {
                                       hintText: 'Mail Organisation',
                                       hintStyle: GoogleFonts.poppins(
                                         color: const Color(
-                                          0xff858891b8,
+                                          // ignore: use_full_hex_values_for_flutter_colors
+                                          0Xff858891b8,
                                         ).withAlpha(122),
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -139,11 +140,7 @@ class _JoinOrganizationState extends State<JoinOrganization> {
                                       ),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(20),
-
-                                        borderSide: BorderSide(
-                                          color: _blue,
-                                          width: 1.6,
-                                        ),
+                                        borderSide: BorderSide.none,
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(20),
