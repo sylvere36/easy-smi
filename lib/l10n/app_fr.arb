@@ -1,10 +1,24 @@
 {
-    "@@author": "Woura",
+    "@@author": "EasySmi",
     "@@context": "",
     "@@last_modified": "",
     "@@locale": "fr",
-    "title":"Woura fr",
+    "title":"EasySmi fr",
     "@title": {
 
-    } 
+    },
+    "onbaordingTitle1": "Simplifiez vos inspections",
+    "onbaordingSubTitle1": "Planifiez, réalisez et suivez vos inspections en toute simplicité, grâce à une application pensée pour vous faire gagner du temps et améliorer la qualité de vos audits",
+    "onbaordingTitle2": "Maîtrisez vos contrôles",
+    "onbaordingSubTitle2": "Gardez une vision claire et centralisée de tous vos processus, pour des contrôles efficaces, des décisions rapides et une meilleure conformité sur le terrain.",
+    "skip": "Passer",
+    "next": "Suivant",
+    "done": "Terminer",
+    "joinYourOrganisation": "REJOIGNEZ VOTRE\nORGANISATION",
+    "enterYourOrganisation": "Renseignez le mail de votre organisation",
+    "join": "Rejoindre",
+    "acceptTermsPrivacyMsg": "En continuant, vous acceptez nos Conditions\nd’utilisation et notre Politique de confidentialité",
+    "continueWithGoogle": "Continuer avec Google",
+    "continueWithActiveDirectory": "Continuer avec ActiveDirectory",
+    "signIn": "S'IDENTIFIER"
 }

@@ -101,8 +101,92 @@ abstract class AppLocalizations {
   /// No description provided for @title.
   ///
   /// In fr, this message translates to:
-  /// **'Woura fr'**
+  /// **'EasySmi fr'**
   String get title;
+
+  /// No description provided for @onbaordingTitle1.
+  ///
+  /// In fr, this message translates to:
+  /// **'Simplifiez vos inspections'**
+  String get onbaordingTitle1;
+
+  /// No description provided for @onbaordingSubTitle1.
+  ///
+  /// In fr, this message translates to:
+  /// **'Planifiez, réalisez et suivez vos inspections en toute simplicité, grâce à une application pensée pour vous faire gagner du temps et améliorer la qualité de vos audits'**
+  String get onbaordingSubTitle1;
+
+  /// No description provided for @onbaordingTitle2.
+  ///
+  /// In fr, this message translates to:
+  /// **'Maîtrisez vos contrôles'**
+  String get onbaordingTitle2;
+
+  /// No description provided for @onbaordingSubTitle2.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gardez une vision claire et centralisée de tous vos processus, pour des contrôles efficaces, des décisions rapides et une meilleure conformité sur le terrain.'**
+  String get onbaordingSubTitle2;
+
+  /// No description provided for @skip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passer'**
+  String get skip;
+
+  /// No description provided for @next.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivant'**
+  String get next;
+
+  /// No description provided for @done.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminer'**
+  String get done;
+
+  /// No description provided for @joinYourOrganisation.
+  ///
+  /// In fr, this message translates to:
+  /// **'REJOIGNEZ VOTRE\nORGANISATION'**
+  String get joinYourOrganisation;
+
+  /// No description provided for @enterYourOrganisation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renseignez le mail de votre organisation'**
+  String get enterYourOrganisation;
+
+  /// No description provided for @join.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejoindre'**
+  String get join;
+
+  /// No description provided for @acceptTermsPrivacyMsg.
+  ///
+  /// In fr, this message translates to:
+  /// **'En continuant, vous acceptez nos Conditions\nd’utilisation et notre Politique de confidentialité'**
+  String get acceptTermsPrivacyMsg;
+
+  /// No description provided for @continueWithGoogle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer avec Google'**
+  String get continueWithGoogle;
+
+  /// No description provided for @continueWithActiveDirectory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer avec ActiveDirectory'**
+  String get continueWithActiveDirectory;
+
+  /// No description provided for @signIn.
+  ///
+  /// In fr, this message translates to:
+  /// **'S\'IDENTIFIER'**
+  String get signIn;
 }
 
 class _AppLocalizationsDelegate
