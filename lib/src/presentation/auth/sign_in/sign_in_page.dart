@@ -15,7 +15,7 @@ class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appLocalizations = AppLocalizations.of(context)!;
-    
+
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -30,20 +30,25 @@ class SignInPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 12,
-                  children: [
-                    Assets.svgs.box.svg(),
-                    Text(
-                      email,
-                      style: GoogleFonts.montserrat(
-                        fontWeight: FontWeight.w300,
-                        fontSize: 16,
+                GestureDetector(
+                  onTap: () {
+                    context.router.pop();
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 12,
+                    children: [
+                      Assets.svgs.box.svg(),
+                      Text(
+                        email,
+                        style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.w300,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                    Assets.svgs.edit.svg(),
-                  ],
+                      Assets.svgs.edit.svg(),
+                    ],
+                  ),
                 ),
                 Expanded(
                   child: Column(
@@ -201,7 +206,8 @@ class SignInPage extends StatelessWidget {
                                           right: 8,
                                         ),
                                         child: Text(
-                                          appLocalizations.continueWithActiveDirectory,
+                                          appLocalizations
+                                              .continueWithActiveDirectory,
                                           style: GoogleFonts.poppins(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w600,
