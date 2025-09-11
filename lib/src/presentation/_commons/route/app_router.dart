@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 
 import '../../auth/sign_in/login.dart';
+import '../../auth/sign_in/sign_in_page.dart';
 import '../../home/home.dart';
+import '../../onboarding/onboarding_page.dart';
 import '../../splash/splash.dart';
 import 'app_router.gr.dart';
 
@@ -16,5 +18,7 @@ class AppRouter extends RootStackRouter {
     ),
     AutoRoute(page: HomeRoute.page, path: HomePage.routeName),
     AutoRoute(page: LoginRoute.page, path: LoginPage.routeName),
+    AutoRoute(page: SignInRoute.page, path: SignInPage.routeName),
+    AutoRoute(page: OnboardingRoute.page, path: OnboardingPage.routeName),
   ];
 }
