@@ -12,6 +12,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get title => 'EasySmi fr';
 
   @override
+  String get appName => 'EASY SMI';
+
+  @override
   String get onbaordingTitle1 => 'Simplifiez vos inspections';
 
   @override

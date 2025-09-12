@@ -47,6 +47,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/login.png
   AssetGenImage get login => const AssetGenImage('assets/images/login.png');
 
+  /// File path: assets/images/man.png
+  AssetGenImage get man => const AssetGenImage('assets/images/man.png');
+
   /// File path: assets/images/microsoft.png
   AssetGenImage get microsoft =>
       const AssetGenImage('assets/images/microsoft.png');
@@ -62,31 +65,106 @@ class $AssetsImagesGen {
   /// File path: assets/images/pattern.png
   AssetGenImage get pattern => const AssetGenImage('assets/images/pattern.png');
 
+  /// File path: assets/images/port_cotonou.png
+  AssetGenImage get portCotonou =>
+      const AssetGenImage('assets/images/port_cotonou.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
     google,
     login,
+    man,
     microsoft,
     onboarding1,
     onboarding2,
     pattern,
+    portCotonou,
   ];
 }
 
 class $AssetsSvgsGen {
   const $AssetsSvgsGen();
 
+  /// File path: assets/svgs/bell.svg
+  SvgGenImage get bell => const SvgGenImage('assets/svgs/bell.svg');
+
+  /// File path: assets/svgs/bell_bold.svg
+  SvgGenImage get bellBold => const SvgGenImage('assets/svgs/bell_bold.svg');
+
   /// File path: assets/svgs/box.svg
   SvgGenImage get box => const SvgGenImage('assets/svgs/box.svg');
+
+  /// File path: assets/svgs/document.svg
+  SvgGenImage get document => const SvgGenImage('assets/svgs/document.svg');
 
   /// File path: assets/svgs/edit.svg
   SvgGenImage get edit => const SvgGenImage('assets/svgs/edit.svg');
 
+  /// File path: assets/svgs/event.svg
+  SvgGenImage get event => const SvgGenImage('assets/svgs/event.svg');
+
+  /// File path: assets/svgs/formation.svg
+  SvgGenImage get formation => const SvgGenImage('assets/svgs/formation.svg');
+
+  /// File path: assets/svgs/home.svg
+  SvgGenImage get home => const SvgGenImage('assets/svgs/home.svg');
+
+  /// File path: assets/svgs/hot.svg
+  SvgGenImage get hot => const SvgGenImage('assets/svgs/hot.svg');
+
+  /// File path: assets/svgs/jam_blue.svg
+  SvgGenImage get jamBlue => const SvgGenImage('assets/svgs/jam_blue.svg');
+
+  /// File path: assets/svgs/jam_green.svg
+  SvgGenImage get jamGreen => const SvgGenImage('assets/svgs/jam_green.svg');
+
+  /// File path: assets/svgs/jam_orange.svg
+  SvgGenImage get jamOrange => const SvgGenImage('assets/svgs/jam_orange.svg');
+
+  /// File path: assets/svgs/jam_purple.svg
+  SvgGenImage get jamPurple => const SvgGenImage('assets/svgs/jam_purple.svg');
+
+  /// File path: assets/svgs/jam_red.svg
+  SvgGenImage get jamRed => const SvgGenImage('assets/svgs/jam_red.svg');
+
+  /// File path: assets/svgs/log_out.svg
+  SvgGenImage get logOut => const SvgGenImage('assets/svgs/log_out.svg');
+
   /// File path: assets/svgs/mail.svg
   SvgGenImage get mail => const SvgGenImage('assets/svgs/mail.svg');
 
+  /// File path: assets/svgs/menu.svg
+  SvgGenImage get menu => const SvgGenImage('assets/svgs/menu.svg');
+
+  /// File path: assets/svgs/message.svg
+  SvgGenImage get message => const SvgGenImage('assets/svgs/message.svg');
+
+  /// File path: assets/svgs/office-stamp-document.svg
+  SvgGenImage get officeStampDocument =>
+      const SvgGenImage('assets/svgs/office-stamp-document.svg');
+
   /// List of all assets
-  List<SvgGenImage> get values => [box, edit, mail];
+  List<SvgGenImage> get values => [
+    bell,
+    bellBold,
+    box,
+    document,
+    edit,
+    event,
+    formation,
+    home,
+    hot,
+    jamBlue,
+    jamGreen,
+    jamOrange,
+    jamPurple,
+    jamRed,
+    logOut,
+    mail,
+    menu,
+    message,
+    officeStampDocument,
+  ];
 }
 
 class $AssetsTranslationsGen {

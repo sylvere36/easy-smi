@@ -12,6 +12,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get title => 'Woura En';
 
   @override
+  String get appName => 'EASY SMI';
+
+  @override
   String get onbaordingTitle1 => 'Simplifiez vos inspections';
 
   @override

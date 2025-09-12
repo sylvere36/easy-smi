@@ -104,6 +104,12 @@ abstract class AppLocalizations {
   /// **'EasySmi fr'**
   String get title;
 
+  /// No description provided for @appName.
+  ///
+  /// In fr, this message translates to:
+  /// **'EASY SMI'**
+  String get appName;
+
   /// No description provided for @onbaordingTitle1.
   ///
   /// In fr, this message translates to:
