@@ -17,7 +17,8 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       await Future.delayed(Duration(seconds: event.splashTime));
       final String? token = await _userSession.getAuthToken();
       //bool? introIsShow = await _userSession.checkIntroIsShow();
-      final PageRouteInfo<dynamic> route = OnboardingRoute();
+      final PageRouteInfo<dynamic> route = const HomeRoute();
+      // final PageRouteInfo<dynamic> route = OnboardingRoute();
       // token != null
       // ? const HomeRoute()
       // : const LoginRoute();

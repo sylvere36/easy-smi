@@ -94,6 +94,10 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/box.svg
   SvgGenImage get box => const SvgGenImage('assets/svgs/box.svg');
 
+  /// File path: assets/svgs/calendar-date.svg
+  SvgGenImage get calendarDate =>
+      const SvgGenImage('assets/svgs/calendar-date.svg');
+
   /// File path: assets/svgs/document.svg
   SvgGenImage get document => const SvgGenImage('assets/svgs/document.svg');
 
@@ -148,6 +152,7 @@ class $AssetsSvgsGen {
     bell,
     bellBold,
     box,
+    calendarDate,
     document,
     edit,
     event,

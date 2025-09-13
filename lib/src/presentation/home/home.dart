@@ -606,13 +606,20 @@ class CustomDrawer extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  CircleAvatar(
-                    radius: 70,
-                    backgroundColor: AppColors.primary,
+                  GestureDetector(
+                    onTap: () {
+                      Scaffold.of(context).closeDrawer();
+                      // Navigate to profile
+                      context.router.push(const ProfileRoute());
+                    },
                     child: CircleAvatar(
-                      radius: 68,
+                      radius: 70,
+                      backgroundColor: AppColors.primary,
+                      child: CircleAvatar(
+                        radius: 68,
 
-                      backgroundImage: Assets.images.man.provider(),
+                        backgroundImage: Assets.images.man.provider(),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -637,6 +644,8 @@ class CustomDrawer extends StatelessWidget {
                   // Logout
                   GestureDetector(
                     onTap: () {
+                      Scaffold.of(context).closeDrawer();
+                      // Navigate to login and clear stack
                       context.router.replaceAll([const LoginRoute()]);
                     },
                     child: Row(
