@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../gen/assets.gen.dart';
+import '../../_commons/route/app_router.gr.dart';
+import '../../actions/widget/action_card.dart';
 
 class HomeBody extends StatefulWidget {
   const HomeBody({super.key});
@@ -117,9 +120,14 @@ class _HomeBodyState extends State<HomeBody> {
           _Section(
             icon: Assets.svgs.jamGreen,
             title: 'Actions',
-            trailing: const _SeeAll(countLabel: '30'),
+            trailing: _SeeAll(
+              countLabel: '30',
+              onTap: () {
+                context.router.push(const ActionsRoute());
+              },
+            ),
             children: const [
-              _ActionCard(
+              ActionCard(
                 badgeText: 'En retard · il y a 1 semaine',
                 badgeColor: Colors.red,
                 title:
@@ -129,7 +137,7 @@ class _HomeBodyState extends State<HomeBody> {
                 inProgress: false,
                 unreadBubble: 3,
               ),
-              _ActionCard(
+              ActionCard(
                 badgeText: 'Échéance · Dans 1 semaine',
                 badgeColor: Color(0xFF00A651),
                 title:
@@ -138,7 +146,7 @@ class _HomeBodyState extends State<HomeBody> {
                 owner: 'Arielle BABATON',
                 unreadBubble: 1,
               ),
-              _ActionCard(
+              ActionCard(
                 badgeText: 'Échéance · Dans 1 semaine',
                 badgeColor: Color(0xFF00A651),
                 title:
@@ -330,13 +338,14 @@ class _Section extends StatelessWidget {
 
 class _SeeAll extends StatelessWidget {
   final String? countLabel;
-  const _SeeAll({this.countLabel});
+  final void Function()? onTap;
+  const _SeeAll({this.countLabel, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final label = 'Voir tout';
     return InkWell(
-      onTap: () {},
+      onTap: onTap,
       child: Text.rich(
         TextSpan(
           text: label,
@@ -380,122 +389,6 @@ class _CardBase extends StatelessWidget {
       elevation: 1.5,
       borderRadius: BorderRadius.circular(14),
       child: Padding(padding: padding, child: child),
-    );
-  }
-}
-
-/* ---- Action ---- */
-class _ActionCard extends StatelessWidget {
-  final String badgeText;
-  final Color badgeColor;
-  final String title;
-  final String status;
-  final String owner;
-  final bool inProgress;
-  final int unreadBubble;
-
-  const _ActionCard({
-    required this.badgeText,
-    required this.badgeColor,
-    required this.title,
-    required this.status,
-    required this.owner,
-    this.inProgress = true,
-    this.unreadBubble = 0,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final style = GoogleFonts.poppins(fontWeight: FontWeight.w700);
-
-    return _CardBase(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // badge + bulle
-          Row(
-            children: [
-              Text(
-                badgeText,
-                style: style.copyWith(color: badgeColor, fontSize: 12),
-              ),
-              const Spacer(),
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Assets.svgs.message.svg(),
-                  if (unreadBubble > 0)
-                    Positioned(
-                      right: -6,
-                      top: -10,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 15,
-                          minHeight: 15,
-                        ),
-                        child: Center(
-                          child: Text(
-                            '$unreadBubble',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(
-              title,
-              style: style.copyWith(
-                fontSize: 15,
-                fontFamily: GoogleFonts.dmSans().fontFamily,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Row(
-              children: [
-                Text(
-                  inProgress ? 'En cours' : 'Brouillon',
-                  style: GoogleFonts.poppins(
-                    color: inProgress ? const Color(0xFF2E6CF6) : Colors.black,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 13,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  'Responsable  ',
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF6E7787),
-                    fontSize: 13,
-                  ),
-                ),
-                Text(
-                  owner,
-                  style: GoogleFonts.montserrat(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

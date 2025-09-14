@@ -1,7 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 
+import '../../actions/action_detail_page.dart';
+import '../../actions/actions_page.dart';
 import '../../auth/sign_in/login.dart';
 import '../../auth/sign_in/sign_in_page.dart';
+import '../../comments/comments_page.dart';
 import '../../home/home.dart';
 import '../../onboarding/onboarding_page.dart';
 import '../../profile/degree/profile_degree_page.dart';
@@ -59,6 +62,9 @@ class AppRouter extends RootStackRouter {
       page: ProfileSearchEntretienRoute.page,
       path: ProfileSearchEntretienPage.routeName,
     ),
+    AutoRoute(page: CommentsRoute.page, path: CommentsPage.routeName),
+    AutoRoute(page: ActionsRoute.page, path: ActionsPage.routeName),
+    AutoRoute(page: ActionDetailRoute.page, path: ActionDetailPage.routeName),
     // AutoRoute(page: Route.page, path: Page.routeName),
   ];
 }

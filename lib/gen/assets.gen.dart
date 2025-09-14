@@ -147,6 +147,9 @@ class $AssetsSvgsGen {
   SvgGenImage get officeStampDocument =>
       const SvgGenImage('assets/svgs/office-stamp-document.svg');
 
+  /// File path: assets/svgs/pdf.svg
+  SvgGenImage get pdf => const SvgGenImage('assets/svgs/pdf.svg');
+
   /// List of all assets
   List<SvgGenImage> get values => [
     bell,
@@ -169,6 +172,7 @@ class $AssetsSvgsGen {
     menu,
     message,
     officeStampDocument,
+    pdf,
   ];
 }
 
