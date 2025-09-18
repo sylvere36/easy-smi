@@ -6,6 +6,13 @@ import '../../auth/sign_in/login.dart';
 import '../../auth/sign_in/sign_in_page.dart';
 import '../../comments/comments_page.dart';
 import '../../home/home.dart';
+import '../../inspections/inspection_recent_detail_page.dart';
+import '../../inspections/inspection_result_page.dart';
+import '../../inspections/inspection_result_saving_page.dart';
+import '../../inspections/inspection_section_page.dart';
+import '../../inspections/inspections_page.dart';
+import '../../inspections/start_inspection_detail_page.dart';
+import '../../inspections/start_inspection_page.dart';
 import '../../onboarding/onboarding_page.dart';
 import '../../profile/degree/profile_degree_page.dart';
 import '../../profile/degree/profile_search_degree_page.dart';
@@ -65,6 +72,31 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: CommentsRoute.page, path: CommentsPage.routeName),
     AutoRoute(page: ActionsRoute.page, path: ActionsPage.routeName),
     AutoRoute(page: ActionDetailRoute.page, path: ActionDetailPage.routeName),
+    AutoRoute(page: InspectionsRoute.page, path: InspectionsPage.routeName),
+    AutoRoute(
+      page: InpectionRecentDetailRoute.page,
+      path: InpectionRecentDetailPage.routeName,
+    ),
+    AutoRoute(
+      page: StartInspectionRoute.page,
+      path: StartInspectionPage.routeName,
+    ),
+    AutoRoute(
+      page: StartInspectionDetailRoute.page,
+      path: StartInspectionDetailPage.routeName,
+    ),
+    AutoRoute(
+      page: InspectionSectionRoute.page,
+      path: InspectionSectionPage.routeName,
+    ),
+    AutoRoute(
+      page: InspectionResultRoute.page,
+      path: InspectionResultPage.routeName,
+    ),
+    AutoRoute(
+      page: InspectionResultSavingRoute.page,
+      path: InspectionResultSavingPage.routeName,
+    ),
     // AutoRoute(page: Route.page, path: Page.routeName),
   ];
 }

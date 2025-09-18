@@ -570,7 +570,10 @@ class CustomDrawer extends StatelessWidget {
                   _drawerItem(
                     icon: Assets.svgs.home,
                     text: 'Inspections',
-                    onTap: () {},
+                    onTap: () {
+                      context.router.push(const InspectionsRoute());
+                      Scaffold.of(context).closeDrawer();
+                    },
                   ),
                   _drawerItem(
                     icon: Assets.svgs.document,

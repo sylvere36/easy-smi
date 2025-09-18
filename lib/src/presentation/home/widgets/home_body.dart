@@ -190,7 +190,11 @@ class _HomeBodyState extends State<HomeBody> {
             icon: Assets.svgs.jamBlue,
 
             title: 'Inspections',
-            trailing: const _SeeAll(),
+            trailing: _SeeAll(
+              onTap: () {
+                context.router.push(const InspectionsRoute());
+              },
+            ),
             children: const [
               _InspectionCard(
                 date: '22 / 09 / 25',
@@ -531,84 +535,89 @@ class _InspectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final blue = const Color(0xFF2E6CF6);
 
-    return _CardBase(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // date + statut
-          Row(
-            children: [
-              Container(
-                decoration: const BoxDecoration(color: Colors.black45),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  child: Text(
-                    date,
-                    style: GoogleFonts.dmSans(
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                      fontSize: 14,
+    return GestureDetector(
+      onTap: () {
+        context.router.push(const StartInspectionRoute());
+      },
+      child: _CardBase(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // date + statut
+            Row(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(color: Colors.black45),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    child: Text(
+                      date,
+                      style: GoogleFonts.dmSans(
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const Spacer(),
-              Text(
-                'Statut :  ',
-                style: GoogleFonts.nunito(
-                  color: const Color(0xFF6E7787),
-                  fontWeight: FontWeight.w500,
-                  fontSize: 13,
-                ),
-              ),
-              Text(
-                status,
-                style: GoogleFonts.poppins(
-                  color: blue,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(
-              title,
-              style: GoogleFonts.dmSans(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Row(
-              children: [
+                const Spacer(),
                 Text(
-                  'Site :  ',
+                  'Statut :  ',
                   style: GoogleFonts.nunito(
+                    color: const Color(0xFF6E7787),
                     fontWeight: FontWeight.w500,
                     fontSize: 13,
-                    color: const Color(0xFF6E7787),
                   ),
                 ),
-                Expanded(
-                  child: Text(
-                    site,
-                    style: GoogleFonts.nunito(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13,
-                    ),
+                Text(
+                  status,
+                  style: GoogleFonts.poppins(
+                    color: blue,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ],
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                title,
+                style: GoogleFonts.dmSans(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Row(
+                children: [
+                  Text(
+                    'Site :  ',
+                    style: GoogleFonts.nunito(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
+                      color: const Color(0xFF6E7787),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      site,
+                      style: GoogleFonts.nunito(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

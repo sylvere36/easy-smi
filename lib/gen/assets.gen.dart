@@ -101,6 +101,10 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/document.svg
   SvgGenImage get document => const SvgGenImage('assets/svgs/document.svg');
 
+  /// File path: assets/svgs/download-rounded.svg
+  SvgGenImage get downloadRounded =>
+      const SvgGenImage('assets/svgs/download-rounded.svg');
+
   /// File path: assets/svgs/edit.svg
   SvgGenImage get edit => const SvgGenImage('assets/svgs/edit.svg');
 
@@ -150,6 +154,12 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/pdf.svg
   SvgGenImage get pdf => const SvgGenImage('assets/svgs/pdf.svg');
 
+  /// File path: assets/svgs/pen.svg
+  SvgGenImage get pen => const SvgGenImage('assets/svgs/pen.svg');
+
+  /// File path: assets/svgs/success.svg
+  SvgGenImage get success => const SvgGenImage('assets/svgs/success.svg');
+
   /// List of all assets
   List<SvgGenImage> get values => [
     bell,
@@ -157,6 +167,7 @@ class $AssetsSvgsGen {
     box,
     calendarDate,
     document,
+    downloadRounded,
     edit,
     event,
     formation,
@@ -173,6 +184,8 @@ class $AssetsSvgsGen {
     message,
     officeStampDocument,
     pdf,
+    pen,
+    success,
   ];
 }
 
