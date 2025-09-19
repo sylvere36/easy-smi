@@ -7,11 +7,14 @@ import '../../auth/sign_in/sign_in_page.dart';
 import '../../comments/comments_page.dart';
 import '../../formations/certifications/all_certifications_page.dart';
 import '../../formations/certifications/certification_detail_page.dart';
+import '../../formations/formation_detail_page.dart';
+import '../../formations/formation_display_page.dart';
 import '../../formations/formations_sensibilizations_page.dart';
 import '../../formations/certifications/my_certifications_page.dart';
 import '../../formations/quizz/quizz_page.dart';
 import '../../formations/quizz/quizz_responses_page.dart';
 import '../../formations/quizz/quizz_responses_stats.dart';
+import '../../formations/sensibilization_detail_page.dart';
 import '../../home/home.dart';
 import '../../inspections/inspection_recent_detail_page.dart';
 import '../../inspections/inspection_result_page.dart';
@@ -128,6 +131,18 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       page: QuizzResponsesStatsRoute.page,
       path: QuizzResponsesStatsPage.routeName,
+    ),
+    AutoRoute(
+      page: SensibilizationDetailRoute.page,
+      path: SensibilizationDetailPage.routeName,
+    ),
+    AutoRoute(
+      page: FormationDetailRoute.page,
+      path: FormationDetailPage.routeName,
+    ),
+    AutoRoute(
+      page: FormationDisplayRoute.page,
+      path: FormationDisplayPage.routeName,
     ),
     // AutoRoute(page: Route.page, path: Page.routeName),
   ];

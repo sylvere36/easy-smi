@@ -105,6 +105,7 @@ class _FormationsSensibilizationsBodyState
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                 child: TabBar(
                   controller: _tab,
+                  tabAlignment: TabAlignment.start,
                   labelColor: theme.colorScheme.primary,
                   unselectedLabelColor: const Color(0xFF475467),
                   indicatorColor: theme.colorScheme.primary,
@@ -146,12 +147,17 @@ class _FormationsSensibilizationsBodyState
                   final c = _inProgress[i];
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: _ProgressCard(
-                      title: c.title,
-                      cover: c.cover,
-                      done: c.done,
-                      total: c.total,
-                      onPlay: () {},
+                    child: GestureDetector(
+                      onTap: () {
+                        context.router.push(const FormationDisplayRoute());
+                      },
+                      child: _ProgressCard(
+                        title: c.title,
+                        cover: c.cover,
+                        done: c.done,
+                        total: c.total,
+                        onPlay: () {},
+                      ),
                     ),
                   );
                 },
@@ -193,6 +199,7 @@ class _FormationsSensibilizationsBodyState
               ),
               _GridCourses(
                 items: _grid,
+                isCourse: false,
                 emptyPadding: const EdgeInsets.only(bottom: 24),
                 titleColor: theme.colorScheme.onSurface,
                 subtitleColor: grey,
@@ -483,12 +490,14 @@ class _GridCourses extends StatelessWidget {
     required this.emptyPadding,
     required this.titleColor,
     required this.subtitleColor,
+    this.isCourse = true,
   });
 
   final List<_Course> items;
   final EdgeInsets emptyPadding;
   final Color titleColor;
   final Color subtitleColor;
+  final bool isCourse;
 
   @override
   Widget build(BuildContext context) {
@@ -505,35 +514,44 @@ class _GridCourses extends StatelessWidget {
         itemCount: items.length,
         itemBuilder: (ctx, i) {
           final c = items[i];
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // cover
-              ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: Stack(
-                  children: [
-                    AspectRatio(
-                      aspectRatio: 1.25,
-                      child: Image.network(c.cover, fit: BoxFit.cover),
-                    ),
-                  ],
-                ),
-              ),
-              // title
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(
-                  c.title,
-                  style: TextStyle(
-                    fontSize: 15,
-                    height: 1.2,
-                    color: titleColor,
-                    fontWeight: FontWeight.w600,
+          return GestureDetector(
+            onTap: () {
+              if (isCourse) {
+                context.router.push(const FormationDetailRoute());
+              } else {
+                context.router.push(const SensibilizationDetailRoute());
+              }
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // cover
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: Stack(
+                    children: [
+                      AspectRatio(
+                        aspectRatio: 1.25,
+                        child: Image.network(c.cover, fit: BoxFit.cover),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
+                // title
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text(
+                    c.title,
+                    style: TextStyle(
+                      fontSize: 15,
+                      height: 1.2,
+                      color: titleColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           );
         },
       ),
