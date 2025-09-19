@@ -69,6 +69,9 @@ class $AssetsImagesGen {
   AssetGenImage get portCotonou =>
       const AssetGenImage('assets/images/port_cotonou.png');
 
+  /// File path: assets/images/quizz.png
+  AssetGenImage get quizz => const AssetGenImage('assets/images/quizz.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
     google,
@@ -79,6 +82,7 @@ class $AssetsImagesGen {
     onboarding2,
     pattern,
     portCotonou,
+    quizz,
   ];
 }
 
@@ -97,6 +101,13 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/calendar-date.svg
   SvgGenImage get calendarDate =>
       const SvgGenImage('assets/svgs/calendar-date.svg');
+
+  /// File path: assets/svgs/certificate.svg
+  SvgGenImage get certificate =>
+      const SvgGenImage('assets/svgs/certificate.svg');
+
+  /// File path: assets/svgs/certified.svg
+  SvgGenImage get certified => const SvgGenImage('assets/svgs/certified.svg');
 
   /// File path: assets/svgs/document.svg
   SvgGenImage get document => const SvgGenImage('assets/svgs/document.svg');
@@ -166,6 +177,8 @@ class $AssetsSvgsGen {
     bellBold,
     box,
     calendarDate,
+    certificate,
+    certified,
     document,
     downloadRounded,
     edit,

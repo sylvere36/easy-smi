@@ -5,6 +5,13 @@ import '../../actions/actions_page.dart';
 import '../../auth/sign_in/login.dart';
 import '../../auth/sign_in/sign_in_page.dart';
 import '../../comments/comments_page.dart';
+import '../../formations/certifications/all_certifications_page.dart';
+import '../../formations/certifications/certification_detail_page.dart';
+import '../../formations/formations_sensibilizations_page.dart';
+import '../../formations/certifications/my_certifications_page.dart';
+import '../../formations/quizz/quizz_page.dart';
+import '../../formations/quizz/quizz_responses_page.dart';
+import '../../formations/quizz/quizz_responses_stats.dart';
 import '../../home/home.dart';
 import '../../inspections/inspection_recent_detail_page.dart';
 import '../../inspections/inspection_result_page.dart';
@@ -96,6 +103,31 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       page: InspectionResultSavingRoute.page,
       path: InspectionResultSavingPage.routeName,
+    ),
+    AutoRoute(
+      page: FormationsSensibilizationsRoute.page,
+      path: FormationsSensibilizationsPage.routeName,
+    ),
+    AutoRoute(
+      page: AllCertificationsRoute.page,
+      path: AllCertificationsPage.routeName,
+    ),
+    AutoRoute(
+      page: MyCertificationsRoute.page,
+      path: MyCertificationsPage.routeName,
+    ),
+    AutoRoute(
+      page: CertificationDetailRoute.page,
+      path: CertificationDetailPage.routeName,
+    ),
+    AutoRoute(page: QuizzRoute.page, path: QuizzPage.routeName),
+    AutoRoute(
+      page: QuizzResponsesRoute.page,
+      path: QuizzResponsesPage.routeName,
+    ),
+    AutoRoute(
+      page: QuizzResponsesStatsRoute.page,
+      path: QuizzResponsesStatsPage.routeName,
     ),
     // AutoRoute(page: Route.page, path: Page.routeName),
   ];

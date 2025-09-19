@@ -583,12 +583,20 @@ class CustomDrawer extends StatelessWidget {
                   _drawerItem(
                     icon: Assets.svgs.formation,
                     text: 'Formations',
-                    onTap: () {},
+                    onTap: () {
+                      context.router.push(FormationsSensibilizationsRoute());
+                      Scaffold.of(context).closeDrawer();
+                    },
                   ),
                   _drawerItem(
                     icon: Assets.svgs.bell,
                     text: 'Sensibilisations',
-                    onTap: () {},
+                    onTap: () {
+                      context.router.push(
+                        FormationsSensibilizationsRoute(initialPage: 3),
+                      );
+                      Scaffold.of(context).closeDrawer();
+                    },
                   ),
                   _drawerItem(
                     icon: Assets.svgs.event,
