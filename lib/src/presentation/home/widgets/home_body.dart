@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../actions/widget/action_card.dart';
+import '../../audits/widgets/audits_widget.dart';
 import '../../events/widgets/event_card.dart';
 
 class HomeBody extends StatefulWidget {
@@ -221,16 +222,20 @@ class _HomeBodyState extends State<HomeBody> {
           _Section(
             icon: Assets.svgs.jamOrange,
             title: 'Audits',
-            trailing: const _SeeAll(),
+            trailing: _SeeAll(
+              onTap: () {
+                context.router.push(const AuditsRoute());
+              },
+            ),
             children: const [
-              _AuditCard(
+              AuditCard(
                 tag: 'Interne',
                 status: 'En cours',
                 title:
                     'Audits sur les activités internes liées aux dechargements des marchandises',
                 process: 'Marketing international et developpment',
               ),
-              _AuditCard(
+              AuditCard(
                 tag: 'Externe',
                 status: 'En cours',
                 title:
@@ -507,123 +512,6 @@ class _InspectionCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-/* ---- Audit ---- */
-class _AuditCard extends StatelessWidget {
-  final String tag;
-  final String status;
-  final String title;
-  final String process;
-
-  const _AuditCard({
-    required this.tag,
-    required this.status,
-    required this.title,
-    required this.process,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final blue = const Color(0xFF2E6CF6);
-
-    return _CardBase(
-      padding: const EdgeInsets.all(4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // tag + statut
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(top: 2),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFABC3D),
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(8)),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 2,
-                  ),
-                  child: Text(
-                    tag,
-                    style: GoogleFonts.dmSans(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(top: 8, right: 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Statut :  ',
-                      style: GoogleFonts.nunito(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 13,
-                        color: const Color(0xFF6E7787),
-                      ),
-                    ),
-                    Text(
-                      status,
-                      style: GoogleFonts.nunito(
-                        color: blue,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
-            child: Text(
-              title,
-              style: GoogleFonts.dmSans(
-                fontWeight: FontWeight.w700,
-                fontSize: 17,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 4,
-              left: 8,
-              right: 8,
-              bottom: 8,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Processus',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Text(
-                  process,
-                  style: GoogleFonts.dmSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

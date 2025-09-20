@@ -2,6 +2,11 @@ import 'package:auto_route/auto_route.dart';
 
 import '../../actions/action_detail_page.dart';
 import '../../actions/actions_page.dart';
+import '../../audits/audit_control_objectif_page.dart';
+import '../../audits/audit_detail_page.dart';
+import '../../audits/audit_make_constat_page.dart';
+import '../../audits/audits_page.dart';
+import '../../audits/programm_audit_page.dart';
 import '../../auth/sign_in/login.dart';
 import '../../auth/sign_in/sign_in_page.dart';
 import '../../comments/comments_page.dart';
@@ -170,6 +175,17 @@ class AppRouter extends RootStackRouter {
       page: HotPermisDetailRoute.page,
       path: HotPermisDetailPage.routeName,
     ),
+    AutoRoute(page: AuditsRoute.page, path: AuditsPage.routeName),
+    AutoRoute(page: AuditDetailRoute.page, path: AuditDetailPage.routeName),
+    AutoRoute(
+      page: AuditControlObjectifRoute.page,
+      path: AuditControlObjectifPage.routeName,
+    ),
+    AutoRoute(
+      page: AuditMakeConstatRoute.page,
+      path: AuditMakeConstatPage.routeName,
+    ),
+    AutoRoute(page: ProgrammAuditRoute.page, path: ProgrammAuditPage.routeName),
     // AutoRoute(page: Route.page, path: Page.routeName),
   ];
 }
