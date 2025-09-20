@@ -601,7 +601,9 @@ class CustomDrawer extends StatelessWidget {
                   _drawerItem(
                     icon: Assets.svgs.event,
                     text: 'Evennements',
-                    onTap: () {},
+                    onTap: () {
+                      context.router.push(const NewBadEventsRoute());
+                    },
                   ),
                   _drawerItem(
                     icon: Assets.svgs.hot,

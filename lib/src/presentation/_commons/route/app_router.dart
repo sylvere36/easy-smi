@@ -5,6 +5,10 @@ import '../../actions/actions_page.dart';
 import '../../auth/sign_in/login.dart';
 import '../../auth/sign_in/sign_in_page.dart';
 import '../../comments/comments_page.dart';
+import '../../events/add_new_bad_events_page.dart';
+import '../../events/bad_events_detail_page.dart';
+import '../../events/declarate_event_page.dart';
+import '../../events/new_bad_events_page.dart';
 import '../../formations/certifications/all_certifications_page.dart';
 import '../../formations/certifications/certification_detail_page.dart';
 import '../../formations/formation_detail_page.dart';
@@ -143,6 +147,19 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       page: FormationDisplayRoute.page,
       path: FormationDisplayPage.routeName,
+    ),
+    AutoRoute(page: NewBadEventsRoute.page, path: NewBadEventsPage.routeName),
+    AutoRoute(
+      page: AddNewBadEventsRoute.page,
+      path: AddNewBadEventsPage.routeName,
+    ),
+    AutoRoute(
+      page: DeclarateEventRoute.page,
+      path: DeclarateEventPage.routeName,
+    ),
+    AutoRoute(
+      page: BadEventsDetailRoute.page,
+      path: BadEventsDetailPage.routeName,
     ),
     // AutoRoute(page: Route.page, path: Page.routeName),
   ];
