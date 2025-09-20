@@ -28,6 +28,9 @@ import '../../inspections/inspections_page.dart';
 import '../../inspections/start_inspection_detail_page.dart';
 import '../../inspections/start_inspection_page.dart';
 import '../../onboarding/onboarding_page.dart';
+import '../../permis/add_hot_permis_page.dart';
+import '../../permis/hot_permis_detail_page.dart';
+import '../../permis/hot_permis_page.dart';
 import '../../profile/degree/profile_degree_page.dart';
 import '../../profile/degree/profile_search_degree_page.dart';
 import '../../profile/entretien/profile_entretien_page.dart';
@@ -160,6 +163,12 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       page: BadEventsDetailRoute.page,
       path: BadEventsDetailPage.routeName,
+    ),
+    AutoRoute(page: AddHotPermisRoute.page, path: AddHotPermisPage.routeName),
+    AutoRoute(page: HotPermisRoute.page, path: HotPermisPage.routeName),
+    AutoRoute(
+      page: HotPermisDetailRoute.page,
+      path: HotPermisDetailPage.routeName,
     ),
     // AutoRoute(page: Route.page, path: Page.routeName),
   ];

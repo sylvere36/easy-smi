@@ -168,6 +168,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/pen.svg
   SvgGenImage get pen => const SvgGenImage('assets/svgs/pen.svg');
 
+  /// File path: assets/svgs/property.svg
+  SvgGenImage get property => const SvgGenImage('assets/svgs/property.svg');
+
   /// File path: assets/svgs/success.svg
   SvgGenImage get success => const SvgGenImage('assets/svgs/success.svg');
 
@@ -198,6 +201,7 @@ class $AssetsSvgsGen {
     officeStampDocument,
     pdf,
     pen,
+    property,
     success,
   ];
 }

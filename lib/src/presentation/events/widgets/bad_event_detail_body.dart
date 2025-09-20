@@ -562,7 +562,7 @@ class _Section extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
               child: Row(
                 children: [
-                  Assets.svgs.jamPurple.svg(),
+                  Assets.svgs.jamOrange.svg(),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
