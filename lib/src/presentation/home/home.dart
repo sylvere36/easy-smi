@@ -324,6 +324,7 @@ class _HomePageState extends State<HomePage>
                           color: _navy,
                           onTap: () {
                             _toggleFabMenu();
+                            context.router.push(const AddNewBadEventsRoute());
                           },
                         ),
                       ),
@@ -578,7 +579,10 @@ class CustomDrawer extends StatelessWidget {
                   _drawerItem(
                     icon: Assets.svgs.document,
                     text: 'Audits',
-                    onTap: () {},
+                    onTap: () {
+                      context.router.push(const AuditsRoute());
+                      Scaffold.of(context).closeDrawer();
+                    },
                   ),
                   _drawerItem(
                     icon: Assets.svgs.formation,
@@ -603,12 +607,16 @@ class CustomDrawer extends StatelessWidget {
                     text: 'Evennements',
                     onTap: () {
                       context.router.push(const NewBadEventsRoute());
+                      Scaffold.of(context).closeDrawer();
                     },
                   ),
                   _drawerItem(
                     icon: Assets.svgs.hot,
                     text: 'Travail à chaud',
-                    onTap: () {},
+                    onTap: () {
+                      context.router.push(const HotPermisRoute());
+                      Scaffold.of(context).closeDrawer();
+                    },
                   ),
                 ],
               ),
