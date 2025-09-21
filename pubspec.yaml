@@ -53,6 +53,7 @@ dependencies:
   freezed_annotation: ^3.0.0
   get_it: ^8.0.3
   google_fonts: ^6.1.0
+  image_picker: ^1.2.0
   intl: any
   json_annotation: ^4.3.0
   pretty_dio_logger: ^1.1.1
@@ -60,6 +61,7 @@ dependencies:
   rflutter_alert: ^2.0.4
   shared_preferences: ^2.0.5
   toastification: ^3.0.3
+  video_player: ^2.10.0
   webview_flutter: ^4.10.0
 
 dev_dependencies:

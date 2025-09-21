@@ -2,12 +2,41 @@ import 'package:auto_route/auto_route.dart';
 
 import '../../actions/action_detail_page.dart';
 import '../../actions/actions_page.dart';
+import '../../audits/audit_control_objectif_page.dart';
+import '../../audits/audit_detail_page.dart';
+import '../../audits/audit_make_constat_page.dart';
+import '../../audits/audits_page.dart';
+import '../../audits/programm_audit_page.dart';
 import '../../auth/sign_in/login.dart';
 import '../../auth/sign_in/sign_in_page.dart';
 import '../../auth/webview/auth_webview_page.dart';
 import '../../comments/comments_page.dart';
+import '../../events/add_new_bad_events_page.dart';
+import '../../events/bad_events_detail_page.dart';
+import '../../events/declarate_event_page.dart';
+import '../../events/new_bad_events_page.dart';
+import '../../formations/certifications/all_certifications_page.dart';
+import '../../formations/certifications/certification_detail_page.dart';
+import '../../formations/certifications/my_certifications_page.dart';
+import '../../formations/formation_detail_page.dart';
+import '../../formations/formation_display_page.dart';
+import '../../formations/formations_sensibilizations_page.dart';
+import '../../formations/quizz/quizz_page.dart';
+import '../../formations/quizz/quizz_responses_page.dart';
+import '../../formations/quizz/quizz_responses_stats.dart';
+import '../../formations/sensibilization_detail_page.dart';
 import '../../home/home.dart';
+import '../../inspections/inspection_recent_detail_page.dart';
+import '../../inspections/inspection_result_page.dart';
+import '../../inspections/inspection_result_saving_page.dart';
+import '../../inspections/inspection_section_page.dart';
+import '../../inspections/inspections_page.dart';
+import '../../inspections/start_inspection_detail_page.dart';
+import '../../inspections/start_inspection_page.dart';
 import '../../onboarding/onboarding_page.dart';
+import '../../permis/add_hot_permis_page.dart';
+import '../../permis/hot_permis_detail_page.dart';
+import '../../permis/hot_permis_page.dart';
 import '../../profile/degree/profile_degree_page.dart';
 import '../../profile/degree/profile_search_degree_page.dart';
 import '../../profile/entretien/profile_entretien_page.dart';
@@ -67,6 +96,98 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: ActionsRoute.page, path: ActionsPage.routeName),
     AutoRoute(page: ActionDetailRoute.page, path: ActionDetailPage.routeName),
     AutoRoute(page: AuthWebViewRoute.page, path: AuthWebViewPage.routeName),
+    AutoRoute(page: InspectionsRoute.page, path: InspectionsPage.routeName),
+    AutoRoute(
+      page: InpectionRecentDetailRoute.page,
+      path: InpectionRecentDetailPage.routeName,
+    ),
+    AutoRoute(
+      page: StartInspectionRoute.page,
+      path: StartInspectionPage.routeName,
+    ),
+    AutoRoute(
+      page: StartInspectionDetailRoute.page,
+      path: StartInspectionDetailPage.routeName,
+    ),
+    AutoRoute(
+      page: InspectionSectionRoute.page,
+      path: InspectionSectionPage.routeName,
+    ),
+    AutoRoute(
+      page: InspectionResultRoute.page,
+      path: InspectionResultPage.routeName,
+    ),
+    AutoRoute(
+      page: InspectionResultSavingRoute.page,
+      path: InspectionResultSavingPage.routeName,
+    ),
+    AutoRoute(
+      page: FormationsSensibilizationsRoute.page,
+      path: FormationsSensibilizationsPage.routeName,
+    ),
+    AutoRoute(
+      page: AllCertificationsRoute.page,
+      path: AllCertificationsPage.routeName,
+    ),
+    AutoRoute(
+      page: MyCertificationsRoute.page,
+      path: MyCertificationsPage.routeName,
+    ),
+    AutoRoute(
+      page: CertificationDetailRoute.page,
+      path: CertificationDetailPage.routeName,
+    ),
+    AutoRoute(page: QuizzRoute.page, path: QuizzPage.routeName),
+    AutoRoute(
+      page: QuizzResponsesRoute.page,
+      path: QuizzResponsesPage.routeName,
+    ),
+    AutoRoute(
+      page: QuizzResponsesStatsRoute.page,
+      path: QuizzResponsesStatsPage.routeName,
+    ),
+    AutoRoute(
+      page: SensibilizationDetailRoute.page,
+      path: SensibilizationDetailPage.routeName,
+    ),
+    AutoRoute(
+      page: FormationDetailRoute.page,
+      path: FormationDetailPage.routeName,
+    ),
+    AutoRoute(
+      page: FormationDisplayRoute.page,
+      path: FormationDisplayPage.routeName,
+    ),
+    AutoRoute(page: NewBadEventsRoute.page, path: NewBadEventsPage.routeName),
+    AutoRoute(
+      page: AddNewBadEventsRoute.page,
+      path: AddNewBadEventsPage.routeName,
+    ),
+    AutoRoute(
+      page: DeclarateEventRoute.page,
+      path: DeclarateEventPage.routeName,
+    ),
+    AutoRoute(
+      page: BadEventsDetailRoute.page,
+      path: BadEventsDetailPage.routeName,
+    ),
+    AutoRoute(page: AddHotPermisRoute.page, path: AddHotPermisPage.routeName),
+    AutoRoute(page: HotPermisRoute.page, path: HotPermisPage.routeName),
+    AutoRoute(
+      page: HotPermisDetailRoute.page,
+      path: HotPermisDetailPage.routeName,
+    ),
+    AutoRoute(page: AuditsRoute.page, path: AuditsPage.routeName),
+    AutoRoute(page: AuditDetailRoute.page, path: AuditDetailPage.routeName),
+    AutoRoute(
+      page: AuditControlObjectifRoute.page,
+      path: AuditControlObjectifPage.routeName,
+    ),
+    AutoRoute(
+      page: AuditMakeConstatRoute.page,
+      path: AuditMakeConstatPage.routeName,
+    ),
+    AutoRoute(page: ProgrammAuditRoute.page, path: ProgrammAuditPage.routeName),
     // AutoRoute(page: Route.page, path: Page.routeName),
   ];
 }

@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../actions/widget/action_card.dart';
+import '../../audits/widgets/audits_widget.dart';
+import '../../events/widgets/event_card.dart';
 
 class HomeBody extends StatefulWidget {
   const HomeBody({super.key});
@@ -160,23 +162,27 @@ class _HomeBodyState extends State<HomeBody> {
           _Section(
             icon: Assets.svgs.jamRed,
             title: 'Evenement non desirables',
-            trailing: const _SeeAll(),
+            trailing: _SeeAll(
+              onTap: () {
+                context.router.push(const NewBadEventsRoute());
+              },
+            ),
             children: const [
-              _EventCard(
+              EventCard(
                 imageUrl: 'https://picsum.photos/seed/ev1/600/320',
                 level: 'Majeur',
                 status: 'En cours',
                 title: 'Entrepôt de stockage, zone de stockage',
                 site: 'Espace vert du PAC',
               ),
-              _EventCard(
+              EventCard(
                 imageUrl: 'https://picsum.photos/seed/ev2/600/320',
                 level: 'Majeur',
                 status: 'En cours',
                 title: 'Entrepôt de stockage, zone de stockage',
                 site: 'Espace vert du PAC',
               ),
-              _EventCard(
+              EventCard(
                 imageUrl: 'https://picsum.photos/seed/ev3/600/320',
                 level: 'Majeur',
                 status: 'En cours',
@@ -190,7 +196,11 @@ class _HomeBodyState extends State<HomeBody> {
             icon: Assets.svgs.jamBlue,
 
             title: 'Inspections',
-            trailing: const _SeeAll(),
+            trailing: _SeeAll(
+              onTap: () {
+                context.router.push(const InspectionsRoute());
+              },
+            ),
             children: const [
               _InspectionCard(
                 date: '22 / 09 / 25',
@@ -212,16 +222,20 @@ class _HomeBodyState extends State<HomeBody> {
           _Section(
             icon: Assets.svgs.jamOrange,
             title: 'Audits',
-            trailing: const _SeeAll(),
+            trailing: _SeeAll(
+              onTap: () {
+                context.router.push(const AuditsRoute());
+              },
+            ),
             children: const [
-              _AuditCard(
+              AuditCard(
                 tag: 'Interne',
                 status: 'En cours',
                 title:
                     'Audits sur les activités internes liées aux dechargements des marchandises',
                 process: 'Marketing international et developpment',
               ),
-              _AuditCard(
+              AuditCard(
                 tag: 'Externe',
                 status: 'En cours',
                 title:
@@ -235,7 +249,11 @@ class _HomeBodyState extends State<HomeBody> {
             icon: Assets.svgs.jamPurple,
 
             title: 'Permis à chaud',
-            trailing: const _SeeAll(),
+            trailing: _SeeAll(
+              onTap: () {
+                context.router.push(const HotPermisRoute());
+              },
+            ),
             children: const [
               _HotWorkCard(
                 level: 'Travail Normal',
@@ -393,126 +411,6 @@ class _CardBase extends StatelessWidget {
   }
 }
 
-/* ---- Event ---- */
-class _EventCard extends StatelessWidget {
-  final String imageUrl;
-  final String level;
-  final String status;
-  final String title;
-  final String site;
-
-  const _EventCard({
-    required this.imageUrl,
-    required this.level,
-    required this.status,
-    required this.title,
-    required this.site,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final blue = const Color(0xFF2E6CF6);
-
-    return _CardBase(
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(5),
-            child: Image.network(
-              imageUrl,
-              width: 106,
-              height: 102,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: 10,
-                right: 4,
-                top: 2,
-                bottom: 2,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // niveau + statut
-                  Row(
-                    children: [
-                      Text(
-                        level,
-                        style: GoogleFonts.nunito(
-                          color: Colors.deepOrange,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13,
-                        ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        'Statut :  ',
-                        style: GoogleFonts.poppins(
-                          color: const Color(0xFF6E7787),
-                          fontWeight: FontWeight.w500,
-                          fontSize: 13,
-                        ),
-                      ),
-                      Text(
-                        status,
-                        style: GoogleFonts.nunito(
-                          color: blue,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: Text(
-                      title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSans(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 17,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Site :  ',
-                          style: GoogleFonts.nunito(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 13,
-                            color: const Color(0xFF6E7787),
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            site,
-                            style: GoogleFonts.nunito(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 /* ---- Inspection ---- */
 class _InspectionCard extends StatelessWidget {
   final String date;
@@ -531,201 +429,89 @@ class _InspectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final blue = const Color(0xFF2E6CF6);
 
-    return _CardBase(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // date + statut
-          Row(
-            children: [
-              Container(
-                decoration: const BoxDecoration(color: Colors.black45),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  child: Text(
-                    date,
-                    style: GoogleFonts.dmSans(
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                      fontSize: 14,
+    return GestureDetector(
+      onTap: () {
+        context.router.push(const StartInspectionRoute());
+      },
+      child: _CardBase(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // date + statut
+            Row(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(color: Colors.black45),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    child: Text(
+                      date,
+                      style: GoogleFonts.dmSans(
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const Spacer(),
-              Text(
-                'Statut :  ',
-                style: GoogleFonts.nunito(
-                  color: const Color(0xFF6E7787),
-                  fontWeight: FontWeight.w500,
-                  fontSize: 13,
-                ),
-              ),
-              Text(
-                status,
-                style: GoogleFonts.poppins(
-                  color: blue,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(
-              title,
-              style: GoogleFonts.dmSans(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Row(
-              children: [
+                const Spacer(),
                 Text(
-                  'Site :  ',
+                  'Statut :  ',
                   style: GoogleFonts.nunito(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 13,
                     color: const Color(0xFF6E7787),
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    site,
-                    style: GoogleFonts.nunito(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/* ---- Audit ---- */
-class _AuditCard extends StatelessWidget {
-  final String tag;
-  final String status;
-  final String title;
-  final String process;
-
-  const _AuditCard({
-    required this.tag,
-    required this.status,
-    required this.title,
-    required this.process,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final blue = const Color(0xFF2E6CF6);
-
-    return _CardBase(
-      padding: const EdgeInsets.all(4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // tag + statut
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(top: 2),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFABC3D),
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(8)),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 2,
-                  ),
-                  child: Text(
-                    tag,
-                    style: GoogleFonts.dmSans(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(top: 8, right: 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Statut :  ',
-                      style: GoogleFonts.nunito(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 13,
-                        color: const Color(0xFF6E7787),
-                      ),
-                    ),
-                    Text(
-                      status,
-                      style: GoogleFonts.nunito(
-                        color: blue,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
-            child: Text(
-              title,
-              style: GoogleFonts.dmSans(
-                fontWeight: FontWeight.w700,
-                fontSize: 17,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 4,
-              left: 8,
-              right: 8,
-              bottom: 8,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Processus',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 12,
                     fontWeight: FontWeight.w500,
+                    fontSize: 13,
                   ),
                 ),
                 Text(
-                  process,
-                  style: GoogleFonts.dmSans(
+                  status,
+                  style: GoogleFonts.poppins(
+                    color: blue,
                     fontSize: 13,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ],
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                title,
+                style: GoogleFonts.dmSans(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Row(
+                children: [
+                  Text(
+                    'Site :  ',
+                    style: GoogleFonts.nunito(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
+                      color: const Color(0xFF6E7787),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      site,
+                      style: GoogleFonts.nunito(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -751,99 +537,104 @@ class _HotWorkCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final blue = const Color(0xFF2E6CF6);
 
-    return _CardBase(
-      padding: const EdgeInsets.all(4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // level + statut
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(top: 2),
-                decoration: BoxDecoration(
-                  color: levelColor,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(8),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 2,
-                  ),
-                  child: Text(
-                    level,
-                    style: GoogleFonts.dmSans(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(top: 8, right: 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Statut :  ',
-                      style: GoogleFonts.nunito(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 13,
-                        color: const Color(0xFF6E7787),
-                      ),
-                    ),
-                    Text(
-                      status,
-                      style: GoogleFonts.nunito(
-                        color: blue,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8, right: 8, left: 8),
-            child: Text(
-              title,
-              style: GoogleFonts.dmSans(
-                fontWeight: FontWeight.w700,
-                fontSize: 17,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
+    return GestureDetector(
+      onTap: () {
+        context.router.push(const HotPermisDetailRoute());
+      },
+      child: _CardBase(
+        padding: const EdgeInsets.all(4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // level + statut
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Site :  ',
-                  style: GoogleFonts.nunito(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 13,
-                    color: const Color(0xFF6E7787),
+                Container(
+                  margin: const EdgeInsets.only(top: 2),
+                  decoration: BoxDecoration(
+                    color: levelColor,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 2,
+                    ),
+                    child: Text(
+                      level,
+                      style: GoogleFonts.dmSans(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ),
                 ),
-                Expanded(
-                  child: Text(
-                    site,
-                    style: GoogleFonts.nunito(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13,
-                    ),
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, right: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Statut :  ',
+                        style: GoogleFonts.nunito(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13,
+                          color: const Color(0xFF6E7787),
+                        ),
+                      ),
+                      Text(
+                        status,
+                        style: GoogleFonts.nunito(
+                          color: blue,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.only(top: 8, right: 8, left: 8),
+              child: Text(
+                title,
+                style: GoogleFonts.dmSans(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 17,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                children: [
+                  Text(
+                    'Site :  ',
+                    style: GoogleFonts.nunito(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
+                      color: const Color(0xFF6E7787),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      site,
+                      style: GoogleFonts.nunito(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

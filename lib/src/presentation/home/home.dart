@@ -324,6 +324,7 @@ class _HomePageState extends State<HomePage>
                           color: _navy,
                           onTap: () {
                             _toggleFabMenu();
+                            context.router.push(const AddNewBadEventsRoute());
                           },
                         ),
                       ),
@@ -570,32 +571,52 @@ class CustomDrawer extends StatelessWidget {
                   _drawerItem(
                     icon: Assets.svgs.home,
                     text: 'Inspections',
-                    onTap: () {},
+                    onTap: () {
+                      context.router.push(const InspectionsRoute());
+                      Scaffold.of(context).closeDrawer();
+                    },
                   ),
                   _drawerItem(
                     icon: Assets.svgs.document,
                     text: 'Audits',
-                    onTap: () {},
+                    onTap: () {
+                      context.router.push(const AuditsRoute());
+                      Scaffold.of(context).closeDrawer();
+                    },
                   ),
                   _drawerItem(
                     icon: Assets.svgs.formation,
                     text: 'Formations',
-                    onTap: () {},
+                    onTap: () {
+                      context.router.push(FormationsSensibilizationsRoute());
+                      Scaffold.of(context).closeDrawer();
+                    },
                   ),
                   _drawerItem(
                     icon: Assets.svgs.bell,
                     text: 'Sensibilisations',
-                    onTap: () {},
+                    onTap: () {
+                      context.router.push(
+                        FormationsSensibilizationsRoute(initialPage: 3),
+                      );
+                      Scaffold.of(context).closeDrawer();
+                    },
                   ),
                   _drawerItem(
                     icon: Assets.svgs.event,
                     text: 'Evennements',
-                    onTap: () {},
+                    onTap: () {
+                      context.router.push(const NewBadEventsRoute());
+                      Scaffold.of(context).closeDrawer();
+                    },
                   ),
                   _drawerItem(
                     icon: Assets.svgs.hot,
                     text: 'Travail à chaud',
-                    onTap: () {},
+                    onTap: () {
+                      context.router.push(const HotPermisRoute());
+                      Scaffold.of(context).closeDrawer();
+                    },
                   ),
                 ],
               ),

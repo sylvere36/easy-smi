@@ -69,6 +69,9 @@ class $AssetsImagesGen {
   AssetGenImage get portCotonou =>
       const AssetGenImage('assets/images/port_cotonou.png');
 
+  /// File path: assets/images/quizz.png
+  AssetGenImage get quizz => const AssetGenImage('assets/images/quizz.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
     google,
@@ -79,6 +82,7 @@ class $AssetsImagesGen {
     onboarding2,
     pattern,
     portCotonou,
+    quizz,
   ];
 }
 
@@ -98,8 +102,19 @@ class $AssetsSvgsGen {
   SvgGenImage get calendarDate =>
       const SvgGenImage('assets/svgs/calendar-date.svg');
 
+  /// File path: assets/svgs/certificate.svg
+  SvgGenImage get certificate =>
+      const SvgGenImage('assets/svgs/certificate.svg');
+
+  /// File path: assets/svgs/certified.svg
+  SvgGenImage get certified => const SvgGenImage('assets/svgs/certified.svg');
+
   /// File path: assets/svgs/document.svg
   SvgGenImage get document => const SvgGenImage('assets/svgs/document.svg');
+
+  /// File path: assets/svgs/download-rounded.svg
+  SvgGenImage get downloadRounded =>
+      const SvgGenImage('assets/svgs/download-rounded.svg');
 
   /// File path: assets/svgs/edit.svg
   SvgGenImage get edit => const SvgGenImage('assets/svgs/edit.svg');
@@ -150,13 +165,25 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/pdf.svg
   SvgGenImage get pdf => const SvgGenImage('assets/svgs/pdf.svg');
 
+  /// File path: assets/svgs/pen.svg
+  SvgGenImage get pen => const SvgGenImage('assets/svgs/pen.svg');
+
+  /// File path: assets/svgs/property.svg
+  SvgGenImage get property => const SvgGenImage('assets/svgs/property.svg');
+
+  /// File path: assets/svgs/success.svg
+  SvgGenImage get success => const SvgGenImage('assets/svgs/success.svg');
+
   /// List of all assets
   List<SvgGenImage> get values => [
     bell,
     bellBold,
     box,
     calendarDate,
+    certificate,
+    certified,
     document,
+    downloadRounded,
     edit,
     event,
     formation,
@@ -173,6 +200,9 @@ class $AssetsSvgsGen {
     message,
     officeStampDocument,
     pdf,
+    pen,
+    property,
+    success,
   ];
 }
 
