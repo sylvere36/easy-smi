@@ -4,6 +4,7 @@ import '../../actions/action_detail_page.dart';
 import '../../actions/actions_page.dart';
 import '../../auth/sign_in/login.dart';
 import '../../auth/sign_in/sign_in_page.dart';
+import '../../auth/webview/auth_webview_page.dart';
 import '../../comments/comments_page.dart';
 import '../../home/home.dart';
 import '../../onboarding/onboarding_page.dart';
@@ -65,6 +66,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: CommentsRoute.page, path: CommentsPage.routeName),
     AutoRoute(page: ActionsRoute.page, path: ActionsPage.routeName),
     AutoRoute(page: ActionDetailRoute.page, path: ActionDetailPage.routeName),
+    AutoRoute(page: AuthWebViewRoute.page, path: AuthWebViewPage.routeName),
     // AutoRoute(page: Route.page, path: Page.routeName),
   ];
 }

@@ -121,10 +121,7 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
-                  child: _roundIcon(
-                    Icons.attach_file_rounded,
-                    onTap: () {}, // TODO: pick file
-                  ),
+                  child: _roundIcon(Icons.attach_file_rounded, onTap: () {}),
                 ),
               ],
             ),

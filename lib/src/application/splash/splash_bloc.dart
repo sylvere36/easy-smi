@@ -2,11 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../infrastructure/_commons/network/user_session.dart';
 import '../../domain/auth/device/device_register_request.dart';
 import '../../domain/auth/device/i_auth_device_repository.dart';
-import '../../presentation/_commons/route/app_router.gr.dart';
 import '../../infrastructure/_commons/device/device_info_helper.dart';
+import '../../infrastructure/_commons/network/user_session.dart';
+import '../../presentation/_commons/route/app_router.gr.dart';
 
 part 'splash_bloc.freezed.dart';
 part 'splash_event.dart';
