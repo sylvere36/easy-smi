@@ -1,11 +1,18 @@
+// Removed unused imports
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../gen/assets.gen.dart';
+import '../../../../../injection_container.dart';
 import '../../../../../l10n/app_localizations.dart';
+import '../../../../application/organization/organization_bloc.dart';
 import '../../../_commons/route/app_router.gr.dart';
 import '../../../_commons/theming/app_color.dart';
+import '../../../_commons_widgets/loading_widget.dart';
+import '../../../_commons_widgets/my_toast.dart';
 
 class JoinOrganization extends StatefulWidget {
   const JoinOrganization({super.key});
@@ -46,18 +53,14 @@ class _JoinOrganizationState extends State<JoinOrganization> {
           builder: (context, c) {
             return Stack(
               children: [
-                // ---- Blue curved background
                 Positioned.fill(
                   child: CustomPaint(painter: _HeaderWavePainter(color: _blue)),
                 ),
-
-                // ---- Content
                 SingleChildScrollView(
                   padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Title
                       Padding(
                         padding: const EdgeInsets.only(top: 25),
                         child: Text(
@@ -65,14 +68,10 @@ class _JoinOrganizationState extends State<JoinOrganization> {
                           style: _title,
                         ),
                       ),
-
-                      // Illustration placeholder (replace with your image)
                       Padding(
                         padding: const EdgeInsets.only(top: 10),
                         child: Assets.images.login.image(),
                       ),
-
-                      // Card-like lower section
                       Padding(
                         padding: const EdgeInsets.only(top: 12),
                         child: Container(
@@ -83,7 +82,6 @@ class _JoinOrganizationState extends State<JoinOrganization> {
                             key: _formKey,
                             child: Column(
                               children: [
-                                // Helper label
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 10),
                                   child: Text(
@@ -95,8 +93,6 @@ class _JoinOrganizationState extends State<JoinOrganization> {
                                     ),
                                   ),
                                 ),
-
-                                // Email field
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 6,
@@ -126,14 +122,12 @@ class _JoinOrganizationState extends State<JoinOrganization> {
                                       hintText: 'Mail Organisation',
                                       hintStyle: GoogleFonts.poppins(
                                         color: const Color(
-                                          // ignore: use_full_hex_values_for_flutter_colors
-                                          0Xff858891b8,
+                                          0xFF8589B8,
                                         ).withAlpha(122),
                                         fontWeight: FontWeight.w600,
                                       ),
                                       filled: true,
                                       fillColor: const Color(0xFFEDEFFF),
-
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(20),
                                         borderSide: BorderSide.none,
@@ -170,43 +164,101 @@ class _JoinOrganizationState extends State<JoinOrganization> {
                                     ),
                                   ),
                                 ),
-
-                                // Button
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     top: 16,
                                     left: 6,
                                     right: 6,
                                   ),
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      onPressed: _onJoin,
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: _blue,
-                                        elevation: 0,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            26,
-                                          ),
+                                  child: BlocProvider(
+                                    create: (_) => sl<OrganizationBloc>(),
+                                    child:
+                                        BlocConsumer<
+                                          OrganizationBloc,
+                                          OrganizationState
+                                        >(
+                                          listener: (context, state) {
+                                            state.failureOrSuccessOption.fold(
+                                              () {},
+                                              (either) => either.fold(
+                                                (failure) {
+                                                  errorFailureHandle(
+                                                    context: context,
+                                                    failure: failure,
+                                                  );
+                                                },
+                                                (success) {
+                                                  context.router.push(
+                                                    SignInRoute(
+                                                      email: _mailCtrl.text
+                                                          .trim(),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                          builder: (context, state) {
+                                            final loading = state.isSubmitting;
+                                            return SizedBox(
+                                              width: double.infinity,
+                                              child: ElevatedButton(
+                                                onPressed: loading
+                                                    ? null
+                                                    : () {
+                                                        if (_formKey
+                                                                .currentState
+                                                                ?.validate() ??
+                                                            false) {
+                                                          context
+                                                              .read<
+                                                                OrganizationBloc
+                                                              >()
+                                                              .add(
+                                                                OrganizationEvent.fetch(
+                                                                  _mailCtrl.text
+                                                                      .trim(),
+                                                                ),
+                                                              );
+                                                        }
+                                                      },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: _blue,
+                                                  elevation: 0,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          26,
+                                                        ),
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 14,
+                                                      ),
+                                                ),
+                                                child: loading
+                                                    ? const LoadingWidget(
+                                                        color: Colors.white,
+                                                        height: 20,
+                                                      )
+                                                    : Text(
+                                                        appLocalizations.join,
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                              fontSize: 15,
+                                                            ),
+                                                      ),
+                                              ),
+                                            );
+                                          },
                                         ),
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 14,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        appLocalizations.join,
-                                        style: GoogleFonts.poppins(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                    ),
                                   ),
                                 ),
-
-                                // Legal text
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     top: 20,
@@ -237,23 +289,8 @@ class _JoinOrganizationState extends State<JoinOrganization> {
     );
   }
 
-  void _onJoin() {
-    if (_formKey.currentState?.validate() ?? false) {
-      context.router.push(SignInRoute(email: _mailCtrl.text.trim()));
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Votre ${_mailCtrl.text} est valide !',
-            style: GoogleFonts.poppins(),
-          ),
-        ),
-      );
-    }
-  }
+  // Button logic handled via BlocConsumer above
 }
-
-/* ===================== Painter for blue header shape ===================== */
 
 class _HeaderWavePainter extends CustomPainter {
   final Color color;

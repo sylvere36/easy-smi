@@ -202,7 +202,7 @@ class _SensibilizationProofBodyState extends State<_SensibilizationProofBody> {
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: kBlue.withOpacity(.18),
+                        color: kBlue.withValues(alpha: .18),
                         blurRadius: 10,
                         offset: const Offset(0, 6),
                       ),

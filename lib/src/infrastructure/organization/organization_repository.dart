@@ -1,0 +1,38 @@
+import 'package:dartz/dartz.dart';
+
+import '../../domain/_commons/global_failure.dart';
+import '../../domain/organization/i_organization_repository.dart';
+import '../_commons/exceptions.dart';
+import '../_commons/network/network_info.dart';
+import 'data_sources/organization_remote_data_source.dart';
+
+class OrganizationRepository implements IOrganizationRepository {
+  final INetworkInfo networkInfo;
+  final IOrganizationRemoteDataSource remoteDataSource;
+  OrganizationRepository({
+    required this.networkInfo,
+    required this.remoteDataSource,
+  });
+
+  @override
+  Future<Either<GlobalFailure, OrganizationSettingsResult>>
+  getOrganizationSettings({required String email}) async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        final result = await remoteDataSource.getOrganizationSettings(
+          email: email,
+        );
+        return right(result);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        // When backend returns success=false with message
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
+}

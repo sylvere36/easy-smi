@@ -297,7 +297,7 @@ class _FormationReportBodyState extends State<_FormationReportBody> {
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: kBlue.withOpacity(.18),
+                        color: kBlue.withValues(alpha: .18),
                         blurRadius: 10,
                         offset: const Offset(0, 6),
                       ),

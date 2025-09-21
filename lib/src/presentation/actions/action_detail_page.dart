@@ -639,7 +639,7 @@ Widget _primaryButton(String label, {required VoidCallback onTap}) => Material(
 
 Widget _chip(String text, Color color) => Container(
   decoration: BoxDecoration(
-    color: color.withOpacity(.12),
+    color: color.withValues(alpha: .12),
     borderRadius: BorderRadius.circular(6),
   ),
   child: Padding(
