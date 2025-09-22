@@ -6,6 +6,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../domain/auth/device/device_register_request.dart';
 import '../../domain/auth/device/i_auth_device_repository.dart';
+import '../../domain/organization/models/license.dart';
 import '../../infrastructure/_commons/device/device_info_helper.dart';
 import '../../infrastructure/_commons/network/user_session.dart';
 import '../../presentation/_commons/route/app_router.gr.dart';
@@ -31,8 +32,13 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
           (token) async => myUserSession.cacheDeviceToken(token),
         );
       }
+
+      final OrganizationLicense? organizationLicense = await myUserSession
+          .getOrganizationLicense();
       final PageRouteInfo<dynamic> route = token != null
           ? const HomeRoute()
+          : organizationLicense != null
+          ? SignInRoute(email: organizationLicense.adminEmail)
           : OnboardingRoute();
 
       emit(SplashState.loaded(token != null, route));
