@@ -63,6 +63,7 @@ dependencies:
   toastification: ^3.0.3
   video_player: ^2.10.0
   webview_flutter: ^4.10.0
+  flutter_web_auth_2: ^4.0.1
 
 dev_dependencies:
   auto_route_generator: ^10.0.1

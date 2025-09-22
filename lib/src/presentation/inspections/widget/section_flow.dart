@@ -107,54 +107,52 @@ class _SectionFlowScreenState extends State<SectionFlowScreen> {
   Widget build(BuildContext context) {
     final themeColor = current.color;
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: themeColor,
-          elevation: 0,
-          iconTheme: const IconThemeData(color: Colors.white),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded),
-            onPressed: _toPrev,
-          ),
-          titleSpacing: 0,
-          title: Text(
-            widget.title.toUpperCase(),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.ubuntu(
-              color: Colors.white,
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          centerTitle: false,
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: themeColor,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: _toPrev,
         ),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [themeColor, themeColor.withValues(alpha: .9)],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
+        titleSpacing: 0,
+        title: Text(
+          widget.title.toUpperCase(),
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.ubuntu(
+            color: Colors.white,
+            fontSize: 17,
+            fontWeight: FontWeight.w400,
           ),
-          child: _qIndex < 0
-              ? _SectionIntroCard(
-                  color: themeColor,
-                  index: _sectionIndex + 1,
-                  title: current.name,
-                  onNext: _toNext,
-                )
-              : _QuestionView(
-                  color: themeColor,
-                  sectionName: current.name,
-                  questions: current.questions,
-                  qIndex: _qIndex,
-                  onPrev: _toPrev,
-                  onNext: _toNext,
-                  onUpdate: () => setState(() {}),
-                ),
         ),
+        centerTitle: false,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [themeColor, themeColor.withValues(alpha: .9)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: _qIndex < 0
+            ? _SectionIntroCard(
+                color: themeColor,
+                index: _sectionIndex + 1,
+                title: current.name,
+                onNext: _toNext,
+              )
+            : _QuestionView(
+                color: themeColor,
+                sectionName: current.name,
+                questions: current.questions,
+                qIndex: _qIndex,
+                onPrev: _toPrev,
+                onNext: _toNext,
+                onUpdate: () => setState(() {}),
+              ),
       ),
     );
   }

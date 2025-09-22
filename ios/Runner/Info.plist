@@ -47,5 +47,16 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>easysmi</string>
+				</array>
+				<key>CFBundleURLName</key>
+				<string>easysmi</string>
+			</dict>
+		</array>
 	</dict>
 </plist>

@@ -64,55 +64,50 @@ class _ImageViewerDialogState extends State<_ImageViewerDialog> {
   Widget build(BuildContext context) {
     final images = widget.images;
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: Stack(
-          children: [
-            // Pages with zoom
-            PageView.builder(
-              controller: _pageCtrl,
-              onPageChanged: (i) => setState(() => _index = i),
-              itemCount: images.length,
-              itemBuilder: (_, i) {
-                return Center(child: _ZoomableNetworkImage(url: images[i]));
-              },
-            ),
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          // Pages with zoom
+          PageView.builder(
+            controller: _pageCtrl,
+            onPageChanged: (i) => setState(() => _index = i),
+            itemCount: images.length,
+            itemBuilder: (_, i) {
+              return Center(child: _ZoomableNetworkImage(url: images[i]));
+            },
+          ),
 
-            // Close button (top-right)
+          // Close button (top-right)
+          Positioned(
+            top: 12,
+            right: 12,
+            child: IconButton(
+              onPressed: () => Navigator.of(context).maybePop(),
+              icon: const Icon(Icons.close, color: Colors.white, size: 28),
+              tooltip: 'Fermer',
+            ),
+          ),
+
+          // Left arrow
+          if (_index > 0)
             Positioned(
-              top: 12,
-              right: 12,
-              child: IconButton(
-                onPressed: () => Navigator.of(context).maybePop(),
-                icon: const Icon(Icons.close, color: Colors.white, size: 28),
-                tooltip: 'Fermer',
-              ),
+              bottom: 72,
+              left: 48,
+              child: _NavButton(icon: Icons.chevron_left_rounded, onTap: _prev),
             ),
 
-            // Left arrow
-            if (_index > 0)
-              Positioned(
-                bottom: 72,
-                left: 48,
-                child: _NavButton(
-                  icon: Icons.chevron_left_rounded,
-                  onTap: _prev,
-                ),
+          // Right arrow
+          if (_index < images.length - 1)
+            Positioned(
+              bottom: 72,
+              right: 48,
+              child: _NavButton(
+                icon: Icons.chevron_right_rounded,
+                onTap: _next,
               ),
-
-            // Right arrow
-            if (_index < images.length - 1)
-              Positioned(
-                bottom: 72,
-                right: 48,
-                child: _NavButton(
-                  icon: Icons.chevron_right_rounded,
-                  onTap: _next,
-                ),
-              ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }

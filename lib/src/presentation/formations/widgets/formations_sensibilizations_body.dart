@@ -105,6 +105,7 @@ class _FormationsSensibilizationsBodyState
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                 child: TabBar(
                   controller: _tab,
+                  isScrollable: true,
                   tabAlignment: TabAlignment.start,
                   labelColor: theme.colorScheme.primary,
                   unselectedLabelColor: const Color(0xFF475467),

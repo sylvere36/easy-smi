@@ -105,15 +105,13 @@ class _CertificationQuizState extends State<CertificationQuiz> {
   // ----------------- UI Blocks -----------------
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: _primary,
-        body: Stack(
-          children: [
-            _BubblesBackground(gradient: _bgGrad), // bulles floues
-            SafeArea(child: _buildBody()),
-          ],
-        ),
+    return Scaffold(
+      backgroundColor: _primary,
+      body: Stack(
+        children: [
+          _BubblesBackground(gradient: _bgGrad), // bulles floues
+          SafeArea(child: _buildBody()),
+        ],
       ),
     );
   }

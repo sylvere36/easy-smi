@@ -44,118 +44,116 @@ class QuizzStatsBody extends StatelessWidget {
     final total = questions.length;
     final wrong = total - correct;
 
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
-          children: [
-            // Top header zone with circular score
-            Column(
-              children: [
-                Expanded(
-                  flex: 4,
-                  child: Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF2D2458),
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(40),
-                        bottomRight: Radius.circular(40),
-                      ),
-                    ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Positioned(
-                          left: 8,
-                          top: 8,
-                          child: IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        _AnimatedRing(percent: percent),
-                      ],
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Top header zone with circular score
+          Column(
+            children: [
+              Expanded(
+                flex: 4,
+                child: Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF2D2458),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(40),
+                      bottomRight: Radius.circular(40),
                     ),
                   ),
-                ),
-                const Expanded(flex: 6, child: SizedBox()),
-              ],
-            ),
-
-            // Floating white card with stats
-            Align(
-              alignment: const Alignment(0, -0.05),
-              child: _StatsCard(
-                percent: percent,
-                correct: correct,
-                wrong: wrong,
-                total: total,
-              ),
-            ),
-
-            // Bottom actions
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 26,
-                  vertical: 24,
-                ).copyWith(bottom: 75),
-                child: Wrap(
-                  alignment: WrapAlignment.spaceBetween,
-                  runSpacing: 22,
-                  spacing: 22,
-                  children: [
-                    _ActionIcon(
-                      label: 'Ressayer',
-                      icon: Icons.refresh,
-                      color: const Color(0xFF128494),
-                      onTap: () {
-                        Navigator.pop(context);
-                        context.router.push(const QuizzRoute());
-                      },
-                    ),
-                    _ActionIcon(
-                      label: 'Mes reponses',
-                      icon: Icons.visibility,
-                      color: const Color(0xFFB5804F),
-                      onTap: () {
-                        context.router.push(const QuizzResponsesRoute());
-                      },
-                    ),
-                    _ActionIcon(
-                      label: 'Partager',
-                      icon: Icons.share,
-                      color: const Color(0xFF5E7BEF),
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Partager…')),
-                        );
-                      },
-                    ),
-                    _ActionIcon(
-                      label: 'Certificat',
-                      icon: Icons.badge_outlined,
-                      color: const Color(0xFF15A677),
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Certificat…')),
-                        );
-                      },
-                    ),
-                  ],
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Positioned(
+                        left: 8,
+                        top: 8,
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      _AnimatedRing(percent: percent),
+                    ],
+                  ),
                 ),
               ),
+              const Expanded(flex: 6, child: SizedBox()),
+            ],
+          ),
+
+          // Floating white card with stats
+          Align(
+            alignment: const Alignment(0, -0.05),
+            child: _StatsCard(
+              percent: percent,
+              correct: correct,
+              wrong: wrong,
+              total: total,
             ),
-          ],
-        ),
+          ),
+
+          // Bottom actions
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 26,
+                vertical: 24,
+              ).copyWith(bottom: 75),
+              child: Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                runSpacing: 22,
+                spacing: 22,
+                children: [
+                  _ActionIcon(
+                    label: 'Ressayer',
+                    icon: Icons.refresh,
+                    color: const Color(0xFF128494),
+                    onTap: () {
+                      Navigator.pop(context);
+                      context.router.push(const QuizzRoute());
+                    },
+                  ),
+                  _ActionIcon(
+                    label: 'Mes reponses',
+                    icon: Icons.visibility,
+                    color: const Color(0xFFB5804F),
+                    onTap: () {
+                      context.router.push(const QuizzResponsesRoute());
+                    },
+                  ),
+                  _ActionIcon(
+                    label: 'Partager',
+                    icon: Icons.share,
+                    color: const Color(0xFF5E7BEF),
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Partager…')),
+                      );
+                    },
+                  ),
+                  _ActionIcon(
+                    label: 'Certificat',
+                    icon: Icons.badge_outlined,
+                    color: const Color(0xFF15A677),
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Certificat…')),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

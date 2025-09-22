@@ -15,12 +15,17 @@ class ExternalAuthRepository implements IExternalAuthRepository {
   Future<Either<GlobalFailure, ExternalAuthRedirect>> google({
     required String deviceToken,
     bool local = true,
+    String? callbackUrl,
   }) async {
     if (!await networkInfo.checkConnection()) {
       return left(const GlobalFailure.noNetwork());
     }
     try {
-      final url = await remote.google(deviceToken: deviceToken, local: local);
+      final url = await remote.google(
+        deviceToken: deviceToken,
+        local: local,
+        callbackUrl: callbackUrl,
+      );
       return right(
         ExternalAuthRedirect(redirectUrl: url, message: ''),
       ); // message optional
@@ -37,12 +42,17 @@ class ExternalAuthRepository implements IExternalAuthRepository {
   Future<Either<GlobalFailure, ExternalAuthRedirect>> ldap({
     required String deviceToken,
     bool local = true,
+    String? callbackUrl,
   }) async {
     if (!await networkInfo.checkConnection()) {
       return left(const GlobalFailure.noNetwork());
     }
     try {
-      final url = await remote.ldap(deviceToken: deviceToken, local: local);
+      final url = await remote.ldap(
+        deviceToken: deviceToken,
+        local: local,
+        callbackUrl: callbackUrl,
+      );
       return right(ExternalAuthRedirect(redirectUrl: url, message: ''));
     } on UnauthorizedException catch (e) {
       return left(GlobalFailure.unauthorized(e.errorText));

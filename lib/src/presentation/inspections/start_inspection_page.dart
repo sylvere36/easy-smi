@@ -47,138 +47,136 @@ class _StartInspectionPageState extends State<StartInspectionPage>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
-            onPressed: () => Navigator.of(context).maybePop(),
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
+      ),
+      body: Stack(
+        children: [
+          // ---- gradient background + bubbles
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF1567E0), Color(0xFF0E5ED7)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
           ),
-        ),
-        body: Stack(
-          children: [
-            // ---- gradient background + bubbles
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF1567E0), Color(0xFF0E5ED7)],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+          const _Bubbles(), // décor
+          // ---- middle white band + title card
+          Align(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // le ruban blanc derrière
+                Container(
+                  height: 66,
+
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
-              ),
-            ),
-            const _Bubbles(), // décor
-            // ---- middle white band + title card
-            Align(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // le ruban blanc derrière
-                  Container(
-                    height: 66,
-
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                // cartouche
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x551E40FF),
+                        blurRadius: 22,
+                        offset: Offset(0, 8),
+                      ),
+                    ],
                   ),
-                  // cartouche
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 24),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(18),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x551E40FF),
-                          blurRadius: 22,
-                          offset: Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 26, 16, 26),
-                      child: Text(
-                        'INSPECTION SUR LA SECURITE\nZONE DES PRODUITS',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.montserrat(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w800,
-                        ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 26, 16, 26),
+                    child: Text(
+                      'INSPECTION SUR LA SECURITE\nZONE DES PRODUITS',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
+          ),
 
-            // ---- big play button + cancel
-            Positioned.fill(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  // bouton pulse
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 28),
-                    child: AnimatedBuilder(
-                      animation: _pulse,
-                      builder: (context, child) {
-                        // halo respirant
-                        final scale = 1.0 + sin(_pulse.value * pi) * 0.12;
-                        return Transform.scale(
-                          scale: _running ? scale : 1.0,
-                          child: child,
-                        );
+          // ---- big play button + cancel
+          Positioned.fill(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // bouton pulse
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 28),
+                  child: AnimatedBuilder(
+                    animation: _pulse,
+                    builder: (context, child) {
+                      // halo respirant
+                      final scale = 1.0 + sin(_pulse.value * pi) * 0.12;
+                      return Transform.scale(
+                        scale: _running ? scale : 1.0,
+                        child: child,
+                      );
+                    },
+                    child: GestureDetector(
+                      onTap: () {
+                        _toggle();
+                        if (_running) {
+                          context.router.push(
+                            const StartInspectionDetailRoute(),
+                          );
+                        }
                       },
-                      child: GestureDetector(
-                        onTap: () {
-                          _toggle();
-                          if (_running) {
-                            context.router.push(
-                              const StartInspectionDetailRoute(),
-                            );
-                          }
-                        },
-                        child: Container(
-                          width: 200,
-                          height: 200,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: RadialGradient(
-                              colors: [
-                                const Color(0xFF5BA0FF).withValues(alpha: .35),
-                                const Color(0xFF0E3E88).withValues(alpha: .95),
-                              ],
-                              radius: .9,
-                            ),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0x335BA0FF),
-                                blurRadius: 18,
-                                spreadRadius: 2,
-                                offset: Offset(0, 6),
-                              ),
+                      child: Container(
+                        width: 200,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(
+                            colors: [
+                              const Color(0xFF5BA0FF).withValues(alpha: .35),
+                              const Color(0xFF0E3E88).withValues(alpha: .95),
                             ],
+                            radius: .9,
                           ),
-                          child: Center(
-                            child: Container(
-                              width: 100,
-                              height: 100,
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: Icon(
-                                  _running
-                                      ? Icons.pause_rounded
-                                      : Icons.play_arrow_rounded,
-                                  size: 50,
-                                  color: const Color(0xFF113A86),
-                                ),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x335BA0FF),
+                              blurRadius: 18,
+                              spreadRadius: 2,
+                              offset: Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Icon(
+                                _running
+                                    ? Icons.pause_rounded
+                                    : Icons.play_arrow_rounded,
+                                size: 50,
+                                color: const Color(0xFF113A86),
                               ),
                             ),
                           ),
@@ -186,53 +184,53 @@ class _StartInspectionPageState extends State<StartInspectionPage>
                       ),
                     ),
                   ),
+                ),
 
-                  // bouton Annuler
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 26),
-                    child: SizedBox(
-                      width: 150,
-                      height: 58,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          backgroundColor: Colors.transparent,
+                // bouton Annuler
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 26),
+                  child: SizedBox(
+                    width: 150,
+                    height: 58,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        onPressed: () {
-                          if (_running) _toggle();
-                          Navigator.of(context).maybePop();
-                        },
-                        child: Ink(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFF7EE0FF), Color(0xFF37B8F1)],
-                            ),
+                        backgroundColor: Colors.transparent,
+                      ),
+                      onPressed: () {
+                        if (_running) _toggle();
+                        Navigator.of(context).maybePop();
+                      },
+                      child: Ink(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF7EE0FF), Color(0xFF37B8F1)],
                           ),
-                          child: const Center(
-                            child: Text(
-                              'ANNULER',
-                              style: TextStyle(
-                                color: Color(0xFF122033),
-                                fontWeight: FontWeight.w800,
-                                fontSize: 17,
-                                letterSpacing: .5,
-                              ),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'ANNULER',
+                            style: TextStyle(
+                              color: Color(0xFF122033),
+                              fontWeight: FontWeight.w800,
+                              fontSize: 17,
+                              letterSpacing: .5,
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

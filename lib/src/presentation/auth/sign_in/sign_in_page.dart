@@ -1,12 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../gen/assets.gen.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../application/auth/external/external_auth_bloc.dart';
+import '../../../infrastructure/_commons/network/user_session.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons_widgets/my_toast.dart';
 
@@ -25,23 +27,64 @@ class SignInPage extends StatelessWidget {
       child: Scaffold(
         body: BlocConsumer<ExternalAuthBloc, ExternalAuthState>(
           listenWhen: (p, c) => p.resultOption != c.resultOption,
-          listener: (context, state) {
-            state.resultOption.fold(
-              () {},
-              (either) => either.fold(
-                (failure) =>
+          listener: (context, state) async {
+            state.resultOption.fold(() {}, (either) async {
+              await either.fold(
+                (failure) async =>
                     errorFailureHandle(context: context, failure: failure),
                 (redirectUrl) async {
-                  await context.router.push(
-                    AuthWebViewRoute(initialUrl: redirectUrl),
-                  );
-                  // Reset state after handling
-                  context.read<ExternalAuthBloc>().add(
-                    const ExternalAuthEvent.reset(),
-                  );
+                  try {
+                    final callbackUrl = await FlutterWebAuth2.authenticate(
+                      url: redirectUrl,
+                      callbackUrlScheme: 'easysmi',
+                    );
+                    final uri = Uri.parse(callbackUrl);
+                    String? token =
+                        uri.queryParameters['accessToken'] ??
+                        uri.queryParameters['access_token'];
+                    if (token == null || token.isEmpty) {
+                      final frag = uri.fragment;
+                      if (frag.isNotEmpty) {
+                        for (final part in frag.split('&')) {
+                          final kv = part.split('=');
+                          if (kv.length == 2 &&
+                              (kv[0] == 'accessToken' ||
+                                  kv[0] == 'access_token')) {
+                            token = Uri.decodeComponent(kv[1]);
+                            break;
+                          }
+                        }
+                      }
+                    }
+                    if (token == null || token.isEmpty) {
+                      errorToast(context: context, msg: 'Token manquant');
+                    } else {
+                      await myUserSession.cacheAuthToken(token);
+                      if (context.mounted) {
+                        successToast(
+                          context: context,
+                          msg: 'Connexion réussie',
+                        );
+                        context.router.replaceAll([const HomeRoute()]);
+                      }
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      errorToast(
+                        context: context,
+                        msg: 'Authentification annulée',
+                      );
+                    }
+                  } finally {
+                    if (context.mounted) {
+                      context.read<ExternalAuthBloc>().add(
+                        const ExternalAuthEvent.reset(),
+                      );
+                    }
+                  }
                 },
-              ),
-            );
+              );
+            });
           },
           builder: (context, state) {
             final isLoading = state.isSubmitting;

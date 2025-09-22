@@ -14,13 +14,14 @@ class ExternalAuthBloc extends Bloc<ExternalAuthEvent, ExternalAuthState> {
   final IExternalAuthRepository _externalRepo;
 
   ExternalAuthBloc(this._externalRepo) : super(ExternalAuthState.initial()) {
-    on<ExternalAuthEvent>((event, emit) async {
-      await event.map(
-        googlePressed: (_) => _handleAuth(emit, provider: _AuthProvider.google),
-        ldapPressed: (_) => _handleAuth(emit, provider: _AuthProvider.ldap),
-        reset: (_) async =>
-            emit(state.copyWith(isSubmitting: false, resultOption: none())),
-      );
+    on<_GooglePressed>((event, emit) async {
+      await _handleAuth(emit, provider: _AuthProvider.google);
+    });
+    on<_LdapPressed>((event, emit) async {
+      await _handleAuth(emit, provider: _AuthProvider.ldap);
+    });
+    on<_Reset>((event, emit) async {
+      emit(state.copyWith(isSubmitting: false, resultOption: none()));
     });
   }
 
@@ -29,16 +30,26 @@ class ExternalAuthBloc extends Bloc<ExternalAuthEvent, ExternalAuthState> {
     required _AuthProvider provider,
   }) async {
     emit(state.copyWith(isSubmitting: true, resultOption: none()));
-
     // Ensure device token
     final String? deviceToken = await myUserSession.getDeviceToken();
-
-    if (deviceToken == null) return;
+    if (deviceToken == null) {
+      emit(state.copyWith(isSubmitting: false));
+      return;
+    }
 
     // Call external auth to get redirect url
+    const callback = 'easysmi://authcallback';
     final res = provider == _AuthProvider.google
-        ? await _externalRepo.google(deviceToken: deviceToken, local: true)
-        : await _externalRepo.ldap(deviceToken: deviceToken, local: true);
+        ? await _externalRepo.google(
+            deviceToken: deviceToken,
+            local: false,
+            callbackUrl: callback,
+          )
+        : await _externalRepo.ldap(
+            deviceToken: deviceToken,
+            local: false,
+            callbackUrl: callback,
+          );
 
     emit(
       res.fold(

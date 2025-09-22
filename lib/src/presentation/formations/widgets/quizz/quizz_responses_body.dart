@@ -12,37 +12,35 @@ class QuizzResponseBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<QuizQuestion> questions = data;
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+        ),
+        title: Text(
+          'Mes reponses',
+          style: GoogleFonts.poppins(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
           ),
-          title: Text(
-            'Mes reponses',
-            style: GoogleFonts.poppins(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 18,
-            ),
-          ),
-          backgroundColor: const Color(0xFF221D47), // deep purple
         ),
         backgroundColor: const Color(0xFF221D47), // deep purple
-        body: CustomScrollView(
-          slivers: [
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+      ),
+      backgroundColor: const Color(0xFF221D47), // deep purple
+      body: CustomScrollView(
+        slivers: [
+          const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
-            SliverList.separated(
-              itemBuilder: (_, i) =>
-                  _QuestionReviewCard(index: i, data: questions[i]),
-              separatorBuilder: (_, _) => const SizedBox(height: 14),
-              itemCount: questions.length,
-            ),
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
-          ],
-        ),
+          SliverList.separated(
+            itemBuilder: (_, i) =>
+                _QuestionReviewCard(index: i, data: questions[i]),
+            separatorBuilder: (_, _) => const SizedBox(height: 14),
+            itemCount: questions.length,
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 24)),
+        ],
       ),
     );
   }

@@ -63,72 +63,71 @@ class MyScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: backgroundColor,
-        body: Stack(
-          children: [
-            // ---- Blue curved background
-            Positioned.fill(
-              child: CustomPaint(
-                painter: _HeaderWavePainter(color: AppColors.primary),
-              ),
+    return Scaffold(
+      backgroundColor: backgroundColor,
+      body: Stack(
+        children: [
+          // ---- Blue curved background
+          Positioned.fill(
+            child: CustomPaint(
+              painter: _HeaderWavePainter(color: AppColors.primary),
             ),
-            Scaffold(
-              backgroundColor: Colors.transparent,
-              appBar:
-                  appBar ??
-                  AppBar(
-                    backgroundColor: Colors.transparent,
-                    centerTitle: false,
-                    leading: IconButton(
-                      onPressed: () => Navigator.maybePop(context),
-                      icon: const Icon(
-                        Icons.arrow_back_rounded,
-                        color: Colors.white,
-                      ),
-                    ),
-                    title: Text(
-                      appBarTitle ?? '',
-                      style: GoogleFonts.inter(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 17,
-                        color: Colors.white,
-                      ),
+          ),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar:
+                appBar ??
+                AppBar(
+                  backgroundColor: Colors.transparent,
+                  centerTitle: false,
+                  leading: IconButton(
+                    onPressed: () => Navigator.maybePop(context),
+                    icon: const Icon(
+                      Icons.arrow_back_rounded,
+                      color: Colors.black,
                     ),
                   ),
-              body: Padding(
-                padding: EdgeInsets.only(
-                  left: paddingHorizontale,
-                  right: paddingHorizontale,
-                  top: 9,
+                  title: Text(
+                    appBarTitle ?? '',
+                    style: GoogleFonts.inter(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 17,
+                      color: Colors.black,
+                    ),
+                  ),
+                  iconTheme: const IconThemeData(color: Colors.black),
                 ),
-                child: body,
+            body: Padding(
+              padding: EdgeInsets.only(
+                left: paddingHorizontale,
+                right: paddingHorizontale,
+                top: 9,
               ),
-              bottomNavigationBar: bottomNavigationBar,
-              bottomSheet: bottomSheet,
-              drawer: drawer,
-              drawerDragStartBehavior: drawerDragStartBehavior,
-              drawerEdgeDragWidth: drawerEdgeDragWidth,
-              drawerEnableOpenDragGesture: drawerEnableOpenDragGesture,
-              drawerScrimColor: drawerScrimColor,
-              endDrawer: endDrawer,
-              endDrawerEnableOpenDragGesture: endDrawerEnableOpenDragGesture,
-              extendBody: extendBody,
-              extendBodyBehindAppBar: extendBodyBehindAppBar,
-              floatingActionButton: floatingActionButton,
-              floatingActionButtonAnimator: floatingActionButtonAnimator,
-              floatingActionButtonLocation: floatingActionButtonLocation,
-              onDrawerChanged: onDrawerChanged,
-              onEndDrawerChanged: onEndDrawerChanged,
-              persistentFooterAlignment: persistentFooterAlignment,
-              persistentFooterButtons: persistentFooterButtons,
-              primary: primary,
-              resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-              restorationId: restorationId,
+              child: body,
             ),
-          ],
-        ),
+            bottomNavigationBar: bottomNavigationBar,
+            bottomSheet: bottomSheet,
+            drawer: drawer,
+            drawerDragStartBehavior: drawerDragStartBehavior,
+            drawerEdgeDragWidth: drawerEdgeDragWidth,
+            drawerEnableOpenDragGesture: drawerEnableOpenDragGesture,
+            drawerScrimColor: drawerScrimColor,
+            endDrawer: endDrawer,
+            endDrawerEnableOpenDragGesture: endDrawerEnableOpenDragGesture,
+            extendBody: extendBody,
+            extendBodyBehindAppBar: extendBodyBehindAppBar,
+            floatingActionButton: floatingActionButton,
+            floatingActionButtonAnimator: floatingActionButtonAnimator,
+            floatingActionButtonLocation: floatingActionButtonLocation,
+            onDrawerChanged: onDrawerChanged,
+            onEndDrawerChanged: onEndDrawerChanged,
+            persistentFooterAlignment: persistentFooterAlignment,
+            persistentFooterButtons: persistentFooterButtons,
+            primary: primary,
+            resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+            restorationId: restorationId,
+          ),
+        ],
       ),
     );
   }

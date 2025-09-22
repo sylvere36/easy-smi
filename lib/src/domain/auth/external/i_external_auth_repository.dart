@@ -15,10 +15,12 @@ abstract class IExternalAuthRepository {
   Future<Either<GlobalFailure, ExternalAuthRedirect>> google({
     required String deviceToken,
     bool local,
+    String? callbackUrl,
   });
 
   Future<Either<GlobalFailure, ExternalAuthRedirect>> ldap({
     required String deviceToken,
     bool local,
+    String? callbackUrl,
   });
 }

@@ -122,70 +122,68 @@ class _AuditDetailBodyState extends State<AuditDetailBody>
     final onBlue = Colors.white;
     final blue = AppColors.primary;
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        floatingActionButton: addContact
-            ? FloatingActionButton(
-                backgroundColor: blue,
-                shape: const CircleBorder(),
-                onPressed: _showAddConstatSheet,
-                child: const Icon(Icons.add),
-              )
-            : null,
-        body: DefaultTabController(
-          length: 4,
-          child: NestedScrollView(
-            headerSliverBuilder: (c, _) => [
-              SliverToBoxAdapter(
-                child: _Header(blue: blue, onBlue: onBlue),
-              ),
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _TabsDelegate(
-                  TabBar(
-                    controller: _tab,
-                    onTap: (index) {
-                      if (index == 1) {
-                        addContact = true;
-                      } else {
-                        addContact = false;
-                      }
-                      setState(() {});
-                    },
-                    isScrollable: true,
-                    tabAlignment: TabAlignment.start,
-                    labelPadding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 8,
-                    ),
-                    indicatorColor: blue,
-                    labelColor: Colors.black,
-                    unselectedLabelColor: Colors.black54,
-                    labelStyle: GoogleFonts.poppins(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    tabs: const [
-                      Tab(text: 'Descriptions'),
-                      Tab(text: 'Liste des constats'),
-                      Tab(text: 'Resultats'),
-                      Tab(text: 'Actions'),
-                    ],
+    return Scaffold(
+      backgroundColor: Colors.white,
+      floatingActionButton: addContact
+          ? FloatingActionButton(
+              backgroundColor: blue,
+              shape: const CircleBorder(),
+              onPressed: _showAddConstatSheet,
+              child: const Icon(Icons.add),
+            )
+          : null,
+      body: DefaultTabController(
+        length: 4,
+        child: NestedScrollView(
+          headerSliverBuilder: (c, _) => [
+            SliverToBoxAdapter(
+              child: _Header(blue: blue, onBlue: onBlue),
+            ),
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _TabsDelegate(
+                TabBar(
+                  controller: _tab,
+                  onTap: (index) {
+                    if (index == 1) {
+                      addContact = true;
+                    } else {
+                      addContact = false;
+                    }
+                    setState(() {});
+                  },
+                  isScrollable: true,
+                  tabAlignment: TabAlignment.start,
+                  labelPadding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 8,
                   ),
+                  indicatorColor: blue,
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.black54,
+                  labelStyle: GoogleFonts.poppins(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  tabs: const [
+                    Tab(text: 'Descriptions'),
+                    Tab(text: 'Liste des constats'),
+                    Tab(text: 'Resultats'),
+                    Tab(text: 'Actions'),
+                  ],
                 ),
               ),
-            ],
-            body: TabBarView(
-              physics: const NeverScrollableScrollPhysics(),
-              controller: _tab,
-              children: [
-                _DescriptionTab(title: _title, label: _label, value: _value),
-                _ConstatsTab(constats: _constats),
-                _ResultatsTab(items: _results),
-                _ActionsTab(items: _actions),
-              ],
             ),
+          ],
+          body: TabBarView(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: _tab,
+            children: [
+              _DescriptionTab(title: _title, label: _label, value: _value),
+              _ConstatsTab(constats: _constats),
+              _ResultatsTab(items: _results),
+              _ActionsTab(items: _actions),
+            ],
           ),
         ),
       ),

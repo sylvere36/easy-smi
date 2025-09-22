@@ -256,100 +256,95 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     final appLocalizations = AppLocalizations.of(context)!;
 
-    return SafeArea(
-      child: Scaffold(
-        drawer: const CustomDrawer(),
-        appBar: AppBar(
-          leading: Builder(
-            builder: (context) => IconButton(
-              icon: Assets.svgs.menu.svg(),
-              onPressed: () => Scaffold.of(context).openDrawer(),
-            ),
+    return Scaffold(
+      drawer: const CustomDrawer(),
+      appBar: AppBar(
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Assets.svgs.menu.svg(),
+            onPressed: () => Scaffold.of(context).openDrawer(),
           ),
-          title: Text(
-            appLocalizations.appName,
-            style: GoogleFonts.montserrat(
-              fontWeight: FontWeight.w700,
-              fontSize: 17,
-              // ignore: use_full_hex_values_for_flutter_colors
-              color: const Color(0xff0f0f0fa3).withAlpha(134),
-            ),
-          ),
-          actions: [
-            BadgeIcon(
-              hasNotification: true,
-              icon: Assets.svgs.officeStampDocument,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: BadgeIcon(
-                hasNotification: true,
-                icon: Assets.svgs.bellBold,
-              ),
-            ),
-          ],
         ),
-        body: const HomeBody(),
-        // FAB with glow and toggling icon
-        floatingActionButton: Column(
-          spacing: 12,
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            if (_menuOpen)
-              IgnorePointer(
-                ignoring: !_menuOpen,
-                child: AnimatedOpacity(
-                  opacity: _menuOpen ? 1 : 0,
-                  duration: const Duration(milliseconds: 200),
-                  child: Column(
-                    spacing: 12,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      SlideTransition(
-                        position: _slide1,
-                        child: _MenuPill(
-                          label: 'Inspections',
-                          color: _navy,
-                          onTap: () {
-                            _toggleFabMenu();
-                            _showInspectionDialog();
-                          },
-                        ),
+        title: Text(
+          appLocalizations.appName,
+          style: GoogleFonts.montserrat(
+            fontWeight: FontWeight.w700,
+            fontSize: 17,
+            // ignore: use_full_hex_values_for_flutter_colors
+            color: const Color(0xff0f0f0fa3).withAlpha(134),
+          ),
+        ),
+        actions: [
+          BadgeIcon(
+            hasNotification: true,
+            icon: Assets.svgs.officeStampDocument,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: BadgeIcon(hasNotification: true, icon: Assets.svgs.bellBold),
+          ),
+        ],
+      ),
+      body: const HomeBody(),
+      // FAB with glow and toggling icon
+      floatingActionButton: Column(
+        spacing: 12,
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (_menuOpen)
+            IgnorePointer(
+              ignoring: !_menuOpen,
+              child: AnimatedOpacity(
+                opacity: _menuOpen ? 1 : 0,
+                duration: const Duration(milliseconds: 200),
+                child: Column(
+                  spacing: 12,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    SlideTransition(
+                      position: _slide1,
+                      child: _MenuPill(
+                        label: 'Inspections',
+                        color: _navy,
+                        onTap: () {
+                          _toggleFabMenu();
+                          _showInspectionDialog();
+                        },
                       ),
-                      SlideTransition(
-                        position: _slide2,
-                        child: _MenuPill(
-                          label: 'Evenements',
-                          color: _navy,
-                          onTap: () {
-                            _toggleFabMenu();
-                            context.router.push(const AddNewBadEventsRoute());
-                          },
-                        ),
+                    ),
+                    SlideTransition(
+                      position: _slide2,
+                      child: _MenuPill(
+                        label: 'Evenements',
+                        color: _navy,
+                        onTap: () {
+                          _toggleFabMenu();
+                          context.router.push(const AddNewBadEventsRoute());
+                        },
                       ),
-                      SlideTransition(
-                        position: _slide3,
-                        child: _MenuPill(
-                          label: 'Contrôle',
-                          color: _navy,
-                          onTap: () {
-                            _toggleFabMenu();
-                            _showHotWorkDialog();
-                          },
-                        ),
+                    ),
+                    SlideTransition(
+                      position: _slide3,
+                      child: _MenuPill(
+                        label: 'Contrôle',
+                        color: _navy,
+                        onTap: () {
+                          _toggleFabMenu();
+                          _showHotWorkDialog();
+                        },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            _GlowingFab(
-              open: _menuOpen,
-              mainColor: _navy,
-              onPressed: _toggleFabMenu,
             ),
-          ],
-        ),
+          _GlowingFab(
+            open: _menuOpen,
+            mainColor: _navy,
+            onPressed: _toggleFabMenu,
+          ),
+        ],
       ),
     );
   }
