@@ -2,19 +2,20 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../domain/auth/_commons/user/user.dart';
+import '../../../../injection_container.dart';
 import '../../../domain/organization/models/license.dart';
 import '../../../domain/organization/models/organization_settings.dart';
-import '../../auth/dtos/auth_response/auth_response_dto.dart';
-import '../../auth/dtos/user/user_dto.dart';
 
-const locaLang = 'benin_appart_local_lang';
+const locaLang = 'local_lang';
 const devisesStore = 'devises_store';
 const appUser = 'APP_USER';
 const alreadyShow = 'ALREADY_SHOW';
 const orgSettingsKey = 'ORG_SETTINGS';
 const orgLicenseKey = 'ORG_LICENSE';
 const deviceTokenKey = 'DEVICE_TOKEN';
+const accessTokenKey = 'ACCESS_TOKEN';
+
+final myUserSession = sl<UserSession>();
 
 class UserSession {
   SharedPreferences? preferences;
@@ -26,34 +27,14 @@ class UserSession {
     preferences = sharedPreferences ?? await SharedPreferences.getInstance();
   }
 
-  Future<AuthResponseDto?> getUserDto() async {
+  Future<bool?> cacheAuthToken(String token) async {
     preferences = preferences ?? await SharedPreferences.getInstance();
-    final String? authdtoStore = preferences?.getString(appUser);
-    if (authdtoStore == null) return null;
-    final AuthResponseDto userDto = AuthResponseDto.fromJson(
-      jsonDecode(authdtoStore),
-    );
-    return userDto;
+    return await preferences?.setString(accessTokenKey, token);
   }
 
   Future<String?> getAuthToken() async {
     preferences = preferences ?? await SharedPreferences.getInstance();
-    final String? authdtoStore = preferences?.getString(appUser);
-    if (authdtoStore == null) return null;
-    final AuthResponseDto userDto = AuthResponseDto.fromJson(
-      jsonDecode(authdtoStore),
-    );
-    return userDto.token;
-  }
-
-  Future<User?> getUser() async {
-    preferences = preferences ?? await SharedPreferences.getInstance();
-    final String? authdtoStore = preferences?.getString(appUser);
-    if (authdtoStore == null) return null;
-    final AuthResponseDto userDto = AuthResponseDto.fromJson(
-      jsonDecode(authdtoStore),
-    );
-    return userDto.user!.toDomain();
+    return preferences?.getString(accessTokenKey);
   }
 
   Future<bool?> checkIntroIsShow() async {

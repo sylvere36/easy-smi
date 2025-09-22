@@ -12,9 +12,8 @@ part 'organization_state.dart';
 
 class OrganizationBloc extends Bloc<OrganizationEvent, OrganizationState> {
   final IOrganizationRepository repository;
-  final UserSession session;
 
-  OrganizationBloc({required this.repository, required this.session})
+  OrganizationBloc({required this.repository})
     : super(OrganizationState.initial()) {
     on<_Fetch>(_onFetch);
   }
@@ -60,7 +59,7 @@ class OrganizationBloc extends Bloc<OrganizationEvent, OrganizationState> {
         );
       },
       (r) async {
-        await session.cacheOrganization(
+        await myUserSession.cacheOrganization(
           settings: r.settings,
           license: r.license,
         );

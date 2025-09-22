@@ -4,10 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../../../../injection_container.dart';
 import '../../../infrastructure/_commons/network/user_session.dart';
-import '../../../infrastructure/auth/data_sources/auth_local_data_source.dart';
-import '../../../infrastructure/auth/dtos/auth_response/auth_response_dto.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons_widgets/my_toast.dart';
 
@@ -67,22 +64,17 @@ class _AuthWebViewPageState extends State<AuthWebViewPage> {
   }
 
   Future<void> _handleToken(String token) async {
-    final session = UserSession();
-    await session.init(null);
-    final existing = await session.getUserDto();
-    final newDto = AuthResponseDto(user: existing?.user, token: token);
-    // Persist via local DS (uses SharedPreferences), through DI
-    await sl<IAuthLocalDataSource>().cacheUser(newDto);
+    myUserSession.cacheAuthToken(token);
 
     if (!mounted) return;
     successToast(context: context, msg: 'Connexion réussie');
-    context.router.replaceAll([const HomeRoute()]);
+    context.router.replaceAll([SplashRoute()]);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Authentication')),
+      appBar: AppBar(title: const Text('Authentification')),
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),

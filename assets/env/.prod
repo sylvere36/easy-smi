@@ -1,2 +1,2 @@
 NAME=production
-BASE_URL=
+BASE_URL=https://api.easysmi.com

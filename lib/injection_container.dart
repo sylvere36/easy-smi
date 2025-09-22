@@ -6,7 +6,6 @@ import 'src/application/auth/external/external_auth_bloc.dart';
 import 'src/application/connected/connected_bloc.dart';
 import 'src/application/organization/organization_bloc.dart';
 import 'src/application/splash/splash_bloc.dart';
-import 'src/domain/auth/_commons/i_auth_repository.dart';
 import 'src/domain/auth/device/i_auth_device_repository.dart';
 import 'src/domain/auth/external/i_external_auth_repository.dart';
 import 'src/domain/organization/i_organization_repository.dart';
@@ -14,10 +13,7 @@ import 'src/infrastructure/_commons/network/app_requests.dart';
 import 'src/infrastructure/_commons/network/network_info.dart';
 import 'src/infrastructure/_commons/network/user_session.dart';
 import 'src/infrastructure/auth/auth_device_repository.dart';
-import 'src/infrastructure/auth/auth_repository.dart';
 import 'src/infrastructure/auth/data_sources/auth_device_remote_data_source.dart';
-import 'src/infrastructure/auth/data_sources/auth_local_data_source.dart';
-import 'src/infrastructure/auth/data_sources/auth_remote_data_source.dart';
 import 'src/infrastructure/auth/data_sources/external_auth_remote_data_source.dart';
 import 'src/infrastructure/auth/external_auth_repository.dart';
 import 'src/infrastructure/organization/data_sources/organization_remote_data_source.dart';
@@ -34,7 +30,7 @@ Future<void> init() async {
 }
 
 void initSplashScreen() {
-  sl.registerFactory(() => SplashBloc(sl(), sl()));
+  sl.registerFactory(() => SplashBloc(sl()));
 }
 
 Future<void> initCore() async {
@@ -42,26 +38,11 @@ Future<void> initCore() async {
   sl.registerFactory(() => UserSession());
   sl.registerLazySingleton<INetworkInfo>(() => NetworkInfo(connectivity: sl()));
   final sharedPreferences = await SharedPreferences.getInstance();
-  //final firebaseMessaging = FirebaseMessaging.instance;
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
-  //sl.registerLazySingleton<FirebaseMessaging>(() => firebaseMessaging);
   sl.registerLazySingleton<IAppRequests>(() => AppRequests());
 }
 
 Future<void> initAuth() async {
-  sl.registerLazySingleton<IAuthLocalDataSource>(
-    () => AuthLocalDataSource(sharedPreferences: sl(), userSession: sl()),
-  );
-  sl.registerLazySingleton<IAuthRemoteDataSource>(
-    () => AuthRemoteDataSource(httpClient: sl()),
-  );
-  sl.registerLazySingleton<IAuthRepository>(
-    () => AuthRepository(
-      networkInfo: sl(),
-      localDataSource: sl(),
-      remoteDataSource: sl(),
-    ),
-  );
   // Device register deps
   sl.registerLazySingleton<IAuthDeviceRemoteDataSource>(
     () => AuthDeviceRemoteDataSource(httpClient: sl()),
@@ -77,7 +58,7 @@ Future<void> initAuth() async {
     () => ExternalAuthRepository(networkInfo: sl(), remote: sl()),
   );
   // Bloc for external auth
-  sl.registerFactory(() => ExternalAuthBloc(sl(), sl(), sl()));
+  sl.registerFactory(() => ExternalAuthBloc(sl()));
 }
 
 Future<void> initConnected() async {
@@ -91,5 +72,5 @@ Future<void> initOrganization() async {
   sl.registerLazySingleton<IOrganizationRepository>(
     () => OrganizationRepository(networkInfo: sl(), remoteDataSource: sl()),
   );
-  sl.registerFactory(() => OrganizationBloc(repository: sl(), session: sl()));
+  sl.registerFactory(() => OrganizationBloc(repository: sl()));
 }

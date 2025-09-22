@@ -240,6 +240,7 @@ class _JoinOrganizationState extends State<JoinOrganization> {
                                                     ? const LoadingWidget(
                                                         color: Colors.white,
                                                         height: 20,
+                                                        width: 20,
                                                       )
                                                     : Text(
                                                         appLocalizations.join,

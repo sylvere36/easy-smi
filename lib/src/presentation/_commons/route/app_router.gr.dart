@@ -21,7 +21,8 @@ import 'package:easy_smi/src/presentation/audits/audit_make_constat_page.dart'
 import 'package:easy_smi/src/presentation/audits/audits_page.dart' as _i9;
 import 'package:easy_smi/src/presentation/audits/programm_audit_page.dart'
     as _i39;
-import 'package:easy_smi/src/presentation/auth/sign_in/login.dart' as _i26;
+import 'package:easy_smi/src/presentation/auth/sign_in/join_organisation.dart'
+    as _i26;
 import 'package:easy_smi/src/presentation/auth/sign_in/sign_in_page.dart'
     as _i44;
 import 'package:easy_smi/src/presentation/auth/webview/auth_webview_page.dart'
@@ -569,17 +570,17 @@ class InspectionsRoute extends _i48.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i26.LoginPage]
-class LoginRoute extends _i48.PageRouteInfo<void> {
-  const LoginRoute({List<_i48.PageRouteInfo>? children})
-    : super(LoginRoute.name, initialChildren: children);
+/// [_i26.JoinOrganisationPage]
+class JoinOrganisationRoute extends _i48.PageRouteInfo<void> {
+  const JoinOrganisationRoute({List<_i48.PageRouteInfo>? children})
+    : super(JoinOrganisationRoute.name, initialChildren: children);
 
-  static const String name = 'LoginRoute';
+  static const String name = 'JoinOrganisationRoute';
 
   static _i48.PageInfo page = _i48.PageInfo(
     name,
     builder: (data) {
-      return const _i26.LoginPage();
+      return const _i26.JoinOrganisationPage();
     },
   );
 }

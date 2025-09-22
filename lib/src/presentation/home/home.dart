@@ -667,7 +667,7 @@ class CustomDrawer extends StatelessWidget {
                     onTap: () {
                       Scaffold.of(context).closeDrawer();
                       // Navigate to login and clear stack
-                      context.router.replaceAll([const LoginRoute()]);
+                      context.router.replaceAll([SplashRoute()]);
                     },
                     child: Row(
                       spacing: 6,

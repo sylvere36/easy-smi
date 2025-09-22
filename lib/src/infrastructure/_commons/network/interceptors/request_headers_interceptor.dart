@@ -28,13 +28,13 @@ Future<void> _performInterceptor(
 
   options.headers['Content-Type'] = optionHeaderContentType;
 
-  final String? lang = await UserSession().getLocaleLanguage();
+  final String? lang = await myUserSession.getLocaleLanguage();
   if (lang != null) {
     final String langSend = lang.split('_')[0];
     options.headers['Accept-Language'] = langSend;
   }
 
-  final String? token = await UserSession().getAuthToken();
+  final String? token = await myUserSession.getAuthToken();
   if (token != null) {
     options.headers['Authorization'] = 'Token $token';
   }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -13,31 +15,25 @@ part 'splash_event.dart';
 part 'splash_state.dart';
 
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
-  final UserSession _userSession;
   final IAuthDeviceRepository _deviceRepo;
-  SplashBloc(this._userSession, this._deviceRepo)
-    : super(const SplashState.loading()) {
+  SplashBloc(this._deviceRepo) : super(const SplashState.loading()) {
     on<SplashEvent>((event, emit) {});
     on<StartLoading>((event, emit) async {
-      await Future.delayed(Duration(seconds: event.splashTime));
-      final String? token = await _userSession.getAuthToken();
-      // Register device if not already registered
-      final String? deviceToken = await _userSession.getDeviceToken();
+      final String? token = await myUserSession.getAuthToken();
+
+      final String? deviceToken = await myUserSession.getDeviceToken();
       if (deviceToken == null) {
-        // Build dynamic device info via device_info_plus
         final DeviceRegisterRequest req = await DeviceInfoHelper.buildRequest();
+        log('--- Registering device with info: ${req.toJson()}');
         final res = await _deviceRepo.registerDevice(request: req);
         await res.fold(
           (_) async {},
-          (token) async => _userSession.cacheDeviceToken(token),
+          (token) async => myUserSession.cacheDeviceToken(token),
         );
       }
-      //bool? introIsShow = await _userSession.checkIntroIsShow();
-      final PageRouteInfo<dynamic> route = OnboardingRoute();
-      // final PageRouteInfo<dynamic> route = OnboardingRoute();
-      // token != null
-      // ? const HomeRoute()
-      // : const LoginRoute();
+      final PageRouteInfo<dynamic> route = token != null
+          ? const HomeRoute()
+          : OnboardingRoute();
 
       emit(SplashState.loaded(token != null, route));
     });

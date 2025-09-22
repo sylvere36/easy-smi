@@ -66,13 +66,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
     } else {
       // Finished
       widget.onFinish?.call();
-      context.pushRoute(const LoginRoute());
+      context.pushRoute(const JoinOrganisationRoute());
     }
   }
 
   void _skip() {
     widget.onFinish?.call();
-    context.pushRoute(const LoginRoute());
+    context.pushRoute(const JoinOrganisationRoute());
   }
 
   // -- Build ------------------------------------------------------------------
