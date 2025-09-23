@@ -43,7 +43,9 @@ class OrganizationRepository implements IOrganizationRepository {
       try {
         // Get admin email from cached organization settings
         final settings = await myUserSession.getOrganizationSettings();
-        final adminEmail = settings?.adminEmail;
+
+        // TODO: Remove hardcoded email after testing
+        final adminEmail = 'jkpeyi@gmail.com' ?? settings?.adminEmail;
         if (adminEmail == null || adminEmail.isEmpty) {
           return left(
             const GlobalFailure.serverError(
