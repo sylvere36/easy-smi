@@ -55,7 +55,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
             u,
           ) async {
             if (u.organizationId == null) {
-              _organizationRepo.joinOrganization();
+              await _organizationRepo.joinOrganization();
             }
             if (u.organizationValidated == false) {
               route = const PendingJoinOrganisationRoute();

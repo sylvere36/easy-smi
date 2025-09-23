@@ -3,8 +3,8 @@ import 'package:dartz/dartz.dart';
 import '../../domain/_commons/global_failure.dart';
 import '../../domain/organization/i_organization_repository.dart';
 import '../_commons/exceptions.dart';
-import '../_commons/network/user_session.dart';
 import '../_commons/network/network_info.dart';
+import '../_commons/network/user_session.dart';
 import 'data_sources/organization_remote_data_source.dart';
 
 class OrganizationRepository implements IOrganizationRepository {
