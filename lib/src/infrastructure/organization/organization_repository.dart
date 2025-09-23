@@ -4,7 +4,6 @@ import '../../domain/_commons/global_failure.dart';
 import '../../domain/organization/i_organization_repository.dart';
 import '../_commons/exceptions.dart';
 import '../_commons/network/network_info.dart';
-import '../_commons/network/user_session.dart';
 import 'data_sources/organization_remote_data_source.dart';
 
 class OrganizationRepository implements IOrganizationRepository {
@@ -42,11 +41,13 @@ class OrganizationRepository implements IOrganizationRepository {
     if (await networkInfo.checkConnection()) {
       try {
         // Get admin email from cached organization settings
-        final settings = await myUserSession.getOrganizationSettings();
 
-        // TODO: Remove hardcoded email after testing
-        final adminEmail = 'jkpeyi@gmail.com' ?? settings?.adminEmail;
-        if (adminEmail == null || adminEmail.isEmpty) {
+        // final settings = await myUserSession.getOrganizationSettings();
+        // final adminEmail = settings?.adminEmail;
+
+        final adminEmail = 'jkpeyi@gmail.com';
+
+        if (adminEmail.isEmpty) {
           return left(
             const GlobalFailure.serverError(
               'Admin email not found in organization settings',

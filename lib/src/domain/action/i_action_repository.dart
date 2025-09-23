@@ -1,0 +1,31 @@
+import 'package:dartz/dartz.dart';
+
+import '../_commons/global_failure.dart';
+import 'models/action_item.dart';
+
+abstract class IActionRepository {
+  Future<Either<GlobalFailure, List<ActionItem>>> getActions();
+
+  Future<Either<GlobalFailure, List<ActionItem>>> getActionsByOrigin({
+    required String originType,
+    required int originId,
+  });
+
+  Future<Either<GlobalFailure, ActionItem>> getAction({required int id});
+
+  // Requests and workflow actions
+  Future<Either<GlobalFailure, String>> requestValidation({
+    required int id,
+    String? comment,
+  });
+
+  Future<Either<GlobalFailure, String>> requestRevision({required int id});
+
+  Future<Either<GlobalFailure, String>> submitRevision({
+    required int id,
+    String? revisionComment,
+  });
+
+  /// Downloads the action document and returns the absolute file path
+  Future<Either<GlobalFailure, String>> printActionDocument({required int id});
+}

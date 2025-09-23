@@ -2,18 +2,24 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'src/application/actions/actions_bloc.dart';
+import 'src/application/actions/detail/action_detail_bloc.dart';
 import 'src/application/auth/external/external_auth_bloc.dart';
 import 'src/application/auth/user/authenticated_user_bloc.dart';
 import 'src/application/connected/connected_bloc.dart';
 import 'src/application/organization/organization_bloc.dart';
 import 'src/application/splash/splash_bloc.dart';
+import 'src/domain/action/i_action_repository.dart';
 import 'src/domain/auth/device/i_auth_device_repository.dart';
 import 'src/domain/auth/external/i_external_auth_repository.dart';
 import 'src/domain/auth/user/i_authenticated_user_repository.dart';
 import 'src/domain/organization/i_organization_repository.dart';
+import 'src/infrastructure/_commons/files/download_service.dart';
 import 'src/infrastructure/_commons/network/app_requests.dart';
 import 'src/infrastructure/_commons/network/network_info.dart';
 import 'src/infrastructure/_commons/network/user_session.dart';
+import 'src/infrastructure/action/action_repository.dart';
+import 'src/infrastructure/action/data_sources/action_remote_data_source.dart';
 import 'src/infrastructure/auth/auth_device_repository.dart';
 import 'src/infrastructure/auth/authenticated_user_repository.dart';
 import 'src/infrastructure/auth/data_sources/auth_device_remote_data_source.dart';
@@ -31,6 +37,7 @@ Future<void> init() async {
   initOrganization();
   initConnected();
   initSplashScreen();
+  initActions();
 }
 
 void initSplashScreen() {
@@ -44,6 +51,8 @@ Future<void> initCore() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
   sl.registerLazySingleton<IAppRequests>(() => AppRequests());
+  // File download service
+  sl.registerLazySingleton<IDownloadService>(() => DownloadService());
 }
 
 Future<void> initAuth() async {
@@ -86,4 +95,19 @@ Future<void> initOrganization() async {
     () => OrganizationRepository(networkInfo: sl(), remoteDataSource: sl()),
   );
   sl.registerFactory(() => OrganizationBloc(repository: sl()));
+}
+
+Future<void> initActions() async {
+  sl.registerLazySingleton<IActionRemoteDataSource>(
+    () => ActionRemoteDataSource(httpClient: sl()),
+  );
+  sl.registerLazySingleton<IActionRepository>(
+    () => ActionRepository(
+      networkInfo: sl(),
+      remoteDataSource: sl(),
+      downloadService: sl(),
+    ),
+  );
+  sl.registerFactory(() => ActionsBloc(repository: sl()));
+  sl.registerFactory(() => ActionDetailBloc(repository: sl()));
 }
