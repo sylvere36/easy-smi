@@ -21,23 +21,27 @@ class AuthDeviceRemoteDataSource implements IAuthDeviceRemoteDataSource {
   Future<String> registerDevice({
     required DeviceRegisterRequest request,
   }) async {
-    final String url = '${AppHttpService.baseUrl}/auth/register-device';
-    final body = jsonEncode(request.toJson());
-    final Response response = await httpClient.postRequest(url, body: body);
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final data = (response.data is String)
-          ? json.decode(response.data as String) as Map<String, dynamic>
-          : response.data as Map<String, dynamic>;
-      final success = data['success'] == true;
-      if (!success) {
-        throw ServerException(data['message'] as String? ?? 'Unknown error');
+    try {
+      final String url = '${AppHttpService.baseUrl}/auth/register-device';
+      final body = jsonEncode(request.toJson());
+      final Response response = await httpClient.postRequest(url, body: body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = (response.data is String)
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : response.data as Map<String, dynamic>;
+        final success = data['success'] == true;
+        if (!success) {
+          throw ServerException(data['message'] as String? ?? 'Unknown error');
+        }
+        final token = data['device_token'] as String?;
+        if (token == null || token.isEmpty) {
+          throw ServerException('device_token missing');
+        }
+        return token;
       }
-      final token = data['device_token'] as String?;
-      if (token == null || token.isEmpty) {
-        throw ServerException('device_token missing');
-      }
-      return token;
+      throw ServerException(errorThrow(response));
+    } catch (e) {
+      throw ServerException(e.toString());
     }
-    throw ServerException(errorThrow(response));
   }
 }

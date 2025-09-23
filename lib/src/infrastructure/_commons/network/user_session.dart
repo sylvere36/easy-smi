@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../injection_container.dart';
+import '../../../domain/auth/user/authenticated_user.dart';
 import '../../../domain/organization/models/license.dart';
 import '../../../domain/organization/models/organization_settings.dart';
 
@@ -14,6 +15,7 @@ const orgSettingsKey = 'ORG_SETTINGS';
 const orgLicenseKey = 'ORG_LICENSE';
 const deviceTokenKey = 'DEVICE_TOKEN';
 const accessTokenKey = 'ACCESS_TOKEN';
+const authenticatedUserKey = 'AUTHENTICATED_USER';
 
 final myUserSession = sl<UserSession>();
 
@@ -90,5 +92,35 @@ class UserSession {
   Future<String?> getDeviceToken() async {
     preferences = preferences ?? await SharedPreferences.getInstance();
     return preferences?.getString(deviceTokenKey);
+  }
+
+  // Authenticated user storage ---------------------------------------------
+  Future<void> cacheAuthenticatedUser(AuthenticatedUser user) async {
+    preferences = preferences ?? await SharedPreferences.getInstance();
+    final map = {
+      'id': user.id,
+      'name': user.name,
+      'email': user.email,
+      'organization_validated': user.organizationValidated,
+    };
+    await preferences?.setString(authenticatedUserKey, jsonEncode(map));
+  }
+
+  Future<AuthenticatedUser?> getAuthenticatedUser() async {
+    preferences = preferences ?? await SharedPreferences.getInstance();
+    final raw = preferences?.getString(authenticatedUserKey);
+    if (raw == null) return null;
+    final map = jsonDecode(raw) as Map<String, dynamic>;
+    return AuthenticatedUser(
+      id: map['id'] as int,
+      name: map['name'] as String,
+      email: map['email'] as String,
+      organizationValidated: map['organization_validated'] as bool,
+    );
+  }
+
+  Future<void> clearAuthenticatedUser() async {
+    preferences = preferences ?? await SharedPreferences.getInstance();
+    await preferences?.remove(authenticatedUserKey);
   }
 }

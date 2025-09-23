@@ -5,6 +5,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 
 import '../../injection_container.dart';
 import '../../l10n/app_localizations.dart';
+import '../application/auth/user/authenticated_user_bloc.dart';
 import '../application/connected/connected_bloc.dart';
 import '_commons/route/app_router.dart';
 import '_commons/route/app_router.gr.dart';
@@ -23,7 +24,10 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => sl<ConnectedBloc>())],
+      providers: [
+        BlocProvider(create: (_) => sl<ConnectedBloc>()),
+        BlocProvider(create: (_) => sl<AuthenticatedUserBloc>()),
+      ],
       child: MaterialApp.router(
         routerDelegate: _appRouter.delegate(),
         routeInformationProvider: _appRouter.routeInfoProvider(),

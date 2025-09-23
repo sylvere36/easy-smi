@@ -26,7 +26,6 @@ class _JoinOrganizationState extends State<JoinOrganization> {
   final _mailCtrl = TextEditingController();
 
   final Color _blue = AppColors.primary; // main blue
-  final Color _bgGrey = const Color(0xFFF1F2F4);
 
   @override
   void dispose() {
@@ -47,7 +46,7 @@ class _JoinOrganizationState extends State<JoinOrganization> {
     final appLocalizations = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: _bgGrey,
+      backgroundColor: AppColors.bgGrey,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, c) {

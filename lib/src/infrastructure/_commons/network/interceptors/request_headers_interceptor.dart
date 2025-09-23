@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 
 import '../user_session.dart';
@@ -35,6 +37,8 @@ Future<void> _performInterceptor(
   }
 
   final String? token = await myUserSession.getAuthToken();
+  log('Request Headers: ${options.headers}');
+  log('Request Token: $token');
   if (token != null) {
     options.headers['Authorization'] = 'Token $token';
   }

@@ -3,17 +3,21 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'src/application/auth/external/external_auth_bloc.dart';
+import 'src/application/auth/user/authenticated_user_bloc.dart';
 import 'src/application/connected/connected_bloc.dart';
 import 'src/application/organization/organization_bloc.dart';
 import 'src/application/splash/splash_bloc.dart';
 import 'src/domain/auth/device/i_auth_device_repository.dart';
 import 'src/domain/auth/external/i_external_auth_repository.dart';
+import 'src/domain/auth/user/i_authenticated_user_repository.dart';
 import 'src/domain/organization/i_organization_repository.dart';
 import 'src/infrastructure/_commons/network/app_requests.dart';
 import 'src/infrastructure/_commons/network/network_info.dart';
 import 'src/infrastructure/_commons/network/user_session.dart';
 import 'src/infrastructure/auth/auth_device_repository.dart';
+import 'src/infrastructure/auth/authenticated_user_repository.dart';
 import 'src/infrastructure/auth/data_sources/auth_device_remote_data_source.dart';
+import 'src/infrastructure/auth/data_sources/authenticated_user_remote_data_source.dart';
 import 'src/infrastructure/auth/data_sources/external_auth_remote_data_source.dart';
 import 'src/infrastructure/auth/external_auth_repository.dart';
 import 'src/infrastructure/organization/data_sources/organization_remote_data_source.dart';
@@ -23,14 +27,14 @@ final sl = GetIt.instance;
 
 Future<void> init() async {
   initCore();
-  initSplashScreen();
   initAuth();
-  initConnected();
   initOrganization();
+  initConnected();
+  initSplashScreen();
 }
 
 void initSplashScreen() {
-  sl.registerFactory(() => SplashBloc(sl()));
+  sl.registerFactory(() => SplashBloc(sl(), sl(), sl()));
 }
 
 Future<void> initCore() async {
@@ -59,6 +63,15 @@ Future<void> initAuth() async {
   );
   // Bloc for external auth
   sl.registerFactory(() => ExternalAuthBloc(sl()));
+
+  // Authenticated user deps
+  sl.registerLazySingleton<IAuthenticatedUserRemoteDataSource>(
+    () => AuthenticatedUserRemoteDataSource(httpClient: sl()),
+  );
+  sl.registerLazySingleton<IAuthenticatedUserRepository>(
+    () => AuthenticatedUserRepository(networkInfo: sl(), remote: sl()),
+  );
+  sl.registerFactory(() => AuthenticatedUserBloc(sl()));
 }
 
 Future<void> initConnected() async {

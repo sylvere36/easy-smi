@@ -7,6 +7,9 @@ import 'models/organization_settings.dart';
 abstract class IOrganizationRepository {
   Future<Either<GlobalFailure, OrganizationSettingsResult>>
   getOrganizationSettings({required String email});
+
+  // Join organization using the admin email (from session settings by default)
+  Future<Either<GlobalFailure, String>> joinOrganization();
 }
 
 class OrganizationSettingsResult {

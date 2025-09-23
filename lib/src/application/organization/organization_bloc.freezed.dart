@@ -14,61 +14,30 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$OrganizationEvent {
 
- String get email;
-/// Create a copy of OrganizationEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$OrganizationEventCopyWith<OrganizationEvent> get copyWith => _$OrganizationEventCopyWithImpl<OrganizationEvent>(this as OrganizationEvent, _$identity);
+
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OrganizationEvent&&(identical(other.email, email) || other.email == email));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OrganizationEvent);
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,email);
+int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'OrganizationEvent(email: $email)';
+  return 'OrganizationEvent()';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $OrganizationEventCopyWith<$Res>  {
-  factory $OrganizationEventCopyWith(OrganizationEvent value, $Res Function(OrganizationEvent) _then) = _$OrganizationEventCopyWithImpl;
-@useResult
-$Res call({
- String email
-});
-
-
-
-
-}
-/// @nodoc
-class _$OrganizationEventCopyWithImpl<$Res>
-    implements $OrganizationEventCopyWith<$Res> {
-  _$OrganizationEventCopyWithImpl(this._self, this._then);
-
-  final OrganizationEvent _self;
-  final $Res Function(OrganizationEvent) _then;
-
-/// Create a copy of OrganizationEvent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? email = null,}) {
-  return _then(_self.copyWith(
-email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
+class $OrganizationEventCopyWith<$Res>  {
+$OrganizationEventCopyWith(OrganizationEvent _, $Res Function(OrganizationEvent) __);
 }
 
 
@@ -86,11 +55,12 @@ extension OrganizationEventPatterns on OrganizationEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _JoinRequested value)?  joinRequested,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
-return fetch(_that);case _:
+return fetch(_that);case _JoinRequested() when joinRequested != null:
+return joinRequested(_that);case _:
   return orElse();
 
 }
@@ -108,11 +78,12 @@ return fetch(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _JoinRequested value)  joinRequested,}){
 final _that = this;
 switch (_that) {
 case _Fetch():
-return fetch(_that);case _:
+return fetch(_that);case _JoinRequested():
+return joinRequested(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -129,11 +100,12 @@ return fetch(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _JoinRequested value)?  joinRequested,}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
-return fetch(_that);case _:
+return fetch(_that);case _JoinRequested() when joinRequested != null:
+return joinRequested(_that);case _:
   return null;
 
 }
@@ -150,10 +122,11 @@ return fetch(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String email)?  fetch,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String email)?  fetch,TResult Function()?  joinRequested,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
-return fetch(_that.email);case _:
+return fetch(_that.email);case _JoinRequested() when joinRequested != null:
+return joinRequested();case _:
   return orElse();
 
 }
@@ -171,10 +144,11 @@ return fetch(_that.email);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String email)  fetch,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String email)  fetch,required TResult Function()  joinRequested,}) {final _that = this;
 switch (_that) {
 case _Fetch():
-return fetch(_that.email);case _:
+return fetch(_that.email);case _JoinRequested():
+return joinRequested();case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -191,10 +165,11 @@ return fetch(_that.email);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String email)?  fetch,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String email)?  fetch,TResult? Function()?  joinRequested,}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
-return fetch(_that.email);case _:
+return fetch(_that.email);case _JoinRequested() when joinRequested != null:
+return joinRequested();case _:
   return null;
 
 }
@@ -209,11 +184,11 @@ class _Fetch implements OrganizationEvent {
   const _Fetch(this.email);
   
 
-@override final  String email;
+ final  String email;
 
 /// Create a copy of OrganizationEvent
 /// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
+@JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 _$FetchCopyWith<_Fetch> get copyWith => __$FetchCopyWithImpl<_Fetch>(this, _$identity);
 
@@ -239,7 +214,7 @@ String toString() {
 /// @nodoc
 abstract mixin class _$FetchCopyWith<$Res> implements $OrganizationEventCopyWith<$Res> {
   factory _$FetchCopyWith(_Fetch value, $Res Function(_Fetch) _then) = __$FetchCopyWithImpl;
-@override @useResult
+@useResult
 $Res call({
  String email
 });
@@ -258,7 +233,7 @@ class __$FetchCopyWithImpl<$Res>
 
 /// Create a copy of OrganizationEvent
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? email = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? email = null,}) {
   return _then(_Fetch(
 null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,
@@ -267,6 +242,38 @@ as String,
 
 
 }
+
+/// @nodoc
+
+
+class _JoinRequested implements OrganizationEvent {
+  const _JoinRequested();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _JoinRequested);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'OrganizationEvent.joinRequested()';
+}
+
+
+}
+
+
+
 
 /// @nodoc
 mixin _$OrganizationState {

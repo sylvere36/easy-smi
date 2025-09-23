@@ -8,6 +8,7 @@ import '../../audits/audit_make_constat_page.dart';
 import '../../audits/audits_page.dart';
 import '../../audits/programm_audit_page.dart';
 import '../../auth/sign_in/join_organisation.dart';
+import '../../auth/sign_in/pending_join_organisation_page.dart';
 import '../../auth/sign_in/sign_in_page.dart';
 import '../../auth/webview/auth_webview_page.dart';
 import '../../comments/comments_page.dart';
@@ -63,6 +64,10 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       page: JoinOrganisationRoute.page,
       path: JoinOrganisationPage.routeName,
+    ),
+    AutoRoute(
+      page: PendingJoinOrganisationRoute.page,
+      path: PendingJoinOrganisationPage.routeName,
     ),
     AutoRoute(page: OnboardingRoute.page, path: OnboardingPage.routeName),
     AutoRoute(page: ProfileRoute.page, path: ProfilePage.routeName),

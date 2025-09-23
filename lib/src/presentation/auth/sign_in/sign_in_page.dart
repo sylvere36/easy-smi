@@ -65,7 +65,7 @@ class SignInPage extends StatelessWidget {
                           context: context,
                           msg: 'Connexion réussie',
                         );
-                        context.router.replaceAll([const HomeRoute()]);
+                        context.router.replaceAll([SplashRoute()]);
                       }
                     }
                   } catch (e) {

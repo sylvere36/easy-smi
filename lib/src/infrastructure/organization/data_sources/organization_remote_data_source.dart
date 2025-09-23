@@ -13,6 +13,8 @@ abstract class IOrganizationRemoteDataSource {
   Future<OrganizationSettingsResult> getOrganizationSettings({
     required String email,
   });
+
+  Future<String> joinOrganization({required String adminEmail});
 }
 
 class OrganizationRemoteDataSource implements IOrganizationRemoteDataSource {
@@ -50,6 +52,33 @@ class OrganizationRemoteDataSource implements IOrganizationRemoteDataSource {
           license: license,
           message: message,
         );
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<String> joinOrganization({required String adminEmail}) async {
+    try {
+      final String request = '/organization/join';
+      final body = jsonEncode({'admin_email': adminEmail});
+      final Response response = await httpClient.postRequest(
+        request,
+        body: body,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = (response.data is String)
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final bool success = data['success'] == true;
+        final String message = (data['message'] as String?) ?? '';
+        if (!success) {
+          throw ServerException(message);
+        }
+        return message;
       } else {
         throw ServerException(errorThrow(response));
       }
