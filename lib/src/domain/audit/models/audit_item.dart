@@ -63,10 +63,11 @@ class AuditItem {
           : AuditProcess.fromJson(json['process'] as Map<String, dynamic>),
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
-      controlPointsSummary: (json['control_points_summary'] as List<dynamic>? ?? [])
-          .whereType<Map<String, dynamic>>()
-          .map((e) => ControlPointSummary.fromJson(e))
-          .toList(),
+      controlPointsSummary:
+          (json['control_points_summary'] as List<dynamic>? ?? [])
+              .whereType<Map<String, dynamic>>()
+              .map((e) => ControlPointSummary.fromJson(e))
+              .toList(),
     );
   }
 }

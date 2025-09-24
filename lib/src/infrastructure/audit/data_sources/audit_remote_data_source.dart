@@ -9,10 +9,7 @@ import '../../_commons/network/app_requests.dart';
 import '../../_commons/throw_error.dart';
 
 abstract class IAuditRemoteDataSource {
-  Future<(List<AuditItem>, Pagination)> getAudits({
-    int page,
-    int perPage,
-  });
+  Future<(List<AuditItem>, Pagination)> getAudits({int page, int perPage});
 
   Future<(List<AuditItem>, Pagination)> getOngoingAudits({
     int page,
@@ -26,10 +23,7 @@ abstract class IAuditRemoteDataSource {
 
   Future<AuditItem> getAudit({required int id});
 
-  Future<String> changeStatus({
-    required int id,
-    required String status,
-  });
+  Future<String> changeStatus({required int id, required String status});
 }
 
 class AuditRemoteDataSource implements IAuditRemoteDataSource {
@@ -45,10 +39,7 @@ class AuditRemoteDataSource implements IAuditRemoteDataSource {
       const String request = '/conformity/audits';
       final Response response = await httpClient.getRequest(
         request,
-        queryParameters: {
-          'page': page,
-          'per_page': perPage,
-        },
+        queryParameters: {'page': page, 'per_page': perPage},
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data is String
@@ -113,10 +104,7 @@ class AuditRemoteDataSource implements IAuditRemoteDataSource {
     try {
       final Response response = await httpClient.getRequest(
         path,
-        queryParameters: {
-          'page': page,
-          'per_page': perPage,
-        },
+        queryParameters: {'page': page, 'per_page': perPage},
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data is String
@@ -166,9 +154,10 @@ class AuditRemoteDataSource implements IAuditRemoteDataSource {
         final resultData = data['data'] as Map<String, dynamic>;
         final Map<String, dynamic> jsonItem =
             resultData['audit'] as Map<String, dynamic>? ??
-                (resultData['audits'] is List && (resultData['audits'] as List).isNotEmpty
-                    ? (resultData['audits'] as List).first as Map<String, dynamic>
-                    : <String, dynamic>{});
+            (resultData['audits'] is List &&
+                    (resultData['audits'] as List).isNotEmpty
+                ? (resultData['audits'] as List).first as Map<String, dynamic>
+                : <String, dynamic>{});
         return AuditItem.fromJson(jsonItem);
       } else {
         throw ServerException(errorThrow(response));
@@ -183,7 +172,10 @@ class AuditRemoteDataSource implements IAuditRemoteDataSource {
     try {
       final String request = '/conformity/audits/$id/status';
       final body = jsonEncode({'status': status});
-      final Response response = await httpClient.postRequest(request, body: body);
+      final Response response = await httpClient.postRequest(
+        request,
+        body: body,
+      );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data is String
             ? json.decode(response.data as String) as Map<String, dynamic>

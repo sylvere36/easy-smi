@@ -14,13 +14,13 @@ abstract class AuditsState with _$AuditsState {
   }) = _AuditsState;
 
   factory AuditsState.initial() => AuditsState(
-        isLoading: false,
-        items: const [],
-        currentPage: 1,
-        perPage: 10,
-        total: 0,
-        canLoadMore: true,
-        resultOption: none(),
-        mode: AuditListMode.all,
-      );
+    isLoading: false,
+    items: const [],
+    currentPage: 1,
+    perPage: 10,
+    total: 0,
+    canLoadMore: true,
+    resultOption: none(),
+    mode: AuditListMode.all,
+  );
 }

@@ -8,9 +8,6 @@ abstract class AuditDetailState with _$AuditDetailState {
     required Option<Either<GlobalFailure, AuditItem>> resultOption,
   }) = _AuditDetailState;
 
-  factory AuditDetailState.initial() => AuditDetailState(
-        isLoading: false,
-        item: null,
-        resultOption: none(),
-      );
+  factory AuditDetailState.initial() =>
+      AuditDetailState(isLoading: false, item: null, resultOption: none());
 }

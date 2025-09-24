@@ -20,8 +20,10 @@ class AuditRepository implements IAuditRepository {
   }) async {
     if (await networkInfo.checkConnection()) {
       try {
-        final (items, pagination) =
-            await remoteDataSource.getAudits(page: page, perPage: perPage);
+        final (items, pagination) = await remoteDataSource.getAudits(
+          page: page,
+          perPage: perPage,
+        );
         return right(Paginated(items: items, pagination: pagination));
       } on UnauthorizedException catch (e) {
         return left(GlobalFailure.unauthorized(e.errorText));
@@ -108,7 +110,10 @@ class AuditRepository implements IAuditRepository {
   }) async {
     if (await networkInfo.checkConnection()) {
       try {
-        final message = await remoteDataSource.changeStatus(id: id, status: status);
+        final message = await remoteDataSource.changeStatus(
+          id: id,
+          status: status,
+        );
         return right(message);
       } on UnauthorizedException catch (e) {
         return left(GlobalFailure.unauthorized(e.errorText));
