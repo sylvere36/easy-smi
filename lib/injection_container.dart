@@ -4,12 +4,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'src/application/actions/actions_bloc.dart';
 import 'src/application/actions/detail/action_detail_bloc.dart';
+import 'src/application/audit/audits_bloc.dart';
+import 'src/application/audit/detail/audit_detail_bloc.dart';
 import 'src/application/auth/external/external_auth_bloc.dart';
 import 'src/application/auth/user/authenticated_user_bloc.dart';
 import 'src/application/connected/connected_bloc.dart';
 import 'src/application/organization/organization_bloc.dart';
 import 'src/application/splash/splash_bloc.dart';
 import 'src/domain/action/i_action_repository.dart';
+import 'src/domain/audit/i_audit_repository.dart';
 import 'src/domain/auth/device/i_auth_device_repository.dart';
 import 'src/domain/auth/external/i_external_auth_repository.dart';
 import 'src/domain/auth/user/i_authenticated_user_repository.dart';
@@ -20,6 +23,8 @@ import 'src/infrastructure/_commons/network/network_info.dart';
 import 'src/infrastructure/_commons/network/user_session.dart';
 import 'src/infrastructure/action/action_repository.dart';
 import 'src/infrastructure/action/data_sources/action_remote_data_source.dart';
+import 'src/infrastructure/audit/audit_repository.dart';
+import 'src/infrastructure/audit/data_sources/audit_remote_data_source.dart';
 import 'src/infrastructure/auth/auth_device_repository.dart';
 import 'src/infrastructure/auth/authenticated_user_repository.dart';
 import 'src/infrastructure/auth/data_sources/auth_device_remote_data_source.dart';
@@ -38,6 +43,7 @@ Future<void> init() async {
   initConnected();
   initSplashScreen();
   initActions();
+  initAudits();
 }
 
 void initSplashScreen() {
@@ -110,4 +116,15 @@ Future<void> initActions() async {
   );
   sl.registerFactory(() => ActionsBloc(repository: sl()));
   sl.registerFactory(() => ActionDetailBloc(repository: sl()));
+}
+
+Future<void> initAudits() async {
+  sl.registerLazySingleton<IAuditRemoteDataSource>(
+    () => AuditRemoteDataSource(httpClient: sl()),
+  );
+  sl.registerLazySingleton<IAuditRepository>(
+    () => AuditRepository(networkInfo: sl(), remoteDataSource: sl()),
+  );
+  sl.registerFactory(() => AuditsBloc(repository: sl()));
+  sl.registerFactory(() => AuditDetailBloc(repository: sl()));
 }

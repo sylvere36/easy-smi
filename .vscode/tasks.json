@@ -37,6 +37,18 @@
 				"$dartc"
 			],
 			"group": "build"
+		},
+		{
+			"label": "analyze build",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"analyze"
+			],
+			"problemMatcher": [
+				"$dartc"
+			],
+			"group": "build"
 		}
 	]
 }
