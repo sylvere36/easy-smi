@@ -28,6 +28,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       final String? token = await myUserSession.getAuthToken();
 
       final String? deviceToken = await myUserSession.getDeviceToken();
+      log('Device Token: $deviceToken');
       if (deviceToken == null) {
         final DeviceRegisterRequest req = await DeviceInfoHelper.buildRequest();
         log('--- Registering device with info: ${req.toJson()}');
@@ -65,8 +66,6 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
           log('Authenticated user fetch error: $e');
         }
       }
-
-      log('Request Token: $token');
 
       emit(SplashState.loaded(token != null, route));
     });

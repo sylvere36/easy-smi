@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -69,6 +71,7 @@ class SignInPage extends StatelessWidget {
                       }
                     }
                   } catch (e) {
+                    log('Sign-in error: $e');
                     if (context.mounted) {
                       errorToast(
                         context: context,
@@ -211,7 +214,7 @@ class SignInPage extends StatelessWidget {
                                               appLocalizations
                                                   .continueWithGoogle,
                                               style: GoogleFonts.poppins(
-                                                fontSize: 14,
+                                                fontSize: 12,
                                                 fontWeight: FontWeight.w600,
                                                 color: Colors.white,
                                               ),
@@ -297,7 +300,7 @@ class SignInPage extends StatelessWidget {
                                               appLocalizations
                                                   .continueWithActiveDirectory,
                                               style: GoogleFonts.poppins(
-                                                fontSize: 14,
+                                                fontSize: 12,
                                                 fontWeight: FontWeight.w600,
                                                 color: Colors.white,
                                               ),
