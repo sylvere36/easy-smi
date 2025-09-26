@@ -24,9 +24,7 @@ class AppHttpService {
       }
       ..interceptors.add(RequestHeaderInterceptorJsonImpl());
     if (kDebugMode) {
-      _instance!.interceptors.add(
-        PrettyDioLogger(requestHeader: true, requestBody: true),
-      );
+      _instance!.interceptors.add(PrettyDioLogger(requestHeader: true));
     }
     return _instance!;
   }

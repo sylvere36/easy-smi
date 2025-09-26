@@ -4,16 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../gen/assets.gen.dart';
+import '../../../domain/action/models/action_item.dart';
 import '../../_commons/route/app_router.gr.dart';
 
 class ActionCard extends StatelessWidget {
   final String badgeText;
   final Color badgeColor;
+  final Color statusColor;
   final String title;
   final String status;
   final String owner;
   final bool inProgress;
   final int unreadBubble;
+  final ActionItem action;
 
   const ActionCard({
     super.key,
@@ -21,9 +24,11 @@ class ActionCard extends StatelessWidget {
     required this.badgeColor,
     required this.title,
     required this.status,
+    required this.statusColor,
     required this.owner,
     this.inProgress = true,
     this.unreadBubble = 0,
+    required this.action,
   });
 
   @override
@@ -32,7 +37,7 @@ class ActionCard extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        context.router.push(const ActionDetailRoute());
+        context.router.push(ActionDetailRoute(action: action));
       },
       child: _CardBase(
         child: Column(
@@ -95,11 +100,9 @@ class ActionCard extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    inProgress ? 'En cours' : 'Brouillon',
+                    status,
                     style: GoogleFonts.poppins(
-                      color: inProgress
-                          ? const Color(0xFF2E6CF6)
-                          : Colors.black,
+                      color: statusColor,
                       fontWeight: FontWeight.w900,
                       fontSize: 13,
                     ),

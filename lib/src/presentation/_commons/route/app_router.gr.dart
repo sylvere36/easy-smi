@@ -10,6 +10,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i49;
+import 'package:easy_smi/src/domain/action/models/action_item.dart' as _i51;
 import 'package:easy_smi/src/presentation/actions/action_detail_page.dart'
     as _i1;
 import 'package:easy_smi/src/presentation/actions/actions_page.dart' as _i2;
@@ -102,18 +103,49 @@ import 'package:flutter/material.dart' as _i50;
 
 /// generated route for
 /// [_i1.ActionDetailPage]
-class ActionDetailRoute extends _i49.PageRouteInfo<void> {
-  const ActionDetailRoute({List<_i49.PageRouteInfo>? children})
-    : super(ActionDetailRoute.name, initialChildren: children);
+class ActionDetailRoute extends _i49.PageRouteInfo<ActionDetailRouteArgs> {
+  ActionDetailRoute({
+    _i50.Key? key,
+    required _i51.ActionItem action,
+    List<_i49.PageRouteInfo>? children,
+  }) : super(
+         ActionDetailRoute.name,
+         args: ActionDetailRouteArgs(key: key, action: action),
+         initialChildren: children,
+       );
 
   static const String name = 'ActionDetailRoute';
 
   static _i49.PageInfo page = _i49.PageInfo(
     name,
     builder: (data) {
-      return const _i1.ActionDetailPage();
+      final args = data.argsAs<ActionDetailRouteArgs>();
+      return _i1.ActionDetailPage(key: args.key, action: args.action);
     },
   );
+}
+
+class ActionDetailRouteArgs {
+  const ActionDetailRouteArgs({this.key, required this.action});
+
+  final _i50.Key? key;
+
+  final _i51.ActionItem action;
+
+  @override
+  String toString() {
+    return 'ActionDetailRouteArgs{key: $key, action: $action}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! ActionDetailRouteArgs) return false;
+    return key == other.key && action == other.action;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ action.hashCode;
 }
 
 /// generated route for

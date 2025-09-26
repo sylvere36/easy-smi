@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../gen/assets.gen.dart';
+import '../../domain/action/models/action_item.dart';
 import '../_commons/route/app_router.gr.dart';
 import '../_commons/theming/app_color.dart';
 import '../_commons_widgets/my_scaffold.dart';
@@ -11,7 +12,9 @@ import '../_commons_widgets/my_scaffold.dart';
 @RoutePage()
 class ActionDetailPage extends StatelessWidget {
   static const String routeName = '/action-detail';
-  const ActionDetailPage({super.key});
+
+  final ActionItem action;
+  const ActionDetailPage({super.key, required this.action});
 
   @override
   Widget build(BuildContext context) {

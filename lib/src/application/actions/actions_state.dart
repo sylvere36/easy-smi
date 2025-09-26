@@ -4,10 +4,15 @@ part of 'actions_bloc.dart';
 abstract class ActionsState with _$ActionsState {
   const factory ActionsState({
     required bool isLoading,
-    required List<ActionItem> items,
+    required List<ActionItem>? items,
+    required List<ActionItem>? originItems,
     required Option<Either<GlobalFailure, List<ActionItem>>> resultOption,
   }) = _ActionsState;
 
-  factory ActionsState.initial() =>
-      ActionsState(isLoading: false, items: const [], resultOption: none());
+  factory ActionsState.initial() => ActionsState(
+    isLoading: false,
+    items: null,
+    originItems: null,
+    resultOption: none(),
+  );
 }

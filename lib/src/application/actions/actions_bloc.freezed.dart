@@ -318,7 +318,7 @@ as int,
 /// @nodoc
 mixin _$ActionsState {
 
- bool get isLoading; List<ActionItem> get items; Option<Either<GlobalFailure, List<ActionItem>>> get resultOption;
+ bool get isLoading; List<ActionItem>? get items; List<ActionItem>? get originItems; Option<Either<GlobalFailure, List<ActionItem>>> get resultOption;
 /// Create a copy of ActionsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -329,16 +329,16 @@ $ActionsStateCopyWith<ActionsState> get copyWith => _$ActionsStateCopyWithImpl<A
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActionsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActionsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other.items, items)&&const DeepCollectionEquality().equals(other.originItems, originItems)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(items),resultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(items),const DeepCollectionEquality().hash(originItems),resultOption);
 
 @override
 String toString() {
-  return 'ActionsState(isLoading: $isLoading, items: $items, resultOption: $resultOption)';
+  return 'ActionsState(isLoading: $isLoading, items: $items, originItems: $originItems, resultOption: $resultOption)';
 }
 
 
@@ -349,7 +349,7 @@ abstract mixin class $ActionsStateCopyWith<$Res>  {
   factory $ActionsStateCopyWith(ActionsState value, $Res Function(ActionsState) _then) = _$ActionsStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, List<ActionItem> items, Option<Either<GlobalFailure, List<ActionItem>>> resultOption
+ bool isLoading, List<ActionItem>? items, List<ActionItem>? originItems, Option<Either<GlobalFailure, List<ActionItem>>> resultOption
 });
 
 
@@ -366,11 +366,12 @@ class _$ActionsStateCopyWithImpl<$Res>
 
 /// Create a copy of ActionsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? items = null,Object? resultOption = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? items = freezed,Object? originItems = freezed,Object? resultOption = null,}) {
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
-as bool,items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
-as List<ActionItem>,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
+as bool,items: freezed == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
+as List<ActionItem>?,originItems: freezed == originItems ? _self.originItems : originItems // ignore: cast_nullable_to_non_nullable
+as List<ActionItem>?,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
 as Option<Either<GlobalFailure, List<ActionItem>>>,
   ));
 }
@@ -456,10 +457,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<ActionItem> items,  Option<Either<GlobalFailure, List<ActionItem>>> resultOption)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<ActionItem>? items,  List<ActionItem>? originItems,  Option<Either<GlobalFailure, List<ActionItem>>> resultOption)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ActionsState() when $default != null:
-return $default(_that.isLoading,_that.items,_that.resultOption);case _:
+return $default(_that.isLoading,_that.items,_that.originItems,_that.resultOption);case _:
   return orElse();
 
 }
@@ -477,10 +478,10 @@ return $default(_that.isLoading,_that.items,_that.resultOption);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<ActionItem> items,  Option<Either<GlobalFailure, List<ActionItem>>> resultOption)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<ActionItem>? items,  List<ActionItem>? originItems,  Option<Either<GlobalFailure, List<ActionItem>>> resultOption)  $default,) {final _that = this;
 switch (_that) {
 case _ActionsState():
-return $default(_that.isLoading,_that.items,_that.resultOption);case _:
+return $default(_that.isLoading,_that.items,_that.originItems,_that.resultOption);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -497,10 +498,10 @@ return $default(_that.isLoading,_that.items,_that.resultOption);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<ActionItem> items,  Option<Either<GlobalFailure, List<ActionItem>>> resultOption)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<ActionItem>? items,  List<ActionItem>? originItems,  Option<Either<GlobalFailure, List<ActionItem>>> resultOption)?  $default,) {final _that = this;
 switch (_that) {
 case _ActionsState() when $default != null:
-return $default(_that.isLoading,_that.items,_that.resultOption);case _:
+return $default(_that.isLoading,_that.items,_that.originItems,_that.resultOption);case _:
   return null;
 
 }
@@ -512,15 +513,26 @@ return $default(_that.isLoading,_that.items,_that.resultOption);case _:
 
 
 class _ActionsState implements ActionsState {
-  const _ActionsState({required this.isLoading, required final  List<ActionItem> items, required this.resultOption}): _items = items;
+  const _ActionsState({required this.isLoading, required final  List<ActionItem>? items, required final  List<ActionItem>? originItems, required this.resultOption}): _items = items,_originItems = originItems;
   
 
 @override final  bool isLoading;
- final  List<ActionItem> _items;
-@override List<ActionItem> get items {
+ final  List<ActionItem>? _items;
+@override List<ActionItem>? get items {
+  final value = _items;
+  if (value == null) return null;
   if (_items is EqualUnmodifiableListView) return _items;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_items);
+  return EqualUnmodifiableListView(value);
+}
+
+ final  List<ActionItem>? _originItems;
+@override List<ActionItem>? get originItems {
+  final value = _originItems;
+  if (value == null) return null;
+  if (_originItems is EqualUnmodifiableListView) return _originItems;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(value);
 }
 
 @override final  Option<Either<GlobalFailure, List<ActionItem>>> resultOption;
@@ -535,16 +547,16 @@ _$ActionsStateCopyWith<_ActionsState> get copyWith => __$ActionsStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActionsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActionsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other._items, _items)&&const DeepCollectionEquality().equals(other._originItems, _originItems)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(_items),resultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(_items),const DeepCollectionEquality().hash(_originItems),resultOption);
 
 @override
 String toString() {
-  return 'ActionsState(isLoading: $isLoading, items: $items, resultOption: $resultOption)';
+  return 'ActionsState(isLoading: $isLoading, items: $items, originItems: $originItems, resultOption: $resultOption)';
 }
 
 
@@ -555,7 +567,7 @@ abstract mixin class _$ActionsStateCopyWith<$Res> implements $ActionsStateCopyWi
   factory _$ActionsStateCopyWith(_ActionsState value, $Res Function(_ActionsState) _then) = __$ActionsStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, List<ActionItem> items, Option<Either<GlobalFailure, List<ActionItem>>> resultOption
+ bool isLoading, List<ActionItem>? items, List<ActionItem>? originItems, Option<Either<GlobalFailure, List<ActionItem>>> resultOption
 });
 
 
@@ -572,11 +584,12 @@ class __$ActionsStateCopyWithImpl<$Res>
 
 /// Create a copy of ActionsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? items = null,Object? resultOption = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? items = freezed,Object? originItems = freezed,Object? resultOption = null,}) {
   return _then(_ActionsState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
-as bool,items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
-as List<ActionItem>,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
+as bool,items: freezed == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
+as List<ActionItem>?,originItems: freezed == originItems ? _self._originItems : originItems // ignore: cast_nullable_to_non_nullable
+as List<ActionItem>?,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
 as Option<Either<GlobalFailure, List<ActionItem>>>,
   ));
 }

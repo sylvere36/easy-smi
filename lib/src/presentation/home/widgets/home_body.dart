@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../gen/assets.gen.dart';
+import '../../../application/actions/actions_bloc.dart';
 import '../../_commons/route/app_router.gr.dart';
+import '../../_commons/theming/app_color.dart';
+import '../../_shimmers/action_card_shimmer.dart';
 import '../../actions/widget/action_card.dart';
 import '../../audits/widgets/audits_widget.dart';
 import '../../events/widgets/event_card.dart';
@@ -119,44 +123,46 @@ class _HomeBodyState extends State<HomeBody> {
             ),
           ),
 
-          _Section(
-            icon: Assets.svgs.jamGreen,
-            title: 'Actions',
-            trailing: _SeeAll(
-              countLabel: '30',
-              onTap: () {
-                context.router.push(const ActionsRoute());
-              },
-            ),
-            children: const [
-              ActionCard(
-                badgeText: 'En retard · il y a 1 semaine',
-                badgeColor: Colors.red,
-                title:
-                    'Renforcement du control qualité dans le departement departement Gestion Produits',
-                status: 'Brouillon',
-                owner: 'Adeline AITCHEVI',
-                inProgress: false,
-                unreadBubble: 3,
-              ),
-              ActionCard(
-                badgeText: 'Échéance · Dans 1 semaine',
-                badgeColor: Color(0xFF00A651),
-                title:
-                    'Renforcement du control qualité dans le departement Gestion Produits',
-                status: 'En cours',
-                owner: 'Arielle BABATON',
-                unreadBubble: 1,
-              ),
-              ActionCard(
-                badgeText: 'Échéance · Dans 1 semaine',
-                badgeColor: Color(0xFF00A651),
-                title:
-                    'Renforcement du control qualité dans le departement Gestion Produits',
-                status: 'En cours',
-                owner: 'Arielle BABATON',
-              ),
-            ],
+          BlocBuilder<ActionsBloc, ActionsState>(
+            builder: (context, state) {
+              return _Section(
+                icon: Assets.svgs.jamGreen,
+                title: 'Actions',
+                trailing: state.items == null
+                    ? const SizedBox()
+                    : _SeeAll(
+                        countLabel: state.items!.length.toString(),
+                        onTap: () {
+                          context.router.push(const ActionsRoute());
+                        },
+                      ),
+                children: state.items == null
+                    ? const [
+                        ActionCardShimmer(compact: true),
+                        ActionCardShimmer(compact: true),
+                        ActionCardShimmer(compact: true),
+                      ]
+                    : [
+                        ...state.items!
+                            .take(3)
+                            .map(
+                              (action) => ActionCard(
+                                badgeText: action.echeanceText ?? '',
+                                badgeColor: action.inProgressStatus
+                                    ? AppColors.green
+                                    : Colors.red,
+                                title: action.justification ?? 'Sans titre',
+                                status: action.humanReadableStatus ?? '',
+                                owner: action.inChargeName ?? 'Non assignée',
+                                inProgress: action.inProgressStatus,
+                                unreadBubble: action.commentsCount ?? 0,
+                                statusColor: action.badgeColor,
+                                action: action,
+                              ),
+                            ),
+                      ],
+              );
+            },
           ),
 
           _Section(

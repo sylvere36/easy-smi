@@ -55,7 +55,8 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
           res.fold((f) => log('Authenticated user fetch failed: $f'), (
             u,
           ) async {
-            if (u.organizationId == null) {
+            if (u.organizationId == null && u.organizationValidated == false) {
+              log('Joining organization for user: ${u.id}');
               await _organizationRepo.joinOrganization();
             }
             if (u.organizationValidated == false) {

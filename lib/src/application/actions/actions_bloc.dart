@@ -15,7 +15,7 @@ class ActionsBloc extends Bloc<ActionsEvent, ActionsState> {
 
   ActionsBloc({required this.repository}) : super(ActionsState.initial()) {
     on<_Fetch>((event, emit) async {
-      emit(state.copyWith(isLoading: true, resultOption: none(), items: []));
+      emit(state.copyWith(isLoading: true, resultOption: none(), items: null));
       final res = await repository.getActions();
       res.fold(
         (l) =>
@@ -30,7 +30,13 @@ class ActionsBloc extends Bloc<ActionsEvent, ActionsState> {
       );
     });
     on<_FetchByOrigin>((event, emit) async {
-      emit(state.copyWith(isLoading: true, resultOption: none(), items: []));
+      emit(
+        state.copyWith(
+          isLoading: true,
+          resultOption: none(),
+          originItems: null,
+        ),
+      );
       final res = await repository.getActionsByOrigin(
         originType: event.originType,
         originId: event.originId,
@@ -41,14 +47,21 @@ class ActionsBloc extends Bloc<ActionsEvent, ActionsState> {
         (items) => emit(
           state.copyWith(
             isLoading: false,
-            items: items,
+            originItems: items,
             resultOption: some(right(items)),
           ),
         ),
       );
     });
     on<_Reset>((event, emit) async {
-      emit(state.copyWith(isLoading: false, resultOption: none(), items: []));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          resultOption: none(),
+          items: [],
+          originItems: null,
+        ),
+      );
     });
   }
 }

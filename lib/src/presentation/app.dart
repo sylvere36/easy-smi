@@ -5,6 +5,8 @@ import 'package:responsive_framework/responsive_framework.dart';
 
 import '../../injection_container.dart';
 import '../../l10n/app_localizations.dart';
+import '../application/actions/actions_bloc.dart';
+import '../application/audit/audits_bloc.dart';
 import '../application/auth/user/authenticated_user_bloc.dart';
 import '../application/connected/connected_bloc.dart';
 import '_commons/route/app_router.dart';
@@ -27,6 +29,10 @@ class _AppState extends State<App> {
       providers: [
         BlocProvider(create: (_) => sl<ConnectedBloc>()),
         BlocProvider(create: (_) => sl<AuthenticatedUserBloc>()),
+        BlocProvider(
+          create: (_) => sl<ActionsBloc>()..add(const ActionsEvent.fetch()),
+        ),
+        BlocProvider(create: (_) => sl<AuditsBloc>()),
       ],
       child: MaterialApp.router(
         routerDelegate: _appRouter.delegate(),

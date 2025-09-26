@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class ActionProcess {
   final int id;
   final String title;
@@ -26,6 +28,89 @@ class ActionProcess {
     'reference': reference,
     'status': status,
   };
+}
+
+List<String> actionStatus = [
+  'draft',
+  'toBeValidated',
+  'inProgress_Compliant',
+  'inProgress_NonCompliant',
+  'closed',
+  'validated',
+  'inProgress_Revision',
+];
+
+String humanReadableActionStatus(String status) {
+  switch (status) {
+    case 'draft':
+      return 'Brouillon';
+    case 'toBeValidated':
+      return 'À valider';
+    case 'inProgress_Compliant':
+      return 'En cours - Conforme';
+    case 'inProgress_NonCompliant':
+      return 'En cours - Non conforme';
+    case 'closed':
+      return 'Clôturée';
+    case 'validated':
+      return 'Validée';
+    case 'inProgress_Revision':
+      return 'En cours - Révision';
+    default:
+      return status;
+  }
+}
+
+Color actionStatusColor(String status) {
+  switch (status) {
+    case 'draft':
+      return Colors.grey;
+    case 'toBeValidated':
+      return Colors.orange;
+    case 'inProgress_Compliant':
+      return Colors.blue;
+    case 'inProgress_NonCompliant':
+      return Colors.red;
+    case 'closed':
+      return Colors.green;
+    case 'validated':
+      return Colors.teal;
+    case 'inProgress_Revision':
+      return Colors.purple;
+    default:
+      return Colors.black;
+  }
+}
+
+String echeance(String date) {
+  final now = DateTime.now();
+  final dueDate = DateTime.parse(date);
+  final difference = dueDate.difference(now).inDays;
+
+  if (difference > 1) {
+    return 'Échéance dans $difference jours';
+  } else if (difference == 1) {
+    return 'Échéance demain';
+  } else if (difference == 0) {
+    return 'Échéance aujourd\'hui';
+  } else {
+    // Ici je veux jour, semaine, mois et année en fonction de la différence
+    if (-difference == 1) {
+      return 'En retard de 1 jour';
+    } else if (-difference < 30) {
+      return 'En retard de ${-difference} jours';
+    } else if (-difference < 365) {
+      return 'En retard de ${-difference ~/ 30} mois';
+    } else {
+      return 'En retard de ${-difference ~/ 365} ans';
+    }
+  }
+}
+
+bool inProgress(String date) {
+  final now = DateTime.now();
+  final startDate = DateTime.parse(date);
+  return now.isBefore(startDate);
 }
 
 class ActionItem {
@@ -57,6 +142,16 @@ class ActionItem {
   final String? inChargeName;
   final dynamic origin; // leave as dynamic for simplicity
   final int? commentsCount;
+
+  String? get humanReadableStatus =>
+      actionStatus != null ? humanReadableActionStatus(actionStatus!) : '';
+
+  String? get echeanceText => endDate != null ? echeance(endDate!) : null;
+
+  bool get inProgressStatus => endDate != null ? inProgress(endDate!) : false;
+
+  Color get badgeColor =>
+      actionStatus != null ? actionStatusColor(actionStatus!) : Colors.grey;
 
   const ActionItem({
     required this.id,

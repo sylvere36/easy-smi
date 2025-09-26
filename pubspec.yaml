@@ -62,9 +62,11 @@ dependencies:
   responsive_framework: ^1.1.1 
   rflutter_alert: ^2.0.4
   shared_preferences: ^2.0.5
+  shimmer: ^3.0.0
   toastification: ^3.0.3
   video_player: ^2.10.0
   webview_flutter: ^4.10.0
+  
   
 
 dev_dependencies:
