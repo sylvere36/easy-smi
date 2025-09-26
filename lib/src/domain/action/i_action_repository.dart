@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import '../_commons/global_failure.dart';
 import 'models/action_item.dart';
+import 'models/action_task.dart';
 
 abstract class IActionRepository {
   Future<Either<GlobalFailure, List<ActionItem>>> getActions();
@@ -28,4 +29,9 @@ abstract class IActionRepository {
 
   /// Downloads the action document and returns the absolute file path
   Future<Either<GlobalFailure, String>> printActionDocument({required int id});
+
+  /// Returns the list of tasks for a given action
+  Future<Either<GlobalFailure, List<ActionTask>>> getTasks({
+    required int actionId,
+  });
 }

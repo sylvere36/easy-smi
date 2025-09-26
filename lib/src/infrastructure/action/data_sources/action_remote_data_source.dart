@@ -7,6 +7,7 @@ import '../../_commons/exceptions.dart';
 import '../../_commons/network/app_http_service.dart';
 import '../../_commons/network/app_requests.dart';
 import '../../_commons/throw_error.dart';
+import '../../../domain/action/models/action_task.dart';
 
 abstract class IActionRemoteDataSource {
   Future<List<ActionItem>> getActions();
@@ -15,6 +16,9 @@ abstract class IActionRemoteDataSource {
     required int originId,
   });
   Future<ActionItem> getAction({required int id});
+
+  /// Returns tasks for a given action id
+  Future<List<ActionTask>> getTasks({required int id});
 
   Future<String> requestValidation({required int id, String? comment});
 
@@ -88,6 +92,37 @@ class ActionRemoteDataSource implements IActionRemoteDataSource {
             ? json.decode(response.data as String) as Map<String, dynamic>
             : (response.data as Map<String, dynamic>);
         return ActionItem.fromJson(data);
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<ActionTask>> getTasks({required int id}) async {
+    try {
+      final String request = '/action/tasks/$id';
+      final Response response = await httpClient.getRequest(request);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // API might return either a raw list or an object with data: []
+        dynamic raw = response.data;
+        if (raw is String) {
+          raw = json.decode(raw);
+        }
+        List<dynamic> list;
+        if (raw is Map<String, dynamic> && raw['data'] is List) {
+          list = raw['data'] as List<dynamic>;
+        } else if (raw is List) {
+          list = raw;
+        } else {
+          list = const [];
+        }
+        return list
+            .whereType<Map<String, dynamic>>()
+            .map((e) => ActionTask.fromJson(e))
+            .toList();
       } else {
         throw ServerException(errorThrow(response));
       }

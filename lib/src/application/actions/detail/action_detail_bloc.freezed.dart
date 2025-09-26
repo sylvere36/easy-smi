@@ -55,7 +55,7 @@ extension ActionDetailEventPatterns on ActionDetailEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _FetchRequested value)?  fetchRequested,TResult Function( _Reset value)?  reset,TResult Function( _RequestValidation value)?  requestValidation,TResult Function( _RequestRevision value)?  requestRevision,TResult Function( _SubmitRevision value)?  submitRevision,TResult Function( _PrintRequested value)?  printRequested,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _FetchRequested value)?  fetchRequested,TResult Function( _Reset value)?  reset,TResult Function( _RequestValidation value)?  requestValidation,TResult Function( _RequestRevision value)?  requestRevision,TResult Function( _SubmitRevision value)?  submitRevision,TResult Function( _PrintRequested value)?  printRequested,TResult Function( _TasksRequested value)?  tasksRequested,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
@@ -64,7 +64,8 @@ return reset(_that);case _RequestValidation() when requestValidation != null:
 return requestValidation(_that);case _RequestRevision() when requestRevision != null:
 return requestRevision(_that);case _SubmitRevision() when submitRevision != null:
 return submitRevision(_that);case _PrintRequested() when printRequested != null:
-return printRequested(_that);case _:
+return printRequested(_that);case _TasksRequested() when tasksRequested != null:
+return tasksRequested(_that);case _:
   return orElse();
 
 }
@@ -82,7 +83,7 @@ return printRequested(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _FetchRequested value)  fetchRequested,required TResult Function( _Reset value)  reset,required TResult Function( _RequestValidation value)  requestValidation,required TResult Function( _RequestRevision value)  requestRevision,required TResult Function( _SubmitRevision value)  submitRevision,required TResult Function( _PrintRequested value)  printRequested,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _FetchRequested value)  fetchRequested,required TResult Function( _Reset value)  reset,required TResult Function( _RequestValidation value)  requestValidation,required TResult Function( _RequestRevision value)  requestRevision,required TResult Function( _SubmitRevision value)  submitRevision,required TResult Function( _PrintRequested value)  printRequested,required TResult Function( _TasksRequested value)  tasksRequested,}){
 final _that = this;
 switch (_that) {
 case _FetchRequested():
@@ -91,7 +92,8 @@ return reset(_that);case _RequestValidation():
 return requestValidation(_that);case _RequestRevision():
 return requestRevision(_that);case _SubmitRevision():
 return submitRevision(_that);case _PrintRequested():
-return printRequested(_that);case _:
+return printRequested(_that);case _TasksRequested():
+return tasksRequested(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -108,7 +110,7 @@ return printRequested(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _FetchRequested value)?  fetchRequested,TResult? Function( _Reset value)?  reset,TResult? Function( _RequestValidation value)?  requestValidation,TResult? Function( _RequestRevision value)?  requestRevision,TResult? Function( _SubmitRevision value)?  submitRevision,TResult? Function( _PrintRequested value)?  printRequested,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _FetchRequested value)?  fetchRequested,TResult? Function( _Reset value)?  reset,TResult? Function( _RequestValidation value)?  requestValidation,TResult? Function( _RequestRevision value)?  requestRevision,TResult? Function( _SubmitRevision value)?  submitRevision,TResult? Function( _PrintRequested value)?  printRequested,TResult? Function( _TasksRequested value)?  tasksRequested,}){
 final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
@@ -117,7 +119,8 @@ return reset(_that);case _RequestValidation() when requestValidation != null:
 return requestValidation(_that);case _RequestRevision() when requestRevision != null:
 return requestRevision(_that);case _SubmitRevision() when submitRevision != null:
 return submitRevision(_that);case _PrintRequested() when printRequested != null:
-return printRequested(_that);case _:
+return printRequested(_that);case _TasksRequested() when tasksRequested != null:
+return tasksRequested(_that);case _:
   return null;
 
 }
@@ -134,7 +137,7 @@ return printRequested(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int id)?  fetchRequested,TResult Function()?  reset,TResult Function( int id,  String? comment)?  requestValidation,TResult Function( int id)?  requestRevision,TResult Function( int id,  String? revisionComment)?  submitRevision,TResult Function( int id)?  printRequested,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int id)?  fetchRequested,TResult Function()?  reset,TResult Function( int id,  String? comment)?  requestValidation,TResult Function( int id)?  requestRevision,TResult Function( int id,  String? revisionComment)?  submitRevision,TResult Function( int id)?  printRequested,TResult Function( int actionId)?  tasksRequested,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested(_that.id);case _Reset() when reset != null:
@@ -142,7 +145,8 @@ return reset();case _RequestValidation() when requestValidation != null:
 return requestValidation(_that.id,_that.comment);case _RequestRevision() when requestRevision != null:
 return requestRevision(_that.id);case _SubmitRevision() when submitRevision != null:
 return submitRevision(_that.id,_that.revisionComment);case _PrintRequested() when printRequested != null:
-return printRequested(_that.id);case _:
+return printRequested(_that.id);case _TasksRequested() when tasksRequested != null:
+return tasksRequested(_that.actionId);case _:
   return orElse();
 
 }
@@ -160,7 +164,7 @@ return printRequested(_that.id);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int id)  fetchRequested,required TResult Function()  reset,required TResult Function( int id,  String? comment)  requestValidation,required TResult Function( int id)  requestRevision,required TResult Function( int id,  String? revisionComment)  submitRevision,required TResult Function( int id)  printRequested,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int id)  fetchRequested,required TResult Function()  reset,required TResult Function( int id,  String? comment)  requestValidation,required TResult Function( int id)  requestRevision,required TResult Function( int id,  String? revisionComment)  submitRevision,required TResult Function( int id)  printRequested,required TResult Function( int actionId)  tasksRequested,}) {final _that = this;
 switch (_that) {
 case _FetchRequested():
 return fetchRequested(_that.id);case _Reset():
@@ -168,7 +172,8 @@ return reset();case _RequestValidation():
 return requestValidation(_that.id,_that.comment);case _RequestRevision():
 return requestRevision(_that.id);case _SubmitRevision():
 return submitRevision(_that.id,_that.revisionComment);case _PrintRequested():
-return printRequested(_that.id);case _:
+return printRequested(_that.id);case _TasksRequested():
+return tasksRequested(_that.actionId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -185,7 +190,7 @@ return printRequested(_that.id);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int id)?  fetchRequested,TResult? Function()?  reset,TResult? Function( int id,  String? comment)?  requestValidation,TResult? Function( int id)?  requestRevision,TResult? Function( int id,  String? revisionComment)?  submitRevision,TResult? Function( int id)?  printRequested,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int id)?  fetchRequested,TResult? Function()?  reset,TResult? Function( int id,  String? comment)?  requestValidation,TResult? Function( int id)?  requestRevision,TResult? Function( int id,  String? revisionComment)?  submitRevision,TResult? Function( int id)?  printRequested,TResult? Function( int actionId)?  tasksRequested,}) {final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested(_that.id);case _Reset() when reset != null:
@@ -193,7 +198,8 @@ return reset();case _RequestValidation() when requestValidation != null:
 return requestValidation(_that.id,_that.comment);case _RequestRevision() when requestRevision != null:
 return requestRevision(_that.id);case _SubmitRevision() when submitRevision != null:
 return submitRevision(_that.id,_that.revisionComment);case _PrintRequested() when printRequested != null:
-return printRequested(_that.id);case _:
+return printRequested(_that.id);case _TasksRequested() when tasksRequested != null:
+return tasksRequested(_that.actionId);case _:
   return null;
 
 }
@@ -568,9 +574,76 @@ as int,
 }
 
 /// @nodoc
+
+
+class _TasksRequested implements ActionDetailEvent {
+  const _TasksRequested({required this.actionId});
+  
+
+ final  int actionId;
+
+/// Create a copy of ActionDetailEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$TasksRequestedCopyWith<_TasksRequested> get copyWith => __$TasksRequestedCopyWithImpl<_TasksRequested>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TasksRequested&&(identical(other.actionId, actionId) || other.actionId == actionId));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,actionId);
+
+@override
+String toString() {
+  return 'ActionDetailEvent.tasksRequested(actionId: $actionId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$TasksRequestedCopyWith<$Res> implements $ActionDetailEventCopyWith<$Res> {
+  factory _$TasksRequestedCopyWith(_TasksRequested value, $Res Function(_TasksRequested) _then) = __$TasksRequestedCopyWithImpl;
+@useResult
+$Res call({
+ int actionId
+});
+
+
+
+
+}
+/// @nodoc
+class __$TasksRequestedCopyWithImpl<$Res>
+    implements _$TasksRequestedCopyWith<$Res> {
+  __$TasksRequestedCopyWithImpl(this._self, this._then);
+
+  final _TasksRequested _self;
+  final $Res Function(_TasksRequested) _then;
+
+/// Create a copy of ActionDetailEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? actionId = null,}) {
+  return _then(_TasksRequested(
+actionId: null == actionId ? _self.actionId : actionId // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
+/// @nodoc
 mixin _$ActionDetailState {
 
- bool get isLoading; ActionItem? get item; Option<Either<GlobalFailure, ActionItem>> get resultOption;
+ bool get isLoading; ActionItem? get item; Option<Either<GlobalFailure, ActionItem>> get resultOption;// Tasks related
+ bool get isTasksLoading; List<ActionTask> get tasks; Option<Either<GlobalFailure, List<ActionTask>>> get tasksResultOption;
 /// Create a copy of ActionDetailState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -581,16 +654,16 @@ $ActionDetailStateCopyWith<ActionDetailState> get copyWith => _$ActionDetailStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActionDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActionDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.isTasksLoading, isTasksLoading) || other.isTasksLoading == isTasksLoading)&&const DeepCollectionEquality().equals(other.tasks, tasks)&&(identical(other.tasksResultOption, tasksResultOption) || other.tasksResultOption == tasksResultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,item,resultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,item,resultOption,isTasksLoading,const DeepCollectionEquality().hash(tasks),tasksResultOption);
 
 @override
 String toString() {
-  return 'ActionDetailState(isLoading: $isLoading, item: $item, resultOption: $resultOption)';
+  return 'ActionDetailState(isLoading: $isLoading, item: $item, resultOption: $resultOption, isTasksLoading: $isTasksLoading, tasks: $tasks, tasksResultOption: $tasksResultOption)';
 }
 
 
@@ -601,7 +674,7 @@ abstract mixin class $ActionDetailStateCopyWith<$Res>  {
   factory $ActionDetailStateCopyWith(ActionDetailState value, $Res Function(ActionDetailState) _then) = _$ActionDetailStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, ActionItem? item, Option<Either<GlobalFailure, ActionItem>> resultOption
+ bool isLoading, ActionItem? item, Option<Either<GlobalFailure, ActionItem>> resultOption, bool isTasksLoading, List<ActionTask> tasks, Option<Either<GlobalFailure, List<ActionTask>>> tasksResultOption
 });
 
 
@@ -618,12 +691,15 @@ class _$ActionDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of ActionDetailState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? item = freezed,Object? resultOption = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? item = freezed,Object? resultOption = null,Object? isTasksLoading = null,Object? tasks = null,Object? tasksResultOption = null,}) {
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,item: freezed == item ? _self.item : item // ignore: cast_nullable_to_non_nullable
 as ActionItem?,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
-as Option<Either<GlobalFailure, ActionItem>>,
+as Option<Either<GlobalFailure, ActionItem>>,isTasksLoading: null == isTasksLoading ? _self.isTasksLoading : isTasksLoading // ignore: cast_nullable_to_non_nullable
+as bool,tasks: null == tasks ? _self.tasks : tasks // ignore: cast_nullable_to_non_nullable
+as List<ActionTask>,tasksResultOption: null == tasksResultOption ? _self.tasksResultOption : tasksResultOption // ignore: cast_nullable_to_non_nullable
+as Option<Either<GlobalFailure, List<ActionTask>>>,
   ));
 }
 
@@ -708,10 +784,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  ActionItem? item,  Option<Either<GlobalFailure, ActionItem>> resultOption)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  ActionItem? item,  Option<Either<GlobalFailure, ActionItem>> resultOption,  bool isTasksLoading,  List<ActionTask> tasks,  Option<Either<GlobalFailure, List<ActionTask>>> tasksResultOption)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ActionDetailState() when $default != null:
-return $default(_that.isLoading,_that.item,_that.resultOption);case _:
+return $default(_that.isLoading,_that.item,_that.resultOption,_that.isTasksLoading,_that.tasks,_that.tasksResultOption);case _:
   return orElse();
 
 }
@@ -729,10 +805,10 @@ return $default(_that.isLoading,_that.item,_that.resultOption);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  ActionItem? item,  Option<Either<GlobalFailure, ActionItem>> resultOption)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  ActionItem? item,  Option<Either<GlobalFailure, ActionItem>> resultOption,  bool isTasksLoading,  List<ActionTask> tasks,  Option<Either<GlobalFailure, List<ActionTask>>> tasksResultOption)  $default,) {final _that = this;
 switch (_that) {
 case _ActionDetailState():
-return $default(_that.isLoading,_that.item,_that.resultOption);case _:
+return $default(_that.isLoading,_that.item,_that.resultOption,_that.isTasksLoading,_that.tasks,_that.tasksResultOption);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -749,10 +825,10 @@ return $default(_that.isLoading,_that.item,_that.resultOption);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  ActionItem? item,  Option<Either<GlobalFailure, ActionItem>> resultOption)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  ActionItem? item,  Option<Either<GlobalFailure, ActionItem>> resultOption,  bool isTasksLoading,  List<ActionTask> tasks,  Option<Either<GlobalFailure, List<ActionTask>>> tasksResultOption)?  $default,) {final _that = this;
 switch (_that) {
 case _ActionDetailState() when $default != null:
-return $default(_that.isLoading,_that.item,_that.resultOption);case _:
+return $default(_that.isLoading,_that.item,_that.resultOption,_that.isTasksLoading,_that.tasks,_that.tasksResultOption);case _:
   return null;
 
 }
@@ -764,12 +840,22 @@ return $default(_that.isLoading,_that.item,_that.resultOption);case _:
 
 
 class _ActionDetailState implements ActionDetailState {
-  const _ActionDetailState({required this.isLoading, required this.item, required this.resultOption});
+  const _ActionDetailState({required this.isLoading, required this.item, required this.resultOption, required this.isTasksLoading, required final  List<ActionTask> tasks, required this.tasksResultOption}): _tasks = tasks;
   
 
 @override final  bool isLoading;
 @override final  ActionItem? item;
 @override final  Option<Either<GlobalFailure, ActionItem>> resultOption;
+// Tasks related
+@override final  bool isTasksLoading;
+ final  List<ActionTask> _tasks;
+@override List<ActionTask> get tasks {
+  if (_tasks is EqualUnmodifiableListView) return _tasks;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_tasks);
+}
+
+@override final  Option<Either<GlobalFailure, List<ActionTask>>> tasksResultOption;
 
 /// Create a copy of ActionDetailState
 /// with the given fields replaced by the non-null parameter values.
@@ -781,16 +867,16 @@ _$ActionDetailStateCopyWith<_ActionDetailState> get copyWith => __$ActionDetailS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActionDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActionDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.isTasksLoading, isTasksLoading) || other.isTasksLoading == isTasksLoading)&&const DeepCollectionEquality().equals(other._tasks, _tasks)&&(identical(other.tasksResultOption, tasksResultOption) || other.tasksResultOption == tasksResultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,item,resultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,item,resultOption,isTasksLoading,const DeepCollectionEquality().hash(_tasks),tasksResultOption);
 
 @override
 String toString() {
-  return 'ActionDetailState(isLoading: $isLoading, item: $item, resultOption: $resultOption)';
+  return 'ActionDetailState(isLoading: $isLoading, item: $item, resultOption: $resultOption, isTasksLoading: $isTasksLoading, tasks: $tasks, tasksResultOption: $tasksResultOption)';
 }
 
 
@@ -801,7 +887,7 @@ abstract mixin class _$ActionDetailStateCopyWith<$Res> implements $ActionDetailS
   factory _$ActionDetailStateCopyWith(_ActionDetailState value, $Res Function(_ActionDetailState) _then) = __$ActionDetailStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, ActionItem? item, Option<Either<GlobalFailure, ActionItem>> resultOption
+ bool isLoading, ActionItem? item, Option<Either<GlobalFailure, ActionItem>> resultOption, bool isTasksLoading, List<ActionTask> tasks, Option<Either<GlobalFailure, List<ActionTask>>> tasksResultOption
 });
 
 
@@ -818,12 +904,15 @@ class __$ActionDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of ActionDetailState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? item = freezed,Object? resultOption = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? item = freezed,Object? resultOption = null,Object? isTasksLoading = null,Object? tasks = null,Object? tasksResultOption = null,}) {
   return _then(_ActionDetailState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,item: freezed == item ? _self.item : item // ignore: cast_nullable_to_non_nullable
 as ActionItem?,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
-as Option<Either<GlobalFailure, ActionItem>>,
+as Option<Either<GlobalFailure, ActionItem>>,isTasksLoading: null == isTasksLoading ? _self.isTasksLoading : isTasksLoading // ignore: cast_nullable_to_non_nullable
+as bool,tasks: null == tasks ? _self._tasks : tasks // ignore: cast_nullable_to_non_nullable
+as List<ActionTask>,tasksResultOption: null == tasksResultOption ? _self.tasksResultOption : tasksResultOption // ignore: cast_nullable_to_non_nullable
+as Option<Either<GlobalFailure, List<ActionTask>>>,
   ));
 }
 

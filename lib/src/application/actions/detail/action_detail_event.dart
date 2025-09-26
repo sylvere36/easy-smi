@@ -22,4 +22,8 @@ class ActionDetailEvent with _$ActionDetailEvent {
 
   const factory ActionDetailEvent.printRequested({required int id}) =
       _PrintRequested;
+
+  // Tasks
+  const factory ActionDetailEvent.tasksRequested({required int actionId}) =
+      _TasksRequested;
 }

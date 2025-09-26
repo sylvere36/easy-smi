@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import '../../domain/_commons/global_failure.dart';
 import '../../domain/action/i_action_repository.dart';
 import '../../domain/action/models/action_item.dart';
+import '../../domain/action/models/action_task.dart';
 import '../_commons/exceptions.dart';
 import '../_commons/files/download_service.dart';
 import '../_commons/network/network_info.dart';
@@ -172,6 +173,26 @@ class ActionRepository implements IActionRepository {
           subdir: 'actions',
         );
         return right(savedPath);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
+
+  @override
+  Future<Either<GlobalFailure, List<ActionTask>>> getTasks({
+    required int actionId,
+  }) async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        final items = await remoteDataSource.getTasks(id: actionId);
+        return right(items);
       } on UnauthorizedException catch (e) {
         return left(GlobalFailure.unauthorized(e.errorText));
       } on ServerException catch (e) {
