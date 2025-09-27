@@ -14,4 +14,15 @@ class AppColors {
   static const black = Color(0xFF000000);
   static const white = Color(0xFFFFFFFF);
   static const bgGrey = Color(0xFFF1F2F4);
+
+  static const dark = Color(0xFF111827);
+  // static const text = Color(0xFF222B33);
+  static const sub = Color(0xFF6B7280);
+  static const chipGreen = Color(0xFF16C067);
+  static const chipRed = Color(0xFFE94C4C);
+  // static const card = Color(0xFFF7F8FB);
+  static const divider = Color(0xFFE7EAF0);
+  static const field = Color(0xFFF2F5F8);
+  static const badge = Color(0xFFEFF2FF);
+  // static const headerPill = Color(0xFFEFF2FF);
 }

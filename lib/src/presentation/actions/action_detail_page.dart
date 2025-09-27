@@ -18,32 +18,19 @@ class ActionDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MyScaffold(
+    return MyScaffold(
       appBarTitle: 'ACTION',
       paddingHorizontale: 0,
-      body: ActionDetailBody(),
+      body: ActionDetailBody(action: action),
     );
   }
 }
 
 /// Colors used across the screen (tuned to match the mock)
-class _P {
-  static const blue = AppColors.primary;
-  static const dark = Color(0xFF111827);
-  // static const text = Color(0xFF222B33);
-  static const sub = Color(0xFF6B7280);
-  static const chipGreen = Color(0xFF16C067);
-  static const chipRed = Color(0xFFE94C4C);
-  // static const card = Color(0xFFF7F8FB);
-  static const divider = Color(0xFFE7EAF0);
-  static const field = Color(0xFFF2F5F8);
-  static const badge = Color(0xFFEFF2FF);
-  // static const headerPill = Color(0xFFEFF2FF);
-}
 
-/// ====== ACTION DETAIL BODY (main screen content only) ======
 class ActionDetailBody extends StatefulWidget {
-  const ActionDetailBody({super.key});
+  final ActionItem action;
+  const ActionDetailBody({super.key, required this.action});
 
   @override
   State<ActionDetailBody> createState() => _ActionDetailBodyState();
@@ -97,7 +84,7 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         children: [
           // Title block
-          _titleBlock(),
+          _titleBlock(widget.action),
 
           // Composer + attachments icon
           Padding(
@@ -111,7 +98,7 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
                       decoration: InputDecoration(
                         hintText: 'Ecrire  un commentaire',
                         border: InputBorder.none,
-                        hintStyle: GoogleFonts.poppins(color: _P.sub),
+                        hintStyle: GoogleFonts.poppins(color: AppColors.sub),
                         isCollapsed: true,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 14,
@@ -151,7 +138,7 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
                   child: Text(
                     'Voir tout',
                     style: GoogleFonts.poppins(
-                      color: _P.blue,
+                      color: AppColors.blue,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -176,7 +163,7 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
             child: _sectionCard(
               title: 'Operationnalisation / Planning',
               onAdd: _openAddPlanningSheet,
-              trailing: _pillButton(
+              trailing: AppColorsillButton(
                 'Ajouter',
                 icon: Icons.add,
                 onTap: _openAddPlanningSheet,
@@ -212,7 +199,7 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
                     spacing: 15,
                     children: [
                       _labelValue('Type action', const SizedBox()),
-                      _chip('Corrective', _P.chipGreen),
+                      _chip('Corrective', AppColors.chipGreen),
                     ],
                   ),
                   _line(),
@@ -235,7 +222,7 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
                             'Justifications de l’action',
                             const SizedBox(),
                           ),
-                          _chip('Écart', _P.chipRed),
+                          _chip('Écart', AppColors.chipRed),
                         ],
                       ),
 
@@ -304,13 +291,13 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
                   ),
                   const Padding(
                     padding: EdgeInsets.only(top: 12),
-                    child: Divider(color: _P.divider, height: 1),
+                    child: Divider(color: AppColors.divider, height: 1),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 12),
                     child: Text(
                       'Piece jointe',
-                      style: GoogleFonts.poppins(color: _P.sub),
+                      style: GoogleFonts.poppins(color: AppColors.sub),
                     ),
                   ),
                   Padding(
@@ -328,7 +315,10 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
                           ),
                         ),
                         const Spacer(),
-                        _primaryButton('Terminer', onTap: _openReportSheet),
+                        AppColorsrimaryButton(
+                          'Terminer',
+                          onTap: _openReportSheet,
+                        ),
                       ],
                     ),
                   ),
@@ -341,7 +331,7 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
     );
   }
 
-  Widget _titleBlock() {
+  Widget _titleBlock(ActionItem action) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -354,8 +344,7 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             child: Text(
-              'Renforcement du contrôle qualité dans le departement gestion produits',
-
+              action.justification ?? '',
               style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w800,
                 fontSize: 18,
@@ -367,14 +356,17 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
           padding: const EdgeInsets.only(top: 10, bottom: 8),
           child: Row(
             children: [
-              _meta('Date', '12-03-25'),
-              Padding(
-                padding: const EdgeInsets.only(left: 18),
-                child: _meta('Ref :', 'AZE-ABA-AUA'),
+              _meta(
+                'Date',
+                '${DateTime.parse(action.startDate!).day.toString().padLeft(2, '0')}-${DateTime.parse(action.startDate!).month.toString().padLeft(2, '0')}-${DateTime.parse(action.startDate!).year}',
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 18),
-                child: _meta('Ver :', '01'),
+                child: _meta('Ref :', '${action.reference}'),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 18),
+                child: _meta('Ver :', '${action.version}'),
               ),
               const Spacer(),
             ],
@@ -382,7 +374,9 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
-          children: [_primaryButton('Terminer', onTap: _openReportSheet)],
+          children: [
+            AppColorsrimaryButton('Terminer', onTap: _openReportSheet),
+          ],
         ),
       ],
     );
@@ -393,12 +387,15 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
 
 Widget _meta(String k, String v) => RichText(
   text: TextSpan(
-    style: GoogleFonts.poppins(color: _P.sub, fontSize: 13),
+    style: GoogleFonts.poppins(color: AppColors.sub, fontSize: 13),
     children: [
       TextSpan(text: '$k '),
       TextSpan(
         text: v,
-        style: const TextStyle(color: _P.dark, fontWeight: FontWeight.w700),
+        style: const TextStyle(
+          color: AppColors.dark,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     ],
   ),
@@ -406,7 +403,7 @@ Widget _meta(String k, String v) => RichText(
 
 Widget _roundedField({required Widget child}) => Container(
   decoration: BoxDecoration(
-    color: _P.field,
+    color: AppColors.field,
     borderRadius: BorderRadius.circular(14),
     border: Border.all(color: const Color(0xFFE5EAF0)),
   ),
@@ -416,7 +413,7 @@ Widget _roundedField({required Widget child}) => Container(
 Widget _roundIcon(
   IconData ic, {
   Color bg = const Color(0xFFEFF2FF),
-  Color icColor = _P.dark,
+  Color icColor = AppColors.dark,
   VoidCallback? onTap,
 }) => Material(
   color: bg,
@@ -433,7 +430,7 @@ Widget _roundIcon(
 
 Widget _tinyCounter(int n) => Container(
   decoration: BoxDecoration(
-    color: _P.badge,
+    color: AppColors.badge,
     borderRadius: BorderRadius.circular(10),
   ),
   child: Padding(
@@ -441,7 +438,7 @@ Widget _tinyCounter(int n) => Container(
     child: Text(
       '$n',
       style: GoogleFonts.poppins(
-        color: _P.blue,
+        color: AppColors.blue,
         fontWeight: FontWeight.w700,
         fontSize: 12,
       ),
@@ -471,7 +468,10 @@ Widget _commentLine(String name, String time, String text) => Padding(
                   ),
                   Text(
                     time,
-                    style: GoogleFonts.poppins(color: _P.sub, fontSize: 12),
+                    style: GoogleFonts.poppins(
+                      color: AppColors.sub,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),
@@ -486,44 +486,6 @@ Widget _commentLine(String name, String time, String text) => Padding(
     ],
   ),
 );
-
-// Widget _commentRow(_Msg m) => Padding(
-//   padding: const EdgeInsets.only(bottom: 18),
-//   child: Row(
-//     crossAxisAlignment: CrossAxisAlignment.start,
-//     children: [
-//       _avatar(m.author),
-//       Expanded(
-//         child: Padding(
-//           padding: const EdgeInsets.only(left: 12),
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               Row(
-//                 children: [
-//                   Expanded(
-//                     child: Text(
-//                       m.author,
-//                       style: GoogleFonts.poppins(
-//                         fontWeight: FontWeight.w700,
-//                         fontSize: 16,
-//                       ),
-//                     ),
-//                   ),
-//                   Text(m.time, style: GoogleFonts.poppins(color: _P.sub)),
-//                 ],
-//               ),
-//               Padding(
-//                 padding: const EdgeInsets.only(top: 6),
-//                 child: Text(m.text, style: GoogleFonts.poppins(fontSize: 16)),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     ],
-//   ),
-// );
 
 Widget _avatar(String name) {
   final parts = name.split(' ');
@@ -556,7 +518,7 @@ Widget _sectionCard({
       boxShadow: const [
         BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 4)),
       ],
-      border: Border.all(color: _P.divider),
+      border: Border.all(color: AppColors.divider),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -595,7 +557,7 @@ Widget _sectionCard({
   );
 }
 
-Widget _pillButton(
+Widget AppColorsillButton(
   String label, {
   IconData? icon,
   required VoidCallback onTap,
@@ -618,24 +580,25 @@ Widget _pillButton(
   ),
 );
 
-Widget _primaryButton(String label, {required VoidCallback onTap}) => Material(
-  color: _P.blue,
-  borderRadius: BorderRadius.circular(8),
-  child: InkWell(
-    onTap: onTap,
-    borderRadius: BorderRadius.circular(8),
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      child: Text(
-        label,
-        style: GoogleFonts.poppins(
-          color: Colors.white,
-          fontWeight: FontWeight.w700,
+Widget AppColorsrimaryButton(String label, {required VoidCallback onTap}) =>
+    Material(
+      color: AppColors.blue,
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          child: Text(
+            label,
+            style: GoogleFonts.poppins(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ),
       ),
-    ),
-  ),
-);
+    );
 
 Widget _chip(String text, Color color) => Container(
   decoration: BoxDecoration(
@@ -660,7 +623,7 @@ Widget _labelValue(String label, Widget value) => Padding(
   child: Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(label, style: GoogleFonts.poppins(color: _P.sub)),
+      Text(label, style: GoogleFonts.poppins(color: AppColors.sub)),
       value,
     ],
   ),
@@ -668,7 +631,7 @@ Widget _labelValue(String label, Widget value) => Padding(
 
 Widget _line() => const Padding(
   padding: EdgeInsets.only(top: 12, bottom: 12),
-  child: Divider(color: _P.divider, height: 1),
+  child: Divider(color: AppColors.divider, height: 1),
 );
 
 Widget _todoTile(
@@ -678,9 +641,9 @@ Widget _todoTile(
   bool hasFile = false,
 }) {
   final Color dueColor = switch (t.state) {
-    _TodoState.today => _P.chipGreen,
-    _TodoState.late => _P.chipRed,
-    _ => _P.sub,
+    _TodoState.today => AppColors.chipGreen,
+    _TodoState.late => AppColors.chipRed,
+    _ => AppColors.sub,
   };
 
   return Column(
@@ -696,7 +659,7 @@ Widget _todoTile(
                 t.crossed
                     ? Icons.radio_button_checked
                     : Icons.radio_button_unchecked,
-                color: t.crossed ? _P.blue : _P.sub,
+                color: t.crossed ? AppColors.blue : AppColors.sub,
               ),
             ),
           ),
@@ -712,7 +675,7 @@ Widget _todoTile(
                       decoration: t.crossed
                           ? TextDecoration.lineThrough
                           : TextDecoration.none,
-                      decorationColor: _P.dark,
+                      decorationColor: AppColors.dark,
                       decorationThickness: 2,
                     ),
                   ),
@@ -750,7 +713,7 @@ Widget _todoTile(
       ),
       const Padding(
         padding: EdgeInsets.only(top: 10, bottom: 10),
-        child: Divider(color: _P.divider, height: 1),
+        child: Divider(color: AppColors.divider, height: 1),
       ),
     ],
   );
@@ -884,7 +847,7 @@ Future<void> _openBottomSheet(
                               padding: EdgeInsets.all(12),
                               child: Icon(
                                 Icons.attach_file_rounded,
-                                color: _P.dark,
+                                color: AppColors.dark,
                               ),
                             ),
                             Expanded(
@@ -892,7 +855,7 @@ Future<void> _openBottomSheet(
                                 pieceJointe,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.poppins(
-                                  color: _P.sub,
+                                  color: AppColors.sub,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -910,7 +873,7 @@ Future<void> _openBottomSheet(
                     padding: const EdgeInsets.only(top: 20, bottom: 8),
                     child: Align(
                       alignment: Alignment.centerRight,
-                      child: _primaryButton('Terminer', onTap: onSubmit),
+                      child: AppColorsrimaryButton('Terminer', onTap: onSubmit),
                     ),
                   ),
                 ],
