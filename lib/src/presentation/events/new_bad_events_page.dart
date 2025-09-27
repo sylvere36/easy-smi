@@ -1,10 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../application/events/events_bloc.dart';
+import '../../domain/event/models/event_item.dart';
 import '../_commons/route/app_router.gr.dart';
 import '../_commons/theming/app_color.dart';
 import '../_commons_widgets/my_scaffold.dart';
+import '../_commons_widgets/paged_list_widget.dart';
 import 'widgets/event_card.dart';
 
 @RoutePage()
@@ -16,20 +20,31 @@ class NewBadEventsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MyScaffold(
       appBarTitle: 'NOUVEL EVENEMENT NON DESIRABLE',
-      body: SingleChildScrollView(
-        child: Column(
-          spacing: 15,
-          children: List.generate(
-            8,
-            (index) => const EventCard(
-              imageUrl: 'https://picsum.photos/seed/ev2/600/320',
-              level: 'Majeur',
-              status: 'En cours',
-              title: 'Entrepôt de stockage, zone de stockage',
-              site: 'Espace vert du PAC',
+      paddingHorizontale: 0,
+      body: BlocBuilder<EventsBloc, EventsState>(
+        builder: (context, state) {
+          return PagedList<EventItem>(
+            items: state.items ?? [], // List<EventItem>
+            isInitialLoading: state.isLoading && state.items == null, // bool
+            isLoadingMore: state.isLoading && state.items != null, // bool
+            isLastPage: state.canLoadMore, // bool
+            onLoadMore: () => context.read<EventsBloc>().add(
+              const EventsEvent.fetchNextPage(),
             ),
-          ),
-        ),
+            onRefresh: () async {
+              context.read<EventsBloc>().add(const EventsEvent.reset());
+              context.read<EventsBloc>().add(const EventsEvent.fetch());
+            },
+            itemBuilder: (ctx, i, event) => EventCard(
+              imageUrl: event.attachments.first,
+              level: event.humanGravity,
+              status: event.humanStatus,
+              title: event.title,
+              site: event.site,
+            ),
+            empty: const SizedBox.shrink(),
+          );
+        },
       ),
 
       floatingActionButton: GestureDetector(

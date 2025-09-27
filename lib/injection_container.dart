@@ -10,6 +10,7 @@ import 'src/application/auth/external/external_auth_bloc.dart';
 import 'src/application/auth/user/authenticated_user_bloc.dart';
 import 'src/application/communication/comments_bloc.dart';
 import 'src/application/connected/connected_bloc.dart';
+import 'src/application/events/events_bloc.dart';
 import 'src/application/organization/organization_bloc.dart';
 import 'src/application/splash/splash_bloc.dart';
 import 'src/domain/action/i_action_repository.dart';
@@ -18,6 +19,7 @@ import 'src/domain/auth/device/i_auth_device_repository.dart';
 import 'src/domain/auth/external/i_external_auth_repository.dart';
 import 'src/domain/auth/user/i_authenticated_user_repository.dart';
 import 'src/domain/communication/i_communication_repository.dart';
+import 'src/domain/event/i_event_repository.dart';
 import 'src/domain/organization/i_organization_repository.dart';
 import 'src/infrastructure/_commons/files/download_service.dart';
 import 'src/infrastructure/_commons/network/app_requests.dart';
@@ -35,6 +37,8 @@ import 'src/infrastructure/auth/data_sources/external_auth_remote_data_source.da
 import 'src/infrastructure/auth/external_auth_repository.dart';
 import 'src/infrastructure/communication/communication_repository.dart';
 import 'src/infrastructure/communication/data_sources/communication_remote_data_source.dart';
+import 'src/infrastructure/event/data-sources/event_remote_data_source.dart';
+import 'src/infrastructure/event/event_repository.dart';
 import 'src/infrastructure/organization/data_sources/organization_remote_data_source.dart';
 import 'src/infrastructure/organization/organization_repository.dart';
 
@@ -49,6 +53,7 @@ Future<void> init() async {
   initActions();
   initAudits();
   initCommunication();
+  initEvents();
 }
 
 void initSplashScreen() {
@@ -142,4 +147,15 @@ Future<void> initCommunication() async {
     () => CommunicationRepository(networkInfo: sl(), remoteDataSource: sl()),
   );
   sl.registerFactory(() => CommentsBloc(repository: sl()));
+}
+
+Future<void> initEvents() async {
+  sl.registerLazySingleton<IEventRemoteDataSource>(
+    () => EventRemoteDataSource(httpClient: sl()),
+  );
+  sl.registerLazySingleton<IEventRepository>(
+    () => EventRepository(networkInfo: sl(), remoteDataSource: sl()),
+  );
+  sl.registerFactory(() => EventsBloc(repository: sl()));
+  // sl.registerFactory(() => AuditDetailBloc(repository: sl()));
 }

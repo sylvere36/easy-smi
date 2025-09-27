@@ -9,6 +9,7 @@ import '../application/actions/actions_bloc.dart';
 import '../application/audit/audits_bloc.dart';
 import '../application/auth/user/authenticated_user_bloc.dart';
 import '../application/connected/connected_bloc.dart';
+import '../application/events/events_bloc.dart';
 import '_commons/route/app_router.dart';
 import '_commons/route/app_router.gr.dart';
 import '_commons/theming/app_theme.dart';
@@ -31,6 +32,9 @@ class _AppState extends State<App> {
         BlocProvider(create: (_) => sl<AuthenticatedUserBloc>()),
         BlocProvider(
           create: (_) => sl<ActionsBloc>()..add(const ActionsEvent.fetch()),
+        ),
+        BlocProvider(
+          create: (_) => sl<EventsBloc>()..add(const EventsEvent.fetch()),
         ),
         BlocProvider(create: (_) => sl<AuditsBloc>()),
       ],

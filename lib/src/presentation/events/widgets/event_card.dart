@@ -3,14 +3,15 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../infrastructure/_commons/network/request_url.dart';
 import '../../_commons/route/app_router.gr.dart';
 
 class EventCard extends StatelessWidget {
-  final String imageUrl;
+  final String? imageUrl;
   final String level;
   final String status;
   final String title;
-  final String site;
+  final String? site;
 
   const EventCard({
     super.key,
@@ -35,12 +36,17 @@ class EventCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(5),
-              child: Image.network(
-                imageUrl,
-                width: 106,
-                height: 102,
-                fit: BoxFit.cover,
-              ),
+              child: imageUrl == null
+                  ? Container(
+                      color: Colors.black12,
+                      child: const Icon(Icons.image_not_supported_outlined),
+                    )
+                  : Image.network(
+                      '${RequestUrl().apiUrl}/minio/storage/${imageUrl!}',
+                      width: 106,
+                      height: 102,
+                      fit: BoxFit.cover,
+                    ),
             ),
             Expanded(
               child: Padding(
@@ -109,7 +115,7 @@ class EventCard extends StatelessWidget {
                           ),
                           Expanded(
                             child: Text(
-                              site,
+                              site ?? '',
                               style: GoogleFonts.nunito(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 13,

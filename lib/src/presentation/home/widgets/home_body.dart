@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../gen/assets.gen.dart';
 import '../../../application/actions/actions_bloc.dart';
+import '../../../application/events/events_bloc.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
 import '../../_shimmers/action_card_shimmer.dart';
@@ -165,37 +166,38 @@ class _HomeBodyState extends State<HomeBody> {
             },
           ),
 
-          _Section(
-            icon: Assets.svgs.jamRed,
-            title: 'Evenement non desirables',
-            trailing: _SeeAll(
-              onTap: () {
-                context.router.push(const NewBadEventsRoute());
-              },
+          BlocBuilder<EventsBloc, EventsState>(
+            builder: (context, state) => _Section(
+              icon: Assets.svgs.jamRed,
+              title: 'Evenement non desirables',
+              trailing: state.items == null
+                  ? null
+                  : _SeeAll(
+                      countLabel: state.total.toString(),
+                      onTap: () {
+                        context.router.push(const NewBadEventsRoute());
+                      },
+                    ),
+              children: state.items == null
+                  ? const [
+                      ActionCardShimmer(compact: true),
+                      ActionCardShimmer(compact: true),
+                      ActionCardShimmer(compact: true),
+                    ]
+                  : [
+                      ...state.items!
+                          .take(3)
+                          .map(
+                            (event) => EventCard(
+                              imageUrl: event.attachments.first,
+                              level: event.humanGravity,
+                              status: event.humanStatus,
+                              title: event.title,
+                              site: event.site,
+                            ),
+                          ),
+                    ],
             ),
-            children: const [
-              EventCard(
-                imageUrl: 'https://picsum.photos/seed/ev1/600/320',
-                level: 'Majeur',
-                status: 'En cours',
-                title: 'Entrepôt de stockage, zone de stockage',
-                site: 'Espace vert du PAC',
-              ),
-              EventCard(
-                imageUrl: 'https://picsum.photos/seed/ev2/600/320',
-                level: 'Majeur',
-                status: 'En cours',
-                title: 'Entrepôt de stockage, zone de stockage',
-                site: 'Espace vert du PAC',
-              ),
-              EventCard(
-                imageUrl: 'https://picsum.photos/seed/ev3/600/320',
-                level: 'Majeur',
-                status: 'En cours',
-                title: 'Entrepôt de stockage, zone de stockage',
-                site: 'Espace vert du PAC',
-              ),
-            ],
           ),
 
           _Section(
