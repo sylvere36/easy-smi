@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 
 import '../../../domain/_commons/pagination.dart';
+import '../../../domain/event/models/cause_analysis.dart';
 import '../../../domain/event/models/event_item.dart';
 import '../../_commons/exceptions.dart';
 import '../../_commons/network/app_requests.dart';
@@ -13,7 +14,7 @@ abstract class IEventRemoteDataSource {
     int perPage = 10,
     int page = 1,
   });
-  
+  Future<List<CauseAnalysis>> getCauseAnalysis({required int event});
 }
 
 class EventRemoteDataSource implements IEventRemoteDataSource {
@@ -59,4 +60,35 @@ class EventRemoteDataSource implements IEventRemoteDataSource {
       throw ServerException(e.toString());
     }
   }
+
+  @override
+  Future<List<CauseAnalysis>> getCauseAnalysis({required int event}) async {
+    try {
+      final String request = '/conformity/events/$event/whys';
+      final Response response = await httpClient.getRequest(request);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final bool success = data['success'] == true;
+        if (!success) {
+          final String message = (data['message'] as String?) ?? '';
+          throw ServerException(message);
+        }
+        final resultData = data['data'] as List<dynamic>? ?? [];
+        final List<CauseAnalysis> items = resultData
+            .whereType<Map<String, dynamic>>()
+            .map((e) => CauseAnalysis.fromJson(e))
+            .toList();
+
+        return items;
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+
 }

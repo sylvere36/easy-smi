@@ -1,10 +1,19 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../gen/assets.gen.dart';
+import '../../../../injection_container.dart';
+import '../../../application/actions/actions_bloc.dart';
+import '../../../application/evalutaion/evaluation_bloc.dart';
+import '../../../application/events/detail/event_detail_bloc.dart';
+import '../../../domain/action/i_action_repository.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
+import '../../_commons/utils/app_constants.dart';
+import '../../_commons_widgets/loading_widget.dart';
 import '../../_commons_widgets/show_network_image_viewer.dart';
 
 // ===================== BODY =====================
@@ -18,6 +27,13 @@ class BadEventDetailBody extends StatefulWidget {
 
 class _BadEventDetailBodyState extends State<BadEventDetailBody> {
   final _commentCtrl = TextEditingController();
+  bool isInit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isInit = true;
+  }
 
   // --- états d'ouverture des sections
   final _open = <String, bool>{
@@ -30,207 +46,286 @@ class _BadEventDetailBodyState extends State<BadEventDetailBody> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
-      children: [
-        _HeaderCard(onValidate: () {}),
+    // final action = sl<ActionsBloc>();
+    // final action2 = sl<ActionsBloc>();
+    return BlocConsumer<EventDetailsBloc, EventDetailState>(
+      listener: (contextEventDetail, detailState) {
+        if (isInit && detailState.item != null) {
+          context.read<EvaluationsBloc>().add(
+            EvaluationsEvent.fetch(event: detailState.item!.id),
+          );
+          context.read<ActionsBloc>().add(
+            ActionsEvent.fetchByOrigin(
+              originType: 'END',
+              originId: detailState.item!.id,
+            ),
+          );
+          // action2.add(
+          //   ActionsEvent.fetchByOrigin(
+          //     originType: 'ENI',
+          //     originId: detailState.item!.id,
+          //   ),
+          // );
 
-        // ----------- zone commentaire -----------
-        _CommentComposer(
-          controller: _commentCtrl,
-          onSend: () {
-            if (_commentCtrl.text.trim().isEmpty) return;
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Commentaire ajouté (démo)')),
-            );
-            _commentCtrl.clear();
-          },
-        ),
-        const SizedBox(height: 8),
-        _CommentsList(),
-        const SizedBox(height: 8),
+          isInit = false;
+        }
+      },
+      builder: (contextEventDetail, detailState) {
+        if (detailState.item == null) {
+          return const Center(child: LoadingWidget());
+        }
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
+          children: [
+            _HeaderCard(
+              title: detailState.item?.title ?? '',
+              ref: detailState.item?.reference ?? '',
+              date: detailState.item?.date != null
+                  ? DateFormat('dd-MM-yy').format(detailState.item!.date!)
+                  : '',
+              version: detailState.item?.version ?? '',
+              onValidate: () {},
+            ),
 
-        // ----------- vignettes & puces -----------
-        _EvidenceStrip(
-          onTapImage: (url) => showNetworkImageViewer(context, images: [url]),
-        ),
-        const SizedBox(height: 8),
-        const _ChipsRow(
-          type: 'Accident',
-          gravite: 'Mineur',
-          site: 'Espace vert',
-        ),
-        const SizedBox(height: 8),
+            // ----------- zone commentaire -----------
+            _CommentComposer(
+              controller: _commentCtrl,
+              onSend: () {
+                if (_commentCtrl.text.trim().isEmpty) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Commentaire ajouté (démo)')),
+                );
+                _commentCtrl.clear();
+              },
+            ),
 
-        // ----------- Description -----------
-        _Section(
-          title: 'Description de l\'evennement',
-          icon: Icons.description_outlined,
-          open: _open['description']!,
-          onToggle: () =>
-              setState(() => _open['description'] = !_open['description']!),
-          child: const _InfoBlock(
-            label: 'Détails',
-            text:
-                'Marketing international et développement des ventes régionales. '
-                'Incident survenu lors d\'une opération de chargement au quai 1. '
-                'Aucune blessure, dégâts matériels mineurs.',
-          ),
-        ),
-        const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: _CommentsList(),
+            ),
 
-        // ----------- Analyses des causes -----------
-        _Section(
-          title: 'Analyses des causes',
-          icon: Icons.analytics_outlined,
-          open: _open['causes']!,
-          onToggle: () => setState(() => _open['causes'] = !_open['causes']!),
-          child: Column(
-            children: List.generate(4, (i) {
-              return const Padding(
-                padding: EdgeInsets.only(bottom: 8),
-                child: _CauseCard(
-                  title: 'Pourquoi le statut ne change pas ?',
-                  reason:
-                      'Délai d’approvisionnement et consigne de sécurité non diffusée à toute l’équipe.',
+            // ----------- vignettes & puces -----------
+            if (detailState.item!.attachments.isNotEmpty)
+              ...detailState.item!.attachments.map(
+                (image) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: _EvidenceStrip(
+                    image: image,
+                    onTapImage: (url) =>
+                        showNetworkImageViewer(context, images: [url]),
+                  ),
                 ),
-              );
-            }),
-          ),
-        ),
-        const SizedBox(height: 8),
-
-        // ----------- Mesures immédiates -----------
-        _Section(
-          title: 'Les mesures correctives : action immédiates',
-          icon: Icons.handyman_outlined,
-          open: _open['imm']!,
-          onToggle: () => setState(() => _open['imm'] = !_open['imm']!),
-          child: const Column(
-            children: [
-              _ActionCard(
-                badge: 'Préventive',
-                title:
-                    'Renforcement du contrôle qualité dans le département Gestion Produits',
-                processus: 'Marketing international et développement',
-                justification:
-                    'Rapport de constat fait par l’équipe lors de l’audit; constat lié par l’équipe lors de l’audit constat fait.',
-                typeOrigine: 'Audit',
-                typeEcart: 'Non conformité ISO 9001',
-                responsable: 'Jenan YVES SOUROU',
-                pieceJointe: true,
               ),
-              SizedBox(height: 8),
-              _ActionCard(
-                badge: 'Préventive',
-                title:
-                    'Renforcement du contrôle qualité dans le département Gestion Produits',
-                processus: 'Marketing international et développement',
-                justification:
-                    'Rapport de constat fait par l’équipe lors de l’audit constat lié par l’équipe lors de l’audit constat fait.',
-                typeOrigine: 'Audit',
-                typeEcart: 'Non conformité ISO 9001',
-                responsable: 'Jenan YVES SOUROU',
-                pieceJointe: true,
-                ecart: true,
+            if (detailState.item!.attachments.isEmpty)
+              _EvidenceStrip(
+                image: null,
+                onTapImage: (url) =>
+                    showNetworkImageViewer(context, images: [url]),
               ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
 
-        // ----------- Long terme -----------
-        _Section(
-          title: 'Les mesures correctives : action à long terme',
-          icon: Icons.task_alt_outlined,
-          open: _open['long']!,
-          onToggle: () => setState(() => _open['long'] = !_open['long']!),
-          child: Column(
-            children: [
-              _ActionCard(
-                badge: 'Préventive',
-                title:
-                    'Renforcement du contrôle qualité dans le département Gestion Produits',
-                processus: 'Marketing international et développement',
-                justification:
-                    'Rapport de constat fait par l’équipe lors de l’audit constat lié par l’équipe lors de l’audit constat fait.',
-                justificationtype: Container(
-                  color: Colors.white,
-                  child: Text(
-                    'Opportunité',
-                    style: GoogleFonts.nunito(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 13,
-                      color: Colors.green,
+            const SizedBox(height: 8),
+            _ChipsRow(
+              type: detailState.item!.humanType,
+              gravite: detailState.item!.humanGravity,
+              site: detailState.item!.site ?? '',
+            ),
+            const SizedBox(height: 8),
+
+            // ----------- Description -----------
+            _Section(
+              title: 'Description de l\'evennement',
+              icon: Icons.description_outlined,
+              open: _open['description']!,
+              onToggle: () =>
+                  setState(() => _open['description'] = !_open['description']!),
+              child: _InfoBlock(
+                label: 'Détails',
+                text: detailState.item!.description ?? '',
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            // ----------- Analyses des causes -----------
+            _Section(
+              title: 'Analyses des causes',
+              icon: Icons.analytics_outlined,
+              open: _open['causes']!,
+              onToggle: () =>
+                  setState(() => _open['causes'] = !_open['causes']!),
+              child: BlocBuilder<EventDetailsBloc, EventDetailState>(
+                builder: (context, state) {
+                  if (state.isLoading) {
+                    return const Center(child: LoadingWidget());
+                  }
+                  if (state.causes != null && state.causes!.isEmpty) {
+                    return const Center(child: Text('Pas d\'analyse de cause'));
+                  }
+                  if (state.causes == null) {
+                    return const SizedBox();
+                  }
+                  return Column(
+                    children: List.generate(state.causes!.length, (i) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: _CauseCard(
+                          title: state.causes![i].question,
+                          reason: state.causes![i].answer ?? '',
+                        ),
+                      );
+                    }),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            // ----------- Mesures immédiates -----------
+            _Section(
+              title: 'Les mesures correctives : action immédiates',
+              icon: Icons.handyman_outlined,
+              open: _open['imm']!,
+              onToggle: () => setState(() => _open['imm'] = !_open['imm']!),
+              child: BlocBuilder<ActionsBloc, ActionsState>(
+                // bloc: action,
+                builder: (context, state) {
+                  if (state.isLoading || state.originItems == null) {
+                    return const Center(child: LoadingWidget());
+                  }
+                  if (state.originItems != null && state.originItems!.isEmpty) {
+                    return const Center(
+                      child: Text('Pas d\'action immédiates'),
+                    );
+                  }
+
+                  return Column(
+                    children: [
+                      ...state.originItems!.map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: _ActionCard(
+                            badge: item.humanReadableType,
+                            title: item.actionName,
+                            processus: item.process?.title ?? '',
+                            ecart: item.justificationType == 'gap',
+                            opportunity:
+                                item.justificationType == 'opportunity',
+                            justification: item.justification ?? 'Non défini',
+                            typeOrigine: item.humanReadableType,
+                            typeEcart: item.origin != null
+                                ? item.origin.toString()
+                                : '',
+                            responsable: item.inChargeName ?? '',
+                            pieceJointe: item.document != null,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            // ----------- Long terme -----------
+            BlocProvider(
+              create: (context) =>
+                  ActionsBloc(repository: sl<IActionRepository>())..add(
+                    ActionsEvent.fetchByOrigin(
+                      originType: 'ENI',
+                      originId: detailState.item!.id,
                     ),
                   ),
+              child: _Section(
+                title: 'Les mesures correctives : action à long terme',
+                icon: Icons.task_alt_outlined,
+                open: _open['long']!,
+                onToggle: () => setState(() => _open['long'] = !_open['long']!),
+                child: BlocBuilder<ActionsBloc, ActionsState>(
+                  builder: (context, state) {
+                    if (state.isLoading || state.originItems == null) {
+                      return const Center(child: LoadingWidget());
+                    }
+                    if (state.originItems != null &&
+                        state.originItems!.isEmpty) {
+                      return const Center(
+                        child: Text('Pas d\'action à long terme'),
+                      );
+                    }
+                    return Column(
+                      children: [
+                        ...state.originItems!.map(
+                          (item) => Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: _ActionCard(
+                              badge: item.humanReadableType,
+                              title: item.actionName,
+                              processus: item.process?.title ?? '',
+                              ecart: item.justificationType == 'gap',
+                              opportunity:
+                                  item.justificationType == 'opportunity',
+                              justification: item.justification ?? 'Non défini',
+                              typeOrigine: item.humanReadableType,
+                              typeEcart: item.origin != null
+                                  ? item.origin.toString()
+                                  : '',
+                              responsable: item.inChargeName ?? '',
+                              pieceJointe: item.document != null,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
-                typeOrigine: 'Audit',
-                typeEcart: 'Non conformité ISO 9001',
-                responsable: 'Jenan YVES SOUROU',
-                pieceJointe: true,
-                longTerme: true,
               ),
-              const SizedBox(height: 8),
-              _ActionCard(
-                badge: 'Préventive',
-                title:
-                    'Renforcement du contrôle qualité dans le département Gestion Produits',
-                processus: 'Marketing international et développement',
-                justification:
-                    'Rapport de constat fait par l’équipe lors de l’audit constat lié par l’équipe lors de l’audit constat fait.',
-                justificationtype: Text(
-                  'Ecart',
-                  style: GoogleFonts.nunito(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 13,
-                    color: Colors.red,
-                  ),
-                ),
-                typeOrigine: 'Audit',
-                typeEcart: 'Non conformité ISO 9001',
-                responsable: 'Jenan YVES SOUROU',
-                pieceJointe: true,
-                longTerme: true,
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
+            ),
+            const SizedBox(height: 8),
 
-        // ----------- Evaluation de l'efficacité -----------
-        _Section(
-          title: 'Evaluation de l’efficacité',
-          icon: Icons.verified_outlined,
-          open: _open['eval']!,
-          onToggle: () => setState(() => _open['eval'] = !_open['eval']!),
-          child: Column(
-            children: [
-              _EvalCard(
-                type: 'Audit',
-                label: 'Revue documentaire',
-                note:
-                    'Marketing international et développement des ventes régionales (checking international).',
-                statutChip: _StatChip.done('Fait'),
-                responsable: 'Henry DESFOUR',
-                date: '23 mars 2024',
+            // ----------- Evaluation de l'efficacité -----------
+            _Section(
+              title: 'Evaluation de l’efficacité',
+              icon: Icons.verified_outlined,
+              open: _open['eval']!,
+              onToggle: () => setState(() => _open['eval'] = !_open['eval']!),
+              child: BlocBuilder<EvaluationsBloc, EvaluationsState>(
+                builder: (context, evaluationState) {
+                  if (evaluationState.items == null) {
+                    return const Center(child: LoadingWidget());
+                  }
+                  if (evaluationState.items != null &&
+                      evaluationState.items!.isEmpty) {
+                    return const Center(
+                      child: Text('Aucune évaluation trouvée'),
+                    );
+                  }
+                  if (evaluationState.items == null) {
+                    return const SizedBox();
+                  }
+                  return Column(
+                    children: [
+                      ...evaluationState.items!.map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: _EvalCard(
+                            type: item.humanType,
+                            label: item.title,
+                            note: item.report,
+                            statutChip: _StatChip.done(item.humanStatus),
+                            responsable: '',
+                            date: item.toFenchDate,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
-              const SizedBox(height: 8),
-              _EvalCard(
-                type: 'Audit',
-                label: 'Revue documentaire',
-                note:
-                    'Marketing international et développement des ventes régionales (checking international).',
-                statutChip: _StatChip.planned('Programmé'),
-                responsable: 'Henry DIGUIN',
-                date: '29 mars 2024',
-              ),
-            ],
-          ),
-        ),
+            ),
 
-        const SizedBox(height: 24),
-      ],
+            const SizedBox(height: 24),
+          ],
+        );
+      },
     );
   }
 }
@@ -238,12 +333,25 @@ class _BadEventDetailBodyState extends State<BadEventDetailBody> {
 // ===================== HEADER =====================
 
 class _HeaderCard extends StatelessWidget {
+  final String title;
+  final String ref;
+  final String version;
+  final String date;
   final VoidCallback onValidate;
-  const _HeaderCard({required this.onValidate});
+  const _HeaderCard({
+    required this.title,
+    required this.date,
+    required this.ref,
+    required this.version,
+    required this.onValidate,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final title = GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 18);
+    final titleStyle = GoogleFonts.inter(
+      fontWeight: FontWeight.w600,
+      fontSize: 18,
+    );
 
     return Card(
       elevation: 0,
@@ -253,15 +361,15 @@ class _HeaderCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Entrepot de stockage, zone de stockage', style: title),
+            Text(title, style: titleStyle),
             const SizedBox(height: 6),
             Wrap(
               children: [
-                _pill('Date: ', '12-03-24'),
+                _pill('Date: ', date),
 
-                _pill('REF: ', 'ABR-ANA-UAA'),
+                _pill('REF: ', ref),
 
-                _pill('Ver: ', '01'),
+                _pill('Ver: ', version),
               ],
             ),
             const SizedBox(height: 8),
@@ -461,13 +569,15 @@ class _CommentsList extends StatelessWidget {
 // ===================== EVIDENCES + CHIPS =====================
 
 class _EvidenceStrip extends StatelessWidget {
+  final String? image;
   final void Function(String) onTapImage;
-  const _EvidenceStrip({required this.onTapImage});
+  const _EvidenceStrip({required this.image, required this.onTapImage});
 
   @override
   Widget build(BuildContext context) {
-    final url =
-        'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=800&auto=format&fit=crop';
+    final url = image == null
+        ? AppConstants.tempImageNetwork
+        : AppConstants.getImageNetworkUrl(image!);
     return SizedBox(
       height: 200,
       child: GestureDetector(
@@ -663,6 +773,7 @@ class _ActionCard extends StatelessWidget {
   final String responsable;
   final bool pieceJointe;
   final bool ecart;
+  final bool opportunity;
   final bool longTerme;
   const _ActionCard({
     required this.badge,
@@ -675,6 +786,7 @@ class _ActionCard extends StatelessWidget {
     this.justificationtype = const SizedBox(),
     this.pieceJointe = false,
     this.ecart = false,
+    this.opportunity = false,
     this.longTerme = false,
   });
 
@@ -712,29 +824,49 @@ class _ActionCard extends StatelessWidget {
           _InfoLine(
             label: 'Justifications',
             value: justification,
-            trailing: justificationtype,
+            trailing: ecart
+                ? Text(
+                    'Ecart',
+                    style: GoogleFonts.nunito(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 13,
+                      color: Colors.red,
+                    ),
+                  )
+                : opportunity
+                ? Text(
+                    'Opportunité',
+                    style: GoogleFonts.nunito(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 13,
+                      color: Colors.green,
+                    ),
+                  )
+                : justificationtype,
           ),
-          _InfoLine(
-            label: 'Type d’origine',
-            value: typeEcart,
-            trailing: Container(
-              color: Colors.black26,
-              child: Text(
-                'Audits',
-                style: GoogleFonts.dmSans(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
-                  color: Colors.white,
-                ),
-              ),
+          if (typeEcart.isNotEmpty)
+            _InfoLine(
+              label: 'Type d’origine',
+              value: typeEcart,
+              // trailing: Container(
+              //   color: Colors.black26,
+              //   child: Text(
+              //     'Audits',// typeOrigine
+              //     style: GoogleFonts.dmSans(
+              //       fontWeight: FontWeight.w700,
+              //       fontSize: 14,
+              //       color: Colors.white,
+              //     ),
+              //   ),
+              // ),
             ),
-          ),
 
-          const _InfoLine(
-            label: 'Opérationnalisation',
-            value: 'Pièce jointe',
-            pieceJointe: true,
-          ),
+          if (pieceJointe)
+            _InfoLine(
+              label: 'Opérationnalisation',
+              value: 'Pièce jointe',
+              pieceJointe: pieceJointe,
+            ),
 
           _InfoLine(label: 'Responsable', value: responsable, inline: true),
         ],
@@ -868,26 +1000,28 @@ class _EvalCard extends StatelessWidget {
           const SizedBox(height: 6),
           _InfoLine(label: 'Libellé', value: label),
           _InfoLine(label: 'Observations', value: note),
-          Row(
-            children: [
-              Expanded(
-                child: _InfoLine(
-                  label: 'Responsable',
-                  value: responsable,
-                  inline: true,
+          responsable == ''
+              ? _InfoLine(label: 'Échéance', value: date, inline: true)
+              : Row(
+                  children: [
+                    Expanded(
+                      child: _InfoLine(
+                        label: 'Responsable',
+                        value: responsable,
+                        inline: true,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text('Échéance', style: cap),
+                        const SizedBox(height: 3),
+                        Text(date, style: GoogleFonts.inter(fontSize: 13)),
+                      ],
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text('Échéance', style: cap),
-                  const SizedBox(height: 3),
-                  Text(date, style: GoogleFonts.inter(fontSize: 13)),
-                ],
-              ),
-            ],
-          ),
         ],
       ),
     );

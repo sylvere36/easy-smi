@@ -85,7 +85,6 @@ String _humanStatus(EventStatus s) {
   }
 }
 
-
 EventType _typeFromString(String? raw) {
   final v = (raw ?? '').trim();
   switch (v) {
@@ -112,6 +111,19 @@ String _typeToString(EventType t) {
       return 'dangerous_situation';
     case EventType.nonConformity:
       return 'non_conformity';
+  }
+}
+
+String _humanType(EventType t) {
+  switch (t) {
+    case EventType.accident:
+      return 'Accident';
+    case EventType.incident:
+      return 'Incident';
+    case EventType.dangerousSituation:
+      return 'Situation Dangereuse';
+    case EventType.nonConformity:
+      return 'Non-conformité';
   }
 }
 
@@ -326,4 +338,5 @@ class EventItem {
   bool get isClosed => status == EventStatus.closed;
   String get humanGravity => _humanGravity(gravity);
   String get humanStatus => _humanStatus(status);
+  String get humanType => _humanType(type);
 }

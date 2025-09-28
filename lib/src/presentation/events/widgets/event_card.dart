@@ -3,8 +3,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../infrastructure/_commons/network/request_url.dart';
 import '../../_commons/route/app_router.gr.dart';
+import '../../_commons/utils/app_constants.dart';
 
 class EventCard extends StatelessWidget {
   final String? imageUrl;
@@ -12,6 +12,7 @@ class EventCard extends StatelessWidget {
   final String status;
   final String title;
   final String? site;
+  final void Function()? onTap;
 
   const EventCard({
     super.key,
@@ -20,6 +21,7 @@ class EventCard extends StatelessWidget {
     required this.status,
     required this.title,
     required this.site,
+    this.onTap,
   });
 
   @override
@@ -28,6 +30,9 @@ class EventCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
+        if (onTap != null) {
+          onTap!();
+        }
         context.router.push(const BadEventsDetailRoute());
       },
       child: _CardBase(
@@ -36,17 +41,14 @@ class EventCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(5),
-              child: imageUrl == null
-                  ? Container(
-                      color: Colors.black12,
-                      child: const Icon(Icons.image_not_supported_outlined),
-                    )
-                  : Image.network(
-                      '${RequestUrl().apiUrl}/minio/storage/${imageUrl!}',
-                      width: 106,
-                      height: 102,
-                      fit: BoxFit.cover,
-                    ),
+              child: Image.network(
+                imageUrl == null
+                    ? AppConstants.tempImageNetwork
+                    : AppConstants.getImageNetworkUrl(imageUrl!),
+                width: 106,
+                height: 102,
+                fit: BoxFit.cover,
+              ),
             ),
             Expanded(
               child: Padding(

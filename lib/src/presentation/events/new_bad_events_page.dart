@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../application/events/detail/event_detail_bloc.dart';
 import '../../application/events/events_bloc.dart';
 import '../../domain/event/models/event_item.dart';
 import '../_commons/route/app_router.gr.dart';
@@ -22,7 +23,7 @@ class NewBadEventsPage extends StatelessWidget {
       appBarTitle: 'NOUVEL EVENEMENT NON DESIRABLE',
       paddingHorizontale: 0,
       body: BlocBuilder<EventsBloc, EventsState>(
-        builder: (context, state) {
+        builder: (contextE, state) {
           return PagedList<EventItem>(
             items: state.items ?? [], // List<EventItem>
             isInitialLoading: state.isLoading && state.items == null, // bool
@@ -36,7 +37,14 @@ class NewBadEventsPage extends StatelessWidget {
               context.read<EventsBloc>().add(const EventsEvent.fetch());
             },
             itemBuilder: (ctx, i, event) => EventCard(
-              imageUrl: event.attachments.first,
+              onTap: () {
+                context.read<EventDetailsBloc>().add(
+                  EventDetailsEvent.getEvent(event: event),
+                );
+              },
+              imageUrl: event.attachments.isEmpty
+                  ? null
+                  : event.attachments.first,
               level: event.humanGravity,
               status: event.humanStatus,
               title: event.title,

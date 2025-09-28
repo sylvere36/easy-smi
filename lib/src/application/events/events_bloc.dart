@@ -19,7 +19,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
         state.copyWith(
           isLoading: true,
           resultOption: none(),
-          items: [],
+          items: null,
           currentPage: 1,
           canLoadMore: true,
         ),

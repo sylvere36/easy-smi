@@ -68,12 +68,20 @@ class ActionRemoteDataSource implements IActionRemoteDataSource {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data is String
-            ? json.decode(response.data as String) as List<dynamic>
-            : (response.data as List<dynamic>);
-        return data
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final bool success = data['success'] == true;
+        if (!success) {
+          final String message = (data['message'] as String?) ?? '';
+          throw ServerException(message);
+        }
+        final resultData = data['data'] as List<dynamic>? ?? [];
+        final List<ActionItem> items = resultData
             .whereType<Map<String, dynamic>>()
             .map((e) => ActionItem.fromJson(e))
             .toList();
+
+        return items;
       } else {
         throw ServerException(errorThrow(response));
       }

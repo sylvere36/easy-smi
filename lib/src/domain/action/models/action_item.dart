@@ -61,6 +61,23 @@ String humanReadableActionStatus(String status) {
   }
 }
 
+String humanReadableActionType(String type) {
+  switch (type) {
+    case 'improvement':
+      return 'Amélioration';
+    case 'corrective':
+      return 'Corrective';
+    case 'preventive':
+      return 'Préventive';
+    case 'curative':
+      return 'Curative';
+    case 'recurring':
+      return 'Récurrente';
+    default:
+      return type;
+  }
+}
+
 Color actionStatusColor(String status) {
   switch (status) {
     case 'draft':
@@ -145,6 +162,7 @@ class ActionItem {
 
   String? get humanReadableStatus =>
       actionStatus != null ? humanReadableActionStatus(actionStatus!) : '';
+  String get humanReadableType => humanReadableActionType(actionType);
 
   String? get echeanceText => endDate != null ? echeance(endDate!) : null;
 

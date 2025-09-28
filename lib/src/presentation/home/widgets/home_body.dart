@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../gen/assets.gen.dart';
 import '../../../application/actions/actions_bloc.dart';
+import '../../../application/events/detail/event_detail_bloc.dart';
 import '../../../application/events/events_bloc.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
@@ -189,7 +190,14 @@ class _HomeBodyState extends State<HomeBody> {
                           .take(3)
                           .map(
                             (event) => EventCard(
-                              imageUrl: event.attachments.first,
+                              onTap: () {
+                                context.read<EventDetailsBloc>().add(
+                                  EventDetailsEvent.getEvent(event: event),
+                                );
+                              },
+                              imageUrl: event.attachments.isEmpty
+                                  ? null
+                                  : event.attachments.first,
                               level: event.humanGravity,
                               status: event.humanStatus,
                               title: event.title,
