@@ -10,6 +10,7 @@ import '../../../application/actions/actions_bloc.dart';
 import '../../../application/evalutaion/evaluation_bloc.dart';
 import '../../../application/events/detail/event_detail_bloc.dart';
 import '../../../domain/action/i_action_repository.dart';
+import '../../../domain/evaluation/models/evaluation.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
 import '../../_commons/utils/app_constants.dart';
@@ -310,7 +311,9 @@ class _BadEventDetailBodyState extends State<BadEventDetailBody> {
                             type: item.humanType,
                             label: item.title,
                             note: item.report,
-                            statutChip: _StatChip.done(item.humanStatus),
+                            statutChip: item.status == EvaluationStatus.done
+                                ? _StatChip.done(item.humanStatus)
+                                : _StatChip.planned(item.humanStatus),
                             responsable: '',
                             date: item.toFenchDate,
                           ),
