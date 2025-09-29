@@ -41,7 +41,9 @@ class _AppState extends State<App> {
         ),
         BlocProvider(create: (_) => sl<EventDetailsBloc>()),
         BlocProvider(create: (_) => sl<EvaluationsBloc>()),
-        BlocProvider(create: (_) => sl<AuditsBloc>()),
+        BlocProvider(
+          create: (_) => sl<AuditsBloc>()..add(const AuditsEvent.fetch()),
+        ),
         BlocProvider(create: (_) => sl<CommentsBloc>()),
       ],
       child: MaterialApp.router(

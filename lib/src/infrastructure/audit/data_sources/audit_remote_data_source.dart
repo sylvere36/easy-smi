@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 
 import '../../../domain/_commons/pagination.dart';
 import '../../../domain/audit/models/audit_item.dart';
+import '../../../domain/audit/models/audit_document_request.dart';
 import '../../_commons/exceptions.dart';
 import '../../_commons/network/app_requests.dart';
 import '../../_commons/throw_error.dart';
@@ -24,6 +25,10 @@ abstract class IAuditRemoteDataSource {
   Future<AuditItem> getAudit({required int id});
 
   Future<String> changeStatus({required int id, required String status});
+
+  Future<List<AuditDocumentRequest>> getAuditDocumentRequests({
+    required int id,
+  });
 }
 
 class AuditRemoteDataSource implements IAuditRemoteDataSource {
@@ -186,6 +191,56 @@ class AuditRemoteDataSource implements IAuditRemoteDataSource {
           throw ServerException(message);
         }
         return message;
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<AuditDocumentRequest>> getAuditDocumentRequests({
+    required int id,
+  }) async {
+    try {
+      final String request = '/conformity/audits/$id/document-requests';
+      final Response response = await httpClient.getRequest(request);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final bool success = data['success'] == true;
+        if (!success) {
+          final String message = (data['message'] as String?) ?? '';
+          throw ServerException(message);
+        }
+        final listJson = (data['data'] as List<dynamic>? ?? [])
+            .whereType<Map<String, dynamic>>()
+            .toList();
+        return listJson
+            .map(
+              (e) => AuditDocumentRequest(
+                id: (e['id'] as num).toInt(),
+                name: (e['name'] as String?) ?? '',
+                createdAt: e['created_at'] as String?,
+                documents: (e['documents'] as List<dynamic>? ?? [])
+                    .whereType<Map<String, dynamic>>()
+                    .map(
+                      (d) => AuditAttachedDocument(
+                        id: (d['id'] as num).toInt(),
+                        documentRequestId: (d['document_request_id'] as num)
+                            .toInt(),
+                        documentPath: (d['document_path'] as String?) ?? '',
+                        commentId: d['comment_id']?.toString(),
+                        createdAt: d['created_at'] as String?,
+                        updatedAt: d['updated_at'] as String?,
+                      ),
+                    )
+                    .toList(),
+              ),
+            )
+            .toList();
       } else {
         throw ServerException(errorThrow(response));
       }

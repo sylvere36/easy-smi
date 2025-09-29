@@ -1,13 +1,20 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../gen/assets.gen.dart';
+import '../../../../injection_container.dart';
+import '../../../application/audit/detail/audit_detail_bloc.dart';
+import '../../../domain/audit/models/audit_item.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
+import '../../_commons_widgets/loading_widget.dart';
 
 class AuditDetailBody extends StatefulWidget {
-  const AuditDetailBody({super.key});
+  final AuditItem audit;
+  const AuditDetailBody({super.key, required this.audit});
 
   @override
   State<AuditDetailBody> createState() => _AuditDetailBodyState();
@@ -122,68 +129,78 @@ class _AuditDetailBodyState extends State<AuditDetailBody>
     final onBlue = Colors.white;
     final blue = AppColors.primary;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      floatingActionButton: addContact
-          ? FloatingActionButton(
-              backgroundColor: blue,
-              shape: const CircleBorder(),
-              onPressed: _showAddConstatSheet,
-              child: const Icon(Icons.add),
-            )
-          : null,
-      body: DefaultTabController(
-        length: 4,
-        child: NestedScrollView(
-          headerSliverBuilder: (c, _) => [
-            SliverToBoxAdapter(
-              child: _Header(blue: blue, onBlue: onBlue),
-            ),
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _TabsDelegate(
-                TabBar(
-                  controller: _tab,
-                  onTap: (index) {
-                    if (index == 1) {
-                      addContact = true;
-                    } else {
-                      addContact = false;
-                    }
-                    setState(() {});
-                  },
-                  isScrollable: true,
-                  tabAlignment: TabAlignment.start,
-                  labelPadding: const EdgeInsets.symmetric(
-                    horizontal: 18,
-                    vertical: 8,
+    return BlocProvider(
+      create: (context) =>
+          sl<AuditDetailBloc>()
+            ..add(AuditDetailEvent.documentsRequested(id: widget.audit.id)),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        floatingActionButton: addContact
+            ? FloatingActionButton(
+                backgroundColor: blue,
+                shape: const CircleBorder(),
+                onPressed: _showAddConstatSheet,
+                child: const Icon(Icons.add),
+              )
+            : null,
+        body: DefaultTabController(
+          length: 4,
+          child: NestedScrollView(
+            headerSliverBuilder: (c, _) => [
+              SliverToBoxAdapter(
+                child: _Header(blue: blue, onBlue: onBlue, audit: widget.audit),
+              ),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _TabsDelegate(
+                  TabBar(
+                    controller: _tab,
+                    onTap: (index) {
+                      if (index == 1) {
+                        addContact = true;
+                      } else {
+                        addContact = false;
+                      }
+                      setState(() {});
+                    },
+                    isScrollable: true,
+                    tabAlignment: TabAlignment.start,
+                    labelPadding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 8,
+                    ),
+                    indicatorColor: blue,
+                    labelColor: Colors.black,
+                    unselectedLabelColor: Colors.black54,
+                    labelStyle: GoogleFonts.poppins(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    tabs: const [
+                      Tab(text: 'Descriptions'),
+                      Tab(text: 'Liste des constats'),
+                      Tab(text: 'Resultats'),
+                      Tab(text: 'Actions'),
+                    ],
                   ),
-                  indicatorColor: blue,
-                  labelColor: Colors.black,
-                  unselectedLabelColor: Colors.black54,
-                  labelStyle: GoogleFonts.poppins(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  tabs: const [
-                    Tab(text: 'Descriptions'),
-                    Tab(text: 'Liste des constats'),
-                    Tab(text: 'Resultats'),
-                    Tab(text: 'Actions'),
-                  ],
                 ),
               ),
-            ),
-          ],
-          body: TabBarView(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: _tab,
-            children: [
-              _DescriptionTab(title: _title, label: _label, value: _value),
-              _ConstatsTab(constats: _constats),
-              _ResultatsTab(items: _results),
-              _ActionsTab(items: _actions),
             ],
+            body: TabBarView(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: _tab,
+              children: [
+                _DescriptionTab(
+                  title: _title,
+                  label: _label,
+                  value: _value,
+                  audit: widget.audit,
+                ),
+                _ConstatsTab(constats: _constats),
+                _ResultatsTab(items: _results),
+                _ActionsTab(items: _actions),
+              ],
+            ),
           ),
         ),
       ),
@@ -360,12 +377,18 @@ class _TabsDelegate extends SliverPersistentHeaderDelegate {
 
 /// ---------- HEADER (titre + méta + bouton)
 class _Header extends StatelessWidget {
-  const _Header({required this.blue, required this.onBlue});
+  const _Header({
+    required this.blue,
+    required this.onBlue,
+    required this.audit,
+  });
   final Color blue;
   final Color onBlue;
+  final AuditItem audit;
 
   @override
   Widget build(BuildContext context) {
+    final date = DateTime.tryParse(audit.startDate ?? '') ?? DateTime.now();
     return Container(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 14),
       decoration: const BoxDecoration(
@@ -376,7 +399,7 @@ class _Header extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Audit sur le contrôle qualité des OTC dans le departement gestion produits',
+            audit.label,
             style: GoogleFonts.poppins(
               fontSize: 19,
               fontWeight: FontWeight.w600,
@@ -384,13 +407,17 @@ class _Header extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          const Row(
+          Row(
             children: [
-              _Meta(label: 'Date', value: '12-03-25'),
-              SizedBox(width: 18),
-              _Meta(label: 'Ref', value: 'AZE-ABA-AUA'),
-              SizedBox(width: 18),
-              _Meta(label: 'Ver', value: '01'),
+              _Meta(
+                label: 'Date',
+                value:
+                    '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}',
+              ),
+              const SizedBox(width: 18),
+              _Meta(label: 'Ref', value: '${audit.reference}'),
+              const SizedBox(width: 18),
+              _Meta(label: 'Ver', value: '${audit.version}'),
             ],
           ),
           const SizedBox(height: 14),
@@ -461,9 +488,11 @@ class _DescriptionTab extends StatelessWidget {
     required this.title,
     required this.label,
     required this.value,
+    required this.audit,
   });
 
   final TextStyle title, label, value;
+  final AuditItem audit;
 
   @override
   Widget build(BuildContext context) {
@@ -497,19 +526,26 @@ class _DescriptionTab extends StatelessWidget {
       ),
     );
 
-    Widget docItem(String name) => Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          const Icon(Icons.picture_as_pdf, color: Colors.red, size: 18),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              name,
-              style: GoogleFonts.poppins(decoration: TextDecoration.underline),
+    Widget docItem(String name, String path) => GestureDetector(
+      onTap: () {
+        context.router.push(FilePreviewRoute(path: path, fileName: name));
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          children: [
+            const Icon(Icons.picture_as_pdf, color: Colors.red, size: 18),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                name,
+                style: GoogleFonts.poppins(
+                  decoration: TextDecoration.underline,
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
 
@@ -519,83 +555,79 @@ class _DescriptionTab extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            tile('Date de debut', 'Lun 04 Mars.2025'),
-            tile('Date fin', 'Lun 04 Mars.2025'),
+            tile(
+              'Date de debut',
+              DateFormat.yMMMd(
+                Localizations.localeOf(context).languageCode,
+              ).format(
+                DateTime.tryParse(audit.startDate ?? '') ?? DateTime.now(),
+              ),
+            ),
+            tile(
+              'Date fin',
+              DateFormat.yMMMd(
+                Localizations.localeOf(context).languageCode,
+              ).format(
+                DateTime.tryParse(audit.endDate ?? '') ?? DateTime.now(),
+              ),
+            ),
           ],
         ),
         const Divider(height: 6),
-        tile('Audité', 'Jean yves KOSSI PAUL'),
+        tile('Audité', audit.auditor != null ? audit.auditor.toString() : ''),
         const Divider(height: 6),
         tile(
           'Processus concerné',
-          'Marketing internationnal et developpement des ventes regionales',
+          audit.process != null ? audit.process!.title : '',
         ),
         const SizedBox(height: 14),
         Text('Points à controler', style: title),
         const SizedBox(height: 8),
-        point(
-          'LearderShirp et developpement',
-          'Marketing internationnal et developpement des ventes regionales arketing internationnal',
-          'ISO 9001',
+        ...audit.controlPointsSummary.map(
+          (e) => point(e.title, e.description ?? '', e.reference ?? '---'),
         ),
-        const SizedBox(height: 10),
-        point(
-          'LearderShirp et developpement',
-          'Marketing internationnal et developpement des ventes regionales arketing internationnal',
-          'ISO 9001',
-        ),
-        const SizedBox(height: 18),
-        Text('Documentations', style: title),
-        const SizedBox(height: 8),
-        ...List.generate(
-          2,
-          (index) => _Card(
-            child: Column(
+
+        BlocBuilder<AuditDetailBloc, AuditDetailState>(
+          builder: (context, state) {
+            return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                tile('Requete de documents', 'LearderShirp et developpement'),
-                const Divider(height: 6),
-                const SizedBox(height: 6),
-                Text(
-                  'Document mis a disposition',
-                  style: label.copyWith(color: Colors.black54),
-                ),
-                const SizedBox(height: 6),
-                docItem('document de presentation'),
-                docItem('document de presentation'),
-                const Divider(height: 6),
-                const SizedBox(height: 6),
-                Text(
-                  'Commetaire',
-                  style: label.copyWith(color: Colors.black54),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    const _Avatar('MH'),
-                    const SizedBox(width: 10),
-                    Text('Maude Hall', style: label),
-                  ],
-                ),
-                Text(
-                  'Commentaire sur le LearderShirp et developpement\nsur le LearderShirp et developpement',
-                  style: value,
-                ),
+                const SizedBox(height: 18),
+                Text('Documents', style: title),
                 const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.reply, size: 18, color: Colors.grey),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Repondre',
-                      style: GoogleFonts.poppins(color: Colors.black54),
+                if (state.isLoadingDocuments)
+                  const Center(child: LoadingWidget())
+                else if (state.documentRequests.isEmpty)
+                  const Text('Aucun document disponible')
+                else
+                  ...state.documentRequests.map(
+                    (d) => _Card(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          tile('Requete de documents', d.name),
+                          const Divider(height: 6),
+                          const SizedBox(height: 6),
+                          if (d.documents.isEmpty)
+                            const Text('Aucun document attaché')
+                          else
+                            ...d.documents.map(
+                              (doc) => docItem(
+                                doc.documentPath.split('/').last,
+                                doc.documentPath,
+                              ),
+                            ),
+                          const SizedBox(height: 12),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
+                  ),
               ],
-            ),
-          ),
+            );
+          },
         ),
+
+        const SizedBox(height: 18),
       ],
     );
   }

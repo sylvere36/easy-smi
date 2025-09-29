@@ -1,3 +1,41 @@
+String humanReadableStatus(String status) {
+  switch (status) {
+    case 'draft':
+      return 'Brouillon';
+    case 'pendingValidation':
+      return 'En attente de validation';
+    case 'planned':
+      return 'Planifié';
+    case 'validated':
+      return 'Validé';
+    case 'inProgress':
+      return 'En cours';
+    case 'inProgress_Revision':
+      return 'En cours - Révision';
+    case 'closed':
+      return 'Clôturé';
+    case 'archived':
+      return 'Archivé';
+    default:
+      return status;
+  }
+}
+
+String humanReadableType(String type) {
+  switch (type) {
+    case 'internal':
+      return 'Interne';
+    case 'external':
+      return 'Externe';
+    case 'regulatory':
+      return 'Réglementaire';
+    case 'certification':
+      return 'Certification';
+    default:
+      return type;
+  }
+}
+
 class AuditItem {
   final int id;
   final String label;
@@ -69,6 +107,16 @@ class AuditItem {
               .map((e) => ControlPointSummary.fromJson(e))
               .toList(),
     );
+  }
+
+  String get statusHumanReadable {
+    if (status == null) return '';
+    return humanReadableStatus(status!);
+  }
+
+  String get typeHumanReadable {
+    if (type == null) return '';
+    return humanReadableType(type!);
   }
 }
 

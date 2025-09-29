@@ -358,7 +358,7 @@ String toString() {
 /// @nodoc
 mixin _$AuditsState {
 
- bool get isLoading; List<AuditItem> get items; int get currentPage; int get perPage; int get total; bool get canLoadMore; Option<Either<GlobalFailure, Paginated<AuditItem>>> get resultOption; AuditListMode get mode;
+ bool get isLoading; List<AuditItem>? get items; int get currentPage; int get perPage; int get total; bool get canLoadMore; Option<Either<GlobalFailure, Paginated<AuditItem>>> get resultOption; AuditListMode get mode;
 /// Create a copy of AuditsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -389,7 +389,7 @@ abstract mixin class $AuditsStateCopyWith<$Res>  {
   factory $AuditsStateCopyWith(AuditsState value, $Res Function(AuditsState) _then) = _$AuditsStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, List<AuditItem> items, int currentPage, int perPage, int total, bool canLoadMore, Option<Either<GlobalFailure, Paginated<AuditItem>>> resultOption, AuditListMode mode
+ bool isLoading, List<AuditItem>? items, int currentPage, int perPage, int total, bool canLoadMore, Option<Either<GlobalFailure, Paginated<AuditItem>>> resultOption, AuditListMode mode
 });
 
 
@@ -406,11 +406,11 @@ class _$AuditsStateCopyWithImpl<$Res>
 
 /// Create a copy of AuditsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? items = null,Object? currentPage = null,Object? perPage = null,Object? total = null,Object? canLoadMore = null,Object? resultOption = null,Object? mode = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? items = freezed,Object? currentPage = null,Object? perPage = null,Object? total = null,Object? canLoadMore = null,Object? resultOption = null,Object? mode = null,}) {
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
-as bool,items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
-as List<AuditItem>,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
+as bool,items: freezed == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
+as List<AuditItem>?,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int,perPage: null == perPage ? _self.perPage : perPage // ignore: cast_nullable_to_non_nullable
 as int,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
 as int,canLoadMore: null == canLoadMore ? _self.canLoadMore : canLoadMore // ignore: cast_nullable_to_non_nullable
@@ -501,7 +501,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<AuditItem> items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<AuditItem>>> resultOption,  AuditListMode mode)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<AuditItem>? items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<AuditItem>>> resultOption,  AuditListMode mode)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuditsState() when $default != null:
 return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_that.total,_that.canLoadMore,_that.resultOption,_that.mode);case _:
@@ -522,7 +522,7 @@ return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<AuditItem> items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<AuditItem>>> resultOption,  AuditListMode mode)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<AuditItem>? items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<AuditItem>>> resultOption,  AuditListMode mode)  $default,) {final _that = this;
 switch (_that) {
 case _AuditsState():
 return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_that.total,_that.canLoadMore,_that.resultOption,_that.mode);case _:
@@ -542,7 +542,7 @@ return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<AuditItem> items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<AuditItem>>> resultOption,  AuditListMode mode)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<AuditItem>? items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<AuditItem>>> resultOption,  AuditListMode mode)?  $default,) {final _that = this;
 switch (_that) {
 case _AuditsState() when $default != null:
 return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_that.total,_that.canLoadMore,_that.resultOption,_that.mode);case _:
@@ -557,15 +557,17 @@ return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_tha
 
 
 class _AuditsState implements AuditsState {
-  const _AuditsState({required this.isLoading, required final  List<AuditItem> items, required this.currentPage, required this.perPage, required this.total, required this.canLoadMore, required this.resultOption, required this.mode}): _items = items;
+  const _AuditsState({required this.isLoading, required final  List<AuditItem>? items, required this.currentPage, required this.perPage, required this.total, required this.canLoadMore, required this.resultOption, required this.mode}): _items = items;
   
 
 @override final  bool isLoading;
- final  List<AuditItem> _items;
-@override List<AuditItem> get items {
+ final  List<AuditItem>? _items;
+@override List<AuditItem>? get items {
+  final value = _items;
+  if (value == null) return null;
   if (_items is EqualUnmodifiableListView) return _items;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_items);
+  return EqualUnmodifiableListView(value);
 }
 
 @override final  int currentPage;
@@ -605,7 +607,7 @@ abstract mixin class _$AuditsStateCopyWith<$Res> implements $AuditsStateCopyWith
   factory _$AuditsStateCopyWith(_AuditsState value, $Res Function(_AuditsState) _then) = __$AuditsStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, List<AuditItem> items, int currentPage, int perPage, int total, bool canLoadMore, Option<Either<GlobalFailure, Paginated<AuditItem>>> resultOption, AuditListMode mode
+ bool isLoading, List<AuditItem>? items, int currentPage, int perPage, int total, bool canLoadMore, Option<Either<GlobalFailure, Paginated<AuditItem>>> resultOption, AuditListMode mode
 });
 
 
@@ -622,11 +624,11 @@ class __$AuditsStateCopyWithImpl<$Res>
 
 /// Create a copy of AuditsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? items = null,Object? currentPage = null,Object? perPage = null,Object? total = null,Object? canLoadMore = null,Object? resultOption = null,Object? mode = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? items = freezed,Object? currentPage = null,Object? perPage = null,Object? total = null,Object? canLoadMore = null,Object? resultOption = null,Object? mode = null,}) {
   return _then(_AuditsState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
-as bool,items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
-as List<AuditItem>,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
+as bool,items: freezed == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
+as List<AuditItem>?,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int,perPage: null == perPage ? _self.perPage : perPage // ignore: cast_nullable_to_non_nullable
 as int,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
 as int,canLoadMore: null == canLoadMore ? _self.canLoadMore : canLoadMore // ignore: cast_nullable_to_non_nullable

@@ -11,6 +11,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i50;
 import 'package:easy_smi/src/domain/action/models/action_item.dart' as _i52;
+import 'package:easy_smi/src/domain/audit/models/audit_item.dart' as _i53;
 import 'package:easy_smi/src/presentation/_commons_widgets/file_preview_page.dart'
     as _i15;
 import 'package:easy_smi/src/presentation/actions/action_detail_page.dart'
@@ -101,7 +102,7 @@ import 'package:easy_smi/src/presentation/profile/sensibilisation/profile_search
 import 'package:easy_smi/src/presentation/profile/sensibilisation/profile_sensibilization_page.dart'
     as _i40;
 import 'package:easy_smi/src/presentation/splash/splash.dart' as _i47;
-import 'package:flutter/foundation.dart' as _i53;
+import 'package:flutter/foundation.dart' as _i54;
 import 'package:flutter/material.dart' as _i51;
 
 /// generated route for
@@ -233,18 +234,49 @@ class AuditControlObjectifRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i7.AuditDetailPage]
-class AuditDetailRoute extends _i50.PageRouteInfo<void> {
-  const AuditDetailRoute({List<_i50.PageRouteInfo>? children})
-    : super(AuditDetailRoute.name, initialChildren: children);
+class AuditDetailRoute extends _i50.PageRouteInfo<AuditDetailRouteArgs> {
+  AuditDetailRoute({
+    _i51.Key? key,
+    required _i53.AuditItem audit,
+    List<_i50.PageRouteInfo>? children,
+  }) : super(
+         AuditDetailRoute.name,
+         args: AuditDetailRouteArgs(key: key, audit: audit),
+         initialChildren: children,
+       );
 
   static const String name = 'AuditDetailRoute';
 
   static _i50.PageInfo page = _i50.PageInfo(
     name,
     builder: (data) {
-      return const _i7.AuditDetailPage();
+      final args = data.argsAs<AuditDetailRouteArgs>();
+      return _i7.AuditDetailPage(key: args.key, audit: args.audit);
     },
   );
+}
+
+class AuditDetailRouteArgs {
+  const AuditDetailRouteArgs({this.key, required this.audit});
+
+  final _i51.Key? key;
+
+  final _i53.AuditItem audit;
+
+  @override
+  String toString() {
+    return 'AuditDetailRouteArgs{key: $key, audit: $audit}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! AuditDetailRouteArgs) return false;
+    return key == other.key && audit == other.audit;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ audit.hashCode;
 }
 
 /// generated route for
@@ -443,7 +475,7 @@ class DeclarateEventRoute extends _i50.PageRouteInfo<void> {
 /// [_i15.FilePreviewPage]
 class FilePreviewRoute extends _i50.PageRouteInfo<FilePreviewRouteArgs> {
   FilePreviewRoute({
-    _i53.Key? key,
+    _i54.Key? key,
     required String path,
     String? fileName,
     List<_i50.PageRouteInfo>? children,
@@ -471,7 +503,7 @@ class FilePreviewRoute extends _i50.PageRouteInfo<FilePreviewRouteArgs> {
 class FilePreviewRouteArgs {
   const FilePreviewRouteArgs({this.key, required this.path, this.fileName});
 
-  final _i53.Key? key;
+  final _i54.Key? key;
 
   final String path;
 

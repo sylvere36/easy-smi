@@ -4,7 +4,7 @@ part of 'audits_bloc.dart';
 abstract class AuditsState with _$AuditsState {
   const factory AuditsState({
     required bool isLoading,
-    required List<AuditItem> items,
+    required List<AuditItem>? items,
     required int currentPage,
     required int perPage,
     required int total,
@@ -15,7 +15,7 @@ abstract class AuditsState with _$AuditsState {
 
   factory AuditsState.initial() => AuditsState(
     isLoading: false,
-    items: const [],
+    items: null,
     currentPage: 1,
     perPage: 10,
     total: 0,

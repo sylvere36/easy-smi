@@ -3,6 +3,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../domain/audit/models/audit_item.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
 
@@ -12,12 +13,15 @@ class AuditCard extends StatelessWidget {
   final String title;
   final String process;
 
+  final AuditItem audit;
+
   const AuditCard({
     super.key,
     required this.tag,
     required this.status,
     required this.title,
     required this.process,
+    required this.audit,
   });
 
   @override
@@ -26,7 +30,7 @@ class AuditCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        context.router.push(const AuditDetailRoute());
+        context.router.push(AuditDetailRoute(audit: audit));
       },
       child: _CardBase(
         padding: const EdgeInsets.all(4),
