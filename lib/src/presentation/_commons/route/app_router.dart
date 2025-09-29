@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 
+import '../../_commons_widgets/file_preview_page.dart';
 import '../../actions/action_detail_page.dart';
 import '../../actions/actions_page.dart';
 import '../../audits/audit_control_objectif_page.dart';
@@ -196,6 +197,7 @@ class AppRouter extends RootStackRouter {
       path: AuditMakeConstatPage.routeName,
     ),
     AutoRoute(page: ProgrammAuditRoute.page, path: ProgrammAuditPage.routeName),
+    AutoRoute(page: FilePreviewRoute.page, path: FilePreviewPage.routeName),
     // AutoRoute(page: Route.page, path: Page.routeName),
   ];
 }

@@ -158,6 +158,7 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
                                         e,
                                         onEdit: () {},
                                         hasFile: e.hasFileAttachment(),
+                                        context: context,
                                       ),
                                     )
                                     .toList(),
@@ -557,6 +558,7 @@ Widget _todoTile(
   VoidCallback? onToggle,
   VoidCallback? onEdit,
   bool hasFile = false,
+  required BuildContext context,
 }) {
   final Color dueColor = t.isInProgress
       ? AppColors.chipGreen
@@ -611,12 +613,22 @@ Widget _todoTile(
                         ),
                         const Spacer(),
                         if (hasFile)
-                          const Padding(
-                            padding: EdgeInsets.only(right: 50),
-                            child: Icon(
-                              Icons.attach_file_rounded,
-                              size: 16,
-                              color: Colors.black,
+                          InkWell(
+                            onTap: () {
+                              AutoRouter.of(context).push(
+                                FilePreviewRoute(
+                                  fileName: t.title ?? '',
+                                  path: t.document!,
+                                ),
+                              );
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.only(right: 50),
+                              child: Icon(
+                                Icons.attach_file_rounded,
+                                size: 16,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                       ],
