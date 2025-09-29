@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pdfx/pdfx.dart';
-import 'package:flutter/foundation.dart';
 import 'package:video_player/video_player.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -367,7 +367,7 @@ class _VideoPreviewWidgetState extends State<_VideoPreviewWidget> {
           child: Icon(
             _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
             size: 64,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
           ),
         ),
       ),

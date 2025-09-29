@@ -450,7 +450,9 @@ class _CommentComposer extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.router.push(const CommentsRoute());
+        context.router.push(
+          CommentsRoute(commentableType: 'Event', commentableId: '0'),
+        );
       },
       child: Card(
         elevation: 0,

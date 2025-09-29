@@ -89,7 +89,12 @@ class InspectionRecentDetailBody extends StatelessWidget {
           padding: const EdgeInsets.only(top: 18),
           child: GestureDetector(
             onTap: () {
-              context.router.push(const CommentsRoute());
+              context.router.push(
+                CommentsRoute(
+                  commentableType: 'Inspection',
+                  commentableId: '0',
+                ),
+              );
             },
             child: Container(
               decoration: _fieldDecoration(),
@@ -141,7 +146,12 @@ class InspectionRecentDetailBody extends StatelessWidget {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
-                      context.router.push(const CommentsRoute());
+                      context.router.push(
+                        CommentsRoute(
+                          commentableType: 'Inspection',
+                          commentableId: '0',
+                        ),
+                      );
                     },
                     child: const Text(
                       'Voir tout',

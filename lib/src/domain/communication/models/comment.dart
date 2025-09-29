@@ -154,4 +154,26 @@ class CommentItem {
     'attachment_url': attachmentUrl,
     'reads': reads.map((e) => e.toJson()).toList(),
   };
+
+  String get humanReadableDate {
+    try {
+      final dateTime = DateTime.parse(createdAt).toLocal();
+      final now = DateTime.now();
+      final difference = now.difference(dateTime);
+
+      if (difference.inSeconds < 60) {
+        return 'Il y a ${difference.inSeconds} secondes';
+      } else if (difference.inMinutes < 60) {
+        return 'Il y a ${difference.inMinutes} minutes';
+      } else if (difference.inHours < 24) {
+        return 'Il y a ${difference.inHours} heures';
+      } else if (difference.inDays < 7) {
+        return 'Il y a ${difference.inDays} jours';
+      } else {
+        return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
+      }
+    } catch (e) {
+      return createdAt;
+    }
+  }
 }

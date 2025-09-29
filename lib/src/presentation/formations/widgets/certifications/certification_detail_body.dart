@@ -151,7 +151,12 @@ class CertificationDetailBody extends StatelessWidget {
                     const Spacer(),
                     TextButton(
                       onPressed: () {
-                        context.router.push(const CommentsRoute());
+                        context.router.push(
+                          CommentsRoute(
+                            commentableType: 'Certification',
+                            commentableId: '0',
+                          ),
+                        );
                       },
                       child: Text(
                         'Voir tout',
@@ -298,7 +303,9 @@ class _CommentInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.router.push(const CommentsRoute());
+        context.router.push(
+          CommentsRoute(commentableType: 'Certification', commentableId: '0'),
+        );
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),

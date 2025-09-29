@@ -101,6 +101,7 @@ import 'package:easy_smi/src/presentation/profile/sensibilisation/profile_search
 import 'package:easy_smi/src/presentation/profile/sensibilisation/profile_sensibilization_page.dart'
     as _i40;
 import 'package:easy_smi/src/presentation/splash/splash.dart' as _i47;
+import 'package:flutter/foundation.dart' as _i53;
 import 'package:flutter/material.dart' as _i51;
 
 /// generated route for
@@ -359,18 +360,67 @@ class CertificationDetailRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i13.CommentsPage]
-class CommentsRoute extends _i50.PageRouteInfo<void> {
-  const CommentsRoute({List<_i50.PageRouteInfo>? children})
-    : super(CommentsRoute.name, initialChildren: children);
+class CommentsRoute extends _i50.PageRouteInfo<CommentsRouteArgs> {
+  CommentsRoute({
+    _i51.Key? key,
+    required String commentableType,
+    required dynamic commentableId,
+    List<_i50.PageRouteInfo>? children,
+  }) : super(
+         CommentsRoute.name,
+         args: CommentsRouteArgs(
+           key: key,
+           commentableType: commentableType,
+           commentableId: commentableId,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'CommentsRoute';
 
   static _i50.PageInfo page = _i50.PageInfo(
     name,
     builder: (data) {
-      return const _i13.CommentsPage();
+      final args = data.argsAs<CommentsRouteArgs>();
+      return _i13.CommentsPage(
+        key: args.key,
+        commentableType: args.commentableType,
+        commentableId: args.commentableId,
+      );
     },
   );
+}
+
+class CommentsRouteArgs {
+  const CommentsRouteArgs({
+    this.key,
+    required this.commentableType,
+    required this.commentableId,
+  });
+
+  final _i51.Key? key;
+
+  final String commentableType;
+
+  final dynamic commentableId;
+
+  @override
+  String toString() {
+    return 'CommentsRouteArgs{key: $key, commentableType: $commentableType, commentableId: $commentableId}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! CommentsRouteArgs) return false;
+    return key == other.key &&
+        commentableType == other.commentableType &&
+        commentableId == other.commentableId;
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^ commentableType.hashCode ^ commentableId.hashCode;
 }
 
 /// generated route for
@@ -393,7 +443,7 @@ class DeclarateEventRoute extends _i50.PageRouteInfo<void> {
 /// [_i15.FilePreviewPage]
 class FilePreviewRoute extends _i50.PageRouteInfo<FilePreviewRouteArgs> {
   FilePreviewRoute({
-    _i51.Key? key,
+    _i53.Key? key,
     required String path,
     String? fileName,
     List<_i50.PageRouteInfo>? children,
@@ -421,7 +471,7 @@ class FilePreviewRoute extends _i50.PageRouteInfo<FilePreviewRouteArgs> {
 class FilePreviewRouteArgs {
   const FilePreviewRouteArgs({this.key, required this.path, this.fileName});
 
-  final _i51.Key? key;
+  final _i53.Key? key;
 
   final String path;
 

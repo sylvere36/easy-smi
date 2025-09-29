@@ -8,6 +8,7 @@ import '../../l10n/app_localizations.dart';
 import '../application/actions/actions_bloc.dart';
 import '../application/audit/audits_bloc.dart';
 import '../application/auth/user/authenticated_user_bloc.dart';
+import '../application/communication/comments_bloc.dart';
 import '../application/connected/connected_bloc.dart';
 import '../application/evalutaion/evaluation_bloc.dart';
 import '../application/events/detail/event_detail_bloc.dart';
@@ -41,6 +42,7 @@ class _AppState extends State<App> {
         BlocProvider(create: (_) => sl<EventDetailsBloc>()),
         BlocProvider(create: (_) => sl<EvaluationsBloc>()),
         BlocProvider(create: (_) => sl<AuditsBloc>()),
+        BlocProvider(create: (_) => sl<CommentsBloc>()),
       ],
       child: MaterialApp.router(
         routerDelegate: _appRouter.delegate(),

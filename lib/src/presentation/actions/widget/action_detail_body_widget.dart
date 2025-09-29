@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -7,10 +9,12 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../injection_container.dart';
 import '../../../application/actions/detail/action_detail_bloc.dart';
+import '../../../application/communication/comments_bloc.dart';
 import '../../../domain/action/models/action_item.dart';
 import '../../../domain/action/models/action_task.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
+import '../../_commons_widgets/comments/comment_field.dart';
 import '../../_commons_widgets/comments/comment_line.dart';
 import '../../_commons_widgets/custom_chip_widget.dart';
 import '../../_commons_widgets/empty_widget.dart';
@@ -25,7 +29,16 @@ class ActionDetailBody extends StatefulWidget {
 }
 
 class _ActionDetailBodyState extends State<ActionDetailBody> {
-  final TextEditingController _commentCtrl = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<CommentsBloc>(context).add(
+      CommentsEvent.fetchRequested(
+        commentableType: 'Action',
+        commentableId: widget.action.id,
+      ),
+    );
+  }
 
   void _openReportSheet() => _openBottomSheet(
     context,
@@ -59,39 +72,25 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
                 _titleBlock(widget.action),
 
                 // Composer + attachments icon
-                Padding(
-                  padding: const EdgeInsets.only(top: 14),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _roundedField(
-                          child: TextField(
-                            controller: _commentCtrl,
-                            decoration: InputDecoration(
-                              hintText: 'Ecrire  un commentaire',
-                              border: InputBorder.none,
-                              hintStyle: GoogleFonts.poppins(
-                                color: AppColors.sub,
-                              ),
-                              isCollapsed: true,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 14,
-                                vertical: 14,
-                              ),
+                BlocBuilder<CommentsBloc, CommentsState>(
+                  builder: (context, state) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 14),
+                      child: CommentFieldWidget(
+                        isLoading: state.isSubmitting,
+                        onSend: (String text, File? file) {
+                          BlocProvider.of<CommentsBloc>(context).add(
+                            CommentsEvent.addCommentRequested(
+                              commentableType: 'Action',
+                              commentableId: widget.action.id,
+                              attachmentPath: file?.path,
+                              body: text,
                             ),
-                            style: GoogleFonts.poppins(),
-                          ),
-                        ),
+                          );
+                        },
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: _roundIcon(
-                          Icons.attach_file_rounded,
-                          onTap: () {},
-                        ),
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
 
                 // Comments header + tiny list
@@ -105,33 +104,53 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 8),
-                        child: _tinyCounter(2),
+                        child: _tinyCounter(widget.action.commentsCount ?? 0),
                       ),
                       const Spacer(),
-                      InkWell(
-                        onTap: () {
-                          context.router.push(const CommentsRoute());
-                        },
-                        child: Text(
-                          'Voir tout',
-                          style: GoogleFonts.poppins(
-                            color: AppColors.blue,
-                            fontWeight: FontWeight.w600,
+                      if ((widget.action.commentsCount ?? 0) > 3)
+                        InkWell(
+                          onTap: () {
+                            context.router.push(
+                              CommentsRoute(
+                                commentableType: 'Action',
+                                commentableId: widget.action.id,
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Voir tout',
+                            style: GoogleFonts.poppins(
+                              color: AppColors.blue,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),
-                commentLine(
-                  'Beatrice BOSSOU',
-                  'Il y a 30 min',
-                  'Les documents fournies ne respectent par les normes internationnales',
-                ),
-                commentLine(
-                  'Beatrice BOSSOU',
-                  'Il y a 30 min',
-                  'Les documents fournies ne respectent par les normes internationnales',
+
+                BlocBuilder<CommentsBloc, CommentsState>(
+                  builder: (context, state) {
+                    if (state.isLoading) {
+                      return const Center(child: LoadingWidget());
+                    }
+                    if (state.items.isEmpty) {
+                      return EmptyWidget.noComments();
+                    }
+                    return Column(
+                      children: [
+                        ...state.items
+                            .take(3)
+                            .map(
+                              (comment) => commentLine(
+                                comment.userName ?? 'Inconnu',
+                                comment.humanReadableDate,
+                                comment.body,
+                              ),
+                            ),
+                      ],
+                    );
+                  },
                 ),
 
                 // Section: Operationnalisation / Planning
@@ -404,24 +423,6 @@ Widget _roundedField({required Widget child}) => Container(
     border: Border.all(color: const Color(0xFFE5EAF0)),
   ),
   child: child,
-);
-
-Widget _roundIcon(
-  IconData ic, {
-  Color bg = const Color(0xFFEFF2FF),
-  Color icColor = AppColors.dark,
-  VoidCallback? onTap,
-}) => Material(
-  color: bg,
-  shape: const CircleBorder(),
-  child: InkWell(
-    customBorder: const CircleBorder(),
-    onTap: onTap,
-    child: Padding(
-      padding: const EdgeInsets.all(10),
-      child: Icon(ic, color: icColor, size: 20),
-    ),
-  ),
 );
 
 Widget _tinyCounter(int n) => Container(
