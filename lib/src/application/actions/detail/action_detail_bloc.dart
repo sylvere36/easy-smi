@@ -43,7 +43,6 @@ class ActionDetailBloc extends Bloc<ActionDetailEvent, ActionDetailState> {
         (l) =>
             emit(state.copyWith(isLoading: false, resultOption: some(left(l)))),
         (message) {
-          // Keep current item; success message can be handled by UI via a separate side effect if needed
           emit(state.copyWith(isLoading: false));
         },
       );

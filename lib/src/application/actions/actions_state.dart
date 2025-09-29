@@ -5,6 +5,7 @@ abstract class ActionsState with _$ActionsState {
   const factory ActionsState({
     required bool isLoading,
     required List<ActionItem>? items,
+    required List<ActionItem>? initialItems,
     required List<ActionItem>? originItems,
     required Option<Either<GlobalFailure, List<ActionItem>>> resultOption,
   }) = _ActionsState;
@@ -12,6 +13,7 @@ abstract class ActionsState with _$ActionsState {
   factory ActionsState.initial() => ActionsState(
     isLoading: false,
     items: null,
+    initialItems: null,
     originItems: null,
     resultOption: none(),
   );

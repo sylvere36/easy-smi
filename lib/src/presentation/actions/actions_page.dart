@@ -1,11 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../application/actions/actions_bloc.dart';
 import '../_commons/theming/app_color.dart';
+import '../_commons_widgets/empty_widget.dart';
 import '../_commons_widgets/my_scaffold.dart';
+import '../_commons_widgets/search_field_widget.dart';
 import '../_shimmers/action_card_shimmer.dart';
 import 'widget/action_card.dart';
 
@@ -35,43 +36,36 @@ class _ActionsPageState extends State<ActionsPage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 12, bottom: 20),
-                  child: TextField(
+                  child: SearchFieldWidget(
                     controller: _search,
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF0E1117),
-                    ),
-                    decoration: InputDecoration(
-                      hintText: 'Recherche',
-                      contentPadding: const EdgeInsets.only(top: 12, left: 12),
-                      filled: true,
-                      fillColor: const Color(0xFFF2F4F7),
-                      suffixIcon: const Icon(
-                        Icons.search_rounded,
-                        color: Color(0xFF9AA0A6),
-                      ),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      hintStyle: GoogleFonts.nunito(
-                        color: const Color(0xFF9AA0A6),
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
-                      ),
-                      isCollapsed: true,
-                    ),
+                    onChanged: (value) {
+                      context.read<ActionsBloc>().add(
+                        ActionsEvent.searchRequested(query: value),
+                      );
+                    },
+                    onClear: () {
+                      _search.text = '';
+                      context.read<ActionsBloc>().add(
+                        const ActionsEvent.searchRequested(query: ''),
+                      );
+                    },
                   ),
                 ),
 
                 Expanded(
                   child: SingleChildScrollView(
                     child: state.items == null
-                        ? const ActionCardShimmerList()
+                        ? const ActionCardShimmerList(count: 7)
                         : Column(
                             spacing: 15,
                             children: [
+                              if (_search.text.isNotEmpty &&
+                                  state.items!.isEmpty)
+                                EmptyWidget.noSearch(),
+
+                              if (_search.text.isEmpty && state.items!.isEmpty)
+                                EmptyWidget.noActions(),
+
                               ...state.items!.map(
                                 (action) => ActionCard(
                                   badgeText: action.echeanceText ?? '',

@@ -15,7 +15,14 @@ class ActionsBloc extends Bloc<ActionsEvent, ActionsState> {
 
   ActionsBloc({required this.repository}) : super(ActionsState.initial()) {
     on<_Fetch>((event, emit) async {
-      emit(state.copyWith(isLoading: true, resultOption: none(), items: null));
+      emit(
+        state.copyWith(
+          isLoading: true,
+          resultOption: none(),
+          items: null,
+          initialItems: null,
+        ),
+      );
       final res = await repository.getActions();
       res.fold(
         (l) =>
@@ -24,6 +31,7 @@ class ActionsBloc extends Bloc<ActionsEvent, ActionsState> {
           state.copyWith(
             isLoading: false,
             items: items,
+            initialItems: items,
             resultOption: some(right(items)),
           ),
         ),
@@ -59,9 +67,27 @@ class ActionsBloc extends Bloc<ActionsEvent, ActionsState> {
           isLoading: false,
           resultOption: none(),
           items: [],
+          initialItems: [],
           originItems: null,
         ),
       );
+    });
+
+    on<_SearchRequested>((event, emit) async {
+      final query = event.query.trim().toLowerCase();
+      if (query.isEmpty) {
+        // Reset to initial items when query is empty
+        emit(state.copyWith(items: state.initialItems));
+      } else if (state.initialItems != null) {
+        // Filter initial items based on query
+        final filteredItems = state.initialItems!.where((item) {
+          return item.actionName.toLowerCase().contains(query) ||
+              (item.summary?.toLowerCase().contains(query) ?? false) ||
+              (item.reference?.toLowerCase().contains(query) ?? false) ||
+              (item.justification?.toLowerCase().contains(query) ?? false);
+        }).toList();
+        emit(state.copyWith(items: filteredItems));
+      }
     });
   }
 }

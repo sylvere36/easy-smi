@@ -70,4 +70,42 @@ class ActionTask {
     'aspects_to_check': aspectsToCheck,
     'action': action?.toJson(),
   };
+
+  bool get isInProgress => status == 'inProgress';
+  bool get isLate {
+    if (endDate == null) return false;
+    final end = DateTime.tryParse(endDate!);
+    if (end == null) return false;
+    final now = DateTime.now();
+    return now.isAfter(end) && status == 'inProgress';
+  }
+
+  bool get isDue => status == 'inProgress' && endDate != null;
+
+  bool get crossed => status == 'completed';
+
+  String get dueLabel {
+    if (endDate == null) return 'Aucune date limite';
+    final end = DateTime.tryParse(endDate!);
+    if (end == null) return 'Date invalide';
+    final now = DateTime.now();
+    final difference = end.difference(now).inDays;
+
+    if (difference > 1) {
+      return 'Échéance dans $difference jours';
+    } else if (difference == 1) {
+      return 'Échéance demain';
+    } else if (difference == 0) {
+      return 'Échéance aujourd\'hui';
+    } else {
+      final overdueDays = -difference;
+      return overdueDays == 1
+          ? 'En retard d\'1 jour'
+          : 'En retard de $overdueDays jours';
+    }
+  }
+
+  bool hasFileAttachment() {
+    return document != null && document!.isNotEmpty;
+  }
 }

@@ -111,7 +111,7 @@ class ActionRemoteDataSource implements IActionRemoteDataSource {
   @override
   Future<List<ActionTask>> getTasks({required int id}) async {
     try {
-      final String request = '/action/tasks/$id';
+      final String request = '/action/action/tasks/$id';
       final Response response = await httpClient.getRequest(request);
       if (response.statusCode == 200 || response.statusCode == 201) {
         // API might return either a raw list or an object with data: []

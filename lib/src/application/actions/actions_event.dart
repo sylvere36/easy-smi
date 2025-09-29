@@ -8,4 +8,6 @@ class ActionsEvent with _$ActionsEvent {
     required String originType,
     required int originId,
   }) = _FetchByOrigin;
+  const factory ActionsEvent.searchRequested({required String query}) =
+      _SearchRequested;
 }

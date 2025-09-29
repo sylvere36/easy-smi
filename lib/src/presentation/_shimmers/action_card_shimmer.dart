@@ -200,9 +200,13 @@ class ActionCardShimmerList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ShimmerSliverList(
-      count: count,
-      builder: (_) => ActionCardShimmer(compact: compact, intensity: intensity),
+    return ListView.separated(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: count,
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      itemBuilder: (context, index) =>
+          ActionCardShimmer(compact: compact, intensity: intensity),
     );
   }
 }
