@@ -325,7 +325,9 @@ class _ReviewsTab extends StatelessWidget {
         // input
         GestureDetector(
           onTap: () {
-            context.router.push(const CommentsRoute());
+            context.router.push(
+              CommentsRoute(commentableType: 'Formation', commentableId: '0'),
+            );
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -350,7 +352,12 @@ class _ReviewsTab extends StatelessWidget {
             const Spacer(),
             TextButton(
               onPressed: () {
-                context.router.push(const CommentsRoute());
+                context.router.push(
+                  CommentsRoute(
+                    commentableType: 'Formation',
+                    commentableId: '0',
+                  ),
+                );
               },
               child: Text(
                 'Voir tout',

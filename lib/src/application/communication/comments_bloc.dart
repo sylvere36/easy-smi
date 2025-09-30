@@ -61,10 +61,15 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
           ),
           (comment) => state.copyWith(
             isSubmitting: false,
-            // If it's a reply (parentId not null), insert into parent's children; else prepend to list.
             items: _insertNewComment(state.items, comment, event.parentId),
             submitResultOption: some(right(comment)),
           ),
+        ),
+      );
+      add(
+        CommentsEvent.fetchRequested(
+          commentableType: event.commentableType,
+          commentableId: event.commentableId,
         ),
       );
     });

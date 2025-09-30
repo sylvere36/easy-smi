@@ -4,6 +4,7 @@ import '../../domain/_commons/global_failure.dart';
 import '../../domain/_commons/pagination.dart';
 import '../../domain/audit/i_audit_repository.dart';
 import '../../domain/audit/models/audit_item.dart';
+import '../../domain/audit/models/audit_document_request.dart';
 import '../_commons/exceptions.dart';
 import '../_commons/network/network_info.dart';
 import 'data_sources/audit_remote_data_source.dart';
@@ -115,6 +116,25 @@ class AuditRepository implements IAuditRepository {
           status: status,
         );
         return right(message);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
+
+  @override
+  Future<Either<GlobalFailure, List<AuditDocumentRequest>>>
+  getAuditDocumentRequests({required int id}) async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        final items = await remoteDataSource.getAuditDocumentRequests(id: id);
+        return right(items);
       } on UnauthorizedException catch (e) {
         return left(GlobalFailure.unauthorized(e.errorText));
       } on ServerException catch (e) {

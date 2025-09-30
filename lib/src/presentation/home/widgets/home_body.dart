@@ -6,11 +6,13 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../gen/assets.gen.dart';
 import '../../../application/actions/actions_bloc.dart';
+import '../../../application/audit/audits_bloc.dart';
 import '../../../application/events/detail/event_detail_bloc.dart';
 import '../../../application/events/events_bloc.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
 import '../../_shimmers/action_card_shimmer.dart';
+import '../../_shimmers/card_shimmer.dart';
 import '../../actions/widget/action_card.dart';
 import '../../audits/widgets/audits_widget.dart';
 import '../../events/widgets/event_card.dart';
@@ -180,11 +182,7 @@ class _HomeBodyState extends State<HomeBody> {
                       },
                     ),
               children: state.items == null
-                  ? const [
-                      ActionCardShimmer(compact: true),
-                      ActionCardShimmer(compact: true),
-                      ActionCardShimmer(compact: true),
-                    ]
+                  ? List.generate(3, (index) => const CardShimmer())
                   : [
                       ...state.items!
                           .take(3)
@@ -235,30 +233,33 @@ class _HomeBodyState extends State<HomeBody> {
             ],
           ),
 
-          _Section(
-            icon: Assets.svgs.jamOrange,
-            title: 'Audits',
-            trailing: _SeeAll(
-              onTap: () {
-                context.router.push(const AuditsRoute());
-              },
-            ),
-            children: const [
-              AuditCard(
-                tag: 'Interne',
-                status: 'En cours',
-                title:
-                    'Audits sur les activités internes liées aux dechargements des marchandises',
-                process: 'Marketing international et developpment',
-              ),
-              AuditCard(
-                tag: 'Externe',
-                status: 'En cours',
-                title:
-                    'Audits sur les activités internes liées aux dechargements des marchandises',
-                process: 'Marketing international et developpment',
-              ),
-            ],
+          BlocBuilder<AuditsBloc, AuditsState>(
+            builder: (context, state) {
+              return _Section(
+                icon: Assets.svgs.jamOrange,
+                title: 'Audits',
+                trailing: _SeeAll(
+                  onTap: () {
+                    context.router.push(const AuditsRoute());
+                  },
+                ),
+                children: state.items == null
+                    ? List.generate(3, (index) => const CardShimmer())
+                    : [
+                        ...state.items!
+                            .take(2)
+                            .map(
+                              (audit) => AuditCard(
+                                audit: audit,
+                                tag: audit.typeHumanReadable,
+                                status: audit.statusHumanReadable,
+                                title: audit.label,
+                                process: audit.process?.title ?? 'N/A',
+                              ),
+                            ),
+                      ],
+              );
+            },
           ),
 
           _Section(

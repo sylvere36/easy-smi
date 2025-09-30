@@ -130,6 +130,38 @@ bool inProgress(String date) {
   return now.isBefore(startDate);
 }
 
+String originHumanReadable(String origin) {
+  switch (origin) {
+    case 'Audit':
+      return 'Audit';
+    case 'Enjeux':
+      return 'Enjeux';
+    case 'Action':
+      return 'Action';
+    case 'interested_parts':
+      return 'Parties intéressées';
+    default:
+      return 'Inconnu';
+  }
+}
+
+String actionTypeHumanReadable(String type) {
+  switch (type) {
+    case 'improvement':
+      return 'Amélioration';
+    case 'corrective':
+      return 'Corrective';
+    case 'preventive':
+      return 'Préventive';
+    case 'curative':
+      return 'Curative';
+    case 'recurring':
+      return 'Récurrente';
+    default:
+      return type;
+  }
+}
+
 class ActionItem {
   final int id;
   final String actionName;
@@ -170,6 +202,12 @@ class ActionItem {
 
   Color get badgeColor =>
       actionStatus != null ? actionStatusColor(actionStatus!) : Colors.grey;
+
+  String get humanReadableOrigin => originHumanReadable(originType ?? '');
+
+  String get humanReadableJustificationType => justificationType != null
+      ? actionTypeHumanReadable(justificationType!)
+      : '';
 
   const ActionItem({
     required this.id,

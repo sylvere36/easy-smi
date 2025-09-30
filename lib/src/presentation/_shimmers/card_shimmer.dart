@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'base_shimmer.dart';
 
 /// Shimmer placeholder replicating the layout of an ActionCard using base primitives.
-class ActionCardShimmer extends StatelessWidget {
+class CardShimmer extends StatelessWidget {
   final bool compact;
   final double intensity; // 0..1 highlight strength
   final bool square;
   final bool ghostHints; // show faint unreadable text/icon silhouettes
-  const ActionCardShimmer({
+  const CardShimmer({
     super.key,
     this.compact = false,
     this.intensity = .45,
@@ -187,11 +187,11 @@ class _CardSkeleton extends StatelessWidget {
 }
 
 /// Convenience vertical list of shimmering action cards
-class ActionCardShimmerList extends StatelessWidget {
+class CardShimmerList extends StatelessWidget {
   final int count;
   final bool compact;
   final double intensity;
-  const ActionCardShimmerList({
+  const CardShimmerList({
     super.key,
     this.count = 3,
     this.compact = false,
@@ -206,7 +206,7 @@ class ActionCardShimmerList extends StatelessWidget {
       itemCount: count,
       separatorBuilder: (context, index) => const SizedBox(height: 12),
       itemBuilder: (context, index) =>
-          ActionCardShimmer(compact: compact, intensity: intensity),
+          CardShimmer(compact: compact, intensity: intensity),
     );
   }
 }

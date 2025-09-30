@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../domain/_commons/global_failure.dart';
 import '../../../domain/audit/i_audit_repository.dart';
+import '../../../domain/audit/models/audit_document_request.dart';
 import '../../../domain/audit/models/audit_item.dart';
 
 part 'audit_detail_bloc.freezed.dart';
@@ -58,6 +59,26 @@ class AuditDetailBloc extends Bloc<AuditDetailEvent, AuditDetailState> {
             ),
           );
         },
+      );
+    });
+
+    on<_DocumentsRequested>((event, emit) async {
+      emit(
+        state.copyWith(isLoadingDocuments: true, documentsResultOption: none()),
+      );
+      final res = await repository.getAuditDocumentRequests(id: event.id);
+      emit(
+        res.fold(
+          (l) => state.copyWith(
+            isLoadingDocuments: false,
+            documentsResultOption: some(left(l)),
+          ),
+          (items) => state.copyWith(
+            isLoadingDocuments: false,
+            documentRequests: items,
+            documentsResultOption: some(right(items)),
+          ),
+        ),
       );
     });
   }

@@ -9,4 +9,6 @@ class AuditDetailEvent with _$AuditDetailEvent {
     required int id,
     required String status,
   }) = _ChangeStatus;
+  const factory AuditDetailEvent.documentsRequested({required int id}) =
+      _DocumentsRequested;
 }

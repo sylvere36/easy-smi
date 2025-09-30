@@ -237,7 +237,12 @@ class _SensibilisationDetailBodyState extends State<SensibilisationDetailBody> {
                   const Spacer(),
                   TextButton(
                     onPressed: () {
-                      context.router.push(const CommentsRoute());
+                      context.router.push(
+                        CommentsRoute(
+                          commentableType: 'Sensibilisation',
+                          commentableId: '0',
+                        ),
+                      );
                     },
                     child: Text(
                       'Voir tout',

@@ -55,13 +55,14 @@ extension AuditDetailEventPatterns on AuditDetailEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _FetchRequested value)?  fetchRequested,TResult Function( _Reset value)?  reset,TResult Function( _ChangeStatus value)?  changeStatus,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _FetchRequested value)?  fetchRequested,TResult Function( _Reset value)?  reset,TResult Function( _ChangeStatus value)?  changeStatus,TResult Function( _DocumentsRequested value)?  documentsRequested,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested(_that);case _Reset() when reset != null:
 return reset(_that);case _ChangeStatus() when changeStatus != null:
-return changeStatus(_that);case _:
+return changeStatus(_that);case _DocumentsRequested() when documentsRequested != null:
+return documentsRequested(_that);case _:
   return orElse();
 
 }
@@ -79,13 +80,14 @@ return changeStatus(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _FetchRequested value)  fetchRequested,required TResult Function( _Reset value)  reset,required TResult Function( _ChangeStatus value)  changeStatus,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _FetchRequested value)  fetchRequested,required TResult Function( _Reset value)  reset,required TResult Function( _ChangeStatus value)  changeStatus,required TResult Function( _DocumentsRequested value)  documentsRequested,}){
 final _that = this;
 switch (_that) {
 case _FetchRequested():
 return fetchRequested(_that);case _Reset():
 return reset(_that);case _ChangeStatus():
-return changeStatus(_that);case _:
+return changeStatus(_that);case _DocumentsRequested():
+return documentsRequested(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -102,13 +104,14 @@ return changeStatus(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _FetchRequested value)?  fetchRequested,TResult? Function( _Reset value)?  reset,TResult? Function( _ChangeStatus value)?  changeStatus,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _FetchRequested value)?  fetchRequested,TResult? Function( _Reset value)?  reset,TResult? Function( _ChangeStatus value)?  changeStatus,TResult? Function( _DocumentsRequested value)?  documentsRequested,}){
 final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested(_that);case _Reset() when reset != null:
 return reset(_that);case _ChangeStatus() when changeStatus != null:
-return changeStatus(_that);case _:
+return changeStatus(_that);case _DocumentsRequested() when documentsRequested != null:
+return documentsRequested(_that);case _:
   return null;
 
 }
@@ -125,12 +128,13 @@ return changeStatus(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int id)?  fetchRequested,TResult Function()?  reset,TResult Function( int id,  String status)?  changeStatus,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int id)?  fetchRequested,TResult Function()?  reset,TResult Function( int id,  String status)?  changeStatus,TResult Function( int id)?  documentsRequested,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested(_that.id);case _Reset() when reset != null:
 return reset();case _ChangeStatus() when changeStatus != null:
-return changeStatus(_that.id,_that.status);case _:
+return changeStatus(_that.id,_that.status);case _DocumentsRequested() when documentsRequested != null:
+return documentsRequested(_that.id);case _:
   return orElse();
 
 }
@@ -148,12 +152,13 @@ return changeStatus(_that.id,_that.status);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int id)  fetchRequested,required TResult Function()  reset,required TResult Function( int id,  String status)  changeStatus,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int id)  fetchRequested,required TResult Function()  reset,required TResult Function( int id,  String status)  changeStatus,required TResult Function( int id)  documentsRequested,}) {final _that = this;
 switch (_that) {
 case _FetchRequested():
 return fetchRequested(_that.id);case _Reset():
 return reset();case _ChangeStatus():
-return changeStatus(_that.id,_that.status);case _:
+return changeStatus(_that.id,_that.status);case _DocumentsRequested():
+return documentsRequested(_that.id);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -170,12 +175,13 @@ return changeStatus(_that.id,_that.status);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int id)?  fetchRequested,TResult? Function()?  reset,TResult? Function( int id,  String status)?  changeStatus,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int id)?  fetchRequested,TResult? Function()?  reset,TResult? Function( int id,  String status)?  changeStatus,TResult? Function( int id)?  documentsRequested,}) {final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested(_that.id);case _Reset() when reset != null:
 return reset();case _ChangeStatus() when changeStatus != null:
-return changeStatus(_that.id,_that.status);case _:
+return changeStatus(_that.id,_that.status);case _DocumentsRequested() when documentsRequested != null:
+return documentsRequested(_that.id);case _:
   return null;
 
 }
@@ -350,9 +356,75 @@ as String,
 }
 
 /// @nodoc
+
+
+class _DocumentsRequested implements AuditDetailEvent {
+  const _DocumentsRequested({required this.id});
+  
+
+ final  int id;
+
+/// Create a copy of AuditDetailEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$DocumentsRequestedCopyWith<_DocumentsRequested> get copyWith => __$DocumentsRequestedCopyWithImpl<_DocumentsRequested>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DocumentsRequested&&(identical(other.id, id) || other.id == id));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id);
+
+@override
+String toString() {
+  return 'AuditDetailEvent.documentsRequested(id: $id)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$DocumentsRequestedCopyWith<$Res> implements $AuditDetailEventCopyWith<$Res> {
+  factory _$DocumentsRequestedCopyWith(_DocumentsRequested value, $Res Function(_DocumentsRequested) _then) = __$DocumentsRequestedCopyWithImpl;
+@useResult
+$Res call({
+ int id
+});
+
+
+
+
+}
+/// @nodoc
+class __$DocumentsRequestedCopyWithImpl<$Res>
+    implements _$DocumentsRequestedCopyWith<$Res> {
+  __$DocumentsRequestedCopyWithImpl(this._self, this._then);
+
+  final _DocumentsRequested _self;
+  final $Res Function(_DocumentsRequested) _then;
+
+/// Create a copy of AuditDetailEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? id = null,}) {
+  return _then(_DocumentsRequested(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
+/// @nodoc
 mixin _$AuditDetailState {
 
- bool get isLoading; AuditItem? get item; Option<Either<GlobalFailure, AuditItem>> get resultOption;
+ bool get isLoading; AuditItem? get item; Option<Either<GlobalFailure, AuditItem>> get resultOption; bool get isLoadingDocuments; List<AuditDocumentRequest> get documentRequests; Option<Either<GlobalFailure, List<AuditDocumentRequest>>> get documentsResultOption;
 /// Create a copy of AuditDetailState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -363,16 +435,16 @@ $AuditDetailStateCopyWith<AuditDetailState> get copyWith => _$AuditDetailStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuditDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuditDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.isLoadingDocuments, isLoadingDocuments) || other.isLoadingDocuments == isLoadingDocuments)&&const DeepCollectionEquality().equals(other.documentRequests, documentRequests)&&(identical(other.documentsResultOption, documentsResultOption) || other.documentsResultOption == documentsResultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,item,resultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,item,resultOption,isLoadingDocuments,const DeepCollectionEquality().hash(documentRequests),documentsResultOption);
 
 @override
 String toString() {
-  return 'AuditDetailState(isLoading: $isLoading, item: $item, resultOption: $resultOption)';
+  return 'AuditDetailState(isLoading: $isLoading, item: $item, resultOption: $resultOption, isLoadingDocuments: $isLoadingDocuments, documentRequests: $documentRequests, documentsResultOption: $documentsResultOption)';
 }
 
 
@@ -383,7 +455,7 @@ abstract mixin class $AuditDetailStateCopyWith<$Res>  {
   factory $AuditDetailStateCopyWith(AuditDetailState value, $Res Function(AuditDetailState) _then) = _$AuditDetailStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, AuditItem? item, Option<Either<GlobalFailure, AuditItem>> resultOption
+ bool isLoading, AuditItem? item, Option<Either<GlobalFailure, AuditItem>> resultOption, bool isLoadingDocuments, List<AuditDocumentRequest> documentRequests, Option<Either<GlobalFailure, List<AuditDocumentRequest>>> documentsResultOption
 });
 
 
@@ -400,12 +472,15 @@ class _$AuditDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of AuditDetailState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? item = freezed,Object? resultOption = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? item = freezed,Object? resultOption = null,Object? isLoadingDocuments = null,Object? documentRequests = null,Object? documentsResultOption = null,}) {
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,item: freezed == item ? _self.item : item // ignore: cast_nullable_to_non_nullable
 as AuditItem?,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
-as Option<Either<GlobalFailure, AuditItem>>,
+as Option<Either<GlobalFailure, AuditItem>>,isLoadingDocuments: null == isLoadingDocuments ? _self.isLoadingDocuments : isLoadingDocuments // ignore: cast_nullable_to_non_nullable
+as bool,documentRequests: null == documentRequests ? _self.documentRequests : documentRequests // ignore: cast_nullable_to_non_nullable
+as List<AuditDocumentRequest>,documentsResultOption: null == documentsResultOption ? _self.documentsResultOption : documentsResultOption // ignore: cast_nullable_to_non_nullable
+as Option<Either<GlobalFailure, List<AuditDocumentRequest>>>,
   ));
 }
 
@@ -490,10 +565,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  AuditItem? item,  Option<Either<GlobalFailure, AuditItem>> resultOption)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  AuditItem? item,  Option<Either<GlobalFailure, AuditItem>> resultOption,  bool isLoadingDocuments,  List<AuditDocumentRequest> documentRequests,  Option<Either<GlobalFailure, List<AuditDocumentRequest>>> documentsResultOption)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuditDetailState() when $default != null:
-return $default(_that.isLoading,_that.item,_that.resultOption);case _:
+return $default(_that.isLoading,_that.item,_that.resultOption,_that.isLoadingDocuments,_that.documentRequests,_that.documentsResultOption);case _:
   return orElse();
 
 }
@@ -511,10 +586,10 @@ return $default(_that.isLoading,_that.item,_that.resultOption);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  AuditItem? item,  Option<Either<GlobalFailure, AuditItem>> resultOption)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  AuditItem? item,  Option<Either<GlobalFailure, AuditItem>> resultOption,  bool isLoadingDocuments,  List<AuditDocumentRequest> documentRequests,  Option<Either<GlobalFailure, List<AuditDocumentRequest>>> documentsResultOption)  $default,) {final _that = this;
 switch (_that) {
 case _AuditDetailState():
-return $default(_that.isLoading,_that.item,_that.resultOption);case _:
+return $default(_that.isLoading,_that.item,_that.resultOption,_that.isLoadingDocuments,_that.documentRequests,_that.documentsResultOption);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -531,10 +606,10 @@ return $default(_that.isLoading,_that.item,_that.resultOption);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  AuditItem? item,  Option<Either<GlobalFailure, AuditItem>> resultOption)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  AuditItem? item,  Option<Either<GlobalFailure, AuditItem>> resultOption,  bool isLoadingDocuments,  List<AuditDocumentRequest> documentRequests,  Option<Either<GlobalFailure, List<AuditDocumentRequest>>> documentsResultOption)?  $default,) {final _that = this;
 switch (_that) {
 case _AuditDetailState() when $default != null:
-return $default(_that.isLoading,_that.item,_that.resultOption);case _:
+return $default(_that.isLoading,_that.item,_that.resultOption,_that.isLoadingDocuments,_that.documentRequests,_that.documentsResultOption);case _:
   return null;
 
 }
@@ -546,12 +621,21 @@ return $default(_that.isLoading,_that.item,_that.resultOption);case _:
 
 
 class _AuditDetailState implements AuditDetailState {
-  const _AuditDetailState({required this.isLoading, required this.item, required this.resultOption});
+  const _AuditDetailState({required this.isLoading, required this.item, required this.resultOption, this.isLoadingDocuments = false, final  List<AuditDocumentRequest> documentRequests = const [], required this.documentsResultOption}): _documentRequests = documentRequests;
   
 
 @override final  bool isLoading;
 @override final  AuditItem? item;
 @override final  Option<Either<GlobalFailure, AuditItem>> resultOption;
+@override@JsonKey() final  bool isLoadingDocuments;
+ final  List<AuditDocumentRequest> _documentRequests;
+@override@JsonKey() List<AuditDocumentRequest> get documentRequests {
+  if (_documentRequests is EqualUnmodifiableListView) return _documentRequests;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_documentRequests);
+}
+
+@override final  Option<Either<GlobalFailure, List<AuditDocumentRequest>>> documentsResultOption;
 
 /// Create a copy of AuditDetailState
 /// with the given fields replaced by the non-null parameter values.
@@ -563,16 +647,16 @@ _$AuditDetailStateCopyWith<_AuditDetailState> get copyWith => __$AuditDetailStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuditDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuditDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.isLoadingDocuments, isLoadingDocuments) || other.isLoadingDocuments == isLoadingDocuments)&&const DeepCollectionEquality().equals(other._documentRequests, _documentRequests)&&(identical(other.documentsResultOption, documentsResultOption) || other.documentsResultOption == documentsResultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,item,resultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,item,resultOption,isLoadingDocuments,const DeepCollectionEquality().hash(_documentRequests),documentsResultOption);
 
 @override
 String toString() {
-  return 'AuditDetailState(isLoading: $isLoading, item: $item, resultOption: $resultOption)';
+  return 'AuditDetailState(isLoading: $isLoading, item: $item, resultOption: $resultOption, isLoadingDocuments: $isLoadingDocuments, documentRequests: $documentRequests, documentsResultOption: $documentsResultOption)';
 }
 
 
@@ -583,7 +667,7 @@ abstract mixin class _$AuditDetailStateCopyWith<$Res> implements $AuditDetailSta
   factory _$AuditDetailStateCopyWith(_AuditDetailState value, $Res Function(_AuditDetailState) _then) = __$AuditDetailStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, AuditItem? item, Option<Either<GlobalFailure, AuditItem>> resultOption
+ bool isLoading, AuditItem? item, Option<Either<GlobalFailure, AuditItem>> resultOption, bool isLoadingDocuments, List<AuditDocumentRequest> documentRequests, Option<Either<GlobalFailure, List<AuditDocumentRequest>>> documentsResultOption
 });
 
 
@@ -600,12 +684,15 @@ class __$AuditDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of AuditDetailState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? item = freezed,Object? resultOption = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? item = freezed,Object? resultOption = null,Object? isLoadingDocuments = null,Object? documentRequests = null,Object? documentsResultOption = null,}) {
   return _then(_AuditDetailState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,item: freezed == item ? _self.item : item // ignore: cast_nullable_to_non_nullable
 as AuditItem?,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
-as Option<Either<GlobalFailure, AuditItem>>,
+as Option<Either<GlobalFailure, AuditItem>>,isLoadingDocuments: null == isLoadingDocuments ? _self.isLoadingDocuments : isLoadingDocuments // ignore: cast_nullable_to_non_nullable
+as bool,documentRequests: null == documentRequests ? _self._documentRequests : documentRequests // ignore: cast_nullable_to_non_nullable
+as List<AuditDocumentRequest>,documentsResultOption: null == documentsResultOption ? _self.documentsResultOption : documentsResultOption // ignore: cast_nullable_to_non_nullable
+as Option<Either<GlobalFailure, List<AuditDocumentRequest>>>,
   ));
 }
 

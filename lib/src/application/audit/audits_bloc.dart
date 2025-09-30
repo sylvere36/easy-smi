@@ -21,7 +21,7 @@ class AuditsBloc extends Bloc<AuditsEvent, AuditsState> {
         state.copyWith(
           isLoading: true,
           resultOption: none(),
-          items: [],
+          items: null,
           currentPage: 1,
           canLoadMore: true,
           mode: AuditListMode.all,
@@ -29,8 +29,13 @@ class AuditsBloc extends Bloc<AuditsEvent, AuditsState> {
       );
       final res = await repository.getAudits(page: 1, perPage: state.perPage);
       res.fold(
-        (l) =>
-            emit(state.copyWith(isLoading: false, resultOption: some(left(l)))),
+        (l) => emit(
+          state.copyWith(
+            isLoading: false,
+            items: [],
+            resultOption: some(left(l)),
+          ),
+        ),
         (paginated) {
           final canLoadMore =
               paginated.pagination.currentPage < paginated.pagination.lastPage;
@@ -73,7 +78,7 @@ class AuditsBloc extends Bloc<AuditsEvent, AuditsState> {
         (l) =>
             emit(state.copyWith(isLoading: false, resultOption: some(left(l)))),
         (paginated) {
-          final newItems = List<AuditItem>.from(state.items)
+          final newItems = List<AuditItem>.from(state.items ?? [])
             ..addAll(paginated.items);
           final canLoadMore =
               paginated.pagination.currentPage < paginated.pagination.lastPage;
