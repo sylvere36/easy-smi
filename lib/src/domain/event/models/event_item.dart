@@ -39,7 +39,7 @@ EventStatus _statusFromString(String? raw) {
     case 'inProgress_Revision':
       return EventStatus.inProgressRevision;
     default:
-      return EventStatus.unknown;
+      return EventStatus.draft;
   }
 }
 
@@ -340,5 +340,10 @@ class EventItem {
   String get humanStatus => _humanStatus(status);
   String get humanType => _humanType(type);
   static String humanEventType(EventType eventType) => _humanType(eventType);
-  static String humanEventGravity(EventGravity eventGravity) => _humanGravity(eventGravity);
+  static String eventTypeToString(EventType eventType) =>
+      _typeToString(eventType);
+  static String humanEventGravity(EventGravity eventGravity) =>
+      _humanGravity(eventGravity);
+  static String eventGravityToString(EventGravity eventGravity) =>
+      _gravityToString(eventGravity);
 }

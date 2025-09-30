@@ -11,6 +11,13 @@ import '../../_commons/throw_error.dart';
 
 abstract class IActionRemoteDataSource {
   Future<List<ActionItem>> getActions();
+  Future<ActionItem> addImmediateActions({
+    required String name,
+    required String type,
+    required int originId,
+    String? justificationType,
+    String? justification,
+  });
   Future<List<ActionItem>> getActionsByOrigin({
     required String originType,
     required int originId,
@@ -227,6 +234,50 @@ class ActionRemoteDataSource implements IActionRemoteDataSource {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<ActionItem> addImmediateActions({
+    required String name,
+    required String type,
+    required int originId,
+    String? justificationType,
+    String? justification,
+  }) async {
+    try {
+      const String request = '/action/action';
+      final body = <String, dynamic>{
+        'action_name': name,
+        'action_type': type,
+        'origin_type': 'END',
+        'origin_id': originId,
+        'justification_type': justificationType,
+        'justification': justification,
+      };
+
+      final Response response = await httpClient.postRequest(
+        request,
+        body: body,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final bool success = data['success'] == true;
+        if (!success) {
+          final String message = (data['message'] as String?) ?? '';
+          throw ServerException(message);
+        }
+
+        final resultData = data['data'] as Map<String, dynamic>;
+
+        return ActionItem.fromJson(resultData);
       } else {
         throw ServerException(errorThrow(response));
       }

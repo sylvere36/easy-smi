@@ -1,4 +1,10 @@
 String errorThrow(dynamic response) {
+  if (response.data['error'] != null) {
+    return response.data['error'];
+  }
+  if (response.data['type'] == null) {
+    return response.data;
+  }
   switch (response.data['type']) {
     case 'authentication_error':
     case 'server_error':

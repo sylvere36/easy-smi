@@ -78,7 +78,70 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     });
 
     on<_Reset>((event, emit) async {
-      emit(EventsState.initial());      
+      emit(EventsState.initial());
+    });
+
+    on<_AddEvent>((event, emit) async {
+      emit(
+        state.copyWith(
+          isLoading: true,
+          hasAddEvent: false,
+          errorMessage: null,
+          newEvent: null,
+        ),
+      );
+
+      final res = await repository.addEvent(
+        title: event.title,
+        description: event.description,
+        type: event.type,
+        gravity: event.gravity,
+        files: event.files,
+        date: event.date,
+        site: event.site,
+      );
+
+      res.fold(
+        (l) {
+          String errorMessage = '';
+          l.when(
+            serverError: (errorText) {
+              if (errorText != null) {
+                errorMessage = errorText;
+              }
+            },
+            unauthorized: (errorText) {
+              errorMessage = errorText;
+            },
+            noNetwork: () {
+              errorMessage = 'Pas de connexion';
+            },
+          );
+          emit(
+            state.copyWith(
+              isLoading: false,
+              hasAddEvent: false,
+              errorMessage: errorMessage,
+              newEvent: null,
+            ),
+          );
+          emit(state.copyWith(errorMessage: null));
+        },
+        (r) {
+          final List<EventItem> items = state.items ?? [];
+          final newItems = List<EventItem>.from([r])..addAll(items);
+          emit(
+            state.copyWith(
+              isLoading: false,
+              hasAddEvent: true,
+              errorMessage: null,
+              newEvent: r,
+              items: newItems,
+            ),
+          );
+          emit(state.copyWith(hasAddEvent: false));
+        },
+      );
     });
   }
 }

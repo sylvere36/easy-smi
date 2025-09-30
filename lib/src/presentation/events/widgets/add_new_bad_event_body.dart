@@ -11,11 +11,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../application/actions/actions_bloc.dart';
 import '../../../application/events/events_bloc.dart';
+import '../../../domain/action/models/action_item.dart';
 import '../../../domain/event/models/event_item.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
 import '../../_commons_widgets/loading_widget.dart';
+import '../../_commons_widgets/my_toast.dart';
 
 enum AttachKind { image, video, file }
 
@@ -24,6 +27,9 @@ class Attach {
   final AttachKind kind;
   final String? name; // utile pour les .pdf, .docx
   Attach(this.file, this.kind, {this.name});
+
+  static List<String> attachments(List<Attach> attachs) =>
+      attachs.map((e) => e.file.path).toList();
 }
 
 class AddNewBadEventBody extends StatefulWidget {
@@ -34,7 +40,7 @@ class AddNewBadEventBody extends StatefulWidget {
 }
 
 class _AddNewBadEventBodyState extends State<AddNewBadEventBody> {
-  final _formKey = GlobalKey<FormState>();
+  final form2Key = GlobalKey<FormBuilderState>();
   bool canNextStep = false;
 
   // Étape 1
@@ -45,10 +51,12 @@ class _AddNewBadEventBodyState extends State<AddNewBadEventBody> {
   final _siteCtrl = TextEditingController();
   final _descCtrl = TextEditingController();
   final List<Attach> _attaches = [];
+  int? originId;
+  DateTime? _dateEvt;
 
   // Étape 2
   String? _typeMesure;
-  final _descActionCtrl = TextEditingController();
+  final _nameActionCtrl = TextEditingController();
   String? _justifType; // Écart | Opportunité
   final _justifCtrl = TextEditingController();
 
@@ -253,293 +261,369 @@ class _AddNewBadEventBodyState extends State<AddNewBadEventBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-        children: [
-          // ---------- ÉTAPE 1 ----------
-          if (!canNextStep)
-            FormBuilder(
-              key: form1Key,
-              child: Column(
-                children: [
-                  const _StepHeader(title: 'NOUVEL EVENNEMENT\nNON DESIRABLE'),
-                  const SizedBox(height: 28),
-
-                  Text(
-                    'Titre de l\'évènement',
-                    style: _label.copyWith(fontSize: 20),
-                  ),
-                  const SizedBox(height: 8),
-                  FormBuilderTextField(
-                    name: 'title',
-                    controller: _titleCtrl,
-                    decoration: _fieldDecor(),
-                    validator: FormBuilderValidators.required(
-                      errorText: "Le titre de l'évènement est requise.",
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  Text(
-                    'Type de l’evennement',
-                    style: _label.copyWith(fontSize: 20),
-                  ),
-                  const SizedBox(height: 8),
-                  FormBuilderDropdown<EventType>(
-                    name: 'eventType',
-                    initialValue: _typeEvt,
-                    items:
-                        [
-                              EventType.accident,
-                              EventType.incident,
-                              EventType.dangerousSituation,
-                              EventType.nonConformity,
-                            ]
-                            .map(
-                              (e) => DropdownMenuItem(
-                                value: e,
-                                child: Text(EventItem.humanEventType(e)),
-                              ),
-                            )
-                            .toList(),
-                    onChanged: (v) => setState(() => _typeEvt = v),
-                    decoration: _fieldDecor(),
-                    validator: FormBuilderValidators.required(
-                      errorText: "Le type de l'évènement est requise.",
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  Text('Graviter *', style: _label.copyWith(fontSize: 20)),
-                  const SizedBox(height: 8),
-                  FormBuilderDropdown<EventGravity>(
-                    name: 'eventGravity',
-                    initialValue: _gravityEvt,
-                    items:
-                        [
-                              EventGravity.minor,
-                              EventGravity.major,
-                              EventGravity.critical,
-                            ]
-                            .map(
-                              (e) => DropdownMenuItem(
-                                value: e,
-                                child: Text(EventItem.humanEventGravity(e)),
-                              ),
-                            )
-                            .toList(),
-                    onChanged: (v) => setState(() => _gravityEvt = v),
-                    decoration: _fieldDecor(),
-                    validator: FormBuilderValidators.required(
-                      errorText: 'La gravité est requise.',
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Date
-                  Text('Date', style: _label.copyWith(fontSize: 20)),
-                  const SizedBox(height: 8),
-                  FormBuilderDateTimePicker(
-                    name: 'date',
-                    decoration: _fieldDecor(hint: 'jj/mm/aaaa'),
-                    format: DateFormat('dd/MM/yyyy'),
-                  ),
-                  const SizedBox(height: 20),
-
-                  Text('Site', style: _label.copyWith(fontSize: 20)),
-                  const SizedBox(height: 8),
-                  FormBuilderTextField(
-                    name: 'site',
-                    controller: _siteCtrl,
-                    decoration: _fieldDecor(),
-                  ),
-                  const SizedBox(height: 20),
-
-                  Text(
-                    'Description de l’evennement *',
-                    style: _label.copyWith(fontSize: 20),
-                  ),
-                  const SizedBox(height: 8),
-                  FormBuilderTextField(
-                    name: 'description',
-                    controller: _descCtrl,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'La description est requise';
-                      }
-                      return null;
-                    },
-                    maxLines: 8,
-                    decoration: _fieldDecor().copyWith(
-                      suffixIcon: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.attachment_outlined,
-                              size: 26,
-                            ),
-                            onPressed: _showAddSheet,
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.photo_camera_outlined,
-                              size: 26,
-                            ),
-                            onPressed: _pickFromCamera,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-                  // Galerie des pièces jointes
-                  if (_attaches.isNotEmpty)
-                    _AttachmentsBar(
-                      attachments: _attaches,
-                      onTap: _openPreview,
-                      onRemove: (a) => setState(() => _attaches.remove(a)),
-                    ),
-
-                  const SizedBox(height: 28),
-                  BlocConsumer<EventsBloc, EventsState>(
-                    listener: (context, state) {
-                      
-                    },
-                    builder: (context, state) {
-                      return FilledButton(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          minimumSize: const Size.fromHeight(56),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: () {
-                          if (!state.isLoading && form1Key.currentState!.validate()) {
-                            Scrollable.ensureVisible(
-                              _step2Key.currentContext!,
-                              duration: const Duration(milliseconds: 300),
-                            );
-                            // setState(() {
-                            //   canNextStep = true;
-                            // });
-                          }
-                        },
-                        child: state.isLoading
-                            ? const LoadingWidget(color: Colors.white)
-                            : Text(
-                                'SUIVANT',
-                                style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 18,
-                                ),
-                              ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          // ---------- ÉTAPE 2 ----------
-          if (canNextStep) ...[
-            _StepHeader(
-              key: _step2Key,
-              title: 'Quelles sont les mesures\nimmédiates prises ?',
-            ),
-            const SizedBox(height: 20),
-
-            Text('Type de mesure', style: _label.copyWith(fontSize: 20)),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              value: _typeMesure,
-              items: const [
-                'Préventives',
-                'Correctives',
-                'Amélioration',
-                'Curative',
-                'Recurente',
-              ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-              onChanged: (v) => setState(() => _typeMesure = v),
-              decoration: _fieldDecor(),
-              validator: (v) => v == null ? 'Veuillez sélectionner' : null,
-            ),
-            const SizedBox(height: 20),
-
-            Text(
-              'Description de l’action',
-              style: _label.copyWith(fontSize: 20),
-            ),
-            const SizedBox(height: 8),
-            FormBuilderTextField(
-              name: 'description',
-              controller: _descActionCtrl,
-              maxLines: 6,
-              decoration: _fieldDecor(),
-            ),
-            const SizedBox(height: 20),
-
-            Row(
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+      children: [
+        // ---------- ÉTAPE 1 ----------
+        if (!canNextStep)
+          FormBuilder(
+            key: form1Key,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Text(
-                    'Justification',
-                    style: _label.copyWith(fontSize: 20),
+                const _StepHeader(title: 'NOUVEL EVENNEMENT\nNON DESIRABLE'),
+                const SizedBox(height: 28),
+
+                Text(
+                  'Titre de l\'évènement *',
+                  style: _label.copyWith(fontSize: 20),
+                ),
+                const SizedBox(height: 8),
+                FormBuilderTextField(
+                  name: 'title',
+                  textCapitalization: TextCapitalization.sentences,
+                  controller: _titleCtrl,
+                  decoration: _fieldDecor(),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: FormBuilderValidators.required(
+                    errorText: "Le titre de l'évènement est requise.",
                   ),
                 ),
-                const SizedBox(width: 8),
-                DropdownButton<String>(
-                  value: _justifType,
-                  hint: const Text('Type'),
-                  items: const ['Écart', 'Opportunité']
-                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                      .toList(),
-                  onChanged: (v) => setState(() => _justifType = v),
+                const SizedBox(height: 20),
+
+                Text(
+                  'Type de l’évènement *',
+                  style: _label.copyWith(fontSize: 20),
+                ),
+                const SizedBox(height: 8),
+                FormBuilderDropdown<EventType>(
+                  name: 'eventType',
+                  initialValue: _typeEvt,
+                  items:
+                      [
+                            EventType.accident,
+                            EventType.incident,
+                            EventType.dangerousSituation,
+                            EventType.nonConformity,
+                          ]
+                          .map(
+                            (e) => DropdownMenuItem(
+                              value: e,
+                              child: Text(EventItem.humanEventType(e)),
+                            ),
+                          )
+                          .toList(),
+                  onChanged: (v) => setState(() => _typeEvt = v),
+                  decoration: _fieldDecor(),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: FormBuilderValidators.required(
+                    errorText: "Le type de l'évènement est requise.",
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                Text('Graviter *', style: _label.copyWith(fontSize: 20)),
+                const SizedBox(height: 8),
+                FormBuilderDropdown<EventGravity>(
+                  name: 'eventGravity',
+                  initialValue: _gravityEvt,
+                  items:
+                      [
+                            EventGravity.minor,
+                            EventGravity.major,
+                            EventGravity.critical,
+                          ]
+                          .map(
+                            (e) => DropdownMenuItem(
+                              value: e,
+                              child: Text(EventItem.humanEventGravity(e)),
+                            ),
+                          )
+                          .toList(),
+                  onChanged: (v) => setState(() => _gravityEvt = v),
+                  decoration: _fieldDecor(),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: FormBuilderValidators.required(
+                    errorText: 'La gravité est requise.',
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Date
+                Text('Date', style: _label.copyWith(fontSize: 20)),
+                const SizedBox(height: 8),
+                FormBuilderDateTimePicker(
+                  name: 'date',
+                  onChanged: (v) => setState(() => _dateEvt = v),
+                  inputType: InputType.date,
+                  decoration: _fieldDecor(hint: 'jj/mm/aaaa'),
+                  format: DateFormat('dd/MM/yyyy'),
+                ),
+                const SizedBox(height: 20),
+
+                Text('Site', style: _label.copyWith(fontSize: 20)),
+                const SizedBox(height: 8),
+                FormBuilderTextField(
+                  name: 'site',
+                  textCapitalization: TextCapitalization.sentences,
+                  controller: _siteCtrl,
+                  decoration: _fieldDecor(),
+                ),
+                const SizedBox(height: 20),
+
+                Text(
+                  'Description de l’evennement *',
+                  style: _label.copyWith(fontSize: 20),
+                ),
+                const SizedBox(height: 8),
+                FormBuilderTextField(
+                  name: 'description',
+                  textCapitalization: TextCapitalization.sentences,
+                  controller: _descCtrl,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'La description est requise';
+                    }
+                    return null;
+                  },
+                  maxLines: 8,
+                  decoration: _fieldDecor().copyWith(
+                    suffixIcon: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.attachment_outlined, size: 26),
+                          onPressed: _showAddSheet,
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.photo_camera_outlined,
+                            size: 26,
+                          ),
+                          onPressed: _pickFromCamera,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+                // Galerie des pièces jointes
+                if (_attaches.isNotEmpty)
+                  _AttachmentsBar(
+                    attachments: _attaches,
+                    onTap: _openPreview,
+                    onRemove: (a) => setState(() => _attaches.remove(a)),
+                  ),
+
+                const SizedBox(height: 28),
+                BlocConsumer<EventsBloc, EventsState>(
+                  listener: (context, state) {
+                    if (state.errorMessage != null) {
+                      errorToast(context: context, msg: state.errorMessage!);
+                    }
+                    if (state.hasAddEvent && state.newEvent != null) {
+                      successToast(context: context, msg: 'Évènement créé');
+                      canNextStep = true;
+                      originId = state.newEvent!.id;
+                      setState(() {});
+                    }
+                  },
+                  builder: (context, state) {
+                    return FilledButton(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        minimumSize: const Size.fromHeight(56),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (!state.isLoading &&
+                            form1Key.currentState!.validate()) {
+                          context.read<EventsBloc>().add(
+                            EventsEvent.addEvent(
+                              title: _titleCtrl.text,
+                              date: _dateEvt,
+                              site: _siteCtrl.text.isEmpty
+                                  ? null
+                                  : _siteCtrl.text,
+                              description: _descCtrl.text,
+                              type: EventItem.eventTypeToString(_typeEvt!),
+                              gravity: EventItem.eventGravityToString(
+                                _gravityEvt!,
+                              ),
+                              files: _attaches.isNotEmpty
+                                  ? Attach.attachments(_attaches)
+                                  : [],
+                            ),
+                          );
+                          // setState(() {
+                          //   canNextStep = true;
+                          // });
+                        }
+                      },
+                      child: state.isLoading
+                          ? const LoadingWidget(color: Colors.white)
+                          : Text(
+                              'SUIVANT',
+                              style: GoogleFonts.inter(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 18,
+                              ),
+                            ),
+                    );
+                  },
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            FormBuilderTextField(
-              name: 'justifica',
-              controller: _justifCtrl,
-              maxLines: 6,
-              decoration: _fieldDecor(),
-            ),
+          ),
+        // ---------- ÉTAPE 2 ----------
+        if (canNextStep)
+          FormBuilder(
+            key: form2Key,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _StepHeader(
+                  key: _step2Key,
+                  title: 'Quelles sont les mesures\nimmédiates prises ?',
+                ),
+                const SizedBox(height: 20),
 
-            const SizedBox(height: 28),
-            FilledButton(
-              style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF1565D8),
-                minimumSize: const Size.fromHeight(56),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                Text('Type de mesure *', style: _label.copyWith(fontSize: 20)),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  value: _typeMesure,
+                  items: actionTypes
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(humanReadableActionType(e)),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (v) => setState(() => _typeMesure = v),
+                  decoration: _fieldDecor(),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: FormBuilderValidators.required(
+                    errorText: 'Le type de messure est requise.',
+                  ),
                 ),
-              ),
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  context.router.push(const DeclarateEventRoute());
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Évènement enregistré (démo).'),
+                const SizedBox(height: 20),
+
+                Text('Nom de l’action *', style: _label.copyWith(fontSize: 20)),
+                const SizedBox(height: 8),
+                FormBuilderTextField(
+                  name: 'actionName',
+                  textCapitalization: TextCapitalization.sentences,
+                  controller: _nameActionCtrl,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: FormBuilderValidators.required(
+                    errorText: "Le nom de l'action est requise.",
+                  ),
+                  decoration: _fieldDecor(),
+                ),
+                const SizedBox(height: 20),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Justification',
+                        style: _label.copyWith(fontSize: 20),
+                      ),
                     ),
-                  );
-                }
-              },
-              child: Text(
-                'TERMINER',
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 18,
+                    const SizedBox(width: 8),
+                    DropdownButton<String>(
+                      value: _justifType,
+                      hint: const Text('Type'),
+                      items: justificationTypes
+                          .map(
+                            (e) => DropdownMenuItem(
+                              value: e,
+                              child: Text(humanReadableJustificationType(e)),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (v) => setState(() => _justifType = v),
+                    ),
+                  ],
                 ),
-              ),
+                const SizedBox(height: 8),
+                FormBuilderTextField(
+                  name: 'justification',
+                  controller: _justifCtrl,
+                  textCapitalization: TextCapitalization.sentences,
+                  maxLines: 6,
+                  decoration: _fieldDecor(),
+                ),
+
+                const SizedBox(height: 28),
+                BlocConsumer<ActionsBloc, ActionsState>(
+                  listener: (context, state) {
+                    if (state.errorMessage != null) {
+                      errorToast(context: context, msg: state.errorMessage!);
+                    }
+                    if (state.hasAddAction && state.newAction != null) {
+                      successToast(
+                        context: context,
+                        msg: "Action ajoutée à l'évènement.",
+                      );
+                      context.read<ActionsBloc>().add(
+                        const ActionsEvent.reset(),
+                      );
+                      context.read<ActionsBloc>().add(
+                        const ActionsEvent.fetch(),
+                      );
+                      context.pop();
+                    }
+                  },
+                  builder: (context, state) {
+                    return FilledButton(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: const Color(0xFF1565D8),
+                        minimumSize: const Size.fromHeight(56),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (!state.isLoading &&
+                            form2Key.currentState!.validate() &&
+                            originId != null) {
+                          // context.router.push(const DeclarateEventRoute());
+                          context.read<ActionsBloc>().add(
+                            ActionsEvent.addImmediateAction(
+                              name: _nameActionCtrl.text,
+                              type: _typeMesure!,
+                              originId: originId!,
+                              justification: _justifCtrl.text.isNotEmpty
+                                  ? _justifCtrl.text
+                                  : null,
+                              justificationType: _justifType,
+                            ),
+                          );
+                        }
+                      },
+                      child: state.isLoading
+                          ? const LoadingWidget(color: Colors.white)
+                          : Text(
+                              'TERMINER',
+                              style: GoogleFonts.inter(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 18,
+                              ),
+                            ),
+                    );
+                  },
+                ),
+              ],
             ),
-          ],
-        ],
-      ),
+          ),
+      ],
     );
   }
 

@@ -55,13 +55,14 @@ extension EventsEventPatterns on EventsEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _FetchNextPage value)?  fetchNextPage,TResult Function( _Reset value)?  reset,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _FetchNextPage value)?  fetchNextPage,TResult Function( _Reset value)?  reset,TResult Function( _AddEvent value)?  addEvent,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that);case _FetchNextPage() when fetchNextPage != null:
 return fetchNextPage(_that);case _Reset() when reset != null:
-return reset(_that);case _:
+return reset(_that);case _AddEvent() when addEvent != null:
+return addEvent(_that);case _:
   return orElse();
 
 }
@@ -79,13 +80,14 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _FetchNextPage value)  fetchNextPage,required TResult Function( _Reset value)  reset,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _FetchNextPage value)  fetchNextPage,required TResult Function( _Reset value)  reset,required TResult Function( _AddEvent value)  addEvent,}){
 final _that = this;
 switch (_that) {
 case _Fetch():
 return fetch(_that);case _FetchNextPage():
 return fetchNextPage(_that);case _Reset():
-return reset(_that);case _:
+return reset(_that);case _AddEvent():
+return addEvent(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -102,13 +104,14 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _FetchNextPage value)?  fetchNextPage,TResult? Function( _Reset value)?  reset,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _FetchNextPage value)?  fetchNextPage,TResult? Function( _Reset value)?  reset,TResult? Function( _AddEvent value)?  addEvent,}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that);case _FetchNextPage() when fetchNextPage != null:
 return fetchNextPage(_that);case _Reset() when reset != null:
-return reset(_that);case _:
+return reset(_that);case _AddEvent() when addEvent != null:
+return addEvent(_that);case _:
   return null;
 
 }
@@ -125,12 +128,13 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( bool? isHome)?  fetch,TResult Function()?  fetchNextPage,TResult Function()?  reset,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( bool? isHome)?  fetch,TResult Function()?  fetchNextPage,TResult Function()?  reset,TResult Function( String title,  String description,  DateTime? date,  String? site,  String type,  String gravity,  List<String> files)?  addEvent,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that.isHome);case _FetchNextPage() when fetchNextPage != null:
 return fetchNextPage();case _Reset() when reset != null:
-return reset();case _:
+return reset();case _AddEvent() when addEvent != null:
+return addEvent(_that.title,_that.description,_that.date,_that.site,_that.type,_that.gravity,_that.files);case _:
   return orElse();
 
 }
@@ -148,12 +152,13 @@ return reset();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( bool? isHome)  fetch,required TResult Function()  fetchNextPage,required TResult Function()  reset,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( bool? isHome)  fetch,required TResult Function()  fetchNextPage,required TResult Function()  reset,required TResult Function( String title,  String description,  DateTime? date,  String? site,  String type,  String gravity,  List<String> files)  addEvent,}) {final _that = this;
 switch (_that) {
 case _Fetch():
 return fetch(_that.isHome);case _FetchNextPage():
 return fetchNextPage();case _Reset():
-return reset();case _:
+return reset();case _AddEvent():
+return addEvent(_that.title,_that.description,_that.date,_that.site,_that.type,_that.gravity,_that.files);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -170,12 +175,13 @@ return reset();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( bool? isHome)?  fetch,TResult? Function()?  fetchNextPage,TResult? Function()?  reset,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( bool? isHome)?  fetch,TResult? Function()?  fetchNextPage,TResult? Function()?  reset,TResult? Function( String title,  String description,  DateTime? date,  String? site,  String type,  String gravity,  List<String> files)?  addEvent,}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that.isHome);case _FetchNextPage() when fetchNextPage != null:
 return fetchNextPage();case _Reset() when reset != null:
-return reset();case _:
+return reset();case _AddEvent() when addEvent != null:
+return addEvent(_that.title,_that.description,_that.date,_that.site,_that.type,_that.gravity,_that.files);case _:
   return null;
 
 }
@@ -314,9 +320,93 @@ String toString() {
 
 
 /// @nodoc
+
+
+class _AddEvent implements EventsEvent {
+  const _AddEvent({required this.title, required this.description, this.date, this.site, required this.type, required this.gravity, required final  List<String> files}): _files = files;
+  
+
+ final  String title;
+ final  String description;
+ final  DateTime? date;
+ final  String? site;
+ final  String type;
+ final  String gravity;
+ final  List<String> _files;
+ List<String> get files {
+  if (_files is EqualUnmodifiableListView) return _files;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_files);
+}
+
+
+/// Create a copy of EventsEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$AddEventCopyWith<_AddEvent> get copyWith => __$AddEventCopyWithImpl<_AddEvent>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AddEvent&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.date, date) || other.date == date)&&(identical(other.site, site) || other.site == site)&&(identical(other.type, type) || other.type == type)&&(identical(other.gravity, gravity) || other.gravity == gravity)&&const DeepCollectionEquality().equals(other._files, _files));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,title,description,date,site,type,gravity,const DeepCollectionEquality().hash(_files));
+
+@override
+String toString() {
+  return 'EventsEvent.addEvent(title: $title, description: $description, date: $date, site: $site, type: $type, gravity: $gravity, files: $files)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$AddEventCopyWith<$Res> implements $EventsEventCopyWith<$Res> {
+  factory _$AddEventCopyWith(_AddEvent value, $Res Function(_AddEvent) _then) = __$AddEventCopyWithImpl;
+@useResult
+$Res call({
+ String title, String description, DateTime? date, String? site, String type, String gravity, List<String> files
+});
+
+
+
+
+}
+/// @nodoc
+class __$AddEventCopyWithImpl<$Res>
+    implements _$AddEventCopyWith<$Res> {
+  __$AddEventCopyWithImpl(this._self, this._then);
+
+  final _AddEvent _self;
+  final $Res Function(_AddEvent) _then;
+
+/// Create a copy of EventsEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = null,Object? date = freezed,Object? site = freezed,Object? type = null,Object? gravity = null,Object? files = null,}) {
+  return _then(_AddEvent(
+title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String,date: freezed == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
+as DateTime?,site: freezed == site ? _self.site : site // ignore: cast_nullable_to_non_nullable
+as String?,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as String,gravity: null == gravity ? _self.gravity : gravity // ignore: cast_nullable_to_non_nullable
+as String,files: null == files ? _self._files : files // ignore: cast_nullable_to_non_nullable
+as List<String>,
+  ));
+}
+
+
+}
+
+/// @nodoc
 mixin _$EventsState {
 
- bool get isLoading; List<EventItem>? get items; int get currentPage; int get perPage; int get total; bool get canLoadMore; Option<Either<GlobalFailure, Paginated<EventItem>>> get resultOption;
+ bool get isLoading; EventItem? get newEvent; bool get hasAddEvent; String? get errorMessage; List<EventItem>? get items; int get currentPage; int get perPage; int get total; bool get canLoadMore; Option<Either<GlobalFailure, Paginated<EventItem>>> get resultOption;
 /// Create a copy of EventsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -327,16 +417,16 @@ $EventsStateCopyWith<EventsState> get copyWith => _$EventsStateCopyWithImpl<Even
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total)&&(identical(other.canLoadMore, canLoadMore) || other.canLoadMore == canLoadMore)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.newEvent, newEvent) || other.newEvent == newEvent)&&(identical(other.hasAddEvent, hasAddEvent) || other.hasAddEvent == hasAddEvent)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total)&&(identical(other.canLoadMore, canLoadMore) || other.canLoadMore == canLoadMore)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(items),currentPage,perPage,total,canLoadMore,resultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,newEvent,hasAddEvent,errorMessage,const DeepCollectionEquality().hash(items),currentPage,perPage,total,canLoadMore,resultOption);
 
 @override
 String toString() {
-  return 'EventsState(isLoading: $isLoading, items: $items, currentPage: $currentPage, perPage: $perPage, total: $total, canLoadMore: $canLoadMore, resultOption: $resultOption)';
+  return 'EventsState(isLoading: $isLoading, newEvent: $newEvent, hasAddEvent: $hasAddEvent, errorMessage: $errorMessage, items: $items, currentPage: $currentPage, perPage: $perPage, total: $total, canLoadMore: $canLoadMore, resultOption: $resultOption)';
 }
 
 
@@ -347,7 +437,7 @@ abstract mixin class $EventsStateCopyWith<$Res>  {
   factory $EventsStateCopyWith(EventsState value, $Res Function(EventsState) _then) = _$EventsStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, List<EventItem>? items, int currentPage, int perPage, int total, bool canLoadMore, Option<Either<GlobalFailure, Paginated<EventItem>>> resultOption
+ bool isLoading, EventItem? newEvent, bool hasAddEvent, String? errorMessage, List<EventItem>? items, int currentPage, int perPage, int total, bool canLoadMore, Option<Either<GlobalFailure, Paginated<EventItem>>> resultOption
 });
 
 
@@ -364,10 +454,13 @@ class _$EventsStateCopyWithImpl<$Res>
 
 /// Create a copy of EventsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? items = freezed,Object? currentPage = null,Object? perPage = null,Object? total = null,Object? canLoadMore = null,Object? resultOption = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? newEvent = freezed,Object? hasAddEvent = null,Object? errorMessage = freezed,Object? items = freezed,Object? currentPage = null,Object? perPage = null,Object? total = null,Object? canLoadMore = null,Object? resultOption = null,}) {
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
-as bool,items: freezed == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
+as bool,newEvent: freezed == newEvent ? _self.newEvent : newEvent // ignore: cast_nullable_to_non_nullable
+as EventItem?,hasAddEvent: null == hasAddEvent ? _self.hasAddEvent : hasAddEvent // ignore: cast_nullable_to_non_nullable
+as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,items: freezed == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
 as List<EventItem>?,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int,perPage: null == perPage ? _self.perPage : perPage // ignore: cast_nullable_to_non_nullable
 as int,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
@@ -458,10 +551,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<EventItem>? items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<EventItem>>> resultOption)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  EventItem? newEvent,  bool hasAddEvent,  String? errorMessage,  List<EventItem>? items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<EventItem>>> resultOption)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EventsState() when $default != null:
-return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_that.total,_that.canLoadMore,_that.resultOption);case _:
+return $default(_that.isLoading,_that.newEvent,_that.hasAddEvent,_that.errorMessage,_that.items,_that.currentPage,_that.perPage,_that.total,_that.canLoadMore,_that.resultOption);case _:
   return orElse();
 
 }
@@ -479,10 +572,10 @@ return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<EventItem>? items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<EventItem>>> resultOption)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  EventItem? newEvent,  bool hasAddEvent,  String? errorMessage,  List<EventItem>? items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<EventItem>>> resultOption)  $default,) {final _that = this;
 switch (_that) {
 case _EventsState():
-return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_that.total,_that.canLoadMore,_that.resultOption);case _:
+return $default(_that.isLoading,_that.newEvent,_that.hasAddEvent,_that.errorMessage,_that.items,_that.currentPage,_that.perPage,_that.total,_that.canLoadMore,_that.resultOption);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -499,10 +592,10 @@ return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<EventItem>? items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<EventItem>>> resultOption)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  EventItem? newEvent,  bool hasAddEvent,  String? errorMessage,  List<EventItem>? items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<EventItem>>> resultOption)?  $default,) {final _that = this;
 switch (_that) {
 case _EventsState() when $default != null:
-return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_that.total,_that.canLoadMore,_that.resultOption);case _:
+return $default(_that.isLoading,_that.newEvent,_that.hasAddEvent,_that.errorMessage,_that.items,_that.currentPage,_that.perPage,_that.total,_that.canLoadMore,_that.resultOption);case _:
   return null;
 
 }
@@ -514,10 +607,13 @@ return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_tha
 
 
 class _EventsState implements EventsState {
-  const _EventsState({required this.isLoading, required final  List<EventItem>? items, required this.currentPage, required this.perPage, required this.total, required this.canLoadMore, required this.resultOption}): _items = items;
+  const _EventsState({required this.isLoading, required this.newEvent, required this.hasAddEvent, required this.errorMessage, required final  List<EventItem>? items, required this.currentPage, required this.perPage, required this.total, required this.canLoadMore, required this.resultOption}): _items = items;
   
 
 @override final  bool isLoading;
+@override final  EventItem? newEvent;
+@override final  bool hasAddEvent;
+@override final  String? errorMessage;
  final  List<EventItem>? _items;
 @override List<EventItem>? get items {
   final value = _items;
@@ -543,16 +639,16 @@ _$EventsStateCopyWith<_EventsState> get copyWith => __$EventsStateCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total)&&(identical(other.canLoadMore, canLoadMore) || other.canLoadMore == canLoadMore)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.newEvent, newEvent) || other.newEvent == newEvent)&&(identical(other.hasAddEvent, hasAddEvent) || other.hasAddEvent == hasAddEvent)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total)&&(identical(other.canLoadMore, canLoadMore) || other.canLoadMore == canLoadMore)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(_items),currentPage,perPage,total,canLoadMore,resultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,newEvent,hasAddEvent,errorMessage,const DeepCollectionEquality().hash(_items),currentPage,perPage,total,canLoadMore,resultOption);
 
 @override
 String toString() {
-  return 'EventsState(isLoading: $isLoading, items: $items, currentPage: $currentPage, perPage: $perPage, total: $total, canLoadMore: $canLoadMore, resultOption: $resultOption)';
+  return 'EventsState(isLoading: $isLoading, newEvent: $newEvent, hasAddEvent: $hasAddEvent, errorMessage: $errorMessage, items: $items, currentPage: $currentPage, perPage: $perPage, total: $total, canLoadMore: $canLoadMore, resultOption: $resultOption)';
 }
 
 
@@ -563,7 +659,7 @@ abstract mixin class _$EventsStateCopyWith<$Res> implements $EventsStateCopyWith
   factory _$EventsStateCopyWith(_EventsState value, $Res Function(_EventsState) _then) = __$EventsStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, List<EventItem>? items, int currentPage, int perPage, int total, bool canLoadMore, Option<Either<GlobalFailure, Paginated<EventItem>>> resultOption
+ bool isLoading, EventItem? newEvent, bool hasAddEvent, String? errorMessage, List<EventItem>? items, int currentPage, int perPage, int total, bool canLoadMore, Option<Either<GlobalFailure, Paginated<EventItem>>> resultOption
 });
 
 
@@ -580,10 +676,13 @@ class __$EventsStateCopyWithImpl<$Res>
 
 /// Create a copy of EventsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? items = freezed,Object? currentPage = null,Object? perPage = null,Object? total = null,Object? canLoadMore = null,Object? resultOption = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? newEvent = freezed,Object? hasAddEvent = null,Object? errorMessage = freezed,Object? items = freezed,Object? currentPage = null,Object? perPage = null,Object? total = null,Object? canLoadMore = null,Object? resultOption = null,}) {
   return _then(_EventsState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
-as bool,items: freezed == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
+as bool,newEvent: freezed == newEvent ? _self.newEvent : newEvent // ignore: cast_nullable_to_non_nullable
+as EventItem?,hasAddEvent: null == hasAddEvent ? _self.hasAddEvent : hasAddEvent // ignore: cast_nullable_to_non_nullable
+as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,items: freezed == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
 as List<EventItem>?,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int,perPage: null == perPage ? _self.perPage : perPage // ignore: cast_nullable_to_non_nullable
 as int,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable

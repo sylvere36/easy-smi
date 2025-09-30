@@ -34,4 +34,12 @@ abstract class IActionRepository {
   Future<Either<GlobalFailure, List<ActionTask>>> getTasks({
     required int actionId,
   });
+
+  Future<Either<GlobalFailure, ActionItem>> addImmediateActions({
+    required String name,
+    required String type,
+    required int originId,
+    String? justificationType,
+    String? justification,
+  });
 }

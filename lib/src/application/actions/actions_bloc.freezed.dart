@@ -55,14 +55,15 @@ extension ActionsEventPatterns on ActionsEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _Reset value)?  reset,TResult Function( _FetchByOrigin value)?  fetchByOrigin,TResult Function( _SearchRequested value)?  searchRequested,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _Reset value)?  reset,TResult Function( _FetchByOrigin value)?  fetchByOrigin,TResult Function( _SearchRequested value)?  searchRequested,TResult Function( _AddImmediateAction value)?  addImmediateAction,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that);case _Reset() when reset != null:
 return reset(_that);case _FetchByOrigin() when fetchByOrigin != null:
 return fetchByOrigin(_that);case _SearchRequested() when searchRequested != null:
-return searchRequested(_that);case _:
+return searchRequested(_that);case _AddImmediateAction() when addImmediateAction != null:
+return addImmediateAction(_that);case _:
   return orElse();
 
 }
@@ -80,14 +81,15 @@ return searchRequested(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _Reset value)  reset,required TResult Function( _FetchByOrigin value)  fetchByOrigin,required TResult Function( _SearchRequested value)  searchRequested,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _Reset value)  reset,required TResult Function( _FetchByOrigin value)  fetchByOrigin,required TResult Function( _SearchRequested value)  searchRequested,required TResult Function( _AddImmediateAction value)  addImmediateAction,}){
 final _that = this;
 switch (_that) {
 case _Fetch():
 return fetch(_that);case _Reset():
 return reset(_that);case _FetchByOrigin():
 return fetchByOrigin(_that);case _SearchRequested():
-return searchRequested(_that);case _:
+return searchRequested(_that);case _AddImmediateAction():
+return addImmediateAction(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -104,14 +106,15 @@ return searchRequested(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _Reset value)?  reset,TResult? Function( _FetchByOrigin value)?  fetchByOrigin,TResult? Function( _SearchRequested value)?  searchRequested,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _Reset value)?  reset,TResult? Function( _FetchByOrigin value)?  fetchByOrigin,TResult? Function( _SearchRequested value)?  searchRequested,TResult? Function( _AddImmediateAction value)?  addImmediateAction,}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that);case _Reset() when reset != null:
 return reset(_that);case _FetchByOrigin() when fetchByOrigin != null:
 return fetchByOrigin(_that);case _SearchRequested() when searchRequested != null:
-return searchRequested(_that);case _:
+return searchRequested(_that);case _AddImmediateAction() when addImmediateAction != null:
+return addImmediateAction(_that);case _:
   return null;
 
 }
@@ -128,13 +131,14 @@ return searchRequested(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  fetch,TResult Function()?  reset,TResult Function( String originType,  int originId)?  fetchByOrigin,TResult Function( String query)?  searchRequested,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  fetch,TResult Function()?  reset,TResult Function( String originType,  int originId)?  fetchByOrigin,TResult Function( String query)?  searchRequested,TResult Function( String name,  String type,  int originId,  String? justificationType,  String? justification)?  addImmediateAction,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch();case _Reset() when reset != null:
 return reset();case _FetchByOrigin() when fetchByOrigin != null:
 return fetchByOrigin(_that.originType,_that.originId);case _SearchRequested() when searchRequested != null:
-return searchRequested(_that.query);case _:
+return searchRequested(_that.query);case _AddImmediateAction() when addImmediateAction != null:
+return addImmediateAction(_that.name,_that.type,_that.originId,_that.justificationType,_that.justification);case _:
   return orElse();
 
 }
@@ -152,13 +156,14 @@ return searchRequested(_that.query);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  fetch,required TResult Function()  reset,required TResult Function( String originType,  int originId)  fetchByOrigin,required TResult Function( String query)  searchRequested,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  fetch,required TResult Function()  reset,required TResult Function( String originType,  int originId)  fetchByOrigin,required TResult Function( String query)  searchRequested,required TResult Function( String name,  String type,  int originId,  String? justificationType,  String? justification)  addImmediateAction,}) {final _that = this;
 switch (_that) {
 case _Fetch():
 return fetch();case _Reset():
 return reset();case _FetchByOrigin():
 return fetchByOrigin(_that.originType,_that.originId);case _SearchRequested():
-return searchRequested(_that.query);case _:
+return searchRequested(_that.query);case _AddImmediateAction():
+return addImmediateAction(_that.name,_that.type,_that.originId,_that.justificationType,_that.justification);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -175,13 +180,14 @@ return searchRequested(_that.query);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  fetch,TResult? Function()?  reset,TResult? Function( String originType,  int originId)?  fetchByOrigin,TResult? Function( String query)?  searchRequested,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  fetch,TResult? Function()?  reset,TResult? Function( String originType,  int originId)?  fetchByOrigin,TResult? Function( String query)?  searchRequested,TResult? Function( String name,  String type,  int originId,  String? justificationType,  String? justification)?  addImmediateAction,}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch();case _Reset() when reset != null:
 return reset();case _FetchByOrigin() when fetchByOrigin != null:
 return fetchByOrigin(_that.originType,_that.originId);case _SearchRequested() when searchRequested != null:
-return searchRequested(_that.query);case _:
+return searchRequested(_that.query);case _AddImmediateAction() when addImmediateAction != null:
+return addImmediateAction(_that.name,_that.type,_that.originId,_that.justificationType,_that.justification);case _:
   return null;
 
 }
@@ -388,9 +394,83 @@ as String,
 }
 
 /// @nodoc
+
+
+class _AddImmediateAction implements ActionsEvent {
+  const _AddImmediateAction({required this.name, required this.type, required this.originId, this.justificationType, this.justification});
+  
+
+ final  String name;
+ final  String type;
+ final  int originId;
+ final  String? justificationType;
+ final  String? justification;
+
+/// Create a copy of ActionsEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$AddImmediateActionCopyWith<_AddImmediateAction> get copyWith => __$AddImmediateActionCopyWithImpl<_AddImmediateAction>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AddImmediateAction&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.originId, originId) || other.originId == originId)&&(identical(other.justificationType, justificationType) || other.justificationType == justificationType)&&(identical(other.justification, justification) || other.justification == justification));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,name,type,originId,justificationType,justification);
+
+@override
+String toString() {
+  return 'ActionsEvent.addImmediateAction(name: $name, type: $type, originId: $originId, justificationType: $justificationType, justification: $justification)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$AddImmediateActionCopyWith<$Res> implements $ActionsEventCopyWith<$Res> {
+  factory _$AddImmediateActionCopyWith(_AddImmediateAction value, $Res Function(_AddImmediateAction) _then) = __$AddImmediateActionCopyWithImpl;
+@useResult
+$Res call({
+ String name, String type, int originId, String? justificationType, String? justification
+});
+
+
+
+
+}
+/// @nodoc
+class __$AddImmediateActionCopyWithImpl<$Res>
+    implements _$AddImmediateActionCopyWith<$Res> {
+  __$AddImmediateActionCopyWithImpl(this._self, this._then);
+
+  final _AddImmediateAction _self;
+  final $Res Function(_AddImmediateAction) _then;
+
+/// Create a copy of ActionsEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? name = null,Object? type = null,Object? originId = null,Object? justificationType = freezed,Object? justification = freezed,}) {
+  return _then(_AddImmediateAction(
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as String,originId: null == originId ? _self.originId : originId // ignore: cast_nullable_to_non_nullable
+as int,justificationType: freezed == justificationType ? _self.justificationType : justificationType // ignore: cast_nullable_to_non_nullable
+as String?,justification: freezed == justification ? _self.justification : justification // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+/// @nodoc
 mixin _$ActionsState {
 
- bool get isLoading; List<ActionItem>? get items; List<ActionItem>? get initialItems; List<ActionItem>? get originItems; Option<Either<GlobalFailure, List<ActionItem>>> get resultOption;
+ bool get isLoading; ActionItem? get newAction; bool get hasAddAction; String? get errorMessage; List<ActionItem>? get items; List<ActionItem>? get initialItems; List<ActionItem>? get originItems; Option<Either<GlobalFailure, List<ActionItem>>> get resultOption;
 /// Create a copy of ActionsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -401,16 +481,16 @@ $ActionsStateCopyWith<ActionsState> get copyWith => _$ActionsStateCopyWithImpl<A
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActionsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other.items, items)&&const DeepCollectionEquality().equals(other.initialItems, initialItems)&&const DeepCollectionEquality().equals(other.originItems, originItems)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActionsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.newAction, newAction) || other.newAction == newAction)&&(identical(other.hasAddAction, hasAddAction) || other.hasAddAction == hasAddAction)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&const DeepCollectionEquality().equals(other.items, items)&&const DeepCollectionEquality().equals(other.initialItems, initialItems)&&const DeepCollectionEquality().equals(other.originItems, originItems)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(items),const DeepCollectionEquality().hash(initialItems),const DeepCollectionEquality().hash(originItems),resultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,newAction,hasAddAction,errorMessage,const DeepCollectionEquality().hash(items),const DeepCollectionEquality().hash(initialItems),const DeepCollectionEquality().hash(originItems),resultOption);
 
 @override
 String toString() {
-  return 'ActionsState(isLoading: $isLoading, items: $items, initialItems: $initialItems, originItems: $originItems, resultOption: $resultOption)';
+  return 'ActionsState(isLoading: $isLoading, newAction: $newAction, hasAddAction: $hasAddAction, errorMessage: $errorMessage, items: $items, initialItems: $initialItems, originItems: $originItems, resultOption: $resultOption)';
 }
 
 
@@ -421,7 +501,7 @@ abstract mixin class $ActionsStateCopyWith<$Res>  {
   factory $ActionsStateCopyWith(ActionsState value, $Res Function(ActionsState) _then) = _$ActionsStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, List<ActionItem>? items, List<ActionItem>? initialItems, List<ActionItem>? originItems, Option<Either<GlobalFailure, List<ActionItem>>> resultOption
+ bool isLoading, ActionItem? newAction, bool hasAddAction, String? errorMessage, List<ActionItem>? items, List<ActionItem>? initialItems, List<ActionItem>? originItems, Option<Either<GlobalFailure, List<ActionItem>>> resultOption
 });
 
 
@@ -438,10 +518,13 @@ class _$ActionsStateCopyWithImpl<$Res>
 
 /// Create a copy of ActionsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? items = freezed,Object? initialItems = freezed,Object? originItems = freezed,Object? resultOption = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? newAction = freezed,Object? hasAddAction = null,Object? errorMessage = freezed,Object? items = freezed,Object? initialItems = freezed,Object? originItems = freezed,Object? resultOption = null,}) {
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
-as bool,items: freezed == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
+as bool,newAction: freezed == newAction ? _self.newAction : newAction // ignore: cast_nullable_to_non_nullable
+as ActionItem?,hasAddAction: null == hasAddAction ? _self.hasAddAction : hasAddAction // ignore: cast_nullable_to_non_nullable
+as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,items: freezed == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
 as List<ActionItem>?,initialItems: freezed == initialItems ? _self.initialItems : initialItems // ignore: cast_nullable_to_non_nullable
 as List<ActionItem>?,originItems: freezed == originItems ? _self.originItems : originItems // ignore: cast_nullable_to_non_nullable
 as List<ActionItem>?,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
@@ -530,10 +613,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<ActionItem>? items,  List<ActionItem>? initialItems,  List<ActionItem>? originItems,  Option<Either<GlobalFailure, List<ActionItem>>> resultOption)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  ActionItem? newAction,  bool hasAddAction,  String? errorMessage,  List<ActionItem>? items,  List<ActionItem>? initialItems,  List<ActionItem>? originItems,  Option<Either<GlobalFailure, List<ActionItem>>> resultOption)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ActionsState() when $default != null:
-return $default(_that.isLoading,_that.items,_that.initialItems,_that.originItems,_that.resultOption);case _:
+return $default(_that.isLoading,_that.newAction,_that.hasAddAction,_that.errorMessage,_that.items,_that.initialItems,_that.originItems,_that.resultOption);case _:
   return orElse();
 
 }
@@ -551,10 +634,10 @@ return $default(_that.isLoading,_that.items,_that.initialItems,_that.originItems
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<ActionItem>? items,  List<ActionItem>? initialItems,  List<ActionItem>? originItems,  Option<Either<GlobalFailure, List<ActionItem>>> resultOption)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  ActionItem? newAction,  bool hasAddAction,  String? errorMessage,  List<ActionItem>? items,  List<ActionItem>? initialItems,  List<ActionItem>? originItems,  Option<Either<GlobalFailure, List<ActionItem>>> resultOption)  $default,) {final _that = this;
 switch (_that) {
 case _ActionsState():
-return $default(_that.isLoading,_that.items,_that.initialItems,_that.originItems,_that.resultOption);case _:
+return $default(_that.isLoading,_that.newAction,_that.hasAddAction,_that.errorMessage,_that.items,_that.initialItems,_that.originItems,_that.resultOption);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -571,10 +654,10 @@ return $default(_that.isLoading,_that.items,_that.initialItems,_that.originItems
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<ActionItem>? items,  List<ActionItem>? initialItems,  List<ActionItem>? originItems,  Option<Either<GlobalFailure, List<ActionItem>>> resultOption)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  ActionItem? newAction,  bool hasAddAction,  String? errorMessage,  List<ActionItem>? items,  List<ActionItem>? initialItems,  List<ActionItem>? originItems,  Option<Either<GlobalFailure, List<ActionItem>>> resultOption)?  $default,) {final _that = this;
 switch (_that) {
 case _ActionsState() when $default != null:
-return $default(_that.isLoading,_that.items,_that.initialItems,_that.originItems,_that.resultOption);case _:
+return $default(_that.isLoading,_that.newAction,_that.hasAddAction,_that.errorMessage,_that.items,_that.initialItems,_that.originItems,_that.resultOption);case _:
   return null;
 
 }
@@ -586,10 +669,13 @@ return $default(_that.isLoading,_that.items,_that.initialItems,_that.originItems
 
 
 class _ActionsState implements ActionsState {
-  const _ActionsState({required this.isLoading, required final  List<ActionItem>? items, required final  List<ActionItem>? initialItems, required final  List<ActionItem>? originItems, required this.resultOption}): _items = items,_initialItems = initialItems,_originItems = originItems;
+  const _ActionsState({required this.isLoading, required this.newAction, required this.hasAddAction, required this.errorMessage, required final  List<ActionItem>? items, required final  List<ActionItem>? initialItems, required final  List<ActionItem>? originItems, required this.resultOption}): _items = items,_initialItems = initialItems,_originItems = originItems;
   
 
 @override final  bool isLoading;
+@override final  ActionItem? newAction;
+@override final  bool hasAddAction;
+@override final  String? errorMessage;
  final  List<ActionItem>? _items;
 @override List<ActionItem>? get items {
   final value = _items;
@@ -629,16 +715,16 @@ _$ActionsStateCopyWith<_ActionsState> get copyWith => __$ActionsStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActionsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other._items, _items)&&const DeepCollectionEquality().equals(other._initialItems, _initialItems)&&const DeepCollectionEquality().equals(other._originItems, _originItems)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActionsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.newAction, newAction) || other.newAction == newAction)&&(identical(other.hasAddAction, hasAddAction) || other.hasAddAction == hasAddAction)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&const DeepCollectionEquality().equals(other._items, _items)&&const DeepCollectionEquality().equals(other._initialItems, _initialItems)&&const DeepCollectionEquality().equals(other._originItems, _originItems)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(_items),const DeepCollectionEquality().hash(_initialItems),const DeepCollectionEquality().hash(_originItems),resultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,newAction,hasAddAction,errorMessage,const DeepCollectionEquality().hash(_items),const DeepCollectionEquality().hash(_initialItems),const DeepCollectionEquality().hash(_originItems),resultOption);
 
 @override
 String toString() {
-  return 'ActionsState(isLoading: $isLoading, items: $items, initialItems: $initialItems, originItems: $originItems, resultOption: $resultOption)';
+  return 'ActionsState(isLoading: $isLoading, newAction: $newAction, hasAddAction: $hasAddAction, errorMessage: $errorMessage, items: $items, initialItems: $initialItems, originItems: $originItems, resultOption: $resultOption)';
 }
 
 
@@ -649,7 +735,7 @@ abstract mixin class _$ActionsStateCopyWith<$Res> implements $ActionsStateCopyWi
   factory _$ActionsStateCopyWith(_ActionsState value, $Res Function(_ActionsState) _then) = __$ActionsStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, List<ActionItem>? items, List<ActionItem>? initialItems, List<ActionItem>? originItems, Option<Either<GlobalFailure, List<ActionItem>>> resultOption
+ bool isLoading, ActionItem? newAction, bool hasAddAction, String? errorMessage, List<ActionItem>? items, List<ActionItem>? initialItems, List<ActionItem>? originItems, Option<Either<GlobalFailure, List<ActionItem>>> resultOption
 });
 
 
@@ -666,10 +752,13 @@ class __$ActionsStateCopyWithImpl<$Res>
 
 /// Create a copy of ActionsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? items = freezed,Object? initialItems = freezed,Object? originItems = freezed,Object? resultOption = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? newAction = freezed,Object? hasAddAction = null,Object? errorMessage = freezed,Object? items = freezed,Object? initialItems = freezed,Object? originItems = freezed,Object? resultOption = null,}) {
   return _then(_ActionsState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
-as bool,items: freezed == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
+as bool,newAction: freezed == newAction ? _self.newAction : newAction // ignore: cast_nullable_to_non_nullable
+as ActionItem?,hasAddAction: null == hasAddAction ? _self.hasAddAction : hasAddAction // ignore: cast_nullable_to_non_nullable
+as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,items: freezed == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
 as List<ActionItem>?,initialItems: freezed == initialItems ? _self._initialItems : initialItems // ignore: cast_nullable_to_non_nullable
 as List<ActionItem>?,originItems: freezed == originItems ? _self._originItems : originItems // ignore: cast_nullable_to_non_nullable
 as List<ActionItem>?,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
