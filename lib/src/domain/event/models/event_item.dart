@@ -339,4 +339,6 @@ class EventItem {
   String get humanGravity => _humanGravity(gravity);
   String get humanStatus => _humanStatus(status);
   String get humanType => _humanType(type);
+  static String humanEventType(EventType eventType) => _humanType(eventType);
+  static String humanEventGravity(EventGravity eventGravity) => _humanGravity(eventGravity);
 }

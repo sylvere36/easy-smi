@@ -3,11 +3,19 @@ import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../application/events/events_bloc.dart';
+import '../../../domain/event/models/event_item.dart';
 import '../../_commons/route/app_router.gr.dart';
+import '../../_commons/theming/app_color.dart';
+import '../../_commons_widgets/loading_widget.dart';
 
 enum AttachKind { image, video, file }
 
@@ -30,7 +38,10 @@ class _AddNewBadEventBodyState extends State<AddNewBadEventBody> {
   bool canNextStep = false;
 
   // Étape 1
-  String? _typeEvt;
+  final form1Key = GlobalKey<FormBuilderState>();
+  EventType? _typeEvt;
+  EventGravity? _gravityEvt;
+  final _titleCtrl = TextEditingController();
   final _siteCtrl = TextEditingController();
   final _descCtrl = TextEditingController();
   final List<Attach> _attaches = [];
@@ -248,100 +259,192 @@ class _AddNewBadEventBodyState extends State<AddNewBadEventBody> {
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
         children: [
           // ---------- ÉTAPE 1 ----------
-          if (!canNextStep) ...[
-            const _StepHeader(title: 'NOUVEL EVENNEMENT\nNON DESIRABLE'),
-            const SizedBox(height: 28),
+          if (!canNextStep)
+            FormBuilder(
+              key: form1Key,
+              child: Column(
+                children: [
+                  const _StepHeader(title: 'NOUVEL EVENNEMENT\nNON DESIRABLE'),
+                  const SizedBox(height: 28),
 
-            Text('Type de l’evennement', style: _label.copyWith(fontSize: 20)),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              value: _typeEvt,
-              items: const [
-                'Accident',
-                'Incident',
-                'Situations dangereuse',
-                'Non conformité',
-              ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-              onChanged: (v) => setState(() => _typeEvt = v),
-              decoration: _fieldDecor(),
-              validator: (v) => v == null ? 'Veuillez sélectionner' : null,
-            ),
-            const SizedBox(height: 20),
-
-            Text('Site', style: _label.copyWith(fontSize: 20)),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _siteCtrl,
-              decoration: _fieldDecor(),
-              validator: (v) => (v ?? '').isEmpty ? 'Champ requis' : null,
-            ),
-            const SizedBox(height: 20),
-
-            Text(
-              'Description de l’evennement',
-              style: _label.copyWith(fontSize: 20),
-            ),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _descCtrl,
-              maxLines: 8,
-              decoration: _fieldDecor().copyWith(
-                suffixIcon: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.attachment_outlined, size: 26),
-                      onPressed: _showAddSheet,
+                  Text(
+                    'Titre de l\'évènement',
+                    style: _label.copyWith(fontSize: 20),
+                  ),
+                  const SizedBox(height: 8),
+                  FormBuilderTextField(
+                    name: 'title',
+                    controller: _titleCtrl,
+                    decoration: _fieldDecor(),
+                    validator: FormBuilderValidators.required(
+                      errorText: "Le titre de l'évènement est requise.",
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.photo_camera_outlined, size: 26),
-                      onPressed: _pickFromCamera,
+                  ),
+                  const SizedBox(height: 20),
+
+                  Text(
+                    'Type de l’evennement',
+                    style: _label.copyWith(fontSize: 20),
+                  ),
+                  const SizedBox(height: 8),
+                  FormBuilderDropdown<EventType>(
+                    name: 'eventType',
+                    initialValue: _typeEvt,
+                    items:
+                        [
+                              EventType.accident,
+                              EventType.incident,
+                              EventType.dangerousSituation,
+                              EventType.nonConformity,
+                            ]
+                            .map(
+                              (e) => DropdownMenuItem(
+                                value: e,
+                                child: Text(EventItem.humanEventType(e)),
+                              ),
+                            )
+                            .toList(),
+                    onChanged: (v) => setState(() => _typeEvt = v),
+                    decoration: _fieldDecor(),
+                    validator: FormBuilderValidators.required(
+                      errorText: "Le type de l'évènement est requise.",
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  Text('Graviter *', style: _label.copyWith(fontSize: 20)),
+                  const SizedBox(height: 8),
+                  FormBuilderDropdown<EventGravity>(
+                    name: 'eventGravity',
+                    initialValue: _gravityEvt,
+                    items:
+                        [
+                              EventGravity.minor,
+                              EventGravity.major,
+                              EventGravity.critical,
+                            ]
+                            .map(
+                              (e) => DropdownMenuItem(
+                                value: e,
+                                child: Text(EventItem.humanEventGravity(e)),
+                              ),
+                            )
+                            .toList(),
+                    onChanged: (v) => setState(() => _gravityEvt = v),
+                    decoration: _fieldDecor(),
+                    validator: FormBuilderValidators.required(
+                      errorText: 'La gravité est requise.',
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Date
+                  Text('Date', style: _label.copyWith(fontSize: 20)),
+                  const SizedBox(height: 8),
+                  FormBuilderDateTimePicker(
+                    name: 'date',
+                    decoration: _fieldDecor(hint: 'jj/mm/aaaa'),
+                    format: DateFormat('dd/MM/yyyy'),
+                  ),
+                  const SizedBox(height: 20),
+
+                  Text('Site', style: _label.copyWith(fontSize: 20)),
+                  const SizedBox(height: 8),
+                  FormBuilderTextField(
+                    name: 'site',
+                    controller: _siteCtrl,
+                    decoration: _fieldDecor(),
+                  ),
+                  const SizedBox(height: 20),
+
+                  Text(
+                    'Description de l’evennement *',
+                    style: _label.copyWith(fontSize: 20),
+                  ),
+                  const SizedBox(height: 8),
+                  FormBuilderTextField(
+                    name: 'description',
+                    controller: _descCtrl,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'La description est requise';
+                      }
+                      return null;
+                    },
+                    maxLines: 8,
+                    decoration: _fieldDecor().copyWith(
+                      suffixIcon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.attachment_outlined,
+                              size: 26,
+                            ),
+                            onPressed: _showAddSheet,
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.photo_camera_outlined,
+                              size: 26,
+                            ),
+                            onPressed: _pickFromCamera,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+                  // Galerie des pièces jointes
+                  if (_attaches.isNotEmpty)
+                    _AttachmentsBar(
+                      attachments: _attaches,
+                      onTap: _openPreview,
+                      onRemove: (a) => setState(() => _attaches.remove(a)),
+                    ),
+
+                  const SizedBox(height: 28),
+                  BlocConsumer<EventsBloc, EventsState>(
+                    listener: (context, state) {
+                      
+                    },
+                    builder: (context, state) {
+                      return FilledButton(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          minimumSize: const Size.fromHeight(56),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () {
+                          if (!state.isLoading && form1Key.currentState!.validate()) {
+                            Scrollable.ensureVisible(
+                              _step2Key.currentContext!,
+                              duration: const Duration(milliseconds: 300),
+                            );
+                            // setState(() {
+                            //   canNextStep = true;
+                            // });
+                          }
+                        },
+                        child: state.isLoading
+                            ? const LoadingWidget(color: Colors.white)
+                            : Text(
+                                'SUIVANT',
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 18,
+                                ),
+                              ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
-
-            const SizedBox(height: 12),
-            // Galerie des pièces jointes
-            if (_attaches.isNotEmpty)
-              _AttachmentsBar(
-                attachments: _attaches,
-                onTap: _openPreview,
-                onRemove: (a) => setState(() => _attaches.remove(a)),
-              ),
-
-            const SizedBox(height: 28),
-            FilledButton(
-              style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF1565D8),
-                minimumSize: const Size.fromHeight(56),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onPressed: () {
-                setState(() {
-                  canNextStep = true;
-                });
-                // if (_formKey.currentState!.validate()) {
-                Scrollable.ensureVisible(
-                  _step2Key.currentContext!,
-                  duration: const Duration(milliseconds: 300),
-                );
-                // }
-              },
-              child: Text(
-                'SUIVANT',
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-          ],
-
           // ---------- ÉTAPE 2 ----------
           if (canNextStep) ...[
             _StepHeader(
@@ -372,7 +475,8 @@ class _AddNewBadEventBodyState extends State<AddNewBadEventBody> {
               style: _label.copyWith(fontSize: 20),
             ),
             const SizedBox(height: 8),
-            TextFormField(
+            FormBuilderTextField(
+              name: 'description',
               controller: _descActionCtrl,
               maxLines: 6,
               decoration: _fieldDecor(),
@@ -399,7 +503,8 @@ class _AddNewBadEventBodyState extends State<AddNewBadEventBody> {
               ],
             ),
             const SizedBox(height: 8),
-            TextFormField(
+            FormBuilderTextField(
+              name: 'justifica',
               controller: _justifCtrl,
               maxLines: 6,
               decoration: _fieldDecor(),
