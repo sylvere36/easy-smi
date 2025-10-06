@@ -9,6 +9,7 @@ import '../../../application/actions/actions_bloc.dart';
 import '../../../application/audit/audits_bloc.dart';
 import '../../../application/events/detail/event_detail_bloc.dart';
 import '../../../application/events/events_bloc.dart';
+import '../../../application/permit/permits_bloc.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
 import '../../_shimmers/action_card_shimmer.dart';
@@ -16,6 +17,7 @@ import '../../_shimmers/card_shimmer.dart';
 import '../../actions/widget/action_card.dart';
 import '../../audits/widgets/audits_widget.dart';
 import '../../events/widgets/event_card.dart';
+import '../../permis/widgets/hot_work_card.dart';
 
 class HomeBody extends StatefulWidget {
   const HomeBody({super.key});
@@ -262,33 +264,35 @@ class _HomeBodyState extends State<HomeBody> {
             },
           ),
 
-          _Section(
-            icon: Assets.svgs.jamPurple,
+          BlocBuilder<PermitsBloc, PermitsState>(
+            builder: (context, state) {
+              return _Section(
+                icon: Assets.svgs.jamPurple,
 
-            title: 'Permis à chaud',
-            trailing: _SeeAll(
-              onTap: () {
-                context.router.push(const HotPermisRoute());
-              },
-            ),
-            children: const [
-              _HotWorkCard(
-                level: 'Travail Normal',
-                status: 'En cours',
-                title:
-                    'Permis pour les travaux sur le quai du bateau de dechargements des marchandises',
-                site: 'Espace vert du PAC',
-                levelColor: Color(0xFF7E59FF),
-              ),
-              _HotWorkCard(
-                level: 'Travail dangereux',
-                status: 'En cours',
-                title:
-                    'Permis pour les travaux sur le quai du bateau de dechargements des marchandises',
-                site: 'Espace vert du PAC',
-                levelColor: Color(0xFF7E59FF),
-              ),
-            ],
+                title: 'Permis à chaud',
+                trailing: _SeeAll(
+                  onTap: () {
+                    context.router.push(const HotPermisRoute());
+                  },
+                ),
+                children: state.items == null
+                    ? List.generate(3, (index) => const CardShimmer())
+                    : [
+                        ...state.items!
+                            .take(2)
+                            .map(
+                              (e) => HotWorkCard(
+                                level: e.workTypeReadable,
+                                status: e.statusHumanReadable,
+                                title: e.title,
+                                site: e.location ?? '---',
+                                levelColor: const Color(0xFF7E59FF),
+                                permit: e,
+                              ),
+                            ),
+                      ],
+              );
+            },
           ),
 
           // fond pour respirer
@@ -505,129 +509,6 @@ class _InspectionCard extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: Row(
-                children: [
-                  Text(
-                    'Site :  ',
-                    style: GoogleFonts.nunito(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 13,
-                      color: const Color(0xFF6E7787),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      site,
-                      style: GoogleFonts.nunito(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/* ---- Permis à chaud ---- */
-class _HotWorkCard extends StatelessWidget {
-  final String level;
-  final Color levelColor;
-  final String status;
-  final String title;
-  final String site;
-
-  const _HotWorkCard({
-    required this.level,
-    required this.levelColor,
-    required this.status,
-    required this.title,
-    required this.site,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final blue = const Color(0xFF2E6CF6);
-
-    return GestureDetector(
-      onTap: () {
-        context.router.push(const HotPermisDetailRoute());
-      },
-      child: _CardBase(
-        padding: const EdgeInsets.all(4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // level + statut
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 2),
-                  decoration: BoxDecoration(
-                    color: levelColor,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 2,
-                    ),
-                    child: Text(
-                      level,
-                      style: GoogleFonts.dmSans(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                ),
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8, right: 8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Statut :  ',
-                        style: GoogleFonts.nunito(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 13,
-                          color: const Color(0xFF6E7787),
-                        ),
-                      ),
-                      Text(
-                        status,
-                        style: GoogleFonts.nunito(
-                          color: blue,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8, right: 8, left: 8),
-              child: Text(
-                title,
-                style: GoogleFonts.dmSans(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 17,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8),
               child: Row(
                 children: [
                   Text(

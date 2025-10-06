@@ -14,6 +14,7 @@ import 'src/application/evalutaion/evaluation_bloc.dart';
 import 'src/application/events/detail/event_detail_bloc.dart';
 import 'src/application/events/events_bloc.dart';
 import 'src/application/organization/organization_bloc.dart';
+import 'src/application/permit/permits_bloc.dart';
 import 'src/application/splash/splash_bloc.dart';
 import 'src/domain/action/i_action_repository.dart';
 import 'src/domain/audit/i_audit_repository.dart';
@@ -24,6 +25,7 @@ import 'src/domain/communication/i_communication_repository.dart';
 import 'src/domain/evaluation/i_evaluation_repository.dart';
 import 'src/domain/event/i_event_repository.dart';
 import 'src/domain/organization/i_organization_repository.dart';
+import 'src/domain/permit/i_permit_repository.dart';
 import 'src/infrastructure/_commons/files/download_service.dart';
 import 'src/infrastructure/_commons/network/app_requests.dart';
 import 'src/infrastructure/_commons/network/network_info.dart';
@@ -46,6 +48,8 @@ import 'src/infrastructure/event/data-sources/event_remote_data_source.dart';
 import 'src/infrastructure/event/event_repository.dart';
 import 'src/infrastructure/organization/data_sources/organization_remote_data_source.dart';
 import 'src/infrastructure/organization/organization_repository.dart';
+import 'src/infrastructure/permit/data_sources/permit_remote_data_source.dart';
+import 'src/infrastructure/permit/permit_repository.dart';
 
 final sl = GetIt.instance;
 
@@ -60,6 +64,7 @@ Future<void> init() async {
   initCommunication();
   initEvents();
   initEvaluations();
+  initPermits();
 }
 
 void initSplashScreen() {
@@ -174,4 +179,14 @@ Future<void> initEvaluations() async {
     () => EvaluationRepository(networkInfo: sl(), remoteDataSource: sl()),
   );
   sl.registerFactory(() => EvaluationsBloc(repository: sl()));
+}
+
+Future<void> initPermits() async {
+  sl.registerLazySingleton<IPermitRemoteDataSource>(
+    () => PermitRemoteDataSource(httpClient: sl()),
+  );
+  sl.registerLazySingleton<IPermitRepository>(
+    () => PermitRepository(networkInfo: sl(), remoteDataSource: sl()),
+  );
+  sl.registerFactory(() => PermitsBloc(repository: sl()));
 }

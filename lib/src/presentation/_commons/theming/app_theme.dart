@@ -138,3 +138,25 @@ class AppTheme {
 
   // Ajoutez ici d'autres thèmes personnalisés si besoin
 }
+
+/* ---- Permis à chaud ---- */
+
+/// ----------------------------------------------
+///  STYLE
+/// ----------------------------------------------
+TextStyle titleStyle(BuildContext c) => GoogleFonts.inter(
+  fontSize: 24,
+  fontWeight: FontWeight.w700,
+  color: Theme.of(c).colorScheme.onSurface,
+);
+TextStyle bodyStyle(BuildContext c) => GoogleFonts.inter(
+  fontSize: 18,
+  height: 1.35,
+  color: Theme.of(c).colorScheme.onSurface,
+);
+ButtonStyle primaryBtn = ElevatedButton.styleFrom(
+  backgroundColor: AppColors.primary,
+  foregroundColor: Colors.white,
+  minimumSize: const Size(double.infinity, 56),
+  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+);

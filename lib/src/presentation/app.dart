@@ -13,6 +13,7 @@ import '../application/connected/connected_bloc.dart';
 import '../application/evalutaion/evaluation_bloc.dart';
 import '../application/events/detail/event_detail_bloc.dart';
 import '../application/events/events_bloc.dart';
+import '../application/permit/permits_bloc.dart';
 import '_commons/route/app_router.dart';
 import '_commons/route/app_router.gr.dart';
 import '_commons/theming/app_theme.dart';
@@ -45,6 +46,10 @@ class _AppState extends State<App> {
           create: (_) => sl<AuditsBloc>()..add(const AuditsEvent.fetch()),
         ),
         BlocProvider(create: (_) => sl<CommentsBloc>()),
+        BlocProvider(
+          create: (_) =>
+              sl<PermitsBloc>()..add(const PermitsEvent.fetchRequested()),
+        ),
       ],
       child: MaterialApp.router(
         routerDelegate: _appRouter.delegate(),

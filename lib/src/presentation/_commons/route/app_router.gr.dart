@@ -12,6 +12,7 @@
 import 'package:auto_route/auto_route.dart' as _i50;
 import 'package:easy_smi/src/domain/action/models/action_item.dart' as _i52;
 import 'package:easy_smi/src/domain/audit/models/audit_item.dart' as _i53;
+import 'package:easy_smi/src/domain/permit/models/permit_item.dart' as _i55;
 import 'package:easy_smi/src/presentation/_commons_widgets/file_preview_page.dart'
     as _i15;
 import 'package:easy_smi/src/presentation/actions/action_detail_page.dart'
@@ -631,18 +632,50 @@ class HomeRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i20.HotPermisDetailPage]
-class HotPermisDetailRoute extends _i50.PageRouteInfo<void> {
-  const HotPermisDetailRoute({List<_i50.PageRouteInfo>? children})
-    : super(HotPermisDetailRoute.name, initialChildren: children);
+class HotPermisDetailRoute
+    extends _i50.PageRouteInfo<HotPermisDetailRouteArgs> {
+  HotPermisDetailRoute({
+    _i51.Key? key,
+    required _i55.PermitItem permit,
+    List<_i50.PageRouteInfo>? children,
+  }) : super(
+         HotPermisDetailRoute.name,
+         args: HotPermisDetailRouteArgs(key: key, permit: permit),
+         initialChildren: children,
+       );
 
   static const String name = 'HotPermisDetailRoute';
 
   static _i50.PageInfo page = _i50.PageInfo(
     name,
     builder: (data) {
-      return const _i20.HotPermisDetailPage();
+      final args = data.argsAs<HotPermisDetailRouteArgs>();
+      return _i20.HotPermisDetailPage(key: args.key, permit: args.permit);
     },
   );
+}
+
+class HotPermisDetailRouteArgs {
+  const HotPermisDetailRouteArgs({this.key, required this.permit});
+
+  final _i51.Key? key;
+
+  final _i55.PermitItem permit;
+
+  @override
+  String toString() {
+    return 'HotPermisDetailRouteArgs{key: $key, permit: $permit}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! HotPermisDetailRouteArgs) return false;
+    return key == other.key && permit == other.permit;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ permit.hashCode;
 }
 
 /// generated route for

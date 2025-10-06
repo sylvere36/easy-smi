@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../gen/assets.gen.dart';
+import '../../../domain/permit/models/permit_item.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
 
 class HotPermitDetailBody extends StatefulWidget {
-  const HotPermitDetailBody({super.key});
+  final PermitItem permit;
+  const HotPermitDetailBody({super.key, required this.permit});
 
   @override
   State<HotPermitDetailBody> createState() => _HotPermitDetailBodyState();
