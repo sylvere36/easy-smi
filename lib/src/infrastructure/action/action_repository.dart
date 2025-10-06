@@ -204,4 +204,34 @@ class ActionRepository implements IActionRepository {
     }
     return left(const GlobalFailure.noNetwork());
   }
+
+  @override
+  Future<Either<GlobalFailure, ActionItem>> addImmediateActions({
+    required String name,
+    required String type,
+    required int originId,
+    String? justificationType,
+    String? justification,
+  }) async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        final items = await remoteDataSource.addImmediateActions(
+          name: name,
+          originId: originId,
+          type: type,
+          justification: justification,
+          justificationType: justificationType,
+        );
+        return right(items);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
 }

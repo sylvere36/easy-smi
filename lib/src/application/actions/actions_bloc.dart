@@ -62,15 +62,7 @@ class ActionsBloc extends Bloc<ActionsEvent, ActionsState> {
       );
     });
     on<_Reset>((event, emit) async {
-      emit(
-        state.copyWith(
-          isLoading: false,
-          resultOption: none(),
-          items: [],
-          initialItems: [],
-          originItems: null,
-        ),
-      );
+      emit(ActionsState.initial());
     });
 
     on<_SearchRequested>((event, emit) async {
@@ -88,6 +80,64 @@ class ActionsBloc extends Bloc<ActionsEvent, ActionsState> {
         }).toList();
         emit(state.copyWith(items: filteredItems));
       }
+    });
+
+    on<_AddImmediateAction>((event, emit) async {
+      emit(
+        state.copyWith(
+          isLoading: true,
+          hasAddAction: false,
+          errorMessage: null,
+          newAction: null,
+        ),
+      );
+
+      final res = await repository.addImmediateActions(
+        name: event.name,
+        originId: event.originId,
+        type: event.type,
+        justification: event.justification,
+        justificationType: event.justificationType,
+      );
+
+      res.fold(
+        (l) {
+          String errorMessage = '';
+          l.when(
+            serverError: (errorText) {
+              if (errorText != null) {
+                errorMessage = errorText;
+              }
+            },
+            unauthorized: (errorText) {
+              errorMessage = errorText;
+            },
+            noNetwork: () {
+              errorMessage = 'Pas de connexion';
+            },
+          );
+          emit(
+            state.copyWith(
+              isLoading: false,
+              hasAddAction: false,
+              errorMessage: errorMessage,
+              newAction: null,
+            ),
+          );
+          emit(state.copyWith(errorMessage: null));
+        },
+        (r) {
+          emit(
+            state.copyWith(
+              isLoading: false,
+              hasAddAction: true,
+              errorMessage: null,
+              newAction: r,
+            ),
+          );
+          emit(state.copyWith(hasAddAction: false));
+        },
+      );
     });
   }
 }

@@ -15,6 +15,15 @@ abstract class IEventRemoteDataSource {
     int page = 1,
   });
   Future<List<CauseAnalysis>> getCauseAnalysis({required int event});
+  Future<EventItem> addEvent({
+    required String title,
+    required String description,
+    DateTime? date,
+    String? site,
+    required String type,
+    required String gravity,
+    required List<String> files,
+  });
 }
 
 class EventRemoteDataSource implements IEventRemoteDataSource {
@@ -90,5 +99,59 @@ class EventRemoteDataSource implements IEventRemoteDataSource {
     }
   }
 
+  @override
+  Future<EventItem> addEvent({
+    required String title,
+    required String description,
+    DateTime? date,
+    String? site,
+    required String type,
+    required String gravity,
+    required List<String> files,
+  }) async {
+    try {
+      const String request = '/conformity/event-forms';
+      final formMap = <String, dynamic>{
+        'title': title,
+        'description': description,
+        'type': type,
+        'gravity': gravity,
+        'date': date?.toIso8601String(),
+        'site': site,
+      };
 
+      if (files.isNotEmpty) {
+        formMap['attachments'] = await Future.wait<MultipartFile>(
+          files.map(
+            (e) async => MultipartFile.fromFile(e, filename: e.split('/').last),
+          ),
+        );
+      }
+      final formData = FormData.fromMap(formMap);
+      final Response response = await httpClient.postRequest(
+        request,
+        body: formData,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final bool success = data['success'] == true;
+        if (!success) {
+          final String message = (data['message'] as String?) ?? '';
+          throw ServerException(message);
+        }
+
+        final resultData = data['data'] as Map<String, dynamic>;
+
+        return EventItem.fromJson(resultData);
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } on ServerException catch (e) {
+      throw ServerException(e.errorText);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
 }

@@ -57,4 +57,38 @@ class EventRepository implements IEventRepository {
     }
     return left(const GlobalFailure.noNetwork());
   }
+
+  @override
+  Future<Either<GlobalFailure, EventItem>> addEvent({
+    required String title,
+    required String description,
+    DateTime? date,
+    String? site,
+    required String type,
+    required String gravity,
+    required List<String> files,
+  }) async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        final items = await remoteDataSource.addEvent(
+          title: title,
+          description: description,
+          files: files,
+          gravity: gravity,
+          type: type,
+          date: date,
+          site: site,
+        );
+        return right(items);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
 }

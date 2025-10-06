@@ -78,6 +78,26 @@ String humanReadableActionType(String type) {
   }
 }
 
+final List<String> actionTypes = [
+  'preventive',
+  'corrective',
+  'improvement',
+  'curative',
+  'recurring',
+];
+
+final List<String> justificationTypes = ['gap', 'opportunity'];
+String humanReadableJustificationType(String type) {
+  switch (type) {
+    case 'gap':
+      return 'Écart';
+    case 'opportunity':
+      return 'Opportunité';
+    default:
+      return type;
+  }
+}
+
 Color actionStatusColor(String status) {
   switch (status) {
     case 'draft':

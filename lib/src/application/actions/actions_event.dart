@@ -10,4 +10,11 @@ class ActionsEvent with _$ActionsEvent {
   }) = _FetchByOrigin;
   const factory ActionsEvent.searchRequested({required String query}) =
       _SearchRequested;
+  const factory ActionsEvent.addImmediateAction({
+    required String name,
+    required String type,
+    required int originId,
+    String? justificationType,
+    String? justification,
+  }) = _AddImmediateAction;
 }
