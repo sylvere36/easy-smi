@@ -2,8 +2,8 @@ import 'package:dartz/dartz.dart';
 
 import '../_commons/global_failure.dart';
 import '../_commons/pagination.dart';
-import 'models/audit_item.dart';
 import 'models/audit_document_request.dart';
+import 'models/audit_item.dart';
 
 abstract class IAuditRepository {
   Future<Either<GlobalFailure, Paginated<AuditItem>>> getAudits({
