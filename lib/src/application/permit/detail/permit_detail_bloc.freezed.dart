@@ -149,7 +149,7 @@ return riskAssessmentSubmitted(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int id)?  fetchRequested,TResult Function()?  reset,TResult Function( int id)?  personnelRequested,TResult Function( int id)?  personnelNextPageRequested,TResult Function( int id)?  typeControlsRequested,TResult Function( int id)?  typeControlsNextPageRequested,TResult Function( int id)?  fireControlsRequested,TResult Function( int id)?  fireControlsNextPageRequested,TResult Function( int id)?  riskAssessmentsRequested,TResult Function( int id)?  riskAssessmentsNextPageRequested,TResult Function( int id,  int workPermitId,  int evaluatorId,  List<PermitRiskAssessmentQuestionInput> questions,  String status,  String conclusion)?  riskAssessmentSubmitted,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int id)?  fetchRequested,TResult Function()?  reset,TResult Function( int id)?  personnelRequested,TResult Function( int id)?  personnelNextPageRequested,TResult Function( int id)?  typeControlsRequested,TResult Function( int id)?  typeControlsNextPageRequested,TResult Function( int id)?  fireControlsRequested,TResult Function( int id)?  fireControlsNextPageRequested,TResult Function( int id)?  riskAssessmentsRequested,TResult Function( int id)?  riskAssessmentsNextPageRequested,TResult Function( PermitRiskAssessmentRequest request)?  riskAssessmentSubmitted,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested(_that.id);case _Reset() when reset != null:
@@ -162,7 +162,7 @@ return fireControlsRequested(_that.id);case _FireControlsNextPageRequested() whe
 return fireControlsNextPageRequested(_that.id);case _RiskAssessmentsRequested() when riskAssessmentsRequested != null:
 return riskAssessmentsRequested(_that.id);case _RiskAssessmentsNextPageRequested() when riskAssessmentsNextPageRequested != null:
 return riskAssessmentsNextPageRequested(_that.id);case _RiskAssessmentSubmitted() when riskAssessmentSubmitted != null:
-return riskAssessmentSubmitted(_that.id,_that.workPermitId,_that.evaluatorId,_that.questions,_that.status,_that.conclusion);case _:
+return riskAssessmentSubmitted(_that.request);case _:
   return orElse();
 
 }
@@ -180,7 +180,7 @@ return riskAssessmentSubmitted(_that.id,_that.workPermitId,_that.evaluatorId,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int id)  fetchRequested,required TResult Function()  reset,required TResult Function( int id)  personnelRequested,required TResult Function( int id)  personnelNextPageRequested,required TResult Function( int id)  typeControlsRequested,required TResult Function( int id)  typeControlsNextPageRequested,required TResult Function( int id)  fireControlsRequested,required TResult Function( int id)  fireControlsNextPageRequested,required TResult Function( int id)  riskAssessmentsRequested,required TResult Function( int id)  riskAssessmentsNextPageRequested,required TResult Function( int id,  int workPermitId,  int evaluatorId,  List<PermitRiskAssessmentQuestionInput> questions,  String status,  String conclusion)  riskAssessmentSubmitted,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int id)  fetchRequested,required TResult Function()  reset,required TResult Function( int id)  personnelRequested,required TResult Function( int id)  personnelNextPageRequested,required TResult Function( int id)  typeControlsRequested,required TResult Function( int id)  typeControlsNextPageRequested,required TResult Function( int id)  fireControlsRequested,required TResult Function( int id)  fireControlsNextPageRequested,required TResult Function( int id)  riskAssessmentsRequested,required TResult Function( int id)  riskAssessmentsNextPageRequested,required TResult Function( PermitRiskAssessmentRequest request)  riskAssessmentSubmitted,}) {final _that = this;
 switch (_that) {
 case _FetchRequested():
 return fetchRequested(_that.id);case _Reset():
@@ -193,7 +193,7 @@ return fireControlsRequested(_that.id);case _FireControlsNextPageRequested():
 return fireControlsNextPageRequested(_that.id);case _RiskAssessmentsRequested():
 return riskAssessmentsRequested(_that.id);case _RiskAssessmentsNextPageRequested():
 return riskAssessmentsNextPageRequested(_that.id);case _RiskAssessmentSubmitted():
-return riskAssessmentSubmitted(_that.id,_that.workPermitId,_that.evaluatorId,_that.questions,_that.status,_that.conclusion);case _:
+return riskAssessmentSubmitted(_that.request);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -210,7 +210,7 @@ return riskAssessmentSubmitted(_that.id,_that.workPermitId,_that.evaluatorId,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int id)?  fetchRequested,TResult? Function()?  reset,TResult? Function( int id)?  personnelRequested,TResult? Function( int id)?  personnelNextPageRequested,TResult? Function( int id)?  typeControlsRequested,TResult? Function( int id)?  typeControlsNextPageRequested,TResult? Function( int id)?  fireControlsRequested,TResult? Function( int id)?  fireControlsNextPageRequested,TResult? Function( int id)?  riskAssessmentsRequested,TResult? Function( int id)?  riskAssessmentsNextPageRequested,TResult? Function( int id,  int workPermitId,  int evaluatorId,  List<PermitRiskAssessmentQuestionInput> questions,  String status,  String conclusion)?  riskAssessmentSubmitted,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int id)?  fetchRequested,TResult? Function()?  reset,TResult? Function( int id)?  personnelRequested,TResult? Function( int id)?  personnelNextPageRequested,TResult? Function( int id)?  typeControlsRequested,TResult? Function( int id)?  typeControlsNextPageRequested,TResult? Function( int id)?  fireControlsRequested,TResult? Function( int id)?  fireControlsNextPageRequested,TResult? Function( int id)?  riskAssessmentsRequested,TResult? Function( int id)?  riskAssessmentsNextPageRequested,TResult? Function( PermitRiskAssessmentRequest request)?  riskAssessmentSubmitted,}) {final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested(_that.id);case _Reset() when reset != null:
@@ -223,7 +223,7 @@ return fireControlsRequested(_that.id);case _FireControlsNextPageRequested() whe
 return fireControlsNextPageRequested(_that.id);case _RiskAssessmentsRequested() when riskAssessmentsRequested != null:
 return riskAssessmentsRequested(_that.id);case _RiskAssessmentsNextPageRequested() when riskAssessmentsNextPageRequested != null:
 return riskAssessmentsNextPageRequested(_that.id);case _RiskAssessmentSubmitted() when riskAssessmentSubmitted != null:
-return riskAssessmentSubmitted(_that.id,_that.workPermitId,_that.evaluatorId,_that.questions,_that.status,_that.conclusion);case _:
+return riskAssessmentSubmitted(_that.request);case _:
   return null;
 
 }
@@ -861,21 +861,10 @@ as int,
 
 
 class _RiskAssessmentSubmitted implements PermitDetailEvent {
-  const _RiskAssessmentSubmitted({required this.id, required this.workPermitId, required this.evaluatorId, required final  List<PermitRiskAssessmentQuestionInput> questions, required this.status, required this.conclusion}): _questions = questions;
+  const _RiskAssessmentSubmitted({required this.request});
   
 
- final  int id;
- final  int workPermitId;
- final  int evaluatorId;
- final  List<PermitRiskAssessmentQuestionInput> _questions;
- List<PermitRiskAssessmentQuestionInput> get questions {
-  if (_questions is EqualUnmodifiableListView) return _questions;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_questions);
-}
-
- final  String status;
- final  String conclusion;
+ final  PermitRiskAssessmentRequest request;
 
 /// Create a copy of PermitDetailEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -887,16 +876,16 @@ _$RiskAssessmentSubmittedCopyWith<_RiskAssessmentSubmitted> get copyWith => __$R
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RiskAssessmentSubmitted&&(identical(other.id, id) || other.id == id)&&(identical(other.workPermitId, workPermitId) || other.workPermitId == workPermitId)&&(identical(other.evaluatorId, evaluatorId) || other.evaluatorId == evaluatorId)&&const DeepCollectionEquality().equals(other._questions, _questions)&&(identical(other.status, status) || other.status == status)&&(identical(other.conclusion, conclusion) || other.conclusion == conclusion));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RiskAssessmentSubmitted&&(identical(other.request, request) || other.request == request));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,workPermitId,evaluatorId,const DeepCollectionEquality().hash(_questions),status,conclusion);
+int get hashCode => Object.hash(runtimeType,request);
 
 @override
 String toString() {
-  return 'PermitDetailEvent.riskAssessmentSubmitted(id: $id, workPermitId: $workPermitId, evaluatorId: $evaluatorId, questions: $questions, status: $status, conclusion: $conclusion)';
+  return 'PermitDetailEvent.riskAssessmentSubmitted(request: $request)';
 }
 
 
@@ -907,7 +896,7 @@ abstract mixin class _$RiskAssessmentSubmittedCopyWith<$Res> implements $PermitD
   factory _$RiskAssessmentSubmittedCopyWith(_RiskAssessmentSubmitted value, $Res Function(_RiskAssessmentSubmitted) _then) = __$RiskAssessmentSubmittedCopyWithImpl;
 @useResult
 $Res call({
- int id, int workPermitId, int evaluatorId, List<PermitRiskAssessmentQuestionInput> questions, String status, String conclusion
+ PermitRiskAssessmentRequest request
 });
 
 
@@ -924,15 +913,10 @@ class __$RiskAssessmentSubmittedCopyWithImpl<$Res>
 
 /// Create a copy of PermitDetailEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? id = null,Object? workPermitId = null,Object? evaluatorId = null,Object? questions = null,Object? status = null,Object? conclusion = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? request = null,}) {
   return _then(_RiskAssessmentSubmitted(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int,workPermitId: null == workPermitId ? _self.workPermitId : workPermitId // ignore: cast_nullable_to_non_nullable
-as int,evaluatorId: null == evaluatorId ? _self.evaluatorId : evaluatorId // ignore: cast_nullable_to_non_nullable
-as int,questions: null == questions ? _self._questions : questions // ignore: cast_nullable_to_non_nullable
-as List<PermitRiskAssessmentQuestionInput>,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String,conclusion: null == conclusion ? _self.conclusion : conclusion // ignore: cast_nullable_to_non_nullable
-as String,
+request: null == request ? _self.request : request // ignore: cast_nullable_to_non_nullable
+as PermitRiskAssessmentRequest,
   ));
 }
 

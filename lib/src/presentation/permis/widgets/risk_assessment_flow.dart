@@ -197,9 +197,11 @@ class _QuestionView extends StatelessWidget {
                             child: Align(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
                                 children: List.generate(
                                   questions.length,
                                   (i) => Column(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.only(

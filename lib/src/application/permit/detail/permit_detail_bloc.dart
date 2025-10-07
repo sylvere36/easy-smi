@@ -365,12 +365,12 @@ class PermitDetailBloc extends Bloc<PermitDetailEvent, PermitDetailState> {
         ),
       );
       final res = await repository.setRiskAssessment(
-        id: event.id,
-        workPermitId: event.workPermitId,
-        evaluatorId: event.evaluatorId,
-        questions: event.questions,
-        status: event.status,
-        conclusion: event.conclusion,
+        id: event.request.id,
+        workPermitId: event.request.workPermitId,
+        evaluatorId: event.request.evaluatorId,
+        questions: event.request.questions,
+        status: event.request.status,
+        conclusion: event.request.conclusion,
       );
       res.fold(
         (l) => emit(
