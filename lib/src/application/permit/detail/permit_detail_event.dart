@@ -31,4 +31,14 @@ class PermitDetailEvent with _$PermitDetailEvent {
   const factory PermitDetailEvent.riskAssessmentsNextPageRequested({
     required int id,
   }) = _RiskAssessmentsNextPageRequested;
+
+  // Submit a new risk assessment
+  const factory PermitDetailEvent.riskAssessmentSubmitted({
+    required int id,
+    required int workPermitId,
+    required int evaluatorId,
+    required List<PermitRiskAssessmentQuestionInput> questions,
+    required String status,
+    required String conclusion,
+  }) = _RiskAssessmentSubmitted;
 }

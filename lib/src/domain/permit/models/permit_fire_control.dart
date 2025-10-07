@@ -31,4 +31,6 @@ class PermitFireControl {
       createdAt: json['created_at']?.toString(),
     );
   }
+
+  
 }

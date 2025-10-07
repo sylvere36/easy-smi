@@ -9,6 +9,7 @@ import '../../../domain/permit/models/permit_personnel_assignment.dart';
 import '../../../domain/permit/models/permit_type_control.dart';
 import '../../../domain/permit/models/permit_fire_control.dart';
 import '../../../domain/permit/models/permit_risk_assessment.dart';
+import '../../../domain/permit/models/permit_risk_assessment_request.dart';
 import '../../_commons/exceptions.dart';
 import '../../_commons/network/app_requests.dart';
 import '../../_commons/throw_error.dart';
@@ -40,6 +41,15 @@ abstract class IPermitRemoteDataSource {
     required int id,
     int page,
     int perPage,
+  });
+
+  Future<PermitRiskAssessment> setRiskAssessment({
+    required int id,
+    required int workPermitId,
+    required int evaluatorId,
+    required List<PermitRiskAssessmentQuestionInput> questions,
+    required String status,
+    required String conclusion,
   });
 }
 
@@ -250,6 +260,62 @@ class PermitRemoteDataSource implements IPermitRemoteDataSource {
       } else {
         throw ServerException(errorThrow(response));
       }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<PermitRiskAssessment> setRiskAssessment({
+    required int id,
+    required int workPermitId,
+    required int evaluatorId,
+    required List<PermitRiskAssessmentQuestionInput> questions,
+    required String status,
+    required String conclusion,
+  }) async {
+    try {
+      final String request = '/conformity/work-permits/$id/risk-assessments';
+      // Build form map with bracket notation for arrays/nested fields
+      final Map<String, dynamic> formMap = {
+        'work_permit_id': workPermitId,
+        'evaluator_id': evaluatorId,
+        'status': status,
+        'conclusion': conclusion,
+      };
+
+      for (int i = 0; i < questions.length; i++) {
+        final q = questions[i];
+        formMap['questions[$i][response]'] = q.response;
+        formMap['questions[$i][comment]'] = q.comment;
+        if (q.evidences.isNotEmpty) {
+          // Multiple files under same key uses [] suffix
+          formMap['questions[$i][evidences][]'] =
+              await Future.wait<MultipartFile>(
+                q.evidences.map(
+                  (p) async =>
+                      MultipartFile.fromFile(p, filename: p.split('/').last),
+                ),
+              );
+        }
+      }
+
+      final formData = FormData.fromMap(formMap);
+      final Response response = await httpClient.postRequest(
+        request,
+        body: formData,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final itemJson = data['data'] as Map<String, dynamic>? ?? {};
+        return PermitRiskAssessment.fromJson(itemJson);
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } on ServerException catch (e) {
+      throw ServerException(e.errorText);
     } catch (e) {
       throw ServerException(e.toString());
     }

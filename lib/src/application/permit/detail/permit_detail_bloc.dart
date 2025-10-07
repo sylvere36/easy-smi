@@ -10,6 +10,7 @@ import '../../../domain/permit/models/permit_personnel_assignment.dart';
 import '../../../domain/permit/models/permit_type_control.dart';
 import '../../../domain/permit/models/permit_fire_control.dart';
 import '../../../domain/permit/models/permit_risk_assessment.dart';
+import '../../../domain/permit/models/permit_risk_assessment_request.dart';
 
 part 'permit_detail_bloc.freezed.dart';
 part 'permit_detail_event.dart';
@@ -350,6 +351,42 @@ class PermitDetailBloc extends Bloc<PermitDetailEvent, PermitDetailState> {
               riskAssessmentsTotal: paginated.pagination.total,
               riskAssessmentsCanLoadMore: canLoadMore,
               riskAssessmentsResultOption: some(right(paginated)),
+            ),
+          );
+        },
+      );
+    });
+
+    on<_RiskAssessmentSubmitted>((event, emit) async {
+      emit(
+        state.copyWith(
+          isSubmittingRiskAssessment: true,
+          riskAssessmentSubmitResultOption: none(),
+        ),
+      );
+      final res = await repository.setRiskAssessment(
+        id: event.id,
+        workPermitId: event.workPermitId,
+        evaluatorId: event.evaluatorId,
+        questions: event.questions,
+        status: event.status,
+        conclusion: event.conclusion,
+      );
+      res.fold(
+        (l) => emit(
+          state.copyWith(
+            isSubmittingRiskAssessment: false,
+            riskAssessmentSubmitResultOption: some(left(l)),
+          ),
+        ),
+        (created) {
+          final newList = [created, ...state.riskAssessments];
+          emit(
+            state.copyWith(
+              isSubmittingRiskAssessment: false,
+              riskAssessments: newList,
+              riskAssessmentsTotal: state.riskAssessmentsTotal + 1,
+              riskAssessmentSubmitResultOption: some(right(created)),
             ),
           );
         },

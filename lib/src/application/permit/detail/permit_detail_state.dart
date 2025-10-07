@@ -42,6 +42,10 @@ abstract class PermitDetailState with _$PermitDetailState {
     required bool riskAssessmentsCanLoadMore,
     required Option<Either<GlobalFailure, Paginated<PermitRiskAssessment>>>
     riskAssessmentsResultOption,
+    // submit risk assessment state
+    required bool isSubmittingRiskAssessment,
+    required Option<Either<GlobalFailure, PermitRiskAssessment>>
+    riskAssessmentSubmitResultOption,
   }) = _PermitDetailState;
 
   factory PermitDetailState.initial() => PermitDetailState(
@@ -76,5 +80,7 @@ abstract class PermitDetailState with _$PermitDetailState {
     riskAssessmentsTotal: 0,
     riskAssessmentsCanLoadMore: true,
     riskAssessmentsResultOption: none(),
+    isSubmittingRiskAssessment: false,
+    riskAssessmentSubmitResultOption: none(),
   );
 }

@@ -45,4 +45,6 @@ class PermitPersonnelAssignment {
       updatedAt: json['updated_at']?.toString(),
     );
   }
+
+  bool get qualified => training == 'qualified';
 }

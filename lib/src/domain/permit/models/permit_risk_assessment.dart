@@ -31,4 +31,7 @@ class PermitRiskAssessment {
       updatedAt: json['updated_at']?.toString(),
     );
   }
+
+  bool get isConforme => status == 'conforme';
+  bool get isNonConforme => status == 'non_conforme';
 }

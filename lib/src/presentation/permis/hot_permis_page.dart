@@ -42,18 +42,6 @@ class HotPermisPage extends StatelessWidget {
                       ),
                     ) ??
                     [const SizedBox.shrink()],
-
-                //   List.generate(
-                //   8,
-                //   (index) => const _HotWorkCard(
-                //     level: 'Travail dangereux',
-                //     status: 'En cours',
-                //     title:
-                //         'Permis pour les travaux sur le quai du bateau de dechargements des marchandises',
-                //     site: 'Espace vert du PAC',
-                //     levelColor: Color(0xFF7E59FF),
-                //   ),
-                // )
               ],
             ),
           ),
