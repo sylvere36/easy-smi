@@ -10,9 +10,12 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i52;
+import 'package:collection/collection.dart' as _i60;
 import 'package:easy_smi/src/domain/action/models/action_item.dart' as _i54;
 import 'package:easy_smi/src/domain/audit/models/audit_item.dart' as _i55;
 import 'package:easy_smi/src/domain/permit/models/permit_item.dart' as _i57;
+import 'package:easy_smi/src/domain/permit/models/permit_risk_assessment_request.dart'
+    as _i59;
 import 'package:easy_smi/src/presentation/_commons_widgets/file_preview_page.dart'
     as _i15;
 import 'package:easy_smi/src/presentation/actions/action_detail_page.dart'
@@ -1106,10 +1109,17 @@ class RiskAssessmentRoute extends _i52.PageRouteInfo<RiskAssessmentRouteArgs> {
   RiskAssessmentRoute({
     _i58.Key? key,
     required _i57.PermitItem permit,
+    List<_i59.PermitRiskAssessmentQuestionInput>? initialAnswers,
+    int? initialIndex,
     List<_i52.PageRouteInfo>? children,
   }) : super(
          RiskAssessmentRoute.name,
-         args: RiskAssessmentRouteArgs(key: key, permit: permit),
+         args: RiskAssessmentRouteArgs(
+           key: key,
+           permit: permit,
+           initialAnswers: initialAnswers,
+           initialIndex: initialIndex,
+         ),
          initialChildren: children,
        );
 
@@ -1119,48 +1129,124 @@ class RiskAssessmentRoute extends _i52.PageRouteInfo<RiskAssessmentRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<RiskAssessmentRouteArgs>();
-      return _i45.RiskAssessmentPage(key: args.key, permit: args.permit);
+      return _i45.RiskAssessmentPage(
+        key: args.key,
+        permit: args.permit,
+        initialAnswers: args.initialAnswers,
+        initialIndex: args.initialIndex,
+      );
     },
   );
 }
 
 class RiskAssessmentRouteArgs {
-  const RiskAssessmentRouteArgs({this.key, required this.permit});
+  const RiskAssessmentRouteArgs({
+    this.key,
+    required this.permit,
+    this.initialAnswers,
+    this.initialIndex,
+  });
 
   final _i58.Key? key;
 
   final _i57.PermitItem permit;
 
+  final List<_i59.PermitRiskAssessmentQuestionInput>? initialAnswers;
+
+  final int? initialIndex;
+
   @override
   String toString() {
-    return 'RiskAssessmentRouteArgs{key: $key, permit: $permit}';
+    return 'RiskAssessmentRouteArgs{key: $key, permit: $permit, initialAnswers: $initialAnswers, initialIndex: $initialIndex}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! RiskAssessmentRouteArgs) return false;
-    return key == other.key && permit == other.permit;
+    return key == other.key &&
+        permit == other.permit &&
+        const _i60.ListEquality().equals(
+          initialAnswers,
+          other.initialAnswers,
+        ) &&
+        initialIndex == other.initialIndex;
   }
 
   @override
-  int get hashCode => key.hashCode ^ permit.hashCode;
+  int get hashCode =>
+      key.hashCode ^
+      permit.hashCode ^
+      const _i60.ListEquality().hash(initialAnswers) ^
+      initialIndex.hashCode;
 }
 
 /// generated route for
 /// [_i46.RiskAssessmentResultPage]
-class RiskAssessmentResultRoute extends _i52.PageRouteInfo<void> {
-  const RiskAssessmentResultRoute({List<_i52.PageRouteInfo>? children})
-    : super(RiskAssessmentResultRoute.name, initialChildren: children);
+class RiskAssessmentResultRoute
+    extends _i52.PageRouteInfo<RiskAssessmentResultRouteArgs> {
+  RiskAssessmentResultRoute({
+    _i53.Key? key,
+    required List<_i59.PermitRiskAssessmentQuestionInput> responses,
+    required _i57.PermitItem permit,
+    List<_i52.PageRouteInfo>? children,
+  }) : super(
+         RiskAssessmentResultRoute.name,
+         args: RiskAssessmentResultRouteArgs(
+           key: key,
+           responses: responses,
+           permit: permit,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'RiskAssessmentResultRoute';
 
   static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
-      return const _i46.RiskAssessmentResultPage();
+      final args = data.argsAs<RiskAssessmentResultRouteArgs>();
+      return _i46.RiskAssessmentResultPage(
+        key: args.key,
+        responses: args.responses,
+        permit: args.permit,
+      );
     },
   );
+}
+
+class RiskAssessmentResultRouteArgs {
+  const RiskAssessmentResultRouteArgs({
+    this.key,
+    required this.responses,
+    required this.permit,
+  });
+
+  final _i53.Key? key;
+
+  final List<_i59.PermitRiskAssessmentQuestionInput> responses;
+
+  final _i57.PermitItem permit;
+
+  @override
+  String toString() {
+    return 'RiskAssessmentResultRouteArgs{key: $key, responses: $responses, permit: $permit}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! RiskAssessmentResultRouteArgs) return false;
+    return key == other.key &&
+        const _i60.ListEquality().equals(responses, other.responses) &&
+        permit == other.permit;
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^
+      const _i60.ListEquality().hash(responses) ^
+      permit.hashCode;
 }
 
 /// generated route for

@@ -1,6 +1,6 @@
-import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:auto_route/auto_route.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,16 +9,22 @@ import 'package:image_picker/image_picker.dart';
 import '../../../domain/permit/models/permit_item.dart';
 import '../../../domain/permit/models/permit_risk_assessment_request.dart';
 import '../../../domain/permit/utils/risk_assessment_builder.dart';
+import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
+import 'evidence_galerry.dart';
 
 class RiskAssessmentFlow extends StatefulWidget {
   const RiskAssessmentFlow({
     super.key,
     required this.title,
     required this.permit,
+    this.initialAnswers,
+    this.initialIndex,
   });
   final String title;
   final PermitItem permit;
+  final List<PermitRiskAssessmentQuestionInput>? initialAnswers;
+  final int? initialIndex;
 
   @override
   State<RiskAssessmentFlow> createState() => _RiskAssessmentFlowState();
@@ -36,8 +42,32 @@ class _RiskAssessmentFlowState extends State<RiskAssessmentFlow> {
     // Build dynamic questions from builder (labels only)
     final inputs = buildDefaultRiskAssessmentInputs();
     questions = inputs
-        .map((i) => Question(title: i.comment, type: QuestionType.boolean))
+        .map(
+          (i) => Question(title: i.questionTitle, type: QuestionType.boolean),
+        )
         .toList();
+    // hydrate from initial answers if provided
+    final init = widget.initialAnswers;
+    if (init != null && init.isNotEmpty) {
+      final len = math.min(init.length, questions.length);
+      for (var i = 0; i < len; i++) {
+        final qi = init[i];
+        final q = questions[i];
+        q.yes = qi.response;
+        q.comment = qi.comment;
+        q.evidences
+          ..clear()
+          ..addAll(qi.evidences);
+      }
+    }
+    // set initial index if provided
+    if (widget.initialIndex != null && questions.isNotEmpty) {
+      _qIndex = widget.initialIndex!.clamp(0, questions.length - 1);
+    }
+    // scroll to index after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _animateProgressTo(_qIndex);
+    });
   }
 
   void _toNext() {
@@ -45,7 +75,6 @@ class _RiskAssessmentFlowState extends State<RiskAssessmentFlow> {
       if (_qIndex < questions.length - 1) {
         _qIndex++;
       } else {
-        // Dernière question: log de la liste des inputs construits
         final List<PermitRiskAssessmentQuestionInput> payload = questions
             .map(
               (q) => PermitRiskAssessmentQuestionInput(
@@ -54,17 +83,15 @@ class _RiskAssessmentFlowState extends State<RiskAssessmentFlow> {
                 comment: (q.comment == null || q.comment!.trim().isEmpty)
                     ? 'Aucun commentaire'
                     : q.comment!.trim(),
+                questionTitle: q.title,
               ),
             )
             .toList();
-        // Log propre
-        debugPrint('RiskAssessment payload (${payload.length} items):');
-        for (var i = 0; i < payload.length; i++) {
-          final p = payload[i];
-          debugPrint(
-            '  #${i + 1} response=${p.response} evidences=${p.evidences.length} comment="${p.comment}"',
-          );
-        }
+
+        AutoRouter.of(context).popAndPush(
+          RiskAssessmentResultRoute(permit: widget.permit, responses: payload),
+        );
+
         return;
       }
     });
@@ -93,6 +120,8 @@ class _RiskAssessmentFlowState extends State<RiskAssessmentFlow> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: themeColor,
+        foregroundColor:
+            Colors.white, // ensure icons/text contrast on colored app bar
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
@@ -296,6 +325,8 @@ class _QuestionView extends StatelessWidget {
                           style: GoogleFonts.ubuntu(
                             fontSize: 25,
                             fontWeight: FontWeight.w500,
+                            color: Colors
+                                .black87, // force readable text on white card
                           ),
                         ),
 
@@ -415,7 +446,7 @@ class _QuestionView extends StatelessWidget {
                         if (q.evidences.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 10),
-                            child: _EvidenceGallery(
+                            child: EvidenceGallery(
                               paths: q.evidences,
                               onRemove: (p) {
                                 q.evidences.remove(p);
@@ -675,93 +706,6 @@ class Question {
 }
 
 /* ==================== EVIDENCE GALLERY ==================== */
-
-class _EvidenceGallery extends StatelessWidget {
-  const _EvidenceGallery({required this.paths, required this.onRemove});
-
-  final List<String> paths;
-  final ValueChanged<String> onRemove;
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          for (final p in paths)
-            Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      width: 88,
-                      height: 88,
-                      color: const Color(0xFFF0F3F6),
-                      child: _thumbForPath(p),
-                    ),
-                  ),
-                  Positioned(
-                    top: -6,
-                    right: -6,
-                    child: Material(
-                      color: Colors.black.withValues(alpha: .65),
-                      shape: const CircleBorder(),
-                      child: InkWell(
-                        onTap: () => onRemove(p),
-                        customBorder: const CircleBorder(),
-                        child: const Padding(
-                          padding: EdgeInsets.all(2),
-                          child: Icon(
-                            Icons.close,
-                            color: Colors.white,
-                            size: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _thumbForPath(String p) {
-    try {
-      final file = File(p);
-      return Image.file(
-        file,
-        width: 88,
-        height: 88,
-        fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => _fallbackThumb(p),
-      );
-    } catch (_) {
-      return _fallbackThumb(p);
-    }
-  }
-
-  Widget _fallbackThumb(String p) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          p.split('/').last,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 10, color: Colors.black54),
-        ),
-      ),
-    );
-  }
-}
-
 class SectionData {
   SectionData({
     required this.name,

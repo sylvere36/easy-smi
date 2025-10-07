@@ -28,6 +28,7 @@ class PermitRiskAssessmentRequest {
               .map((x) => x as String)
               .toList(),
           comment: m['comment'] as String,
+          questionTitle: m['questionTitle'] as String,
         );
       }).toList(),
       status: json['status'] as String,
@@ -59,10 +60,12 @@ class PermitRiskAssessmentQuestionInput {
   final bool response;
   final List<String> evidences; // local file paths
   final String comment;
+  final String questionTitle;
 
   const PermitRiskAssessmentQuestionInput({
     required this.response,
     this.evidences = const [],
     required this.comment,
+    required this.questionTitle,
   });
 }

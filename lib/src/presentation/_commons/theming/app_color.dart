@@ -25,4 +25,7 @@ class AppColors {
   static const field = Color(0xFFF2F5F8);
   static const badge = Color(0xFFEFF2FF);
   // static const headerPill = Color(0xFFEFF2FF);
+
+  static const titleGrey = Color(0xFF54657E);
+  static const bgDark = Color(0xFF04103B);
 }

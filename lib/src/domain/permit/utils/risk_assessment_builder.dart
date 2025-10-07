@@ -5,8 +5,11 @@ import '../models/permit_risk_assessment_request.dart';
 List<PermitRiskAssessmentQuestionInput> buildDefaultRiskAssessmentInputs() {
   return kRiskAssessmentQuestionLabels
       .map(
-        (label) =>
-            PermitRiskAssessmentQuestionInput(response: false, comment: label),
+        (label) => PermitRiskAssessmentQuestionInput(
+          response: false,
+          comment: '',
+          questionTitle: label,
+        ),
       )
       .toList();
 }

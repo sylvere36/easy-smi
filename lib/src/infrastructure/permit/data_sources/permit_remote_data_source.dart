@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 
@@ -301,6 +302,10 @@ class PermitRemoteDataSource implements IPermitRemoteDataSource {
       }
 
       final formData = FormData.fromMap(formMap);
+      log('Submitting RiskAssessment with ${questions.length} questions');
+      log(
+        'EvaluatorId: $evaluatorId, WorkPermitId: $workPermitId, Status: $status',
+      );
       final Response response = await httpClient.postRequest(
         request,
         body: formData,
