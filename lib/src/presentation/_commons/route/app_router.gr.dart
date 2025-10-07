@@ -109,6 +109,7 @@ import 'package:easy_smi/src/presentation/profile/sensibilisation/profile_sensib
 import 'package:easy_smi/src/presentation/splash/splash.dart' as _i49;
 import 'package:flutter/foundation.dart' as _i56;
 import 'package:flutter/material.dart' as _i53;
+import 'package:flutter/widgets.dart' as _i58;
 
 /// generated route for
 /// [_i1.ActionDetailPage]
@@ -1101,18 +1102,49 @@ class QuizzResponsesStatsRoute extends _i52.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i45.RiskAssessmentPage]
-class RiskAssessmentRoute extends _i52.PageRouteInfo<void> {
-  const RiskAssessmentRoute({List<_i52.PageRouteInfo>? children})
-    : super(RiskAssessmentRoute.name, initialChildren: children);
+class RiskAssessmentRoute extends _i52.PageRouteInfo<RiskAssessmentRouteArgs> {
+  RiskAssessmentRoute({
+    _i58.Key? key,
+    required _i57.PermitItem permit,
+    List<_i52.PageRouteInfo>? children,
+  }) : super(
+         RiskAssessmentRoute.name,
+         args: RiskAssessmentRouteArgs(key: key, permit: permit),
+         initialChildren: children,
+       );
 
   static const String name = 'RiskAssessmentRoute';
 
   static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
-      return const _i45.RiskAssessmentPage();
+      final args = data.argsAs<RiskAssessmentRouteArgs>();
+      return _i45.RiskAssessmentPage(key: args.key, permit: args.permit);
     },
   );
+}
+
+class RiskAssessmentRouteArgs {
+  const RiskAssessmentRouteArgs({this.key, required this.permit});
+
+  final _i58.Key? key;
+
+  final _i57.PermitItem permit;
+
+  @override
+  String toString() {
+    return 'RiskAssessmentRouteArgs{key: $key, permit: $permit}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! RiskAssessmentRouteArgs) return false;
+    return key == other.key && permit == other.permit;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ permit.hashCode;
 }
 
 /// generated route for
