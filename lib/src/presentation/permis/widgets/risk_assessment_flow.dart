@@ -6,13 +6,19 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../domain/permit/models/permit_item.dart';
 import '../../../domain/permit/models/permit_risk_assessment_request.dart';
 import '../../../domain/permit/utils/risk_assessment_builder.dart';
 import '../../_commons/theming/app_color.dart';
 
 class RiskAssessmentFlow extends StatefulWidget {
-  const RiskAssessmentFlow({super.key, required this.title});
+  const RiskAssessmentFlow({
+    super.key,
+    required this.title,
+    required this.permit,
+  });
   final String title;
+  final PermitItem permit;
 
   @override
   State<RiskAssessmentFlow> createState() => _RiskAssessmentFlowState();
@@ -46,7 +52,7 @@ class _RiskAssessmentFlowState extends State<RiskAssessmentFlow> {
                 response: q.yes ?? false,
                 evidences: q.evidences,
                 comment: (q.comment == null || q.comment!.trim().isEmpty)
-                    ? q.title
+                    ? 'Aucun commentaire'
                     : q.comment!.trim(),
               ),
             )
@@ -397,7 +403,8 @@ class _QuestionView extends StatelessWidget {
                                 child: _NavBubble(
                                   isLeft: false,
                                   color: color,
-                                  onTap: onNext,
+                                  enabled: q.yes != null,
+                                  onTap: q.yes != null ? onNext : null,
                                 ),
                               ),
                             ],
@@ -531,25 +538,26 @@ class _CommentFieldState extends State<_CommentField> {
   Widget build(BuildContext context) {
     return TextField(
       controller: _controller,
-      minLines: 1,
-      maxLines: 2,
+      minLines: 2,
+      maxLines: 5,
       onChanged: widget.onChanged,
       decoration: InputDecoration(
-        hintText: 'Commentaire',
+        hintText: 'Votre Commentaire',
+        label: const Text('Votre Commentaire'),
         filled: true,
         fillColor: const Color(0xFFF6F8FA),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 12,
           vertical: 10,
         ),
-        suffixIcon: Padding(
-          padding: const EdgeInsets.only(right: 8, left: 8),
-          child: Icon(
-            Icons.send_rounded,
-            color: Colors.grey.shade700,
-            size: 18,
-          ),
-        ),
+        // suffixIcon: Padding(
+        //   padding: const EdgeInsets.only(right: 8, left: 8),
+        //   child: Icon(
+        //     Icons.send_rounded,
+        //     color: Colors.grey.shade700,
+        //     size: 18,
+        //   ),
+        // ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: Color(0xFFE2E7EB)),
@@ -564,19 +572,25 @@ class _CommentFieldState extends State<_CommentField> {
 }
 
 class _NavBubble extends StatelessWidget {
-  const _NavBubble({required this.color, this.onTap, this.isLeft = true});
+  const _NavBubble({
+    required this.color,
+    this.onTap,
+    this.isLeft = true,
+    this.enabled = true,
+  });
 
   final Color color;
   final VoidCallback? onTap;
   final bool isLeft;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: color,
+      color: enabled ? color : Colors.grey.shade400,
       shape: const CircleBorder(),
       child: InkWell(
-        onTap: onTap,
+        onTap: enabled ? onTap : null,
         customBorder: const CircleBorder(),
         child: Padding(
           padding: const EdgeInsets.all(5),

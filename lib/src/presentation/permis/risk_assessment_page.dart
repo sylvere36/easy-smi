@@ -17,8 +17,9 @@ class RiskAssessmentPage extends StatefulWidget {
 class _RiskAssessmentPageState extends State<RiskAssessmentPage> {
   @override
   Widget build(BuildContext context) {
-    return const RiskAssessmentFlow(
+    return RiskAssessmentFlow(
       title: 'Absence de mise à jour des procédures',
+      permit: widget.permit,
     );
   }
 }
