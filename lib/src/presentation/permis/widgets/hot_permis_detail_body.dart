@@ -42,6 +42,8 @@ class _HotPermitDetailBodyState extends State<HotPermitDetailBody> {
     ),
   ];
 
+  String commentTableType = 'Conformity';
+
   // --- Styles rapides ---
   TextStyle get title =>
       GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600);
@@ -57,7 +59,7 @@ class _HotPermitDetailBodyState extends State<HotPermitDetailBody> {
     super.initState();
     BlocProvider.of<CommentsBloc>(context).add(
       CommentsEvent.fetchRequested(
-        commentableType: 'Conformity',
+        commentableType: commentTableType,
         commentableId: widget.permit.id,
       ),
     );
@@ -170,7 +172,7 @@ class _HotPermitDetailBodyState extends State<HotPermitDetailBody> {
                             onSend: (String text, File? file) {
                               BlocProvider.of<CommentsBloc>(context).add(
                                 CommentsEvent.addCommentRequested(
-                                  commentableType: 'Action',
+                                  commentableType: commentTableType,
                                   commentableId: widget.permit.id,
                                   attachmentPath: file?.path,
                                   body: text,
@@ -184,10 +186,11 @@ class _HotPermitDetailBodyState extends State<HotPermitDetailBody> {
 
                     // Comments header + tiny list
                     ResumeCommentWidget(
-                      commentableType: 'Action',
+                      commentableType: commentTableType,
                       commentableId: widget.permit.id,
                       commentsCount: BlocProvider.of<CommentsBloc>(
                         context,
+                        listen: true,
                       ).state.items.length,
                     ),
 

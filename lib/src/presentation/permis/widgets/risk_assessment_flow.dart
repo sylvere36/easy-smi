@@ -1,9 +1,13 @@
+import 'dart:io';
 import 'dart:math' as math;
 
-import 'package:auto_route/auto_route.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 
+import '../../../domain/permit/models/permit_risk_assessment_request.dart';
+import '../../../domain/permit/utils/risk_assessment_builder.dart';
 import '../../_commons/theming/app_color.dart';
 
 class RiskAssessmentFlow extends StatefulWidget {
@@ -15,47 +19,51 @@ class RiskAssessmentFlow extends StatefulWidget {
 }
 
 class _RiskAssessmentFlowState extends State<RiskAssessmentFlow> {
-  int _sectionIndex = 0;
   int _qIndex = 0;
 
-  List<Question> questions = [
-    Question(
-      title:
-          "Le chantier est il rangé et nettoyé après les travaux effectué par l'équipe delegué pour la tâche?",
-      type: QuestionType.boolean,
-    ),
-    Question(
-      title:
-          "Le chantier est il rangé et nettoyé après les travaux effectué par l'équipe delegué pour la tâche?",
-      type: QuestionType.boolean,
-    ),
-    Question(
-      title:
-          "Le chantier est il rangé et nettoyé après les travaux effectué par l'équipe delegué pour la tâche?",
-      type: QuestionType.boolean,
-    ),
-  ];
+  late List<Question> questions;
+  final ScrollController _progressCtrl = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    // Build dynamic questions from builder (labels only)
+    final inputs = buildDefaultRiskAssessmentInputs();
+    questions = inputs
+        .map((i) => Question(title: i.comment, type: QuestionType.boolean))
+        .toList();
   }
 
   void _toNext() {
     setState(() {
-      if (_qIndex < 0) {
-        _qIndex = 0;
-      } else if (_qIndex < questions.length - 1) {
+      if (_qIndex < questions.length - 1) {
         _qIndex++;
       } else {
-        // section suivante
-        if (_sectionIndex < questions.length - 1) {
-          _sectionIndex++;
-          _qIndex = -1;
-        } else if (_sectionIndex == questions.length - 1) {
-          return;
+        // Dernière question: log de la liste des inputs construits
+        final List<PermitRiskAssessmentQuestionInput> payload = questions
+            .map(
+              (q) => PermitRiskAssessmentQuestionInput(
+                response: q.yes ?? false,
+                evidences: q.evidences,
+                comment: (q.comment == null || q.comment!.trim().isEmpty)
+                    ? q.title
+                    : q.comment!.trim(),
+              ),
+            )
+            .toList();
+        // Log propre
+        debugPrint('RiskAssessment payload (${payload.length} items):');
+        for (var i = 0; i < payload.length; i++) {
+          final p = payload[i];
+          debugPrint(
+            '  #${i + 1} response=${p.response} evidences=${p.evidences.length} comment="${p.comment}"',
+          );
         }
+        return;
       }
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _animateProgressTo(_qIndex);
     });
   }
 
@@ -63,16 +71,12 @@ class _RiskAssessmentFlowState extends State<RiskAssessmentFlow> {
     setState(() {
       if (_qIndex > 0) {
         _qIndex--;
-      } else if (_qIndex == 0) {
-        _qIndex = -1;
       } else {
-        if (_sectionIndex > 0) {
-          _sectionIndex--;
-          _qIndex = -1;
-        } else if (_sectionIndex == 0) {
-          context.pop();
-        }
+        Navigator.of(context).maybePop();
       }
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _animateProgressTo(_qIndex);
     });
   }
 
@@ -115,11 +119,34 @@ class _RiskAssessmentFlowState extends State<RiskAssessmentFlow> {
           sectionName: 'current.name',
           questions: questions,
           qIndex: _qIndex,
+          progressController: _progressCtrl,
           onPrev: _toPrev,
           onNext: _toNext,
           onUpdate: () => setState(() {}),
         ),
       ),
+    );
+  }
+
+  void _animateProgressTo(int index) {
+    if (!_progressCtrl.hasClients) return;
+    const double itemExtent = 50.0; // width per item (matches SizedBox width)
+    const double horizontalPadding = 20.0; // scroll view horizontal padding
+    final double viewport = _progressCtrl.position.viewportDimension;
+    final double contentWidth =
+        questions.length * itemExtent + horizontalPadding * 2;
+    final double targetCenter =
+        horizontalPadding + index * itemExtent + itemExtent / 2;
+    final double rawOffset = targetCenter - viewport / 2;
+    final double maxOffset = (contentWidth - viewport).clamp(
+      0.0,
+      double.infinity,
+    );
+    final double offset = rawOffset.clamp(0.0, maxOffset);
+    _progressCtrl.animateTo(
+      offset,
+      duration: const Duration(milliseconds: 280),
+      curve: Curves.easeOutCubic,
     );
   }
 }
@@ -132,6 +159,7 @@ class _QuestionView extends StatelessWidget {
     required this.sectionName,
     required this.questions,
     required this.qIndex,
+    this.progressController,
     required this.onPrev,
     required this.onNext,
     required this.onUpdate,
@@ -141,6 +169,7 @@ class _QuestionView extends StatelessWidget {
   final String sectionName;
   final List<Question> questions;
   final int qIndex;
+  final ScrollController? progressController;
   final VoidCallback onPrev;
   final VoidCallback onNext;
   final VoidCallback onUpdate;
@@ -148,6 +177,7 @@ class _QuestionView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final q = questions[qIndex];
+    final imagePicker = ImagePicker();
 
     return Stack(
       children: [
@@ -185,56 +215,51 @@ class _QuestionView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // progress dots
+                  // progress dots (scrollable to avoid overflow)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 15),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: Align(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: List.generate(
-                                  questions.length,
-                                  (i) => Column(
+                    child: SizedBox(
+                      height: 70,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        controller: progressController,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: List.generate(
+                                questions.length,
+                                (i) => Padding(
+                                  padding: EdgeInsets.zero,
+                                  child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 8,
+                                      Container(
+                                        width: 32,
+                                        height: 32,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: i == qIndex
+                                              ? color
+                                              : Colors.black38,
                                         ),
-                                        child: Container(
-                                          width: 32,
-                                          height: 32,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: i == qIndex
-                                                ? color
-                                                : Colors.black38,
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              '${i + 1}',
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w800,
-                                                fontSize: 10,
-                                              ),
+                                        child: Center(
+                                          child: Text(
+                                            '${i + 1}',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w800,
+                                              fontSize: 10,
                                             ),
                                           ),
                                         ),
                                       ),
-
                                       Padding(
                                         padding: const EdgeInsets.only(
-                                          top: 18.0,
+                                          top: 12.0,
                                         ),
                                         child: SizedBox(
-                                          width: 40,
+                                          width: 50,
                                           child: Divider(
                                             thickness: 2,
                                             color: i == qIndex
@@ -246,12 +271,12 @@ class _QuestionView extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                )..add(const Spacer()),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                   Expanded(
@@ -297,51 +322,107 @@ class _QuestionView extends StatelessWidget {
                             ),
                           ),
 
-                        // nav + commentaire
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Row(
-                              children: [
-                                // prev
-                                _NavBubble(color: color, onTap: onPrev),
-                                const Spacer(),
-                                // attach/comment icons above field (right aligned)
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.attachment_rounded,
-                                      size: 25,
-                                      color: Colors.grey.shade700,
+                        // nav + attach/camera + next
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Row(
+                            children: [
+                              _NavBubble(color: color, onTap: onPrev),
+                              const Spacer(),
+                              Row(
+                                children: [
+                                  // Attach from gallery/files
+                                  InkWell(
+                                    onTap: () async {
+                                      final result = await FilePicker.platform
+                                          .pickFiles(
+                                            allowMultiple: true,
+                                            type: FileType.image,
+                                          );
+                                      if (result != null &&
+                                          result.files.isNotEmpty) {
+                                        final paths = result.paths
+                                            .whereType<String>();
+                                        q.evidences.addAll(paths);
+                                        onUpdate();
+                                      }
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.attachment_rounded,
+                                          size: 25,
+                                          color: Colors.grey.shade700,
+                                        ),
+                                        if (q.evidences.isNotEmpty)
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 6,
+                                            ),
+                                            child: Text(
+                                              '${q.evidences.length}',
+                                              style: TextStyle(
+                                                color: Colors.grey.shade700,
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                          ),
+                                      ],
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 10),
+                                  ),
+                                  // Capture from camera
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: InkWell(
+                                      onTap: () async {
+                                        final x = await imagePicker.pickImage(
+                                          source: ImageSource.camera,
+                                        );
+                                        if (x != null) {
+                                          q.evidences.add(x.path);
+                                          onUpdate();
+                                        }
+                                      },
                                       child: Icon(
                                         Icons.photo_camera_outlined,
                                         size: 25,
                                         color: Colors.grey.shade700,
                                       ),
                                     ),
-                                  ],
-                                ),
-                                // next
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 12),
-                                  child: _NavBubble(
-                                    isLeft: false,
-                                    color: color,
-                                    onTap: onNext,
                                   ),
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 12),
+                                child: _NavBubble(
+                                  isLeft: false,
+                                  color: color,
+                                  onTap: onNext,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
+
+                        // evidences thumbnails (horizontal scroll)
+                        if (q.evidences.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: _EvidenceGallery(
+                              paths: q.evidences,
+                              onRemove: (p) {
+                                q.evidences.remove(p);
+                                onUpdate();
+                              },
+                            ),
+                          ),
 
                         // champ commentaire
                         Padding(
                           padding: const EdgeInsets.only(top: 30, bottom: 50),
                           child: _CommentField(
+                            key: ValueKey('comment-$qIndex'),
+                            initialText: q.comment ?? '',
                             onChanged: (t) {
                               q.comment = t;
                             },
@@ -414,16 +495,45 @@ class _BooleanRow extends StatelessWidget {
   }
 }
 
-class _CommentField extends StatelessWidget {
-  const _CommentField({this.onChanged});
+class _CommentField extends StatefulWidget {
+  const _CommentField({super.key, this.initialText = '', this.onChanged});
+  final String initialText;
   final ValueChanged<String>? onChanged;
+
+  @override
+  State<_CommentField> createState() => _CommentFieldState();
+}
+
+class _CommentFieldState extends State<_CommentField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialText);
+  }
+
+  @override
+  void didUpdateWidget(covariant _CommentField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialText != widget.initialText) {
+      _controller.text = widget.initialText;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: _controller,
       minLines: 1,
       maxLines: 2,
-      onChanged: onChanged,
+      onChanged: widget.onChanged,
       decoration: InputDecoration(
         hintText: 'Commentaire',
         filled: true,
@@ -526,6 +636,7 @@ class Question {
   bool? yes; // for boolean
   String? text; // text or number
   String? comment;
+  final List<String> evidences = <String>[]; // image paths
 
   /// computed status
   String get status {
@@ -546,6 +657,94 @@ class Question {
     if (s == 'Conforme') return const Color(0xFF25B66E);
     if (s == 'Non Conforme') return const Color(0xFFE03B3B);
     return Colors.transparent;
+  }
+}
+
+/* ==================== EVIDENCE GALLERY ==================== */
+
+class _EvidenceGallery extends StatelessWidget {
+  const _EvidenceGallery({required this.paths, required this.onRemove});
+
+  final List<String> paths;
+  final ValueChanged<String> onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          for (final p in paths)
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      width: 88,
+                      height: 88,
+                      color: const Color(0xFFF0F3F6),
+                      child: _thumbForPath(p),
+                    ),
+                  ),
+                  Positioned(
+                    top: -6,
+                    right: -6,
+                    child: Material(
+                      color: Colors.black.withValues(alpha: .65),
+                      shape: const CircleBorder(),
+                      child: InkWell(
+                        onTap: () => onRemove(p),
+                        customBorder: const CircleBorder(),
+                        child: const Padding(
+                          padding: EdgeInsets.all(2),
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _thumbForPath(String p) {
+    try {
+      final file = File(p);
+      return Image.file(
+        file,
+        width: 88,
+        height: 88,
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) => _fallbackThumb(p),
+      );
+    } catch (_) {
+      return _fallbackThumb(p);
+    }
+  }
+
+  Widget _fallbackThumb(String p) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          p.split('/').last,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 10, color: Colors.black54),
+        ),
+      ),
+    );
   }
 }
 

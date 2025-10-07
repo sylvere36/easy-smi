@@ -6,11 +6,11 @@ import '../../../domain/_commons/global_failure.dart';
 import '../../../domain/_commons/pagination.dart';
 import '../../../domain/permit/i_permit_repository.dart';
 import '../../../domain/permit/models/permit_detail.dart';
-import '../../../domain/permit/models/permit_personnel_assignment.dart';
-import '../../../domain/permit/models/permit_type_control.dart';
 import '../../../domain/permit/models/permit_fire_control.dart';
+import '../../../domain/permit/models/permit_personnel_assignment.dart';
 import '../../../domain/permit/models/permit_risk_assessment.dart';
 import '../../../domain/permit/models/permit_risk_assessment_request.dart';
+import '../../../domain/permit/models/permit_type_control.dart';
 
 part 'permit_detail_bloc.freezed.dart';
 part 'permit_detail_event.dart';

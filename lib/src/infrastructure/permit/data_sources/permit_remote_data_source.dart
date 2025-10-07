@@ -4,12 +4,12 @@ import 'package:dio/dio.dart';
 
 import '../../../domain/_commons/pagination.dart';
 import '../../../domain/permit/models/permit_detail.dart';
+import '../../../domain/permit/models/permit_fire_control.dart';
 import '../../../domain/permit/models/permit_item.dart';
 import '../../../domain/permit/models/permit_personnel_assignment.dart';
-import '../../../domain/permit/models/permit_type_control.dart';
-import '../../../domain/permit/models/permit_fire_control.dart';
 import '../../../domain/permit/models/permit_risk_assessment.dart';
 import '../../../domain/permit/models/permit_risk_assessment_request.dart';
+import '../../../domain/permit/models/permit_type_control.dart';
 import '../../_commons/exceptions.dart';
 import '../../_commons/network/app_requests.dart';
 import '../../_commons/throw_error.dart';
