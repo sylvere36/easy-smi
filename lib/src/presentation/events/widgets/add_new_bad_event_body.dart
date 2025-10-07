@@ -15,7 +15,6 @@ import '../../../application/actions/actions_bloc.dart';
 import '../../../application/events/events_bloc.dart';
 import '../../../domain/action/models/action_item.dart';
 import '../../../domain/event/models/event_item.dart';
-import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
 import '../../_commons_widgets/loading_widget.dart';
 import '../../_commons_widgets/my_toast.dart';

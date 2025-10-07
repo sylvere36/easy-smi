@@ -15,6 +15,7 @@ import 'src/application/events/detail/event_detail_bloc.dart';
 import 'src/application/events/events_bloc.dart';
 import 'src/application/organization/organization_bloc.dart';
 import 'src/application/permit/permits_bloc.dart';
+import 'src/application/permit/detail/permit_detail_bloc.dart';
 import 'src/application/splash/splash_bloc.dart';
 import 'src/domain/action/i_action_repository.dart';
 import 'src/domain/audit/i_audit_repository.dart';
@@ -189,4 +190,5 @@ Future<void> initPermits() async {
     () => PermitRepository(networkInfo: sl(), remoteDataSource: sl()),
   );
   sl.registerFactory(() => PermitsBloc(repository: sl()));
+  sl.registerFactory(() => PermitDetailBloc(repository: sl()));
 }

@@ -61,12 +61,6 @@ class _BadEventDetailBodyState extends State<BadEventDetailBody> {
               originId: detailState.item!.id,
             ),
           );
-          // action2.add(
-          //   ActionsEvent.fetchByOrigin(
-          //     originType: 'ENI',
-          //     originId: detailState.item!.id,
-          //   ),
-          // );
 
           isInit = false;
         }
