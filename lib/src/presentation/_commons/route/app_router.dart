@@ -39,6 +39,8 @@ import '../../onboarding/onboarding_page.dart';
 import '../../permis/add_hot_permis_page.dart';
 import '../../permis/hot_permis_detail_page.dart';
 import '../../permis/hot_permis_page.dart';
+import '../../permis/risk_assessment_page.dart';
+import '../../permis/risk_assessment_result_page.dart';
 import '../../profile/degree/profile_degree_page.dart';
 import '../../profile/degree/profile_search_degree_page.dart';
 import '../../profile/entretien/profile_entretien_page.dart';
@@ -198,6 +200,13 @@ class AppRouter extends RootStackRouter {
     ),
     AutoRoute(page: ProgrammAuditRoute.page, path: ProgrammAuditPage.routeName),
     AutoRoute(page: FilePreviewRoute.page, path: FilePreviewPage.routeName),
-    // AutoRoute(page: Route.page, path: Page.routeName),
+    AutoRoute(
+      page: RiskAssessmentRoute.page,
+      path: RiskAssessmentPage.routeName,
+    ),
+    AutoRoute(
+      page: RiskAssessmentResultRoute.page,
+      path: RiskAssessmentResultPage.routeName,
+    ),
   ];
 }

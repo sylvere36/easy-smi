@@ -9,10 +9,10 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:auto_route/auto_route.dart' as _i50;
-import 'package:easy_smi/src/domain/action/models/action_item.dart' as _i52;
-import 'package:easy_smi/src/domain/audit/models/audit_item.dart' as _i53;
-import 'package:easy_smi/src/domain/permit/models/permit_item.dart' as _i55;
+import 'package:auto_route/auto_route.dart' as _i52;
+import 'package:easy_smi/src/domain/action/models/action_item.dart' as _i54;
+import 'package:easy_smi/src/domain/audit/models/audit_item.dart' as _i55;
+import 'package:easy_smi/src/domain/permit/models/permit_item.dart' as _i57;
 import 'package:easy_smi/src/presentation/_commons_widgets/file_preview_page.dart'
     as _i15;
 import 'package:easy_smi/src/presentation/actions/action_detail_page.dart'
@@ -31,7 +31,7 @@ import 'package:easy_smi/src/presentation/auth/sign_in/join_organisation.dart'
 import 'package:easy_smi/src/presentation/auth/sign_in/pending_join_organisation_page.dart'
     as _i31;
 import 'package:easy_smi/src/presentation/auth/sign_in/sign_in_page.dart'
-    as _i46;
+    as _i48;
 import 'package:easy_smi/src/presentation/auth/webview/auth_webview_page.dart'
     as _i10;
 import 'package:easy_smi/src/presentation/comments/comments_page.dart' as _i13;
@@ -62,7 +62,7 @@ import 'package:easy_smi/src/presentation/formations/quizz/quizz_responses_page.
 import 'package:easy_smi/src/presentation/formations/quizz/quizz_responses_stats.dart'
     as _i44;
 import 'package:easy_smi/src/presentation/formations/sensibilization_detail_page.dart'
-    as _i45;
+    as _i47;
 import 'package:easy_smi/src/presentation/home/home.dart' as _i19;
 import 'package:easy_smi/src/presentation/inspections/inspection_recent_detail_page.dart'
     as _i22;
@@ -75,9 +75,9 @@ import 'package:easy_smi/src/presentation/inspections/inspection_section_page.da
 import 'package:easy_smi/src/presentation/inspections/inspections_page.dart'
     as _i26;
 import 'package:easy_smi/src/presentation/inspections/start_inspection_detail_page.dart'
-    as _i48;
+    as _i50;
 import 'package:easy_smi/src/presentation/inspections/start_inspection_page.dart'
-    as _i49;
+    as _i51;
 import 'package:easy_smi/src/presentation/onboarding/onboarding_page.dart'
     as _i30;
 import 'package:easy_smi/src/presentation/permis/add_hot_permis_page.dart'
@@ -85,6 +85,10 @@ import 'package:easy_smi/src/presentation/permis/add_hot_permis_page.dart'
 import 'package:easy_smi/src/presentation/permis/hot_permis_detail_page.dart'
     as _i20;
 import 'package:easy_smi/src/presentation/permis/hot_permis_page.dart' as _i21;
+import 'package:easy_smi/src/presentation/permis/risk_assessment_page.dart'
+    as _i45;
+import 'package:easy_smi/src/presentation/permis/risk_assessment_result_page.dart'
+    as _i46;
 import 'package:easy_smi/src/presentation/profile/degree/profile_degree_page.dart'
     as _i32;
 import 'package:easy_smi/src/presentation/profile/degree/profile_search_degree_page.dart'
@@ -102,17 +106,17 @@ import 'package:easy_smi/src/presentation/profile/sensibilisation/profile_search
     as _i39;
 import 'package:easy_smi/src/presentation/profile/sensibilisation/profile_sensibilization_page.dart'
     as _i40;
-import 'package:easy_smi/src/presentation/splash/splash.dart' as _i47;
-import 'package:flutter/foundation.dart' as _i54;
-import 'package:flutter/material.dart' as _i51;
+import 'package:easy_smi/src/presentation/splash/splash.dart' as _i49;
+import 'package:flutter/foundation.dart' as _i56;
+import 'package:flutter/material.dart' as _i53;
 
 /// generated route for
 /// [_i1.ActionDetailPage]
-class ActionDetailRoute extends _i50.PageRouteInfo<ActionDetailRouteArgs> {
+class ActionDetailRoute extends _i52.PageRouteInfo<ActionDetailRouteArgs> {
   ActionDetailRoute({
-    _i51.Key? key,
-    required _i52.ActionItem action,
-    List<_i50.PageRouteInfo>? children,
+    _i53.Key? key,
+    required _i54.ActionItem action,
+    List<_i52.PageRouteInfo>? children,
   }) : super(
          ActionDetailRoute.name,
          args: ActionDetailRouteArgs(key: key, action: action),
@@ -121,7 +125,7 @@ class ActionDetailRoute extends _i50.PageRouteInfo<ActionDetailRouteArgs> {
 
   static const String name = 'ActionDetailRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ActionDetailRouteArgs>();
@@ -133,9 +137,9 @@ class ActionDetailRoute extends _i50.PageRouteInfo<ActionDetailRouteArgs> {
 class ActionDetailRouteArgs {
   const ActionDetailRouteArgs({this.key, required this.action});
 
-  final _i51.Key? key;
+  final _i53.Key? key;
 
-  final _i52.ActionItem action;
+  final _i54.ActionItem action;
 
   @override
   String toString() {
@@ -155,13 +159,13 @@ class ActionDetailRouteArgs {
 
 /// generated route for
 /// [_i2.ActionsPage]
-class ActionsRoute extends _i50.PageRouteInfo<void> {
-  const ActionsRoute({List<_i50.PageRouteInfo>? children})
+class ActionsRoute extends _i52.PageRouteInfo<void> {
+  const ActionsRoute({List<_i52.PageRouteInfo>? children})
     : super(ActionsRoute.name, initialChildren: children);
 
   static const String name = 'ActionsRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i2.ActionsPage();
@@ -171,13 +175,13 @@ class ActionsRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i3.AddHotPermisPage]
-class AddHotPermisRoute extends _i50.PageRouteInfo<void> {
-  const AddHotPermisRoute({List<_i50.PageRouteInfo>? children})
+class AddHotPermisRoute extends _i52.PageRouteInfo<void> {
+  const AddHotPermisRoute({List<_i52.PageRouteInfo>? children})
     : super(AddHotPermisRoute.name, initialChildren: children);
 
   static const String name = 'AddHotPermisRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i3.AddHotPermisPage();
@@ -187,13 +191,13 @@ class AddHotPermisRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i4.AddNewBadEventsPage]
-class AddNewBadEventsRoute extends _i50.PageRouteInfo<void> {
-  const AddNewBadEventsRoute({List<_i50.PageRouteInfo>? children})
+class AddNewBadEventsRoute extends _i52.PageRouteInfo<void> {
+  const AddNewBadEventsRoute({List<_i52.PageRouteInfo>? children})
     : super(AddNewBadEventsRoute.name, initialChildren: children);
 
   static const String name = 'AddNewBadEventsRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i4.AddNewBadEventsPage();
@@ -203,13 +207,13 @@ class AddNewBadEventsRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i5.AllCertificationsPage]
-class AllCertificationsRoute extends _i50.PageRouteInfo<void> {
-  const AllCertificationsRoute({List<_i50.PageRouteInfo>? children})
+class AllCertificationsRoute extends _i52.PageRouteInfo<void> {
+  const AllCertificationsRoute({List<_i52.PageRouteInfo>? children})
     : super(AllCertificationsRoute.name, initialChildren: children);
 
   static const String name = 'AllCertificationsRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i5.AllCertificationsPage();
@@ -219,13 +223,13 @@ class AllCertificationsRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i6.AuditControlObjectifPage]
-class AuditControlObjectifRoute extends _i50.PageRouteInfo<void> {
-  const AuditControlObjectifRoute({List<_i50.PageRouteInfo>? children})
+class AuditControlObjectifRoute extends _i52.PageRouteInfo<void> {
+  const AuditControlObjectifRoute({List<_i52.PageRouteInfo>? children})
     : super(AuditControlObjectifRoute.name, initialChildren: children);
 
   static const String name = 'AuditControlObjectifRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i6.AuditControlObjectifPage();
@@ -235,11 +239,11 @@ class AuditControlObjectifRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i7.AuditDetailPage]
-class AuditDetailRoute extends _i50.PageRouteInfo<AuditDetailRouteArgs> {
+class AuditDetailRoute extends _i52.PageRouteInfo<AuditDetailRouteArgs> {
   AuditDetailRoute({
-    _i51.Key? key,
-    required _i53.AuditItem audit,
-    List<_i50.PageRouteInfo>? children,
+    _i53.Key? key,
+    required _i55.AuditItem audit,
+    List<_i52.PageRouteInfo>? children,
   }) : super(
          AuditDetailRoute.name,
          args: AuditDetailRouteArgs(key: key, audit: audit),
@@ -248,7 +252,7 @@ class AuditDetailRoute extends _i50.PageRouteInfo<AuditDetailRouteArgs> {
 
   static const String name = 'AuditDetailRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<AuditDetailRouteArgs>();
@@ -260,9 +264,9 @@ class AuditDetailRoute extends _i50.PageRouteInfo<AuditDetailRouteArgs> {
 class AuditDetailRouteArgs {
   const AuditDetailRouteArgs({this.key, required this.audit});
 
-  final _i51.Key? key;
+  final _i53.Key? key;
 
-  final _i53.AuditItem audit;
+  final _i55.AuditItem audit;
 
   @override
   String toString() {
@@ -282,13 +286,13 @@ class AuditDetailRouteArgs {
 
 /// generated route for
 /// [_i8.AuditMakeConstatPage]
-class AuditMakeConstatRoute extends _i50.PageRouteInfo<void> {
-  const AuditMakeConstatRoute({List<_i50.PageRouteInfo>? children})
+class AuditMakeConstatRoute extends _i52.PageRouteInfo<void> {
+  const AuditMakeConstatRoute({List<_i52.PageRouteInfo>? children})
     : super(AuditMakeConstatRoute.name, initialChildren: children);
 
   static const String name = 'AuditMakeConstatRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i8.AuditMakeConstatPage();
@@ -298,13 +302,13 @@ class AuditMakeConstatRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i9.AuditsPage]
-class AuditsRoute extends _i50.PageRouteInfo<void> {
-  const AuditsRoute({List<_i50.PageRouteInfo>? children})
+class AuditsRoute extends _i52.PageRouteInfo<void> {
+  const AuditsRoute({List<_i52.PageRouteInfo>? children})
     : super(AuditsRoute.name, initialChildren: children);
 
   static const String name = 'AuditsRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i9.AuditsPage();
@@ -314,11 +318,11 @@ class AuditsRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i10.AuthWebViewPage]
-class AuthWebViewRoute extends _i50.PageRouteInfo<AuthWebViewRouteArgs> {
+class AuthWebViewRoute extends _i52.PageRouteInfo<AuthWebViewRouteArgs> {
   AuthWebViewRoute({
-    _i51.Key? key,
+    _i53.Key? key,
     required String initialUrl,
-    List<_i50.PageRouteInfo>? children,
+    List<_i52.PageRouteInfo>? children,
   }) : super(
          AuthWebViewRoute.name,
          args: AuthWebViewRouteArgs(key: key, initialUrl: initialUrl),
@@ -327,7 +331,7 @@ class AuthWebViewRoute extends _i50.PageRouteInfo<AuthWebViewRouteArgs> {
 
   static const String name = 'AuthWebViewRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<AuthWebViewRouteArgs>();
@@ -339,7 +343,7 @@ class AuthWebViewRoute extends _i50.PageRouteInfo<AuthWebViewRouteArgs> {
 class AuthWebViewRouteArgs {
   const AuthWebViewRouteArgs({this.key, required this.initialUrl});
 
-  final _i51.Key? key;
+  final _i53.Key? key;
 
   final String initialUrl;
 
@@ -361,13 +365,13 @@ class AuthWebViewRouteArgs {
 
 /// generated route for
 /// [_i11.BadEventsDetailPage]
-class BadEventsDetailRoute extends _i50.PageRouteInfo<void> {
-  const BadEventsDetailRoute({List<_i50.PageRouteInfo>? children})
+class BadEventsDetailRoute extends _i52.PageRouteInfo<void> {
+  const BadEventsDetailRoute({List<_i52.PageRouteInfo>? children})
     : super(BadEventsDetailRoute.name, initialChildren: children);
 
   static const String name = 'BadEventsDetailRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i11.BadEventsDetailPage();
@@ -377,13 +381,13 @@ class BadEventsDetailRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i12.CertificationDetailPage]
-class CertificationDetailRoute extends _i50.PageRouteInfo<void> {
-  const CertificationDetailRoute({List<_i50.PageRouteInfo>? children})
+class CertificationDetailRoute extends _i52.PageRouteInfo<void> {
+  const CertificationDetailRoute({List<_i52.PageRouteInfo>? children})
     : super(CertificationDetailRoute.name, initialChildren: children);
 
   static const String name = 'CertificationDetailRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i12.CertificationDetailPage();
@@ -393,12 +397,12 @@ class CertificationDetailRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i13.CommentsPage]
-class CommentsRoute extends _i50.PageRouteInfo<CommentsRouteArgs> {
+class CommentsRoute extends _i52.PageRouteInfo<CommentsRouteArgs> {
   CommentsRoute({
-    _i51.Key? key,
+    _i53.Key? key,
     required String commentableType,
     required dynamic commentableId,
-    List<_i50.PageRouteInfo>? children,
+    List<_i52.PageRouteInfo>? children,
   }) : super(
          CommentsRoute.name,
          args: CommentsRouteArgs(
@@ -411,7 +415,7 @@ class CommentsRoute extends _i50.PageRouteInfo<CommentsRouteArgs> {
 
   static const String name = 'CommentsRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<CommentsRouteArgs>();
@@ -431,7 +435,7 @@ class CommentsRouteArgs {
     required this.commentableId,
   });
 
-  final _i51.Key? key;
+  final _i53.Key? key;
 
   final String commentableType;
 
@@ -458,13 +462,13 @@ class CommentsRouteArgs {
 
 /// generated route for
 /// [_i14.DeclarateEventPage]
-class DeclarateEventRoute extends _i50.PageRouteInfo<void> {
-  const DeclarateEventRoute({List<_i50.PageRouteInfo>? children})
+class DeclarateEventRoute extends _i52.PageRouteInfo<void> {
+  const DeclarateEventRoute({List<_i52.PageRouteInfo>? children})
     : super(DeclarateEventRoute.name, initialChildren: children);
 
   static const String name = 'DeclarateEventRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i14.DeclarateEventPage();
@@ -474,12 +478,12 @@ class DeclarateEventRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i15.FilePreviewPage]
-class FilePreviewRoute extends _i50.PageRouteInfo<FilePreviewRouteArgs> {
+class FilePreviewRoute extends _i52.PageRouteInfo<FilePreviewRouteArgs> {
   FilePreviewRoute({
-    _i54.Key? key,
+    _i56.Key? key,
     required String path,
     String? fileName,
-    List<_i50.PageRouteInfo>? children,
+    List<_i52.PageRouteInfo>? children,
   }) : super(
          FilePreviewRoute.name,
          args: FilePreviewRouteArgs(key: key, path: path, fileName: fileName),
@@ -488,7 +492,7 @@ class FilePreviewRoute extends _i50.PageRouteInfo<FilePreviewRouteArgs> {
 
   static const String name = 'FilePreviewRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<FilePreviewRouteArgs>();
@@ -504,7 +508,7 @@ class FilePreviewRoute extends _i50.PageRouteInfo<FilePreviewRouteArgs> {
 class FilePreviewRouteArgs {
   const FilePreviewRouteArgs({this.key, required this.path, this.fileName});
 
-  final _i54.Key? key;
+  final _i56.Key? key;
 
   final String path;
 
@@ -528,13 +532,13 @@ class FilePreviewRouteArgs {
 
 /// generated route for
 /// [_i16.FormationDetailPage]
-class FormationDetailRoute extends _i50.PageRouteInfo<void> {
-  const FormationDetailRoute({List<_i50.PageRouteInfo>? children})
+class FormationDetailRoute extends _i52.PageRouteInfo<void> {
+  const FormationDetailRoute({List<_i52.PageRouteInfo>? children})
     : super(FormationDetailRoute.name, initialChildren: children);
 
   static const String name = 'FormationDetailRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i16.FormationDetailPage();
@@ -544,13 +548,13 @@ class FormationDetailRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i17.FormationDisplayPage]
-class FormationDisplayRoute extends _i50.PageRouteInfo<void> {
-  const FormationDisplayRoute({List<_i50.PageRouteInfo>? children})
+class FormationDisplayRoute extends _i52.PageRouteInfo<void> {
+  const FormationDisplayRoute({List<_i52.PageRouteInfo>? children})
     : super(FormationDisplayRoute.name, initialChildren: children);
 
   static const String name = 'FormationDisplayRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i17.FormationDisplayPage();
@@ -561,11 +565,11 @@ class FormationDisplayRoute extends _i50.PageRouteInfo<void> {
 /// generated route for
 /// [_i18.FormationsSensibilizationsPage]
 class FormationsSensibilizationsRoute
-    extends _i50.PageRouteInfo<FormationsSensibilizationsRouteArgs> {
+    extends _i52.PageRouteInfo<FormationsSensibilizationsRouteArgs> {
   FormationsSensibilizationsRoute({
-    _i51.Key? key,
+    _i53.Key? key,
     int initialPage = 2,
-    List<_i50.PageRouteInfo>? children,
+    List<_i52.PageRouteInfo>? children,
   }) : super(
          FormationsSensibilizationsRoute.name,
          args: FormationsSensibilizationsRouteArgs(
@@ -577,7 +581,7 @@ class FormationsSensibilizationsRoute
 
   static const String name = 'FormationsSensibilizationsRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<FormationsSensibilizationsRouteArgs>(
@@ -594,7 +598,7 @@ class FormationsSensibilizationsRoute
 class FormationsSensibilizationsRouteArgs {
   const FormationsSensibilizationsRouteArgs({this.key, this.initialPage = 2});
 
-  final _i51.Key? key;
+  final _i53.Key? key;
 
   final int initialPage;
 
@@ -616,13 +620,13 @@ class FormationsSensibilizationsRouteArgs {
 
 /// generated route for
 /// [_i19.HomePage]
-class HomeRoute extends _i50.PageRouteInfo<void> {
-  const HomeRoute({List<_i50.PageRouteInfo>? children})
+class HomeRoute extends _i52.PageRouteInfo<void> {
+  const HomeRoute({List<_i52.PageRouteInfo>? children})
     : super(HomeRoute.name, initialChildren: children);
 
   static const String name = 'HomeRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i19.HomePage();
@@ -633,11 +637,11 @@ class HomeRoute extends _i50.PageRouteInfo<void> {
 /// generated route for
 /// [_i20.HotPermisDetailPage]
 class HotPermisDetailRoute
-    extends _i50.PageRouteInfo<HotPermisDetailRouteArgs> {
+    extends _i52.PageRouteInfo<HotPermisDetailRouteArgs> {
   HotPermisDetailRoute({
-    _i51.Key? key,
-    required _i55.PermitItem permit,
-    List<_i50.PageRouteInfo>? children,
+    _i53.Key? key,
+    required _i57.PermitItem permit,
+    List<_i52.PageRouteInfo>? children,
   }) : super(
          HotPermisDetailRoute.name,
          args: HotPermisDetailRouteArgs(key: key, permit: permit),
@@ -646,7 +650,7 @@ class HotPermisDetailRoute
 
   static const String name = 'HotPermisDetailRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<HotPermisDetailRouteArgs>();
@@ -658,9 +662,9 @@ class HotPermisDetailRoute
 class HotPermisDetailRouteArgs {
   const HotPermisDetailRouteArgs({this.key, required this.permit});
 
-  final _i51.Key? key;
+  final _i53.Key? key;
 
-  final _i55.PermitItem permit;
+  final _i57.PermitItem permit;
 
   @override
   String toString() {
@@ -680,13 +684,13 @@ class HotPermisDetailRouteArgs {
 
 /// generated route for
 /// [_i21.HotPermisPage]
-class HotPermisRoute extends _i50.PageRouteInfo<void> {
-  const HotPermisRoute({List<_i50.PageRouteInfo>? children})
+class HotPermisRoute extends _i52.PageRouteInfo<void> {
+  const HotPermisRoute({List<_i52.PageRouteInfo>? children})
     : super(HotPermisRoute.name, initialChildren: children);
 
   static const String name = 'HotPermisRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i21.HotPermisPage();
@@ -696,13 +700,13 @@ class HotPermisRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i22.InpectionRecentDetailPage]
-class InpectionRecentDetailRoute extends _i50.PageRouteInfo<void> {
-  const InpectionRecentDetailRoute({List<_i50.PageRouteInfo>? children})
+class InpectionRecentDetailRoute extends _i52.PageRouteInfo<void> {
+  const InpectionRecentDetailRoute({List<_i52.PageRouteInfo>? children})
     : super(InpectionRecentDetailRoute.name, initialChildren: children);
 
   static const String name = 'InpectionRecentDetailRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i22.InpectionRecentDetailPage();
@@ -712,13 +716,13 @@ class InpectionRecentDetailRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i23.InspectionResultPage]
-class InspectionResultRoute extends _i50.PageRouteInfo<void> {
-  const InspectionResultRoute({List<_i50.PageRouteInfo>? children})
+class InspectionResultRoute extends _i52.PageRouteInfo<void> {
+  const InspectionResultRoute({List<_i52.PageRouteInfo>? children})
     : super(InspectionResultRoute.name, initialChildren: children);
 
   static const String name = 'InspectionResultRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i23.InspectionResultPage();
@@ -728,13 +732,13 @@ class InspectionResultRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i24.InspectionResultSavingPage]
-class InspectionResultSavingRoute extends _i50.PageRouteInfo<void> {
-  const InspectionResultSavingRoute({List<_i50.PageRouteInfo>? children})
+class InspectionResultSavingRoute extends _i52.PageRouteInfo<void> {
+  const InspectionResultSavingRoute({List<_i52.PageRouteInfo>? children})
     : super(InspectionResultSavingRoute.name, initialChildren: children);
 
   static const String name = 'InspectionResultSavingRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i24.InspectionResultSavingPage();
@@ -744,13 +748,13 @@ class InspectionResultSavingRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i25.InspectionSectionPage]
-class InspectionSectionRoute extends _i50.PageRouteInfo<void> {
-  const InspectionSectionRoute({List<_i50.PageRouteInfo>? children})
+class InspectionSectionRoute extends _i52.PageRouteInfo<void> {
+  const InspectionSectionRoute({List<_i52.PageRouteInfo>? children})
     : super(InspectionSectionRoute.name, initialChildren: children);
 
   static const String name = 'InspectionSectionRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i25.InspectionSectionPage();
@@ -760,13 +764,13 @@ class InspectionSectionRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i26.InspectionsPage]
-class InspectionsRoute extends _i50.PageRouteInfo<void> {
-  const InspectionsRoute({List<_i50.PageRouteInfo>? children})
+class InspectionsRoute extends _i52.PageRouteInfo<void> {
+  const InspectionsRoute({List<_i52.PageRouteInfo>? children})
     : super(InspectionsRoute.name, initialChildren: children);
 
   static const String name = 'InspectionsRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i26.InspectionsPage();
@@ -776,13 +780,13 @@ class InspectionsRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i27.JoinOrganisationPage]
-class JoinOrganisationRoute extends _i50.PageRouteInfo<void> {
-  const JoinOrganisationRoute({List<_i50.PageRouteInfo>? children})
+class JoinOrganisationRoute extends _i52.PageRouteInfo<void> {
+  const JoinOrganisationRoute({List<_i52.PageRouteInfo>? children})
     : super(JoinOrganisationRoute.name, initialChildren: children);
 
   static const String name = 'JoinOrganisationRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i27.JoinOrganisationPage();
@@ -792,13 +796,13 @@ class JoinOrganisationRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i28.MyCertificationsPage]
-class MyCertificationsRoute extends _i50.PageRouteInfo<void> {
-  const MyCertificationsRoute({List<_i50.PageRouteInfo>? children})
+class MyCertificationsRoute extends _i52.PageRouteInfo<void> {
+  const MyCertificationsRoute({List<_i52.PageRouteInfo>? children})
     : super(MyCertificationsRoute.name, initialChildren: children);
 
   static const String name = 'MyCertificationsRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i28.MyCertificationsPage();
@@ -808,13 +812,13 @@ class MyCertificationsRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i29.NewBadEventsPage]
-class NewBadEventsRoute extends _i50.PageRouteInfo<void> {
-  const NewBadEventsRoute({List<_i50.PageRouteInfo>? children})
+class NewBadEventsRoute extends _i52.PageRouteInfo<void> {
+  const NewBadEventsRoute({List<_i52.PageRouteInfo>? children})
     : super(NewBadEventsRoute.name, initialChildren: children);
 
   static const String name = 'NewBadEventsRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i29.NewBadEventsPage();
@@ -824,11 +828,11 @@ class NewBadEventsRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i30.OnboardingPage]
-class OnboardingRoute extends _i50.PageRouteInfo<OnboardingRouteArgs> {
+class OnboardingRoute extends _i52.PageRouteInfo<OnboardingRouteArgs> {
   OnboardingRoute({
-    _i51.Key? key,
-    _i51.VoidCallback? onFinish,
-    List<_i50.PageRouteInfo>? children,
+    _i53.Key? key,
+    _i53.VoidCallback? onFinish,
+    List<_i52.PageRouteInfo>? children,
   }) : super(
          OnboardingRoute.name,
          args: OnboardingRouteArgs(key: key, onFinish: onFinish),
@@ -837,7 +841,7 @@ class OnboardingRoute extends _i50.PageRouteInfo<OnboardingRouteArgs> {
 
   static const String name = 'OnboardingRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<OnboardingRouteArgs>(
@@ -851,9 +855,9 @@ class OnboardingRoute extends _i50.PageRouteInfo<OnboardingRouteArgs> {
 class OnboardingRouteArgs {
   const OnboardingRouteArgs({this.key, this.onFinish});
 
-  final _i51.Key? key;
+  final _i53.Key? key;
 
-  final _i51.VoidCallback? onFinish;
+  final _i53.VoidCallback? onFinish;
 
   @override
   String toString() {
@@ -873,13 +877,13 @@ class OnboardingRouteArgs {
 
 /// generated route for
 /// [_i31.PendingJoinOrganisationPage]
-class PendingJoinOrganisationRoute extends _i50.PageRouteInfo<void> {
-  const PendingJoinOrganisationRoute({List<_i50.PageRouteInfo>? children})
+class PendingJoinOrganisationRoute extends _i52.PageRouteInfo<void> {
+  const PendingJoinOrganisationRoute({List<_i52.PageRouteInfo>? children})
     : super(PendingJoinOrganisationRoute.name, initialChildren: children);
 
   static const String name = 'PendingJoinOrganisationRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i31.PendingJoinOrganisationPage();
@@ -889,13 +893,13 @@ class PendingJoinOrganisationRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i32.ProfileDegreePage]
-class ProfileDegreeRoute extends _i50.PageRouteInfo<void> {
-  const ProfileDegreeRoute({List<_i50.PageRouteInfo>? children})
+class ProfileDegreeRoute extends _i52.PageRouteInfo<void> {
+  const ProfileDegreeRoute({List<_i52.PageRouteInfo>? children})
     : super(ProfileDegreeRoute.name, initialChildren: children);
 
   static const String name = 'ProfileDegreeRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i32.ProfileDegreePage();
@@ -905,13 +909,13 @@ class ProfileDegreeRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i33.ProfileEntretienPage]
-class ProfileEntretienRoute extends _i50.PageRouteInfo<void> {
-  const ProfileEntretienRoute({List<_i50.PageRouteInfo>? children})
+class ProfileEntretienRoute extends _i52.PageRouteInfo<void> {
+  const ProfileEntretienRoute({List<_i52.PageRouteInfo>? children})
     : super(ProfileEntretienRoute.name, initialChildren: children);
 
   static const String name = 'ProfileEntretienRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i33.ProfileEntretienPage();
@@ -921,13 +925,13 @@ class ProfileEntretienRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i34.ProfileFormationPage]
-class ProfileFormationRoute extends _i50.PageRouteInfo<void> {
-  const ProfileFormationRoute({List<_i50.PageRouteInfo>? children})
+class ProfileFormationRoute extends _i52.PageRouteInfo<void> {
+  const ProfileFormationRoute({List<_i52.PageRouteInfo>? children})
     : super(ProfileFormationRoute.name, initialChildren: children);
 
   static const String name = 'ProfileFormationRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i34.ProfileFormationPage();
@@ -937,13 +941,13 @@ class ProfileFormationRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i35.ProfilePage]
-class ProfileRoute extends _i50.PageRouteInfo<void> {
-  const ProfileRoute({List<_i50.PageRouteInfo>? children})
+class ProfileRoute extends _i52.PageRouteInfo<void> {
+  const ProfileRoute({List<_i52.PageRouteInfo>? children})
     : super(ProfileRoute.name, initialChildren: children);
 
   static const String name = 'ProfileRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i35.ProfilePage();
@@ -953,13 +957,13 @@ class ProfileRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i36.ProfileSearchDegreePage]
-class ProfileSearchDegreeRoute extends _i50.PageRouteInfo<void> {
-  const ProfileSearchDegreeRoute({List<_i50.PageRouteInfo>? children})
+class ProfileSearchDegreeRoute extends _i52.PageRouteInfo<void> {
+  const ProfileSearchDegreeRoute({List<_i52.PageRouteInfo>? children})
     : super(ProfileSearchDegreeRoute.name, initialChildren: children);
 
   static const String name = 'ProfileSearchDegreeRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i36.ProfileSearchDegreePage();
@@ -969,13 +973,13 @@ class ProfileSearchDegreeRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i37.ProfileSearchEntretienPage]
-class ProfileSearchEntretienRoute extends _i50.PageRouteInfo<void> {
-  const ProfileSearchEntretienRoute({List<_i50.PageRouteInfo>? children})
+class ProfileSearchEntretienRoute extends _i52.PageRouteInfo<void> {
+  const ProfileSearchEntretienRoute({List<_i52.PageRouteInfo>? children})
     : super(ProfileSearchEntretienRoute.name, initialChildren: children);
 
   static const String name = 'ProfileSearchEntretienRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i37.ProfileSearchEntretienPage();
@@ -985,13 +989,13 @@ class ProfileSearchEntretienRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i38.ProfileSearchFormationPage]
-class ProfileSearchFormationRoute extends _i50.PageRouteInfo<void> {
-  const ProfileSearchFormationRoute({List<_i50.PageRouteInfo>? children})
+class ProfileSearchFormationRoute extends _i52.PageRouteInfo<void> {
+  const ProfileSearchFormationRoute({List<_i52.PageRouteInfo>? children})
     : super(ProfileSearchFormationRoute.name, initialChildren: children);
 
   static const String name = 'ProfileSearchFormationRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i38.ProfileSearchFormationPage();
@@ -1001,13 +1005,13 @@ class ProfileSearchFormationRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i39.ProfileSearchSensibilizationPage]
-class ProfileSearchSensibilizationRoute extends _i50.PageRouteInfo<void> {
-  const ProfileSearchSensibilizationRoute({List<_i50.PageRouteInfo>? children})
+class ProfileSearchSensibilizationRoute extends _i52.PageRouteInfo<void> {
+  const ProfileSearchSensibilizationRoute({List<_i52.PageRouteInfo>? children})
     : super(ProfileSearchSensibilizationRoute.name, initialChildren: children);
 
   static const String name = 'ProfileSearchSensibilizationRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i39.ProfileSearchSensibilizationPage();
@@ -1017,13 +1021,13 @@ class ProfileSearchSensibilizationRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i40.ProfileSensibilizationPage]
-class ProfileSensibilizationRoute extends _i50.PageRouteInfo<void> {
-  const ProfileSensibilizationRoute({List<_i50.PageRouteInfo>? children})
+class ProfileSensibilizationRoute extends _i52.PageRouteInfo<void> {
+  const ProfileSensibilizationRoute({List<_i52.PageRouteInfo>? children})
     : super(ProfileSensibilizationRoute.name, initialChildren: children);
 
   static const String name = 'ProfileSensibilizationRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i40.ProfileSensibilizationPage();
@@ -1033,13 +1037,13 @@ class ProfileSensibilizationRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i41.ProgrammAuditPage]
-class ProgrammAuditRoute extends _i50.PageRouteInfo<void> {
-  const ProgrammAuditRoute({List<_i50.PageRouteInfo>? children})
+class ProgrammAuditRoute extends _i52.PageRouteInfo<void> {
+  const ProgrammAuditRoute({List<_i52.PageRouteInfo>? children})
     : super(ProgrammAuditRoute.name, initialChildren: children);
 
   static const String name = 'ProgrammAuditRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i41.ProgrammAuditPage();
@@ -1049,13 +1053,13 @@ class ProgrammAuditRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i42.QuizzPage]
-class QuizzRoute extends _i50.PageRouteInfo<void> {
-  const QuizzRoute({List<_i50.PageRouteInfo>? children})
+class QuizzRoute extends _i52.PageRouteInfo<void> {
+  const QuizzRoute({List<_i52.PageRouteInfo>? children})
     : super(QuizzRoute.name, initialChildren: children);
 
   static const String name = 'QuizzRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i42.QuizzPage();
@@ -1065,13 +1069,13 @@ class QuizzRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i43.QuizzResponsesPage]
-class QuizzResponsesRoute extends _i50.PageRouteInfo<void> {
-  const QuizzResponsesRoute({List<_i50.PageRouteInfo>? children})
+class QuizzResponsesRoute extends _i52.PageRouteInfo<void> {
+  const QuizzResponsesRoute({List<_i52.PageRouteInfo>? children})
     : super(QuizzResponsesRoute.name, initialChildren: children);
 
   static const String name = 'QuizzResponsesRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i43.QuizzResponsesPage();
@@ -1081,13 +1085,13 @@ class QuizzResponsesRoute extends _i50.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i44.QuizzResponsesStatsPage]
-class QuizzResponsesStatsRoute extends _i50.PageRouteInfo<void> {
-  const QuizzResponsesStatsRoute({List<_i50.PageRouteInfo>? children})
+class QuizzResponsesStatsRoute extends _i52.PageRouteInfo<void> {
+  const QuizzResponsesStatsRoute({List<_i52.PageRouteInfo>? children})
     : super(QuizzResponsesStatsRoute.name, initialChildren: children);
 
   static const String name = 'QuizzResponsesStatsRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       return const _i44.QuizzResponsesStatsPage();
@@ -1096,28 +1100,60 @@ class QuizzResponsesStatsRoute extends _i50.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i45.SensibilizationDetailPage]
-class SensibilizationDetailRoute extends _i50.PageRouteInfo<void> {
-  const SensibilizationDetailRoute({List<_i50.PageRouteInfo>? children})
-    : super(SensibilizationDetailRoute.name, initialChildren: children);
+/// [_i45.RiskAssessmentPage]
+class RiskAssessmentRoute extends _i52.PageRouteInfo<void> {
+  const RiskAssessmentRoute({List<_i52.PageRouteInfo>? children})
+    : super(RiskAssessmentRoute.name, initialChildren: children);
 
-  static const String name = 'SensibilizationDetailRoute';
+  static const String name = 'RiskAssessmentRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
-      return const _i45.SensibilizationDetailPage();
+      return const _i45.RiskAssessmentPage();
     },
   );
 }
 
 /// generated route for
-/// [_i46.SignInPage]
-class SignInRoute extends _i50.PageRouteInfo<SignInRouteArgs> {
+/// [_i46.RiskAssessmentResultPage]
+class RiskAssessmentResultRoute extends _i52.PageRouteInfo<void> {
+  const RiskAssessmentResultRoute({List<_i52.PageRouteInfo>? children})
+    : super(RiskAssessmentResultRoute.name, initialChildren: children);
+
+  static const String name = 'RiskAssessmentResultRoute';
+
+  static _i52.PageInfo page = _i52.PageInfo(
+    name,
+    builder: (data) {
+      return const _i46.RiskAssessmentResultPage();
+    },
+  );
+}
+
+/// generated route for
+/// [_i47.SensibilizationDetailPage]
+class SensibilizationDetailRoute extends _i52.PageRouteInfo<void> {
+  const SensibilizationDetailRoute({List<_i52.PageRouteInfo>? children})
+    : super(SensibilizationDetailRoute.name, initialChildren: children);
+
+  static const String name = 'SensibilizationDetailRoute';
+
+  static _i52.PageInfo page = _i52.PageInfo(
+    name,
+    builder: (data) {
+      return const _i47.SensibilizationDetailPage();
+    },
+  );
+}
+
+/// generated route for
+/// [_i48.SignInPage]
+class SignInRoute extends _i52.PageRouteInfo<SignInRouteArgs> {
   SignInRoute({
-    _i51.Key? key,
+    _i53.Key? key,
     required String email,
-    List<_i50.PageRouteInfo>? children,
+    List<_i52.PageRouteInfo>? children,
   }) : super(
          SignInRoute.name,
          args: SignInRouteArgs(key: key, email: email),
@@ -1126,11 +1162,11 @@ class SignInRoute extends _i50.PageRouteInfo<SignInRouteArgs> {
 
   static const String name = 'SignInRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<SignInRouteArgs>();
-      return _i46.SignInPage(key: args.key, email: args.email);
+      return _i48.SignInPage(key: args.key, email: args.email);
     },
   );
 }
@@ -1138,7 +1174,7 @@ class SignInRoute extends _i50.PageRouteInfo<SignInRouteArgs> {
 class SignInRouteArgs {
   const SignInRouteArgs({this.key, required this.email});
 
-  final _i51.Key? key;
+  final _i53.Key? key;
 
   final String email;
 
@@ -1159,13 +1195,13 @@ class SignInRouteArgs {
 }
 
 /// generated route for
-/// [_i47.SplashPage]
-class SplashRoute extends _i50.PageRouteInfo<SplashRouteArgs> {
+/// [_i49.SplashPage]
+class SplashRoute extends _i52.PageRouteInfo<SplashRouteArgs> {
   SplashRoute({
-    _i51.Key? key,
+    _i53.Key? key,
     bool? withDeepLink,
     bool? fromLogout,
-    List<_i50.PageRouteInfo>? children,
+    List<_i52.PageRouteInfo>? children,
   }) : super(
          SplashRoute.name,
          args: SplashRouteArgs(
@@ -1178,13 +1214,13 @@ class SplashRoute extends _i50.PageRouteInfo<SplashRouteArgs> {
 
   static const String name = 'SplashRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<SplashRouteArgs>(
         orElse: () => const SplashRouteArgs(),
       );
-      return _i47.SplashPage(
+      return _i49.SplashPage(
         key: args.key,
         withDeepLink: args.withDeepLink,
         fromLogout: args.fromLogout,
@@ -1196,7 +1232,7 @@ class SplashRoute extends _i50.PageRouteInfo<SplashRouteArgs> {
 class SplashRouteArgs {
   const SplashRouteArgs({this.key, this.withDeepLink, this.fromLogout});
 
-  final _i51.Key? key;
+  final _i53.Key? key;
 
   final bool? withDeepLink;
 
@@ -1222,33 +1258,33 @@ class SplashRouteArgs {
 }
 
 /// generated route for
-/// [_i48.StartInspectionDetailPage]
-class StartInspectionDetailRoute extends _i50.PageRouteInfo<void> {
-  const StartInspectionDetailRoute({List<_i50.PageRouteInfo>? children})
+/// [_i50.StartInspectionDetailPage]
+class StartInspectionDetailRoute extends _i52.PageRouteInfo<void> {
+  const StartInspectionDetailRoute({List<_i52.PageRouteInfo>? children})
     : super(StartInspectionDetailRoute.name, initialChildren: children);
 
   static const String name = 'StartInspectionDetailRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
-      return const _i48.StartInspectionDetailPage();
+      return const _i50.StartInspectionDetailPage();
     },
   );
 }
 
 /// generated route for
-/// [_i49.StartInspectionPage]
-class StartInspectionRoute extends _i50.PageRouteInfo<void> {
-  const StartInspectionRoute({List<_i50.PageRouteInfo>? children})
+/// [_i51.StartInspectionPage]
+class StartInspectionRoute extends _i52.PageRouteInfo<void> {
+  const StartInspectionRoute({List<_i52.PageRouteInfo>? children})
     : super(StartInspectionRoute.name, initialChildren: children);
 
   static const String name = 'StartInspectionRoute';
 
-  static _i50.PageInfo page = _i50.PageInfo(
+  static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
-      return const _i49.StartInspectionPage();
+      return const _i51.StartInspectionPage();
     },
   );
 }

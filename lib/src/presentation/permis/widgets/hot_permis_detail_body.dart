@@ -376,7 +376,7 @@ class _HotPermitDetailBodyState extends State<HotPermitDetailBody> {
                       icon: Icons.assignment_turned_in_outlined,
                       action: FilledButton(
                         onPressed: () {
-                          context.router.push(const InspectionSectionRoute());
+                          context.router.push(const RiskAssessmentRoute());
                         },
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 14),
