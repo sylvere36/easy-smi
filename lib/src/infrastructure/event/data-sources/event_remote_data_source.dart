@@ -6,6 +6,7 @@ import '../../../domain/_commons/pagination.dart';
 import '../../../domain/event/models/cause_analysis.dart';
 import '../../../domain/event/models/event_item.dart';
 import '../../_commons/exceptions.dart';
+import '../../_commons/files/file_manager.dart';
 import '../../_commons/network/app_requests.dart';
 import '../../_commons/throw_error.dart';
 
@@ -28,7 +29,9 @@ abstract class IEventRemoteDataSource {
 
 class EventRemoteDataSource implements IEventRemoteDataSource {
   final IAppRequests httpClient;
-  EventRemoteDataSource({required this.httpClient});
+  final IFileManager fileManager;
+
+  EventRemoteDataSource({required this.httpClient, required this.fileManager});
 
   @override
   Future<(List<EventItem>, Pagination)> getEvents({
@@ -111,26 +114,21 @@ class EventRemoteDataSource implements IEventRemoteDataSource {
   }) async {
     try {
       const String request = '/conformity/event-forms';
-      final formMap = <String, dynamic>{
+      // Upload-first: upload files to get URLs using helper, then send JSON body with URLs
+      final List<String> attachmentUrls = await fileManager
+          .uploadManyAndGetUrls(filePaths: files);
+      final Map<String, dynamic> body = {
         'title': title,
         'description': description,
         'type': type,
         'gravity': gravity,
         'date': date?.toIso8601String(),
         'site': site,
+        'attachments': attachmentUrls,
       };
-
-      if (files.isNotEmpty) {
-        formMap['attachments'] = await Future.wait<MultipartFile>(
-          files.map(
-            (e) async => MultipartFile.fromFile(e, filename: e.split('/').last),
-          ),
-        );
-      }
-      final formData = FormData.fromMap(formMap);
       final Response response = await httpClient.postRequest(
         request,
-        body: formData,
+        body: body,
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data is String

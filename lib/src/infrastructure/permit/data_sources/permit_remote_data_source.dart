@@ -12,6 +12,7 @@ import '../../../domain/permit/models/permit_risk_assessment.dart';
 import '../../../domain/permit/models/permit_risk_assessment_request.dart';
 import '../../../domain/permit/models/permit_type_control.dart';
 import '../../_commons/exceptions.dart';
+import '../../_commons/files/file_manager.dart';
 import '../../_commons/network/app_requests.dart';
 import '../../_commons/throw_error.dart';
 
@@ -56,12 +57,14 @@ abstract class IPermitRemoteDataSource {
 
 class PermitRemoteDataSource implements IPermitRemoteDataSource {
   final IAppRequests httpClient;
-  PermitRemoteDataSource({required this.httpClient});
+  final IFileManager fileManager;
+
+  PermitRemoteDataSource({required this.httpClient, required this.fileManager});
 
   @override
   Future<(List<PermitItem>, Pagination)> getPermits({
     int page = 1,
-    int perPage = 10,
+    int perPage = 20,
   }) async {
     try {
       const String request = '/conformity/work-permits';
@@ -277,38 +280,33 @@ class PermitRemoteDataSource implements IPermitRemoteDataSource {
   }) async {
     try {
       final String request = '/conformity/work-permits/$id/risk-assessments';
-      // Build form map with bracket notation for arrays/nested fields
-      final Map<String, dynamic> formMap = {
+      // Upload-first: convert each evidence local path to remote URL via FileManager, then send URLs in JSON body
+      final List<Map<String, dynamic>> questionsPayload = [];
+      for (final q in questions) {
+        final urls = q.evidences.isEmpty
+            ? <String>[]
+            : await fileManager.uploadManyAndGetUrls(filePaths: q.evidences);
+        questionsPayload.add({
+          'response': q.response,
+          'comment': q.comment,
+          'evidences': urls,
+        });
+      }
+
+      final Map<String, dynamic> body = {
         'work_permit_id': workPermitId,
         'evaluator_id': evaluatorId,
         'status': status,
         'conclusion': conclusion,
+        'questions': questionsPayload,
       };
 
-      for (int i = 0; i < questions.length; i++) {
-        final q = questions[i];
-        formMap['questions[$i][response]'] = q.response;
-        formMap['questions[$i][comment]'] = q.comment;
-        if (q.evidences.isNotEmpty) {
-          // Multiple files under same key uses [] suffix
-          formMap['questions[$i][evidences][]'] =
-              await Future.wait<MultipartFile>(
-                q.evidences.map(
-                  (p) async =>
-                      MultipartFile.fromFile(p, filename: p.split('/').last),
-                ),
-              );
-        }
-      }
-
-      final formData = FormData.fromMap(formMap);
-      log('Submitting RiskAssessment with ${questions.length} questions');
       log(
-        'EvaluatorId: $evaluatorId, WorkPermitId: $workPermitId, Status: $status',
+        'Submitting RiskAssessment with ${questions.length} questions (upload first).',
       );
       final Response response = await httpClient.postRequest(
         request,
-        body: formData,
+        body: body,
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data is String

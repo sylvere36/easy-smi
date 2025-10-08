@@ -32,6 +32,7 @@ import 'src/domain/inspection/i_inspection_repository.dart';
 import 'src/domain/organization/i_organization_repository.dart';
 import 'src/domain/permit/i_permit_repository.dart';
 import 'src/infrastructure/_commons/files/download_service.dart';
+import 'src/infrastructure/_commons/files/file_manager.dart';
 import 'src/infrastructure/_commons/network/app_requests.dart';
 import 'src/infrastructure/_commons/network/network_info.dart';
 import 'src/infrastructure/_commons/network/user_session.dart';
@@ -88,6 +89,8 @@ Future<void> initCore() async {
   sl.registerLazySingleton<IAppRequests>(() => AppRequests());
   // File download service
   sl.registerLazySingleton<IDownloadService>(() => DownloadService());
+  // File upload manager
+  sl.registerLazySingleton<IFileManager>(() => FileManager(httpClient: sl()));
 }
 
 Future<void> initAuth() async {
@@ -160,7 +163,7 @@ Future<void> initAudits() async {
 
 Future<void> initCommunication() async {
   sl.registerLazySingleton<ICommunicationRemoteDataSource>(
-    () => CommunicationRemoteDataSource(httpClient: sl()),
+    () => CommunicationRemoteDataSource(httpClient: sl(), fileManager: sl()),
   );
   sl.registerLazySingleton<ICommunicationRepository>(
     () => CommunicationRepository(networkInfo: sl(), remoteDataSource: sl()),
@@ -170,7 +173,7 @@ Future<void> initCommunication() async {
 
 Future<void> initEvents() async {
   sl.registerLazySingleton<IEventRemoteDataSource>(
-    () => EventRemoteDataSource(httpClient: sl()),
+    () => EventRemoteDataSource(httpClient: sl(), fileManager: sl()),
   );
   sl.registerLazySingleton<IEventRepository>(
     () => EventRepository(networkInfo: sl(), remoteDataSource: sl()),
@@ -191,7 +194,7 @@ Future<void> initEvaluations() async {
 
 Future<void> initPermits() async {
   sl.registerLazySingleton<IPermitRemoteDataSource>(
-    () => PermitRemoteDataSource(httpClient: sl()),
+    () => PermitRemoteDataSource(httpClient: sl(), fileManager: sl()),
   );
   sl.registerLazySingleton<IPermitRepository>(
     () => PermitRepository(networkInfo: sl(), remoteDataSource: sl()),

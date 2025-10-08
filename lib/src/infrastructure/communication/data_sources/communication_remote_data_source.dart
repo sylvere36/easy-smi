@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 
 import '../../../domain/communication/models/comment.dart';
 import '../../_commons/exceptions.dart';
+import '../../_commons/files/file_manager.dart';
 import '../../_commons/network/app_requests.dart';
 import '../../_commons/throw_error.dart';
 
@@ -27,7 +28,11 @@ abstract class ICommunicationRemoteDataSource {
 
 class CommunicationRemoteDataSource implements ICommunicationRemoteDataSource {
   final IAppRequests httpClient;
-  CommunicationRemoteDataSource({required this.httpClient});
+  final IFileManager fileManager;
+  CommunicationRemoteDataSource({
+    required this.httpClient,
+    required this.fileManager,
+  });
 
   @override
   Future<List<CommentItem>> getComments({
@@ -77,25 +82,22 @@ class CommunicationRemoteDataSource implements ICommunicationRemoteDataSource {
   }) async {
     try {
       const String request = '/communication/comments';
-      final formMap = <String, dynamic>{
+      // Upload-first: upload attachment to get URL, then send JSON body with URL
+      final String? attachmentUrl =
+          (attachmentPath != null && attachmentPath.isNotEmpty)
+          ? await fileManager.uploadAndGetUrl(filePath: attachmentPath)
+          : null;
+      final Map<String, dynamic> bodyMap = {
         'body': body,
         'memo': memo,
         'commentable_type': commentableType,
         'commentable_id': commentableId,
+        if (parentId != null) 'parent_id': parentId,
+        if (attachmentUrl != null) 'attachment_url': attachmentUrl,
       };
-      if (parentId != null) {
-        formMap['parent_id'] = parentId;
-      }
-      if (attachmentPath != null && attachmentPath.isNotEmpty) {
-        formMap['attachment_url'] = await MultipartFile.fromFile(
-          attachmentPath,
-          filename: attachmentPath.split('/').last,
-        );
-      }
-      final formData = FormData.fromMap(formMap);
       final Response response = await httpClient.postRequest(
         request,
-        body: formData,
+        body: bodyMap,
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         dynamic raw = response.data;
