@@ -320,7 +320,9 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
             children: [
               _meta(
                 'Date',
-                '${DateTime.parse(action.startDate!).day.toString().padLeft(2, '0')}-${DateTime.parse(action.startDate!).month.toString().padLeft(2, '0')}-${DateTime.parse(action.startDate!).year}',
+                action.startDate == null
+                    ? 'N/A'
+                    : '${DateTime.parse(action.startDate!).day.toString().padLeft(2, '0')}-${DateTime.parse(action.startDate!).month.toString().padLeft(2, '0')}-${DateTime.parse(action.startDate!).year}',
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 18),

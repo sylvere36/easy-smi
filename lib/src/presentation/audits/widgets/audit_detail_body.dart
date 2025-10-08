@@ -4,12 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../gen/assets.gen.dart';
 import '../../../../injection_container.dart';
+import '../../../application/actions/actions_bloc.dart';
 import '../../../application/audit/detail/audit_detail_bloc.dart';
 import '../../../domain/audit/models/audit_item.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
+import '../../_commons_widgets/empty_widget.dart';
 import '../../_commons_widgets/loading_widget.dart';
 
 class AuditDetailBody extends StatefulWidget {
@@ -105,6 +106,12 @@ class _AuditDetailBodyState extends State<AuditDetailBody>
   void initState() {
     super.initState();
     _tab = TabController(length: 4, vsync: this);
+    BlocProvider.of<ActionsBloc>(context).add(
+      ActionsEvent.fetchByOrigin(
+        originType: 'Audit',
+        originId: widget.audit.id,
+      ),
+    );
   }
 
   TextStyle get _title => GoogleFonts.poppins(
@@ -904,139 +911,147 @@ class _ActionsTab extends StatelessWidget {
       color: Colors.black54,
     );
 
-    Widget pdf(String name) => Row(
-      children: [
-        const Icon(Icons.picture_as_pdf, color: Colors.red, size: 18),
-        const SizedBox(width: 8),
-        Text(
-          name,
-          style: GoogleFonts.poppins(decoration: TextDecoration.underline),
-        ),
-      ],
-    );
+    // Widget pdf(String name) => Row(
+    //   children: [
+    //     const Icon(Icons.picture_as_pdf, color: Colors.red, size: 18),
+    //     const SizedBox(width: 8),
+    //     Text(
+    //       name,
+    //       style: GoogleFonts.poppins(decoration: TextDecoration.underline),
+    //     ),
+    //   ],
+    // );
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 26),
-      children: [
-        for (final it in items)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 14),
-            child: _Card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    spacing: 10,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: it.color.withValues(alpha: .1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          it.typeBadge,
-                          style: GoogleFonts.poppins(
-                            color: it.color,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                      Assets.svgs.pen.svg(),
-                      const Icon(
-                        Icons.delete_outline_rounded,
-                        size: 18,
-                        color: Colors.red,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    it.titre,
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text('Processus', style: label),
-                  const SizedBox(height: 4),
-                  Text(it.processus, style: GoogleFonts.poppins()),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Justifications', style: label),
-                      Text(
-                        'Ecart',
-                        style: GoogleFonts.poppins(
-                          color: const Color(0xFFE53935),
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(it.justification, style: GoogleFonts.poppins()),
-                  const SizedBox(height: 10),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+    return BlocBuilder<ActionsBloc, ActionsState>(
+      builder: (context, state) {
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 26),
+          children: [
+            if (state.isLoading)
+              const Center(child: LoadingWidget())
+            else if (state.originItems == null || state.originItems!.isEmpty)
+              EmptyWidget.noData()
+            else
+              ...state.originItems!.map((item) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 14),
+                  child: _Card(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 10,
                           children: [
-                            Text('Type Origine', style: label),
-                            const SizedBox(height: 4),
-                            Text(it.origine, style: GoogleFonts.poppins()),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.red.withValues(alpha: .1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                item.humanReadableType,
+                                style: GoogleFonts.poppins(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                            // Assets.svgs.pen.svg(),
+                            // const Icon(
+                            //   Icons.delete_outline_rounded,
+                            //   size: 18,
+                            //   color: Colors.red,
+                            // ),
                           ],
                         ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 5,
-                          vertical: 2,
-                        ),
-                        decoration: const BoxDecoration(color: Colors.grey),
-                        child: Text(
-                          it.origineType,
+                        const SizedBox(height: 8),
+                        Text(
+                          item.actionName,
                           style: GoogleFonts.poppins(
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: Colors.white,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Operationalisation', style: label),
-                      Text(
-                        it.etat,
-                        style: GoogleFonts.poppins(
-                          color: it.etatColor,
-                          fontWeight: FontWeight.w700,
+                        const SizedBox(height: 10),
+                        Text('Processus', style: label),
+                        const SizedBox(height: 4),
+                        Text(
+                          item.process?.title ?? '',
+                          style: GoogleFonts.poppins(),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Justifications', style: label),
+                            Text(
+                              item.humanReadableJustificationType,
+                              style: GoogleFonts.poppins(
+                                color: const Color(0xFFE53935),
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          item.justification ?? '',
+                          style: GoogleFonts.poppins(),
+                        ),
+                        const SizedBox(height: 10),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Type Origine', style: label),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    item.humanReadableOrigin,
+                                    style: GoogleFonts.poppins(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5,
+                                vertical: 2,
+                              ),
+                              decoration: const BoxDecoration(
+                                color: Colors.grey,
+                              ),
+                              child: Text(
+                                item.originType ?? '',
+                                style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Text('Responsable', style: label),
+                        const SizedBox(height: 6),
+                        Text(
+                          item.inChargeName ?? '',
+                          style: GoogleFonts.poppins(),
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 6),
-                  pdf(it.pieceJointe),
-                  const SizedBox(height: 10),
-                  Text('Responsable', style: label),
-                  const SizedBox(height: 6),
-                  Text(it.responsable, style: GoogleFonts.poppins()),
-                ],
-              ),
-            ),
-          ),
-      ],
+                );
+              }),
+          ],
+        );
+      },
     );
   }
 }

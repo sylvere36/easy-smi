@@ -177,6 +177,8 @@ String actionTypeHumanReadable(String type) {
       return 'Curative';
     case 'recurring':
       return 'Récurrente';
+    case 'opportunity':
+      return 'Opportunité';
     default:
       return type;
   }
