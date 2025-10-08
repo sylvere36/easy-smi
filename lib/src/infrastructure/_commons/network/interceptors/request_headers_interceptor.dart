@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 
 import '../user_session.dart';
@@ -36,6 +38,7 @@ Future<void> _performInterceptor(
 
   final String? token = await myUserSession.getAuthToken();
   if (token != null) {
+    log('Authorization: Bearer $token');
     options.headers['Authorization'] = 'Bearer $token';
   }
   return handler.next(options);

@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../domain/_commons/global_failure.dart';
 import '../../../domain/inspection/i_inspection_repository.dart';
+import '../../../domain/inspection/models/inspection_answers_post.dart';
 import '../../../domain/inspection/models/inspection_detail.dart';
 
 part 'inspection_detail_bloc.freezed.dart';
@@ -33,6 +34,25 @@ class InspectionDetailBloc
 
     on<_Reset>((event, emit) async {
       emit(InspectionDetailState.initial());
+    });
+
+    on<_PostAnswers>((event, emit) async {
+      emit(state.copyWith(isLoading: true, resultOption: none()));
+      final res = await repository.postInspectionAnswers(
+        inspectionId: event.id,
+        body: event.body,
+      );
+      res.fold(
+        (l) =>
+            emit(state.copyWith(isLoading: false, resultOption: some(left(l)))),
+        (detail) => emit(
+          state.copyWith(
+            isLoading: false,
+            item: detail,
+            resultOption: some(right(detail)),
+          ),
+        ),
+      );
     });
   }
 }

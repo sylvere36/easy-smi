@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import '../../domain/_commons/global_failure.dart';
 import '../../domain/_commons/pagination.dart';
 import '../../domain/inspection/i_inspection_repository.dart';
+import '../../domain/inspection/models/inspection_answers_post.dart';
 import '../../domain/inspection/models/inspection_detail.dart';
 import '../../domain/inspection/models/inspection_item.dart';
 import '../_commons/exceptions.dart';
@@ -70,6 +71,30 @@ class InspectionRepository implements IInspectionRepository {
           inspectionFormId: inspectionFormId,
         );
         return right(sections);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
+
+  @override
+  Future<Either<GlobalFailure, InspectionDetail>> postInspectionAnswers({
+    required int inspectionId,
+    required InspectionAnswersPostBody body,
+  }) async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        final updated = await remoteDataSource.postInspectionAnswers(
+          inspectionId: inspectionId,
+          body: body,
+        );
+        return right(updated);
       } on UnauthorizedException catch (e) {
         return left(GlobalFailure.unauthorized(e.errorText));
       } on ServerException catch (e) {

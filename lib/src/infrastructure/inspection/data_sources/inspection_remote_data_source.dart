@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 
 import '../../../domain/_commons/pagination.dart';
+import '../../../domain/inspection/models/inspection_answers_post.dart';
 import '../../../domain/inspection/models/inspection_detail.dart';
 import '../../../domain/inspection/models/inspection_item.dart';
 import '../../_commons/exceptions.dart';
@@ -19,6 +20,11 @@ abstract class IInspectionRemoteDataSource {
 
   Future<List<InspectionSectionWithQuestions>> getInspectionFormSections({
     required int inspectionFormId,
+  });
+
+  Future<InspectionDetail> postInspectionAnswers({
+    required int inspectionId,
+    required InspectionAnswersPostBody body,
   });
 }
 
@@ -101,6 +107,31 @@ class InspectionRemoteDataSource implements IInspectionRemoteDataSource {
             .map(InspectionSectionWithQuestions.fromJson)
             .toList();
         return list;
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<InspectionDetail> postInspectionAnswers({
+    required int inspectionId,
+    required InspectionAnswersPostBody body,
+  }) async {
+    try {
+      final String request = '/conformity/inspections/$inspectionId/answers';
+      final Response response = await httpClient.postRequest(
+        request,
+        body: body.toJson(),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final raw = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final data = raw['data'] as Map<String, dynamic>? ?? {};
+        return InspectionDetail.fromJson(data);
       } else {
         throw ServerException(errorThrow(response));
       }

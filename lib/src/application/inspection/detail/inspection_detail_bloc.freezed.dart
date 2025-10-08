@@ -55,11 +55,12 @@ extension InspectionDetailEventPatterns on InspectionDetailEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _Reset value)?  reset,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _PostAnswers value)?  postAnswers,TResult Function( _Reset value)?  reset,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
-return fetch(_that);case _Reset() when reset != null:
+return fetch(_that);case _PostAnswers() when postAnswers != null:
+return postAnswers(_that);case _Reset() when reset != null:
 return reset(_that);case _:
   return orElse();
 
@@ -78,11 +79,12 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _Reset value)  reset,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _PostAnswers value)  postAnswers,required TResult Function( _Reset value)  reset,}){
 final _that = this;
 switch (_that) {
 case _Fetch():
-return fetch(_that);case _Reset():
+return fetch(_that);case _PostAnswers():
+return postAnswers(_that);case _Reset():
 return reset(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -100,11 +102,12 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _Reset value)?  reset,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _PostAnswers value)?  postAnswers,TResult? Function( _Reset value)?  reset,}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
-return fetch(_that);case _Reset() when reset != null:
+return fetch(_that);case _PostAnswers() when postAnswers != null:
+return postAnswers(_that);case _Reset() when reset != null:
 return reset(_that);case _:
   return null;
 
@@ -122,10 +125,11 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int id)?  fetch,TResult Function()?  reset,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int id)?  fetch,TResult Function( int id,  InspectionAnswersPostBody body)?  postAnswers,TResult Function()?  reset,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
-return fetch(_that.id);case _Reset() when reset != null:
+return fetch(_that.id);case _PostAnswers() when postAnswers != null:
+return postAnswers(_that.id,_that.body);case _Reset() when reset != null:
 return reset();case _:
   return orElse();
 
@@ -144,10 +148,11 @@ return reset();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int id)  fetch,required TResult Function()  reset,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int id)  fetch,required TResult Function( int id,  InspectionAnswersPostBody body)  postAnswers,required TResult Function()  reset,}) {final _that = this;
 switch (_that) {
 case _Fetch():
-return fetch(_that.id);case _Reset():
+return fetch(_that.id);case _PostAnswers():
+return postAnswers(_that.id,_that.body);case _Reset():
 return reset();case _:
   throw StateError('Unexpected subclass');
 
@@ -165,10 +170,11 @@ return reset();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int id)?  fetch,TResult? Function()?  reset,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int id)?  fetch,TResult? Function( int id,  InspectionAnswersPostBody body)?  postAnswers,TResult? Function()?  reset,}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
-return fetch(_that.id);case _Reset() when reset != null:
+return fetch(_that.id);case _PostAnswers() when postAnswers != null:
+return postAnswers(_that.id,_that.body);case _Reset() when reset != null:
 return reset();case _:
   return null;
 
@@ -237,6 +243,74 @@ class __$FetchCopyWithImpl<$Res>
   return _then(_Fetch(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class _PostAnswers implements InspectionDetailEvent {
+  const _PostAnswers({required this.id, required this.body});
+  
+
+ final  int id;
+ final  InspectionAnswersPostBody body;
+
+/// Create a copy of InspectionDetailEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$PostAnswersCopyWith<_PostAnswers> get copyWith => __$PostAnswersCopyWithImpl<_PostAnswers>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PostAnswers&&(identical(other.id, id) || other.id == id)&&(identical(other.body, body) || other.body == body));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,body);
+
+@override
+String toString() {
+  return 'InspectionDetailEvent.postAnswers(id: $id, body: $body)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$PostAnswersCopyWith<$Res> implements $InspectionDetailEventCopyWith<$Res> {
+  factory _$PostAnswersCopyWith(_PostAnswers value, $Res Function(_PostAnswers) _then) = __$PostAnswersCopyWithImpl;
+@useResult
+$Res call({
+ int id, InspectionAnswersPostBody body
+});
+
+
+
+
+}
+/// @nodoc
+class __$PostAnswersCopyWithImpl<$Res>
+    implements _$PostAnswersCopyWith<$Res> {
+  __$PostAnswersCopyWithImpl(this._self, this._then);
+
+  final _PostAnswers _self;
+  final $Res Function(_PostAnswers) _then;
+
+/// Create a copy of InspectionDetailEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? id = null,Object? body = null,}) {
+  return _then(_PostAnswers(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,body: null == body ? _self.body : body // ignore: cast_nullable_to_non_nullable
+as InspectionAnswersPostBody,
   ));
 }
 
