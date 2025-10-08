@@ -1,4 +1,5 @@
-import 'package:auto_route/auto_route.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,15 +8,17 @@ import 'package:intl/intl.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../injection_container.dart';
 import '../../../application/actions/actions_bloc.dart';
+import '../../../application/communication/comments_bloc.dart';
 import '../../../application/evalutaion/evaluation_bloc.dart';
 import '../../../application/events/detail/event_detail_bloc.dart';
 import '../../../domain/action/i_action_repository.dart';
 import '../../../domain/evaluation/models/evaluation.dart';
-import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
 import '../../_commons/utils/app_constants.dart';
+import '../../_commons_widgets/comments/comment_field.dart';
 import '../../_commons_widgets/loading_widget.dart';
 import '../../_commons_widgets/show_network_image_viewer.dart';
+import '../../comments/widgets/resume_comment_widget.dart';
 
 // ===================== BODY =====================
 
@@ -27,7 +30,6 @@ class BadEventDetailBody extends StatefulWidget {
 }
 
 class _BadEventDetailBodyState extends State<BadEventDetailBody> {
-  final _commentCtrl = TextEditingController();
   bool isInit = false;
 
   @override
@@ -45,6 +47,8 @@ class _BadEventDetailBodyState extends State<BadEventDetailBody> {
     'eval': true,
   };
 
+  String commentTableType = 'Event';
+
   @override
   Widget build(BuildContext context) {
     // final action = sl<ActionsBloc>();
@@ -59,6 +63,13 @@ class _BadEventDetailBodyState extends State<BadEventDetailBody> {
             ActionsEvent.fetchByOrigin(
               originType: 'END',
               originId: detailState.item!.id,
+            ),
+          );
+
+          context.read<CommentsBloc>().add(
+            CommentsEvent.fetchRequested(
+              commentableType: commentTableType,
+              commentableId: detailState.item!.id,
             ),
           );
 
@@ -83,20 +94,37 @@ class _BadEventDetailBodyState extends State<BadEventDetailBody> {
             ),
 
             // ----------- zone commentaire -----------
-            _CommentComposer(
-              controller: _commentCtrl,
-              onSend: () {
-                if (_commentCtrl.text.trim().isEmpty) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Commentaire ajouté (démo)')),
+            // Comment composer
+            // ----------- zone commentaire -----------
+            BlocBuilder<CommentsBloc, CommentsState>(
+              builder: (context, state) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 14),
+                  child: CommentFieldWidget(
+                    isLoading: state.isSubmitting,
+                    onSend: (String text, File? file) {
+                      BlocProvider.of<CommentsBloc>(context).add(
+                        CommentsEvent.addCommentRequested(
+                          commentableType: commentTableType,
+                          commentableId: detailState.item!.id,
+                          attachmentPath: file?.path,
+                          body: text,
+                        ),
+                      );
+                    },
+                  ),
                 );
-                _commentCtrl.clear();
               },
             ),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: _CommentsList(),
+            // Comments header + tiny list
+            ResumeCommentWidget(
+              commentableType: commentTableType,
+              commentableId: detailState.item!.id,
+              commentsCount: BlocProvider.of<CommentsBloc>(
+                context,
+                listen: true,
+              ).state.items.length,
             ),
 
             // ----------- vignettes & puces -----------
@@ -431,138 +459,6 @@ class _HeaderCard extends StatelessWidget {
       ],
     ),
   );
-}
-
-// ===================== COMMENTS =====================
-
-class _CommentComposer extends StatelessWidget {
-  final TextEditingController controller;
-  final VoidCallback onSend;
-  const _CommentComposer({required this.controller, required this.onSend});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        context.router.push(
-          CommentsRoute(commentableType: 'Event', commentableId: '0'),
-        );
-      },
-      child: Card(
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 10, 8, 8),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: controller,
-                  enabled: false,
-                  decoration: InputDecoration(
-                    hintText: 'Écrire un commentaire',
-                    hintStyle: GoogleFonts.inter(color: Colors.grey.shade500),
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
-              IconButton(
-                onPressed: onSend,
-                icon: const Icon(Icons.attachment_rounded),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CommentsList extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
-        child: Column(
-          children: List.generate(2, (i) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF1BB38A),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0x14000000),
-                          blurRadius: 6,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'MH',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  'Beatrice BOSSOU',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                'Il y a 30 min',
-                                style: TextStyle(
-                                  color: Colors.black45,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 6, right: 2),
-                            child: Text(
-                              'Les documents fournis ne respectent pas les normes internationales',
-                              style: TextStyle(fontSize: 16, height: 1.35),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-        ),
-      ),
-    );
-  }
 }
 
 // ===================== EVIDENCES + CHIPS =====================

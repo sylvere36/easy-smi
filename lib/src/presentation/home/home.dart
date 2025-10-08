@@ -599,7 +599,7 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   _drawerItem(
                     icon: Assets.svgs.event,
-                    text: 'Evennements',
+                    text: 'Evenements',
                     onTap: () {
                       context.router.push(const NewBadEventsRoute());
                       Scaffold.of(context).closeDrawer();
@@ -695,8 +695,8 @@ class CustomDrawer extends StatelessWidget {
     VoidCallback? onTap,
   }) {
     return ListTile(
-      contentPadding: const EdgeInsets.only(left: 40),
-      leading: icon.svg(),
+      contentPadding: const EdgeInsets.only(left: 20),
+      leading: icon.svg(height: 30, width: 30),
       title: Text(
         text,
         style: GoogleFonts.inter(

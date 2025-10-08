@@ -13,6 +13,7 @@ import '../application/connected/connected_bloc.dart';
 import '../application/evalutaion/evaluation_bloc.dart';
 import '../application/events/detail/event_detail_bloc.dart';
 import '../application/events/events_bloc.dart';
+import '../application/inspection/inspections_bloc.dart';
 import '../application/permit/permits_bloc.dart';
 import '_commons/route/app_router.dart';
 import '_commons/route/app_router.gr.dart';
@@ -42,6 +43,10 @@ class _AppState extends State<App> {
         ),
         BlocProvider(create: (_) => sl<EventDetailsBloc>()),
         BlocProvider(create: (_) => sl<EvaluationsBloc>()),
+        BlocProvider(
+          create: (_) =>
+              sl<InspectionsBloc>()..add(const InspectionsEvent.fetch()),
+        ),
         BlocProvider(
           create: (_) => sl<AuditsBloc>()..add(const AuditsEvent.fetch()),
         ),

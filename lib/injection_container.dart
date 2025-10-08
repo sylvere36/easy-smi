@@ -13,6 +13,9 @@ import 'src/application/connected/connected_bloc.dart';
 import 'src/application/evalutaion/evaluation_bloc.dart';
 import 'src/application/events/detail/event_detail_bloc.dart';
 import 'src/application/events/events_bloc.dart';
+import 'src/application/inspection/detail/inspection_detail_bloc.dart';
+import 'src/application/inspection/form/inspection_form_bloc.dart';
+import 'src/application/inspection/inspections_bloc.dart';
 import 'src/application/organization/organization_bloc.dart';
 import 'src/application/permit/detail/permit_detail_bloc.dart';
 import 'src/application/permit/permits_bloc.dart';
@@ -25,6 +28,7 @@ import 'src/domain/auth/user/i_authenticated_user_repository.dart';
 import 'src/domain/communication/i_communication_repository.dart';
 import 'src/domain/evaluation/i_evaluation_repository.dart';
 import 'src/domain/event/i_event_repository.dart';
+import 'src/domain/inspection/i_inspection_repository.dart';
 import 'src/domain/organization/i_organization_repository.dart';
 import 'src/domain/permit/i_permit_repository.dart';
 import 'src/infrastructure/_commons/files/download_service.dart';
@@ -47,6 +51,8 @@ import 'src/infrastructure/evaluation/data-source/evaluation_remote_data_source.
 import 'src/infrastructure/evaluation/evaluation_repository.dart';
 import 'src/infrastructure/event/data-sources/event_remote_data_source.dart';
 import 'src/infrastructure/event/event_repository.dart';
+import 'src/infrastructure/inspection/data_sources/inspection_remote_data_source.dart';
+import 'src/infrastructure/inspection/inspection_repository.dart';
 import 'src/infrastructure/organization/data_sources/organization_remote_data_source.dart';
 import 'src/infrastructure/organization/organization_repository.dart';
 import 'src/infrastructure/permit/data_sources/permit_remote_data_source.dart';
@@ -66,6 +72,7 @@ Future<void> init() async {
   initEvents();
   initEvaluations();
   initPermits();
+  initInspections();
 }
 
 void initSplashScreen() {
@@ -191,4 +198,16 @@ Future<void> initPermits() async {
   );
   sl.registerFactory(() => PermitsBloc(repository: sl()));
   sl.registerFactory(() => PermitDetailBloc(repository: sl()));
+}
+
+Future<void> initInspections() async {
+  sl.registerLazySingleton<IInspectionRemoteDataSource>(
+    () => InspectionRemoteDataSource(httpClient: sl()),
+  );
+  sl.registerLazySingleton<IInspectionRepository>(
+    () => InspectionRepository(networkInfo: sl(), remoteDataSource: sl()),
+  );
+  sl.registerFactory(() => InspectionsBloc(repository: sl()));
+  sl.registerFactory(() => InspectionDetailBloc(repository: sl()));
+  sl.registerFactory(() => InspectionFormBloc(repository: sl()));
 }
