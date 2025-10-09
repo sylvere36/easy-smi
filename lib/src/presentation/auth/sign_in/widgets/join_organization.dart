@@ -187,12 +187,9 @@ class _JoinOrganizationState extends State<JoinOrganization> {
                                                   );
                                                 },
                                                 (success) {
-                                                  context.router.push(
-                                                    SignInRoute(
-                                                      email: _mailCtrl.text
-                                                          .trim(),
-                                                    ),
-                                                  );
+                                                  context.router.replaceAll([
+                                                    SplashRoute(),
+                                                  ]);
                                                 },
                                               ),
                                             );

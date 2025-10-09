@@ -3,9 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../domain/_commons/global_failure.dart';
+import '../../../domain/_commons/pagination.dart';
 import '../../../domain/audit/i_audit_repository.dart';
+import '../../../domain/audit/models/audit_conclusion.dart';
 import '../../../domain/audit/models/audit_document_request.dart';
 import '../../../domain/audit/models/audit_item.dart';
+import '../../../domain/audit/models/audit_observation.dart';
+import '../../../domain/audit/models/audit_result.dart';
 
 part 'audit_detail_bloc.freezed.dart';
 part 'audit_detail_event.dart';
@@ -77,6 +81,132 @@ class AuditDetailBloc extends Bloc<AuditDetailEvent, AuditDetailState> {
             isLoadingDocuments: false,
             documentRequests: items,
             documentsResultOption: some(right(items)),
+          ),
+        ),
+      );
+    });
+
+    on<_ObservationsRequested>((event, emit) async {
+      emit(
+        state.copyWith(
+          isLoadingObservations: true,
+          observationsResultOption: none(),
+        ),
+      );
+      final int page = event.page ?? 1;
+      final int perPage = event.perPage ?? 10;
+      final res = await repository.getAuditObservations(
+        id: event.id,
+        page: page,
+        perPage: perPage,
+      );
+      emit(
+        res.fold(
+          (l) => state.copyWith(
+            isLoadingObservations: false,
+            observationsResultOption: some(left(l)),
+          ),
+          (paginated) => state.copyWith(
+            isLoadingObservations: false,
+            observations: paginated.items,
+            observationsPagination: paginated.pagination,
+            observationsResultOption: some(right(paginated)),
+          ),
+        ),
+      );
+    });
+
+    on<_ObservationsNextPageRequested>((event, emit) async {
+      final currentPag = state.observationsPagination;
+      if (currentPag == null) return;
+      final nextPage = currentPag.currentPage + 1;
+      if (nextPage > currentPag.lastPage) return; // no more pages
+      emit(state.copyWith(isLoadingObservations: true));
+      final res = await repository.getAuditObservations(
+        id: event.id,
+        page: nextPage,
+        perPage: currentPag.perPage,
+      );
+      emit(
+        res.fold(
+          (l) => state.copyWith(
+            isLoadingObservations: false,
+            observationsResultOption: some(left(l)),
+          ),
+          (paginated) => state.copyWith(
+            isLoadingObservations: false,
+            observations: [...state.observations, ...paginated.items],
+            observationsPagination: paginated.pagination,
+            observationsResultOption: some(right(paginated)),
+          ),
+        ),
+      );
+    });
+
+    on<_ConclusionRequested>((event, emit) async {
+      emit(
+        state.copyWith(
+          isLoadingConclusion: true,
+          conclusionResultOption: none(),
+        ),
+      );
+      final res = await repository.getAuditConclusion(id: event.id);
+      emit(
+        res.fold(
+          (l) => state.copyWith(
+            isLoadingConclusion: false,
+            conclusionResultOption: some(left(l)),
+          ),
+          (data) => state.copyWith(
+            isLoadingConclusion: false,
+            conclusion: data,
+            conclusionResultOption: some(right(data)),
+          ),
+        ),
+      );
+    });
+
+    on<_FetchResults>((event, emit) async {
+      emit(state.copyWith(isLoadingResults: true, resultsResultOption: none()));
+      final res = await repository.getAuditResults(id: event.id);
+      emit(
+        res.fold(
+          (l) => state.copyWith(
+            isLoadingResults: false,
+            resultsResultOption: some(left(l)),
+          ),
+          (items) => state.copyWith(
+            isLoadingResults: false,
+            results: items,
+            resultsResultOption: some(right(items)),
+          ),
+        ),
+      );
+    });
+
+    on<_AddObservation>((event, emit) async {
+      emit(
+        state.copyWith(
+          isAddingObservation: true,
+          addObservationResultOption: none(),
+        ),
+      );
+      final res = await repository.addAuditObservation(
+        id: event.id,
+        description: event.description,
+        commentaireId: event.commentaireId,
+        documents: event.documents,
+      );
+      emit(
+        res.fold(
+          (l) => state.copyWith(
+            isAddingObservation: false,
+            addObservationResultOption: some(left(l)),
+          ),
+          (item) => state.copyWith(
+            isAddingObservation: false,
+            observations: [item, ...state.observations],
+            addObservationResultOption: some(right(item)),
           ),
         ),
       );

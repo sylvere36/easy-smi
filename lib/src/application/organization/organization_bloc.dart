@@ -48,7 +48,13 @@ class OrganizationBloc extends Bloc<OrganizationEvent, OrganizationState> {
           state.copyWith(
             isSubmitting: false,
             showErrorMessages: true,
-            failureOrSuccessOption: some(Left(l)),
+            failureOrSuccessOption: some(
+              const Left(
+                Unauthorized(
+                  'Email invalide ou email d\'organisation incorrect',
+                ),
+              ),
+            ),
           ),
         );
         emit(

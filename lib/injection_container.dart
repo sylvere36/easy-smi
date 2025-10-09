@@ -31,6 +31,7 @@ import 'src/domain/event/i_event_repository.dart';
 import 'src/domain/inspection/i_inspection_repository.dart';
 import 'src/domain/organization/i_organization_repository.dart';
 import 'src/domain/permit/i_permit_repository.dart';
+import 'src/infrastructure/_commons/config/base_url_notifier.dart';
 import 'src/infrastructure/_commons/files/download_service.dart';
 import 'src/infrastructure/_commons/files/file_manager.dart';
 import 'src/infrastructure/_commons/network/app_requests.dart';
@@ -60,6 +61,9 @@ import 'src/infrastructure/permit/data_sources/permit_remote_data_source.dart';
 import 'src/infrastructure/permit/permit_repository.dart';
 
 final sl = GetIt.instance;
+
+// Convenience accessor for the global BaseUrlNotifier
+BaseUrlNotifier get baseUrlNotifier => sl<BaseUrlNotifier>();
 
 Future<void> init() async {
   initCore();
@@ -91,6 +95,10 @@ Future<void> initCore() async {
   sl.registerLazySingleton<IDownloadService>(() => DownloadService());
   // File upload manager
   sl.registerLazySingleton<IFileManager>(() => FileManager(httpClient: sl()));
+  // Global base URL notifier with persistence
+  sl.registerLazySingleton<BaseUrlNotifier>(
+    () => BaseUrlNotifier.fromPrefs(sl()),
+  );
 }
 
 Future<void> initAuth() async {
@@ -152,7 +160,7 @@ Future<void> initActions() async {
 
 Future<void> initAudits() async {
   sl.registerLazySingleton<IAuditRemoteDataSource>(
-    () => AuditRemoteDataSource(httpClient: sl()),
+    () => AuditRemoteDataSource(httpClient: sl(), fileManager: sl()),
   );
   sl.registerLazySingleton<IAuditRepository>(
     () => AuditRepository(networkInfo: sl(), remoteDataSource: sl()),

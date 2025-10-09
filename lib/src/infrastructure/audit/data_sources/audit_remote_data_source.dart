@@ -3,9 +3,13 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 
 import '../../../domain/_commons/pagination.dart';
+import '../../../domain/audit/models/audit_conclusion.dart';
 import '../../../domain/audit/models/audit_document_request.dart';
 import '../../../domain/audit/models/audit_item.dart';
+import '../../../domain/audit/models/audit_observation.dart';
+import '../../../domain/audit/models/audit_result.dart';
 import '../../_commons/exceptions.dart';
+import '../../_commons/files/file_manager.dart';
 import '../../_commons/network/app_requests.dart';
 import '../../_commons/throw_error.dart';
 
@@ -29,11 +33,28 @@ abstract class IAuditRemoteDataSource {
   Future<List<AuditDocumentRequest>> getAuditDocumentRequests({
     required int id,
   });
+  Future<AuditConclusion> getAuditConclusion({required int id});
+
+  Future<(List<AuditObservation>, Pagination)> getAuditObservations({
+    required int id,
+    int page,
+    int perPage,
+  });
+
+  Future<List<AuditResult>> getAuditResults({required int id});
+
+  Future<AuditObservation> addAuditObservation({
+    required int id,
+    required String description,
+    int? commentaireId,
+    required List<String> documentPaths,
+  });
 }
 
 class AuditRemoteDataSource implements IAuditRemoteDataSource {
   final IAppRequests httpClient;
-  AuditRemoteDataSource({required this.httpClient});
+  final IFileManager fileManager;
+  AuditRemoteDataSource({required this.httpClient, required this.fileManager});
 
   @override
   Future<(List<AuditItem>, Pagination)> getAudits({
@@ -241,6 +262,145 @@ class AuditRemoteDataSource implements IAuditRemoteDataSource {
               ),
             )
             .toList();
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<(List<AuditObservation>, Pagination)> getAuditObservations({
+    required int id,
+    int page = 1,
+    int perPage = 10,
+  }) async {
+    try {
+      final String request = '/conformity/audits/$id/observations';
+      final Response response = await httpClient.getRequest(
+        request,
+        queryParameters: {'page': page, 'per_page': perPage},
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final raw = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final bool success = raw['success'] == true;
+        if (!success) {
+          final String message = (raw['message'] as String?) ?? '';
+          throw ServerException(message);
+        }
+        final data = raw['data'] as Map<String, dynamic>? ?? {};
+        final listJson = (data['data'] as List<dynamic>? ?? [])
+            .whereType<Map<String, dynamic>>()
+            .toList();
+        final items = listJson
+            .map((e) => AuditObservation.fromJson(e))
+            .toList();
+        final pagination = Pagination(
+          total: (data['total'] as num?)?.toInt() ?? items.length,
+          perPage: (data['per_page'] as num?)?.toInt() ?? perPage,
+          currentPage: (data['current_page'] as num?)?.toInt() ?? page,
+          lastPage: (data['last_page'] as num?)?.toInt() ?? 1,
+        );
+        return (items, pagination);
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<AuditConclusion> getAuditConclusion({required int id}) async {
+    try {
+      final String request = '/conformity/audits/$id/conclusion';
+      final Response response = await httpClient.getRequest(request);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final raw = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final bool success = raw['success'] == true;
+        if (!success) {
+          final String message = (raw['message'] as String?) ?? '';
+          throw ServerException(message);
+        }
+        final data = raw['data'] as Map<String, dynamic>? ?? {};
+        return AuditConclusion.fromJson(data);
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<AuditResult>> getAuditResults({required int id}) async {
+    try {
+      final String request = '/conformity/audits/$id/results';
+      final Response response = await httpClient.getRequest(request);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final raw = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final bool success = raw['success'] == true;
+        if (!success) {
+          final String message = (raw['message'] as String?) ?? '';
+          throw ServerException(message);
+        }
+        final data = raw['data'] as Map<String, dynamic>? ?? {};
+        final list = (data['results'] as List<dynamic>? ?? [])
+            .whereType<Map<String, dynamic>>()
+            .map(AuditResult.fromJson)
+            .toList();
+        return list;
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<AuditObservation> addAuditObservation({
+    required int id,
+    required String description,
+    int? commentaireId,
+    required List<String> documentPaths,
+  }) async {
+    try {
+      final String request = '/conformity/audits/$id/observations';
+      // upload-first for documents
+      final List<String> documents = documentPaths.isEmpty
+          ? <String>[]
+          : await fileManager.uploadManyAndGetUrls(filePaths: documentPaths);
+      final body = jsonEncode({
+        'description': description,
+        if (commentaireId != null) 'commentaire_id': commentaireId,
+        'documents': documents,
+      });
+      final Response response = await httpClient.postRequest(
+        request,
+        body: body,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final raw = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final bool success = raw['success'] == true;
+        if (!success) {
+          final String message = (raw['message'] as String?) ?? '';
+          throw ServerException(message);
+        }
+        final data = raw['data'];
+        final Map<String, dynamic> jsonItem = data is Map<String, dynamic>
+            ? data
+            : <String, dynamic>{};
+        return AuditObservation.fromJson(jsonItem);
       } else {
         throw ServerException(errorThrow(response));
       }

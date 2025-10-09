@@ -136,11 +136,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
                           // Subtitle
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.only(bottom: 15),
                             child: Text(
                               data.subtitle,
                               textAlign: TextAlign.center,
                               style: _subtitleStyle,
+                              overflow: TextOverflow.visible,
+                              maxLines: 12,
                             ),
                           ),
                         ],
@@ -153,8 +155,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
               Expanded(
                 flex: 2,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     // Dots indicator (center)
+                    const Spacer(),
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
                       child: Row(
@@ -176,7 +180,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         }),
                       ),
                     ),
-                    const Spacer(),
+
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
                       child: Row(

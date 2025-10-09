@@ -8,10 +8,12 @@ import '../../../../injection_container.dart';
 import '../../../application/actions/actions_bloc.dart';
 import '../../../application/audit/detail/audit_detail_bloc.dart';
 import '../../../domain/audit/models/audit_item.dart';
+import '../../../domain/audit/models/audit_observation.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
 import '../../_commons_widgets/empty_widget.dart';
 import '../../_commons_widgets/loading_widget.dart';
+import 'bottom_sheet_add_constat.dart';
 
 class AuditDetailBody extends StatefulWidget {
   final AuditItem audit;
@@ -24,83 +26,6 @@ class AuditDetailBody extends StatefulWidget {
 class _AuditDetailBodyState extends State<AuditDetailBody>
     with TickerProviderStateMixin {
   late final TabController _tab;
-  final List<_Constat> _constats = [
-    _Constat(
-      titre: 'Description',
-      texte:
-          'Rapport de constat fait pas l’equipe lors de l’audit constat fait pas l’equipe lors de l’audit constat',
-      medias: ['document de presentation', 'document de presentation'],
-      commentaireAuteur: 'Maude Hall',
-      commentaire:
-          'Commentaire sur le LearderShirp et developpement sur le LearderShirp et developpement',
-    ),
-    _Constat(
-      titre: 'Description',
-      texte:
-          'Rapport de constat fait pas l’equipe lors de l’audit constat fait pas l’equipe lors de l’audit constat',
-      medias: ['document de presentation', 'document de presentation'],
-      commentaireAuteur: 'Maude Hall',
-      commentaire:
-          'Commentaire sur le LearderShirp et developpement sur le LearderShirp et developpement',
-    ),
-  ];
-
-  final List<_ResultItem> _results = [
-    _ResultItem(
-      point: 'Leadership et engagement',
-      resume:
-          'Rapport de constat fait pas l’equipe lors de l’audit constat fait pas l’equipe lors de l’audit constat',
-      statut: _Statut.conforme,
-      preuves: ['Preuve AB', 'Preuve de collecte'],
-    ),
-    _ResultItem(
-      point: 'Leadership et engagement',
-      resume:
-          'Rapport de constat fait pas l’equipe lors de l’audit constat fait pas l’equipe lors de l’audit constat',
-      statut: _Statut.nonConforme,
-      preuves: ['Preuve AB', 'Preuve de collecte'],
-    ),
-    _ResultItem(
-      point: 'Leadership et engagement',
-      resume:
-          'Rapport de constat fait pas l’equipe lors de l’audit constat fait pas l’equipe lors de l’audit constat',
-      statut: _Statut.observation,
-      preuves: ['Preuve AB', 'Preuve de collecte'],
-    ),
-  ];
-
-  final List<_ActionItem> _actions = [
-    _ActionItem(
-      typeBadge: 'Corrective',
-      color: const Color(0xFF00C853),
-      titre:
-          'Renforcement du control qualité dans le departement Gestion Produits',
-      processus: 'Marketing international et developpement',
-      justification:
-          'Rapport de constat fait pas l’equipe lors de l’audit constat fait pas l’equipe lors de l’audit constat fait',
-      origine: 'Non conformité ISO 9001',
-      origineType: 'Audits',
-      pieceJointe: 'Pièce jointe',
-      responsable: 'Jenan YVES SOUSOSU',
-      etat: 'Clôturé',
-      etatColor: const Color(0xFFE53935),
-    ),
-    _ActionItem(
-      typeBadge: 'Préventive',
-      color: const Color(0xFF2E7D32),
-      titre:
-          'Renforcement du control qualité dans le departement Gestion Produits',
-      processus: 'Marketing international et developpement',
-      justification:
-          'Rapport de constat fait pas l’equipe lors de l’audit constat fait pas l’equipe lors de l’audit constat fait',
-      origine: 'Non conformité ISO 9001',
-      origineType: 'Audits',
-      pieceJointe: 'Pièce jointe',
-      responsable: 'Jenan YVES SOUSOSU',
-      etat: 'En cours',
-      etatColor: const Color(0xFF1565C0),
-    ),
-  ];
 
   @override
   void initState() {
@@ -137,222 +62,94 @@ class _AuditDetailBodyState extends State<AuditDetailBody>
     final blue = AppColors.primary;
 
     return BlocProvider(
-      create: (context) =>
-          sl<AuditDetailBloc>()
-            ..add(AuditDetailEvent.documentsRequested(id: widget.audit.id)),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        floatingActionButton: addContact
-            ? FloatingActionButton(
-                backgroundColor: blue,
-                shape: const CircleBorder(),
-                onPressed: _showAddConstatSheet,
-                child: const Icon(Icons.add),
-              )
-            : null,
-        body: DefaultTabController(
-          length: 4,
-          child: NestedScrollView(
-            headerSliverBuilder: (c, _) => [
-              SliverToBoxAdapter(
-                child: _Header(blue: blue, onBlue: onBlue, audit: widget.audit),
-              ),
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _TabsDelegate(
-                  TabBar(
-                    controller: _tab,
-                    onTap: (index) {
-                      if (index == 1) {
-                        addContact = true;
-                      } else {
-                        addContact = false;
-                      }
-                      setState(() {});
-                    },
-                    isScrollable: true,
-                    tabAlignment: TabAlignment.start,
-                    labelPadding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 8,
-                    ),
-                    indicatorColor: blue,
-                    labelColor: Colors.black,
-                    unselectedLabelColor: Colors.black54,
-                    labelStyle: GoogleFonts.poppins(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    tabs: const [
-                      Tab(text: 'Descriptions'),
-                      Tab(text: 'Liste des constats'),
-                      Tab(text: 'Resultats'),
-                      Tab(text: 'Actions'),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-            body: TabBarView(
-              physics: const NeverScrollableScrollPhysics(),
-              controller: _tab,
-              children: [
-                _DescriptionTab(
-                  title: _title,
-                  label: _label,
-                  value: _value,
-                  audit: widget.audit,
-                ),
-                _ConstatsTab(constats: _constats),
-                _ResultatsTab(items: _results),
-                _ActionsTab(items: _actions),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _showAddConstatSheet() async {
-    final libelle = TextEditingController();
-    final desc = TextEditingController();
-    String? media;
-
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
-      ),
-      builder: (ctx) {
-        final blue = const Color(0xFF1565D8);
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 18,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 44,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.black12,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 14),
-              Text(
-                'NOUVEAU CONSTAT',
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 14),
-              _Input(
-                title: 'Libelle constat',
-                controller: libelle,
-                hint: 'Libelle de l’audit',
-              ),
-              const SizedBox(height: 12),
-              _Input(
-                title: 'Description du constat',
-                controller: desc,
-                hint: 'Description de l’audit',
-                minLines: 3,
-                maxLines: 6,
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'Media',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-              ),
-              GestureDetector(
-                onTap: () {
-                  // ici on simule un média sélectionné
-                  setState(() => media = 'document_de_presentation.pdf');
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF5F7FA),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: const Color(0xFFE6ECF2)),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.attach_file, size: 20),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          media == null
-                              ? 'Selectionez media'
-                              : media!.split('/').last,
-                          style: GoogleFonts.poppins(fontSize: 14.5),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
+      create: (context) => sl<AuditDetailBloc>()
+        ..add(AuditDetailEvent.documentsRequested(id: widget.audit.id))
+        ..add(AuditDetailEvent.fetchResults(id: widget.audit.id))
+        ..add(AuditDetailEvent.conclusionRequested(id: widget.audit.id))
+        ..add(AuditDetailEvent.observationsRequested(id: widget.audit.id)),
+      child: BlocBuilder<AuditDetailBloc, AuditDetailState>(
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            floatingActionButton: addContact
+                ? FloatingActionButton(
                     backgroundColor: blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    shape: const CircleBorder(),
+                    onPressed: () => showAddConstatSheet(
+                      context,
+                      auditId: widget.audit.id,
+                      auditBloc: context.read<AuditDetailBloc>(),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    child: const Icon(Icons.add),
+                  )
+                : null,
+            body: DefaultTabController(
+              length: 4,
+              child: NestedScrollView(
+                headerSliverBuilder: (c, _) => [
+                  SliverToBoxAdapter(
+                    child: _Header(
+                      blue: blue,
+                      onBlue: onBlue,
+                      audit: widget.audit,
+                    ),
                   ),
-                  onPressed: () {
-                    if (libelle.text.trim().isEmpty ||
-                        desc.text.trim().isEmpty) {
-                      Navigator.pop(ctx);
-                      return;
-                    }
-                    setState(() {
-                      _constats.insert(
-                        0,
-                        _Constat(
-                          titre: 'Description',
-                          texte: desc.text.trim(),
-                          medias: media == null ? [] : [media!],
-                          commentaireAuteur: 'Maude Hall',
-                          commentaire:
-                              'Commentaire sur le LearderShirp et developpement',
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: _TabsDelegate(
+                      TabBar(
+                        controller: _tab,
+                        onTap: (index) {
+                          if (index == 1) {
+                            addContact = true;
+                          } else {
+                            addContact = false;
+                          }
+                          setState(() {});
+                        },
+                        isScrollable: true,
+                        tabAlignment: TabAlignment.start,
+                        labelPadding: const EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 8,
                         ),
-                      );
-                    });
-                    Navigator.pop(ctx);
-                  },
-                  child: Text(
-                    'Ajouter',
-                    style: GoogleFonts.poppins(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
+                        indicatorColor: blue,
+                        labelColor: Colors.black,
+                        unselectedLabelColor: Colors.black54,
+                        labelStyle: GoogleFonts.poppins(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        tabs: const [
+                          Tab(text: 'Descriptions'),
+                          Tab(text: 'Liste des constats'),
+                          Tab(text: 'Resultats'),
+                          Tab(text: 'Actions'),
+                        ],
+                      ),
                     ),
                   ),
+                ],
+                body: TabBarView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  controller: _tab,
+                  children: [
+                    _DescriptionTab(
+                      title: _title,
+                      label: _label,
+                      value: _value,
+                      audit: widget.audit,
+                    ),
+                    _ConstatsTab(state: state),
+                    _ResultatsTab(state: state),
+                    const _ActionsTab(),
+                  ],
                 ),
               ),
-            ],
-          ),
-        );
-      },
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -641,8 +438,8 @@ class _DescriptionTab extends StatelessWidget {
 }
 
 class _ConstatsTab extends StatelessWidget {
-  const _ConstatsTab({required this.constats});
-  final List<_Constat> constats;
+  const _ConstatsTab({required this.state});
+  final AuditDetailState state;
 
   @override
   Widget build(BuildContext context) {
@@ -659,250 +456,243 @@ class _ConstatsTab extends StatelessWidget {
         ],
       ),
     );
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 90),
-      itemCount: constats.length,
-      itemBuilder: (_, i) {
-        final c = constats[i];
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: _Card(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Description',
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(c.texte, style: GoogleFonts.poppins()),
-                const SizedBox(height: 10),
-                ...c.medias.map(pdf),
-                const Divider(height: 24),
-                Text(
-                  'Commentaire',
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const _Avatar('MH'),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        '${c.commentaireAuteur}\n${c.commentaire}',
-                        style: GoogleFonts.poppins(),
+    return state.isLoadingObservations
+        ? const Center(child: LoadingWidget())
+        : state.observations.isEmpty
+        ? Center(child: EmptyWidget.noData())
+        : ListView.builder(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 90),
+            itemCount: state.observations.length,
+            itemBuilder: (_, i) {
+              final AuditObservation c = state.observations[i];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _Card(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Description',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 6),
+                      Text(c.description, style: GoogleFonts.poppins()),
+                      const SizedBox(height: 10),
+                      ...c.documents.map(pdf),
+                      const Divider(height: 24),
+                      // Text(
+                      //   'Commentaire',
+                      //   style: GoogleFonts.poppins(
+                      //     fontWeight: FontWeight.w600,
+                      //     color: Colors.black87,
+                      //   ),
+                      // ),
+                      // const SizedBox(height: 8),
+                      // Row(
+                      //   children: [
+                      //     const _Avatar('MH'),
+                      //     const SizedBox(width: 10),
+                      //     Expanded(
+                      //       child: Text(
+                      //         '${c.commentaireAuteur}\n${c.commentaire}',
+                      //         style: GoogleFonts.poppins(),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+                      // const SizedBox(height: 8),
+                      // Row(
+                      //   children: [
+                      //     const Icon(Icons.reply, size: 18, color: Colors.grey),
+                      //     const SizedBox(width: 6),
+                      //     Text(
+                      //       'Repondre',
+                      //       style: GoogleFonts.poppins(color: Colors.black54),
+                      //     ),
+                      //   ],
+                      // ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.reply, size: 18, color: Colors.grey),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Repondre',
-                      style: GoogleFonts.poppins(color: Colors.black54),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+              );
+            },
+          );
   }
 }
 
 class _ResultatsTab extends StatelessWidget {
-  const _ResultatsTab({required this.items});
-  final List<_ResultItem> items;
-
-  Color _statutColor(_Statut s) {
-    switch (s) {
-      case _Statut.conforme:
-        return const Color(0xFF00A389);
-      case _Statut.nonConforme:
-        return const Color(0xFFE53935);
-      case _Statut.observation:
-        return const Color(0xFFF39C12);
-    }
-  }
-
-  String _label(_Statut s) {
-    switch (s) {
-      case _Statut.conforme:
-        return 'Conforme';
-      case _Statut.nonConforme:
-        return 'Non Conforme';
-      case _Statut.observation:
-        return 'Observation';
-    }
-  }
+  const _ResultatsTab({required this.state});
+  final AuditDetailState state;
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 26),
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            SizedBox(
-              width: 120,
-              height: 40,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  context.router.push(const AuditControlObjectifRoute());
-                },
-                label: Text('Ajouter', style: GoogleFonts.inter(fontSize: 15)),
-                icon: const Icon(Icons.add),
-              ),
-            ),
-          ],
-        ),
-        ...items.map(
-          (e) => Padding(
-            padding: const EdgeInsets.only(bottom: 14),
-            child: _Card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return state.isLoadingResults
+        ? const Center(child: LoadingWidget())
+        : state.results.isEmpty
+        ? Center(child: EmptyWidget.noData())
+        : ListView(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 26),
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Point de control et objectif',
-                          style: GoogleFonts.poppins(
-                            color: Colors.black54,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                  SizedBox(
+                    width: 120,
+                    height: 40,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        context.router.push(const AuditControlObjectifRoute());
+                      },
+                      label: Text(
+                        'Ajouter',
+                        style: GoogleFonts.inter(fontSize: 15),
                       ),
-                      Text(
-                        'Statut : ',
-                        style: GoogleFonts.poppins(
-                          color: Colors.black54,
-                          fontSize: 13,
-                        ),
-                      ),
-                      Text(
-                        _label(e.statut),
-                        style: GoogleFonts.poppins(
-                          color: _statutColor(e.statut),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    e.point,
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
+                      icon: const Icon(Icons.add),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(e.resume, style: GoogleFonts.poppins()),
-                  const Divider(height: 14),
-                  Text(
-                    'Preuves',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black54,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  ...e.preuves.map(
-                    (p) => Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.picture_as_pdf,
-                            color: Colors.red,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            p,
-                            style: GoogleFonts.poppins(
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Divider(height: 14),
-
-                  Text(
-                    'Conclusion',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black54,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Commentaire sur le LearderShirp et developpement sur le LearderShirp et developpement',
-                    style: GoogleFonts.poppins(),
                   ),
                 ],
               ),
-            ),
-          ),
-        ),
-        _Card(
-          color: const Color(0xFFE3EDFF),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Conclusion Générale',
-                style: GoogleFonts.poppins(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Center(
-                child: Text(
-                  'NON CONFORMITE',
-                  style: GoogleFonts.poppins(
-                    color: const Color(0xFFE53935),
-                    fontWeight: FontWeight.w800,
-                    fontSize: 20,
+              ...state.results.map(
+                (e) => Padding(
+                  padding: const EdgeInsets.only(bottom: 14),
+                  child: _Card(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Point de control et objectif',
+                                style: GoogleFonts.poppins(
+                                  color: Colors.black54,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'Statut : ',
+                              style: GoogleFonts.poppins(
+                                color: Colors.black54,
+                                fontSize: 13,
+                              ),
+                            ),
+                            Text(
+                              e.humanizedStatus,
+                              style: GoogleFonts.poppins(
+                                color: e.statutColor,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          e.controlPoint?.title ?? '',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          e.controlPoint?.description ?? '',
+                          style: GoogleFonts.poppins(),
+                        ),
+                        const Divider(height: 14),
+                        Text(
+                          'Preuves',
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        ...e.attachments.map(
+                          (p) => GestureDetector(
+                            onTap: () {
+                              context.router.push(FilePreviewRoute(path: p));
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 6),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.picture_as_pdf,
+                                    color: Colors.red,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    p,
+                                    style: GoogleFonts.poppins(
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Divider(height: 14),
+
+                        Text(
+                          'Conclusion',
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(e.description, style: GoogleFonts.poppins()),
+                      ],
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
-              Text(
-                'Rapport de constat fait pas l’equipe lors de l’audit constat fait pas l’equipe lors de l’audit constat fait pas l’equipe lors de l’audit constat',
-                style: GoogleFonts.poppins(),
+              _Card(
+                color: const Color(0xFFE3EDFF),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Conclusion Générale',
+                      style: GoogleFonts.poppins(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Center(
+                      child: Text(
+                        state.conclusion?.humanizedGeneralConclusion ?? '',
+                        style: GoogleFonts.poppins(
+                          color: state.conclusion?.statutColor,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      state.conclusion?.generalConclusion ?? '',
+                      style: GoogleFonts.poppins(),
+                    ),
+                  ],
+                ),
               ),
             ],
-          ),
-        ),
-      ],
-    );
+          );
   }
 }
 
 class _ActionsTab extends StatelessWidget {
-  const _ActionsTab({required this.items});
-  final List<_ActionItem> items;
+  const _ActionsTab();
 
   @override
   Widget build(BuildContext context) {
@@ -1082,144 +872,4 @@ class _Card extends StatelessWidget {
       child: child,
     );
   }
-}
-
-class _Input extends StatelessWidget {
-  const _Input({
-    required this.controller,
-    required this.hint,
-    required this.title,
-    this.minLines = 1,
-    this.maxLines = 1,
-  });
-  final TextEditingController controller;
-  final String title;
-  final String hint;
-  final int minLines;
-  final int maxLines;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-        ),
-        TextField(
-          controller: controller,
-          minLines: minLines,
-          maxLines: maxLines,
-          style: GoogleFonts.poppins(),
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: GoogleFonts.poppins(color: Colors.black38),
-            filled: true,
-            fillColor: const Color(0xFFF5F7FA),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 12,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: Color(0xFFE6ECF2)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: Color(0xFFE6ECF2)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                color: Color(0xFF1565D8),
-                width: 1.4,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _Avatar extends StatelessWidget {
-  const _Avatar(this.text);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return CircleAvatar(
-      backgroundColor: const Color(0xFF2DBE8C),
-      child: Text(
-        text,
-        style: GoogleFonts.poppins(
-          color: Colors.white,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-  }
-}
-
-/// ---------- DATA MODELS
-
-class _Constat {
-  final String titre;
-  final String texte;
-  final List<String> medias;
-  final String commentaireAuteur;
-  final String commentaire;
-
-  _Constat({
-    required this.titre,
-    required this.texte,
-    required this.medias,
-    required this.commentaireAuteur,
-    required this.commentaire,
-  });
-}
-
-enum _Statut { conforme, nonConforme, observation }
-
-class _ResultItem {
-  final String point;
-  final String resume;
-  final List<String> preuves;
-  final _Statut statut;
-
-  _ResultItem({
-    required this.point,
-    required this.resume,
-    required this.statut,
-    required this.preuves,
-  });
-}
-
-class _ActionItem {
-  final String typeBadge;
-  final Color color;
-  final String titre;
-  final String processus;
-  final String justification;
-  final String origine;
-  final String origineType;
-  final String pieceJointe;
-  final String responsable;
-  final String etat;
-  final Color etatColor;
-
-  _ActionItem({
-    required this.typeBadge,
-    required this.color,
-    required this.titre,
-    required this.processus,
-    required this.justification,
-    required this.origine,
-    required this.origineType,
-    required this.pieceJointe,
-    required this.responsable,
-    required this.etat,
-    required this.etatColor,
-  });
 }
