@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class InspectionStatistics {
   final int totalAnswers;
   final int conformAnswers;
@@ -57,6 +59,60 @@ class InspectionFormLite {
       reference: json['reference'] as String?,
       status: json['status'] as String?,
     );
+  }
+}
+
+String humanReadableStatus(String status) {
+  switch (status.toLowerCase()) {
+    case 'pending':
+      return 'En attente';
+    case 'in_progress':
+      return 'En cours';
+    case 'completed':
+      return 'Terminé';
+    case 'closed':
+      return 'Clôturé';
+    case 'inprogress_revision':
+      return 'En cours de Révision';
+    case 'inprogress_validation':
+      return 'En cours de Validation';
+    case 'completed_approved':
+      return 'Terminé - Approuvé';
+    case 'completed_rejected':
+      return 'Terminé et Rejeté';
+    case 'cancelled':
+      return 'Annulé';
+    case 'tobevalidated':
+      return 'À valider';
+    default:
+      return status;
+  }
+}
+
+Color statusColor(String status) {
+  switch (status.toLowerCase()) {
+    case 'pending':
+      return Colors.orange;
+    case 'in_progress':
+      return Colors.blue;
+    case 'completed':
+      return Colors.green;
+    case 'closed':
+      return Colors.grey;
+    case 'inprogress_revision':
+      return Colors.purple;
+    case 'inprogress_validation':
+      return Colors.blueAccent;
+    case 'completed_approved':
+      return Colors.green;
+    case 'completed_rejected':
+      return Colors.red;
+    case 'cancelled':
+      return Colors.redAccent;
+    case 'tobevalidated':
+      return Colors.orange;
+    default:
+      return Colors.black;
   }
 }
 
@@ -144,4 +200,12 @@ class InspectionItem {
       ),
     );
   }
+
+  bool get canEdit =>
+      status.toLowerCase() == 'pending' ||
+      status.toLowerCase() == 'in_progress';
+
+  String get readableStatus => humanReadableStatus(status);
+
+  Color get statusColorValue => statusColor(status);
 }

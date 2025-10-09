@@ -3,12 +3,14 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../gen/assets.gen.dart';
 import '../../../application/actions/actions_bloc.dart';
 import '../../../application/audit/audits_bloc.dart';
 import '../../../application/events/detail/event_detail_bloc.dart';
 import '../../../application/events/events_bloc.dart';
+import '../../../application/inspection/inspections_bloc.dart';
 import '../../../application/permit/permits_bloc.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
@@ -208,31 +210,44 @@ class _HomeBodyState extends State<HomeBody> {
             ),
           ),
 
-          _Section(
-            icon: Assets.svgs.jamBlue,
-
-            title: 'Inspections',
-            trailing: _SeeAll(
-              onTap: () {
-                context.router.push(const InspectionsRoute());
-              },
-            ),
-            children: const [
-              _InspectionCard(
-                date: '22 / 09 / 25',
-                status: 'En cours',
-                title:
-                    'Inspections sur les activités internes liées aux dechargements des marchandises',
-                site: 'Espace vert du PAC',
-              ),
-              _InspectionCard(
-                date: '22 / 09 / 25',
-                status: 'En cours',
-                title:
-                    'Inspections sur les activités internes liées aux dechargements des marchandises',
-                site: 'Espace vert du PAC',
-              ),
-            ],
+          BlocBuilder<InspectionsBloc, InspectionsState>(
+            builder: (context, state) {
+              return _Section(
+                icon: Assets.svgs.jamBlue,
+                title: 'Inspections',
+                trailing: _SeeAll(
+                  onTap: () {
+                    context.router.push(const InspectionsRoute());
+                  },
+                ),
+                children: state.items == null
+                    ? List.generate(3, (index) => const CardShimmer())
+                    : [
+                        ...state.items!
+                            .take(3)
+                            .map(
+                              (inspection) => _InspectionCard(
+                                date: inspection.inspectedAt == null
+                                    ? '---'
+                                    : DateFormat('dd / MM / yy').format(
+                                        DateTime.parse(inspection.inspectedAt!),
+                                      ),
+                                status: inspection.readableStatus,
+                                title: () {
+                                  final text = inspection.mission;
+                                  final words = text.trim().split(
+                                    RegExp(r'\s+'),
+                                  );
+                                  if (words.length <= 20) return text;
+                                  return '${words.take(20).join(' ')}...';
+                                }(),
+                                site: inspection.summary ?? 'N/A',
+                                statusColor: inspection.statusColorValue,
+                              ),
+                            ),
+                      ],
+              );
+            },
           ),
 
           BlocBuilder<AuditsBloc, AuditsState>(
@@ -438,18 +453,18 @@ class _InspectionCard extends StatelessWidget {
   final String status;
   final String title;
   final String site;
+  final Color statusColor;
 
   const _InspectionCard({
     required this.date,
     required this.status,
     required this.title,
     required this.site,
+    required this.statusColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    final blue = const Color(0xFF2E6CF6);
-
     return GestureDetector(
       onTap: () {
         context.router.push(const StartInspectionRoute());
@@ -490,7 +505,7 @@ class _InspectionCard extends StatelessWidget {
                 Text(
                   status,
                   style: GoogleFonts.poppins(
-                    color: blue,
+                    color: statusColor,
                     fontSize: 13,
                     fontWeight: FontWeight.w900,
                   ),
@@ -507,30 +522,30 @@ class _InspectionCard extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Row(
-                children: [
-                  Text(
-                    'Site :  ',
-                    style: GoogleFonts.nunito(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 13,
-                      color: const Color(0xFF6E7787),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      site,
-                      style: GoogleFonts.nunito(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.only(top: 8),
+            //   child: Row(
+            //     children: [
+            //       Text(
+            //         'Site :  ',
+            //         style: GoogleFonts.nunito(
+            //           fontWeight: FontWeight.w500,
+            //           fontSize: 13,
+            //           color: const Color(0xFF6E7787),
+            //         ),
+            //       ),
+            //       Expanded(
+            //         child: Text(
+            //           site,
+            //           style: GoogleFonts.nunito(
+            //             fontWeight: FontWeight.w700,
+            //             fontSize: 13,
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),
