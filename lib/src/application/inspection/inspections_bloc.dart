@@ -5,6 +5,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../domain/_commons/global_failure.dart';
 import '../../domain/_commons/pagination.dart';
 import '../../domain/inspection/i_inspection_repository.dart';
+import '../../domain/inspection/models/inspection_form_item.dart';
 import '../../domain/inspection/models/inspection_item.dart';
 
 part 'inspections_bloc.freezed.dart';
@@ -81,6 +82,26 @@ class InspectionsBloc extends Bloc<InspectionsEvent, InspectionsState> {
 
     on<_Reset>((event, emit) async {
       emit(InspectionsState.initial());
+    });
+
+    on<_FetchForms>((event, emit) async {
+      emit(state.copyWith(isLoadingForms: true, formsResultOption: none()));
+      final res = await repository.getInspectionForms();
+      res.fold(
+        (l) => emit(
+          state.copyWith(
+            isLoadingForms: false,
+            formsResultOption: some(left(l)),
+          ),
+        ),
+        (forms) => emit(
+          state.copyWith(
+            isLoadingForms: false,
+            forms: forms,
+            formsResultOption: some(right(forms)),
+          ),
+        ),
+      );
     });
   }
 }

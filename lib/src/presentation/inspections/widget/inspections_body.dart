@@ -1,9 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../gen/assets.gen.dart';
+import '../../../application/inspection/inspections_bloc.dart';
+import '../../../domain/inspection/models/inspection_form_item.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
+import '../../_commons_widgets/empty_widget.dart';
+import '../../_shimmers/card_shimmer.dart';
 
 class InspectionsBody extends StatelessWidget {
   const InspectionsBody({super.key});
@@ -40,49 +45,40 @@ class InspectionsBody extends StatelessWidget {
       ),
     ];
 
-    final recents = [
-      RecentItem(
-        date: '22 / 09 / 25',
-        title:
-            'Inspections sur les activités internes liées aux dechargements des marchandises',
-        site: 'Espace vert du PAC',
-        comments: 1,
-      ),
-      RecentItem(
-        date: '22 / 09 / 25',
-        title:
-            'Inspections sur les activités internes liées aux dechargements des marchandises',
-        site: 'Espace vert du PAC',
-        comments: 3,
-      ),
-    ];
+    return BlocBuilder<InspectionsBloc, InspectionsState>(
+      builder: (context, state) {
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(0, 16, 0, 24),
+          children: [
+            const _SectionHeader(label: 'Inspections'),
+            // planning cards
+            ...planning.map(
+              (e) => Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: _PlanningCard(item: e),
+              ),
+            ),
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(0, 16, 0, 24),
-      children: [
-        const _SectionHeader(label: 'Planning'),
-        // planning cards
-        ...planning.map(
-          (e) => Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: _PlanningCard(item: e),
-          ),
-        ),
+            // divider spacing (with padding only)
+            Padding(
+              padding: const EdgeInsets.only(top: 18, bottom: 6),
+              child: Container(height: 1, color: const Color(0x11000000)),
+            ),
 
-        // divider spacing (with padding only)
-        Padding(
-          padding: const EdgeInsets.only(top: 18, bottom: 6),
-          child: Container(height: 1, color: const Color(0x11000000)),
-        ),
+            const _SectionHeader(label: 'Fiches d\'inspection récentes'),
 
-        const _SectionHeader(label: 'Inspections recentes'),
-        ...recents.map(
-          (e) => Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: _RecentCard(item: e),
-          ),
-        ),
-      ],
+            if (state.isLoadingForms)
+              ...List.generate(3, (index) => const CardShimmer()),
+            if (state.forms.isEmpty) EmptyWidget.noData(),
+            ...state.forms.map(
+              (e) => Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: _RecentCard(item: e),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -329,14 +325,14 @@ class _PlanningCard extends StatelessWidget {
 }
 
 class _RecentCard extends StatelessWidget {
-  final RecentItem item;
+  final InspectionFormItem item;
   const _RecentCard({required this.item});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.router.push(const InpectionRecentDetailRoute());
+        context.router.push(InpectionRecentDetailRoute(item: item));
       },
       child: Container(
         decoration: _cardDecoration(),
@@ -348,25 +344,41 @@ class _RecentCard extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
               child: Row(
                 children: [
-                  _chipDate(item.date),
-                  Expanded(
+                  Material(
+                    borderRadius: BorderRadius.circular(12),
+                    color: item.statusColor,
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: _commentBubble(count: item.comments),
+                      padding: const EdgeInsets.all(4.0),
+                      child: Text(
+                        item.humanizedStatus,
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
+                  // Expanded(
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.only(left: 8),
+                  //     child: Align(
+                  //       alignment: Alignment.centerRight,
+                  //       child: _commentBubble(count: item.comments),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
 
             // title
             Padding(
-              padding: const EdgeInsets.fromLTRB(12, 6, 12, 0),
+              padding: const EdgeInsets.fromLTRB(12, 6, 12, 10),
               child: Text(
-                item.title,
+                (() {
+                  final raw = (item.description ?? '---').trim();
+                  if (raw.isEmpty) return '---';
+                  final words = raw.split(RegExp(r'\s+'));
+                  if (words.length <= 30) return raw;
+                  return '${words.take(30).join(' ')}...';
+                })(),
                 style: const TextStyle(
                   fontSize: 16,
                   height: 1.25,
@@ -376,21 +388,21 @@ class _RecentCard extends StatelessWidget {
             ),
 
             // site
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 14),
-              child: Row(
-                children: [
-                  const Text(
-                    'Site : ',
-                    style: TextStyle(color: Colors.black54),
-                  ),
-                  Text(
-                    item.site,
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.fromLTRB(12, 8, 12, 14),
+            //   child: Row(
+            //     children: [
+            //       const Text(
+            //         'Site : ',
+            //         style: TextStyle(color: Colors.black54),
+            //       ),
+            //       Text(
+            //         item.site,
+            //         style: const TextStyle(fontWeight: FontWeight.w700),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -421,35 +433,5 @@ Widget _chipDate(String text) {
         ),
       ),
     ),
-  );
-}
-
-Widget _commentBubble({required int count}) {
-  return Stack(
-    clipBehavior: Clip.none,
-    children: [
-      Assets.svgs.message.svg(),
-      Positioned(
-        right: -6,
-        top: -6,
-        child: Container(
-          width: 18,
-          height: 18,
-          decoration: const BoxDecoration(
-            color: Color(0xFFFF2B2B),
-            shape: BoxShape.circle,
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            count.toString(),
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 11,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ),
-      ),
-    ],
   );
 }

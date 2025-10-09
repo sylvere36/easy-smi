@@ -44,8 +44,9 @@ class _AppState extends State<App> {
         BlocProvider(create: (_) => sl<EventDetailsBloc>()),
         BlocProvider(create: (_) => sl<EvaluationsBloc>()),
         BlocProvider(
-          create: (_) =>
-              sl<InspectionsBloc>()..add(const InspectionsEvent.fetch()),
+          create: (_) => sl<InspectionsBloc>()
+            ..add(const InspectionsEvent.fetch())
+            ..add(const InspectionsEvent.fetchInspectionForms()),
         ),
         BlocProvider(
           create: (_) => sl<AuditsBloc>()..add(const AuditsEvent.fetch()),

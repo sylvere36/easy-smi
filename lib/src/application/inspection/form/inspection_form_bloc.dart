@@ -6,6 +6,7 @@ import '../../../domain/_commons/global_failure.dart';
 import '../../../domain/inspection/i_inspection_repository.dart';
 import '../../../domain/inspection/models/inspection_detail.dart'
     show InspectionSectionWithQuestions;
+import '../../../domain/inspection/models/inspection_form_detail.dart';
 
 part 'inspection_form_bloc.freezed.dart';
 part 'inspection_form_event.dart';
@@ -35,5 +36,28 @@ class InspectionFormBloc
     });
 
     on<_Reset>((event, emit) => emit(InspectionFormState.initial()));
+
+    on<_FetchDetail>((event, emit) async {
+      emit(
+        state.copyWith(
+          isLoadingDetail: true,
+          detailResult: none(),
+          detail: null,
+        ),
+      );
+      final res = await repository.getInspectionFormDetail(id: event.id);
+      res.fold(
+        (l) => emit(
+          state.copyWith(isLoadingDetail: false, detailResult: some(left(l))),
+        ),
+        (detail) => emit(
+          state.copyWith(
+            isLoadingDetail: false,
+            detail: detail,
+            detailResult: some(right(detail)),
+          ),
+        ),
+      );
+    });
   }
 }

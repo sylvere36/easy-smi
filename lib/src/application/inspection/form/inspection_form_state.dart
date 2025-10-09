@@ -7,11 +7,17 @@ abstract class InspectionFormState with _$InspectionFormState {
     required List<InspectionSectionWithQuestions> sections,
     required Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>>
     resultOption,
+    // Form detail
+    required bool isLoadingDetail,
+    required Option<Either<GlobalFailure, InspectionFormDetail>> detailResult,
+    InspectionFormDetail? detail,
   }) = _InspectionFormState;
 
   factory InspectionFormState.initial() => InspectionFormState(
     isLoading: false,
     sections: const [],
     resultOption: none(),
+    isLoadingDetail: false,
+    detailResult: none(),
   );
 }

@@ -55,11 +55,12 @@ extension InspectionFormEventPatterns on InspectionFormEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _Reset value)?  reset,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _FetchDetail value)?  fetchDetail,TResult Function( _Reset value)?  reset,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
-return fetch(_that);case _Reset() when reset != null:
+return fetch(_that);case _FetchDetail() when fetchDetail != null:
+return fetchDetail(_that);case _Reset() when reset != null:
 return reset(_that);case _:
   return orElse();
 
@@ -78,11 +79,12 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _Reset value)  reset,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _FetchDetail value)  fetchDetail,required TResult Function( _Reset value)  reset,}){
 final _that = this;
 switch (_that) {
 case _Fetch():
-return fetch(_that);case _Reset():
+return fetch(_that);case _FetchDetail():
+return fetchDetail(_that);case _Reset():
 return reset(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -100,11 +102,12 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _Reset value)?  reset,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _FetchDetail value)?  fetchDetail,TResult? Function( _Reset value)?  reset,}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
-return fetch(_that);case _Reset() when reset != null:
+return fetch(_that);case _FetchDetail() when fetchDetail != null:
+return fetchDetail(_that);case _Reset() when reset != null:
 return reset(_that);case _:
   return null;
 
@@ -122,10 +125,11 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int inspectionFormId)?  fetch,TResult Function()?  reset,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int inspectionFormId)?  fetch,TResult Function( int id)?  fetchDetail,TResult Function()?  reset,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
-return fetch(_that.inspectionFormId);case _Reset() when reset != null:
+return fetch(_that.inspectionFormId);case _FetchDetail() when fetchDetail != null:
+return fetchDetail(_that.id);case _Reset() when reset != null:
 return reset();case _:
   return orElse();
 
@@ -144,10 +148,11 @@ return reset();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int inspectionFormId)  fetch,required TResult Function()  reset,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int inspectionFormId)  fetch,required TResult Function( int id)  fetchDetail,required TResult Function()  reset,}) {final _that = this;
 switch (_that) {
 case _Fetch():
-return fetch(_that.inspectionFormId);case _Reset():
+return fetch(_that.inspectionFormId);case _FetchDetail():
+return fetchDetail(_that.id);case _Reset():
 return reset();case _:
   throw StateError('Unexpected subclass');
 
@@ -165,10 +170,11 @@ return reset();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int inspectionFormId)?  fetch,TResult? Function()?  reset,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int inspectionFormId)?  fetch,TResult? Function( int id)?  fetchDetail,TResult? Function()?  reset,}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
-return fetch(_that.inspectionFormId);case _Reset() when reset != null:
+return fetch(_that.inspectionFormId);case _FetchDetail() when fetchDetail != null:
+return fetchDetail(_that.id);case _Reset() when reset != null:
 return reset();case _:
   return null;
 
@@ -246,6 +252,72 @@ as int,
 /// @nodoc
 
 
+class _FetchDetail implements InspectionFormEvent {
+  const _FetchDetail({required this.id});
+  
+
+ final  int id;
+
+/// Create a copy of InspectionFormEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$FetchDetailCopyWith<_FetchDetail> get copyWith => __$FetchDetailCopyWithImpl<_FetchDetail>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FetchDetail&&(identical(other.id, id) || other.id == id));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id);
+
+@override
+String toString() {
+  return 'InspectionFormEvent.fetchDetail(id: $id)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$FetchDetailCopyWith<$Res> implements $InspectionFormEventCopyWith<$Res> {
+  factory _$FetchDetailCopyWith(_FetchDetail value, $Res Function(_FetchDetail) _then) = __$FetchDetailCopyWithImpl;
+@useResult
+$Res call({
+ int id
+});
+
+
+
+
+}
+/// @nodoc
+class __$FetchDetailCopyWithImpl<$Res>
+    implements _$FetchDetailCopyWith<$Res> {
+  __$FetchDetailCopyWithImpl(this._self, this._then);
+
+  final _FetchDetail _self;
+  final $Res Function(_FetchDetail) _then;
+
+/// Create a copy of InspectionFormEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? id = null,}) {
+  return _then(_FetchDetail(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
 class _Reset implements InspectionFormEvent {
   const _Reset();
   
@@ -278,7 +350,8 @@ String toString() {
 /// @nodoc
 mixin _$InspectionFormState {
 
- bool get isLoading; List<InspectionSectionWithQuestions> get sections; Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>> get resultOption;
+ bool get isLoading; List<InspectionSectionWithQuestions> get sections; Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>> get resultOption;// Form detail
+ bool get isLoadingDetail; Option<Either<GlobalFailure, InspectionFormDetail>> get detailResult; InspectionFormDetail? get detail;
 /// Create a copy of InspectionFormState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -289,16 +362,16 @@ $InspectionFormStateCopyWith<InspectionFormState> get copyWith => _$InspectionFo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InspectionFormState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other.sections, sections)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InspectionFormState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other.sections, sections)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.isLoadingDetail, isLoadingDetail) || other.isLoadingDetail == isLoadingDetail)&&(identical(other.detailResult, detailResult) || other.detailResult == detailResult)&&(identical(other.detail, detail) || other.detail == detail));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(sections),resultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(sections),resultOption,isLoadingDetail,detailResult,detail);
 
 @override
 String toString() {
-  return 'InspectionFormState(isLoading: $isLoading, sections: $sections, resultOption: $resultOption)';
+  return 'InspectionFormState(isLoading: $isLoading, sections: $sections, resultOption: $resultOption, isLoadingDetail: $isLoadingDetail, detailResult: $detailResult, detail: $detail)';
 }
 
 
@@ -309,7 +382,7 @@ abstract mixin class $InspectionFormStateCopyWith<$Res>  {
   factory $InspectionFormStateCopyWith(InspectionFormState value, $Res Function(InspectionFormState) _then) = _$InspectionFormStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, List<InspectionSectionWithQuestions> sections, Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>> resultOption
+ bool isLoading, List<InspectionSectionWithQuestions> sections, Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>> resultOption, bool isLoadingDetail, Option<Either<GlobalFailure, InspectionFormDetail>> detailResult, InspectionFormDetail? detail
 });
 
 
@@ -326,12 +399,15 @@ class _$InspectionFormStateCopyWithImpl<$Res>
 
 /// Create a copy of InspectionFormState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? sections = null,Object? resultOption = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? sections = null,Object? resultOption = null,Object? isLoadingDetail = null,Object? detailResult = null,Object? detail = freezed,}) {
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,sections: null == sections ? _self.sections : sections // ignore: cast_nullable_to_non_nullable
 as List<InspectionSectionWithQuestions>,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
-as Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>>,
+as Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>>,isLoadingDetail: null == isLoadingDetail ? _self.isLoadingDetail : isLoadingDetail // ignore: cast_nullable_to_non_nullable
+as bool,detailResult: null == detailResult ? _self.detailResult : detailResult // ignore: cast_nullable_to_non_nullable
+as Option<Either<GlobalFailure, InspectionFormDetail>>,detail: freezed == detail ? _self.detail : detail // ignore: cast_nullable_to_non_nullable
+as InspectionFormDetail?,
   ));
 }
 
@@ -416,10 +492,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<InspectionSectionWithQuestions> sections,  Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>> resultOption)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<InspectionSectionWithQuestions> sections,  Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>> resultOption,  bool isLoadingDetail,  Option<Either<GlobalFailure, InspectionFormDetail>> detailResult,  InspectionFormDetail? detail)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _InspectionFormState() when $default != null:
-return $default(_that.isLoading,_that.sections,_that.resultOption);case _:
+return $default(_that.isLoading,_that.sections,_that.resultOption,_that.isLoadingDetail,_that.detailResult,_that.detail);case _:
   return orElse();
 
 }
@@ -437,10 +513,10 @@ return $default(_that.isLoading,_that.sections,_that.resultOption);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<InspectionSectionWithQuestions> sections,  Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>> resultOption)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<InspectionSectionWithQuestions> sections,  Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>> resultOption,  bool isLoadingDetail,  Option<Either<GlobalFailure, InspectionFormDetail>> detailResult,  InspectionFormDetail? detail)  $default,) {final _that = this;
 switch (_that) {
 case _InspectionFormState():
-return $default(_that.isLoading,_that.sections,_that.resultOption);case _:
+return $default(_that.isLoading,_that.sections,_that.resultOption,_that.isLoadingDetail,_that.detailResult,_that.detail);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -457,10 +533,10 @@ return $default(_that.isLoading,_that.sections,_that.resultOption);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<InspectionSectionWithQuestions> sections,  Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>> resultOption)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<InspectionSectionWithQuestions> sections,  Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>> resultOption,  bool isLoadingDetail,  Option<Either<GlobalFailure, InspectionFormDetail>> detailResult,  InspectionFormDetail? detail)?  $default,) {final _that = this;
 switch (_that) {
 case _InspectionFormState() when $default != null:
-return $default(_that.isLoading,_that.sections,_that.resultOption);case _:
+return $default(_that.isLoading,_that.sections,_that.resultOption,_that.isLoadingDetail,_that.detailResult,_that.detail);case _:
   return null;
 
 }
@@ -472,7 +548,7 @@ return $default(_that.isLoading,_that.sections,_that.resultOption);case _:
 
 
 class _InspectionFormState implements InspectionFormState {
-  const _InspectionFormState({required this.isLoading, required final  List<InspectionSectionWithQuestions> sections, required this.resultOption}): _sections = sections;
+  const _InspectionFormState({required this.isLoading, required final  List<InspectionSectionWithQuestions> sections, required this.resultOption, required this.isLoadingDetail, required this.detailResult, this.detail}): _sections = sections;
   
 
 @override final  bool isLoading;
@@ -484,6 +560,10 @@ class _InspectionFormState implements InspectionFormState {
 }
 
 @override final  Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>> resultOption;
+// Form detail
+@override final  bool isLoadingDetail;
+@override final  Option<Either<GlobalFailure, InspectionFormDetail>> detailResult;
+@override final  InspectionFormDetail? detail;
 
 /// Create a copy of InspectionFormState
 /// with the given fields replaced by the non-null parameter values.
@@ -495,16 +575,16 @@ _$InspectionFormStateCopyWith<_InspectionFormState> get copyWith => __$Inspectio
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InspectionFormState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other._sections, _sections)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InspectionFormState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other._sections, _sections)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.isLoadingDetail, isLoadingDetail) || other.isLoadingDetail == isLoadingDetail)&&(identical(other.detailResult, detailResult) || other.detailResult == detailResult)&&(identical(other.detail, detail) || other.detail == detail));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(_sections),resultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(_sections),resultOption,isLoadingDetail,detailResult,detail);
 
 @override
 String toString() {
-  return 'InspectionFormState(isLoading: $isLoading, sections: $sections, resultOption: $resultOption)';
+  return 'InspectionFormState(isLoading: $isLoading, sections: $sections, resultOption: $resultOption, isLoadingDetail: $isLoadingDetail, detailResult: $detailResult, detail: $detail)';
 }
 
 
@@ -515,7 +595,7 @@ abstract mixin class _$InspectionFormStateCopyWith<$Res> implements $InspectionF
   factory _$InspectionFormStateCopyWith(_InspectionFormState value, $Res Function(_InspectionFormState) _then) = __$InspectionFormStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, List<InspectionSectionWithQuestions> sections, Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>> resultOption
+ bool isLoading, List<InspectionSectionWithQuestions> sections, Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>> resultOption, bool isLoadingDetail, Option<Either<GlobalFailure, InspectionFormDetail>> detailResult, InspectionFormDetail? detail
 });
 
 
@@ -532,12 +612,15 @@ class __$InspectionFormStateCopyWithImpl<$Res>
 
 /// Create a copy of InspectionFormState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? sections = null,Object? resultOption = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? sections = null,Object? resultOption = null,Object? isLoadingDetail = null,Object? detailResult = null,Object? detail = freezed,}) {
   return _then(_InspectionFormState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,sections: null == sections ? _self._sections : sections // ignore: cast_nullable_to_non_nullable
 as List<InspectionSectionWithQuestions>,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
-as Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>>,
+as Option<Either<GlobalFailure, List<InspectionSectionWithQuestions>>>,isLoadingDetail: null == isLoadingDetail ? _self.isLoadingDetail : isLoadingDetail // ignore: cast_nullable_to_non_nullable
+as bool,detailResult: null == detailResult ? _self.detailResult : detailResult // ignore: cast_nullable_to_non_nullable
+as Option<Either<GlobalFailure, InspectionFormDetail>>,detail: freezed == detail ? _self.detail : detail // ignore: cast_nullable_to_non_nullable
+as InspectionFormDetail?,
   ));
 }
 

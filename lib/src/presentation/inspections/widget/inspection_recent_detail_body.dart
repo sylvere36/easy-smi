@@ -1,31 +1,40 @@
-import 'package:auto_route/auto_route.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../gen/assets.gen.dart';
-import '../../_commons/route/app_router.gr.dart';
+import '../../../../injection_container.dart';
+import '../../../application/communication/comments_bloc.dart';
+import '../../../application/inspection/form/inspection_form_bloc.dart';
+import '../../../domain/inspection/models/inspection_form_item.dart';
+import '../../_commons_widgets/comments/comment_field.dart';
+import '../../_commons_widgets/empty_widget.dart';
+import '../../_commons_widgets/loading_widget.dart';
+import '../../comments/widgets/resume_comment_widget.dart';
 
-class InspectionRecentDetailBody extends StatelessWidget {
-  const InspectionRecentDetailBody({super.key});
+class InspectionRecentDetailBody extends StatefulWidget {
+  final InspectionFormItem item;
+  const InspectionRecentDetailBody({super.key, required this.item});
+
+  @override
+  State<InspectionRecentDetailBody> createState() =>
+      _InspectionRecentDetailBodyState();
+}
+
+class _InspectionRecentDetailBodyState
+    extends State<InspectionRecentDetailBody> {
+  String commentTableType = 'Inspection';
+  InspectionFormItem get item => widget.item;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final comments = const [
-      _Comment(
-        initials: 'MH',
-        name: 'Beatrice BOSSOU',
-        ago: 'Il y a 30 min',
-        text:
-            'Les documents fournies ne respectent par les normes internationnales',
-      ),
-      _Comment(
-        initials: 'MH',
-        name: 'Beatrice BOSSOU',
-        ago: 'Il y a 30 min',
-        text:
-            'Les documents fournies ne respectent par les normes internationnales',
-      ),
-    ];
-
     final history = const [
       _History(
         status: _HistoryStatus.nonConforme,
@@ -53,174 +62,162 @@ class InspectionRecentDetailBody extends StatelessWidget {
       ),
     ];
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(0, 16, 0, 24),
-      children: [
-        // ---- Title chips (deux lignes)
-        _titleChip(
-          'Inspections sur les activités internes liées aux dechargements des marchandises',
-        ),
-
-        // ---- Meta + Demarrer
-        Padding(
-          padding: const EdgeInsets.only(top: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Wrap(
-                spacing: 14,
-                runSpacing: 6,
-                children: [
-                  _Meta(label: 'Date', value: '12-03-25'),
-                  _Meta(label: 'Ref', value: 'AZE-ABA-AUA'),
-                  _Meta(label: 'Ver', value: '01'),
-                ],
+    return BlocProvider(
+      create: (context) =>
+          sl<InspectionFormBloc>()
+            ..add(InspectionFormEvent.fetchDetail(id: item.id)),
+      child: BlocConsumer<InspectionFormBloc, InspectionFormState>(
+        listener: (context, state) {
+          if (state.detail != null) {
+            context.read<CommentsBloc>().add(
+              CommentsEvent.fetchRequested(
+                commentableType: commentTableType,
+                commentableId: state.detail!.id,
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Row(children: [const Spacer(), _startButton()]),
-              ),
-            ],
-          ),
-        ),
-
-        // ---- Input comment
-        Padding(
-          padding: const EdgeInsets.only(top: 18),
-          child: GestureDetector(
-            onTap: () {
-              context.router.push(
-                CommentsRoute(
-                  commentableType: 'Inspection',
-                  commentableId: '0',
-                ),
-              );
-            },
-            child: Container(
-              decoration: _fieldDecoration(),
-              child: const Padding(
-                padding: EdgeInsets.fromLTRB(16, 14, 10, 14),
-                child: Row(
+            );
+          }
+        },
+        builder: (context, state) {
+          return state.isLoadingDetail
+              ? const Center(child: LoadingWidget())
+              : state.detail == null
+              ? EmptyWidget.error(title: 'No details available')
+              : ListView(
+                  padding: const EdgeInsets.fromLTRB(0, 16, 0, 24),
                   children: [
-                    Expanded(
-                      child: Text(
-                        'Ecrire  un commentaire',
-                        style: TextStyle(color: Colors.black38, fontSize: 16),
-                      ),
-                    ),
-                    Icon(Icons.attachment_rounded, color: Colors.black54),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
+                    // ---- Title chips (deux lignes)
+                    _titleChip(state.detail!.description ?? '---'),
 
-        // ---- Comments header
-        Padding(
-          padding: const EdgeInsets.only(top: 18),
-          child: Row(
-            children: [
-              const Text(
-                'Commentaire(s)',
-                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF1F4F9),
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.fromLTRB(10, 4, 10, 4),
-                    child: Text(
-                      '2',
-                      style: TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      context.router.push(
-                        CommentsRoute(
-                          commentableType: 'Inspection',
-                          commentableId: '0',
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'Voir tout',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        // ---- Comments list
-        ...comments.map(
-          (c) => Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: _CommentTile(c: c),
-          ),
-        ),
-
-        // ---- Historiques section
-        Padding(
-          padding: const EdgeInsets.only(top: 35),
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFFF0F2FF),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              children: [
-                // header
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-                  child: Row(
-                    children: [
-                      Assets.svgs.jamBlue.svg(),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Text(
-                          'Historiques',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
+                    // ---- Meta + Demarrer
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Wrap(
+                            spacing: 14,
+                            runSpacing: 6,
+                            children: [
+                              _Meta(
+                                label: 'Date',
+                                value: state.detail!.createdAt == null
+                                    ? '---'
+                                    : DateFormat('dd-MM-yyyy').format(
+                                        DateTime.parse(
+                                          state.detail!.createdAt!,
+                                        ),
+                                      ),
+                              ),
+                              _Meta(
+                                label: 'Ref',
+                                value: state.detail!.reference ?? '---',
+                              ),
+                              _Meta(
+                                label: 'Ver',
+                                value: state.detail!.version ?? '---',
+                              ),
+                            ],
                           ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Row(
+                              children: [const Spacer(), _startButton()],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // ----------- zone commentaire -----------
+                    // Comment composer
+                    // ----------- zone commentaire -----------
+                    BlocBuilder<CommentsBloc, CommentsState>(
+                      builder: (context, commentState) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 14),
+                          child: CommentFieldWidget(
+                            isLoading: commentState.isSubmitting,
+                            onSend: (String text, File? file) {
+                              BlocProvider.of<CommentsBloc>(context).add(
+                                CommentsEvent.addCommentRequested(
+                                  commentableType: commentTableType,
+                                  commentableId: state.detail!.id,
+                                  attachmentPath: file?.path,
+                                  body: text,
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+
+                    // Comments header + tiny list
+                    ResumeCommentWidget(
+                      commentableType: commentTableType,
+                      commentableId: state.detail!.id,
+                      commentsCount: BlocProvider.of<CommentsBloc>(
+                        context,
+                        listen: true,
+                      ).state.items.length,
+                    ),
+
+                    // ---- Historiques section
+                    Padding(
+                      padding: const EdgeInsets.only(top: 35),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF0F2FF),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          children: [
+                            // header
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                14,
+                                12,
+                                14,
+                                12,
+                              ),
+                              child: Row(
+                                children: [
+                                  Assets.svgs.jamBlue.svg(),
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 10),
+                                    child: Text(
+                                      'Historiques',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // list items (fond blanc)
+                            Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.vertical(
+                                  bottom: Radius.circular(16),
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  ...history.map((h) => _HistoryTile(h: h)),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                // list items (fond blanc)
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(16),
                     ),
-                  ),
-                  child: Column(
-                    children: [...history.map((h) => _HistoryTile(h: h))],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
+                  ],
+                );
+        },
+      ),
     );
   }
 }
@@ -289,108 +286,6 @@ Container _startButton() {
     ),
   );
 }
-
-BoxDecoration _fieldDecoration() => BoxDecoration(
-  color: const Color(0xFFF5F8FC),
-  borderRadius: BorderRadius.circular(12),
-  border: Border.all(color: const Color(0xFFE6ECF2)),
-);
-
-/* ==================== Comments ==================== */
-
-class _Comment {
-  final String initials;
-  final String name;
-  final String ago;
-  final String text;
-  const _Comment({
-    required this.initials,
-    required this.name,
-    required this.ago,
-    required this.text,
-  });
-}
-
-class _CommentTile extends StatelessWidget {
-  final _Comment c;
-  const _CommentTile({required this.c});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _avatar(c.initials),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        c.name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      c.ago,
-                      style: const TextStyle(
-                        color: Colors.black45,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 6, right: 2),
-                  child: Text(
-                    c.text,
-                    style: const TextStyle(fontSize: 16, height: 1.35),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _avatar(String t) {
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: const BoxDecoration(
-        color: Color(0xFF1BB38A),
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x14000000),
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        t,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w800,
-          fontSize: 18,
-        ),
-      ),
-    );
-  }
-}
-
-/* ==================== History ==================== */
 
 enum _HistoryStatus { conforme, nonConforme }
 

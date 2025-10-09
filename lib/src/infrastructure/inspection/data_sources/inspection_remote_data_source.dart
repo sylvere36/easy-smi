@@ -5,6 +5,8 @@ import 'package:dio/dio.dart';
 import '../../../domain/_commons/pagination.dart';
 import '../../../domain/inspection/models/inspection_answers_post.dart';
 import '../../../domain/inspection/models/inspection_detail.dart';
+import '../../../domain/inspection/models/inspection_form_detail.dart';
+import '../../../domain/inspection/models/inspection_form_item.dart';
 import '../../../domain/inspection/models/inspection_item.dart';
 import '../../_commons/exceptions.dart';
 import '../../_commons/network/app_requests.dart';
@@ -16,11 +18,15 @@ abstract class IInspectionRemoteDataSource {
     int perPage,
   });
 
+  Future<List<InspectionFormItem>> getInspectionForms();
+
   Future<InspectionDetail> getInspection({required int id});
 
   Future<List<InspectionSectionWithQuestions>> getInspectionFormSections({
     required int inspectionFormId,
   });
+
+  Future<InspectionFormDetail> getInspectionFormDetail({required int id});
 
   Future<InspectionDetail> postInspectionAnswers({
     required int inspectionId,
@@ -73,6 +79,28 @@ class InspectionRemoteDataSource implements IInspectionRemoteDataSource {
   }
 
   @override
+  Future<List<InspectionFormItem>> getInspectionForms() async {
+    try {
+      const String request = '/conformity/inspection-forms';
+      final Response response = await httpClient.getRequest(request);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final raw = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final data = raw['data'] as Map<String, dynamic>? ?? {};
+        final listJson = (data['inspection_forms'] as List<dynamic>? ?? [])
+            .whereType<Map<String, dynamic>>()
+            .toList();
+        return listJson.map(InspectionFormItem.fromJson).toList();
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
   Future<InspectionDetail> getInspection({required int id}) async {
     try {
       final String request = '/conformity/inspections/$id';
@@ -107,6 +135,26 @@ class InspectionRemoteDataSource implements IInspectionRemoteDataSource {
             .map(InspectionSectionWithQuestions.fromJson)
             .toList();
         return list;
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<InspectionFormDetail> getInspectionFormDetail({
+    required int id,
+  }) async {
+    try {
+      final String request = '/conformity/inspection-forms/$id';
+      final Response response = await httpClient.getRequest(request);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final raw = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        return InspectionFormDetail.fromJson(raw);
       } else {
         throw ServerException(errorThrow(response));
       }

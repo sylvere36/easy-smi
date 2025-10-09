@@ -10,12 +10,14 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i52;
-import 'package:collection/collection.dart' as _i60;
+import 'package:collection/collection.dart' as _i61;
 import 'package:easy_smi/src/domain/action/models/action_item.dart' as _i54;
 import 'package:easy_smi/src/domain/audit/models/audit_item.dart' as _i55;
+import 'package:easy_smi/src/domain/inspection/models/inspection_form_item.dart'
+    as _i58;
 import 'package:easy_smi/src/domain/permit/models/permit_item.dart' as _i57;
 import 'package:easy_smi/src/domain/permit/models/permit_risk_assessment_request.dart'
-    as _i59;
+    as _i60;
 import 'package:easy_smi/src/presentation/_commons_widgets/file_preview_page.dart'
     as _i15;
 import 'package:easy_smi/src/presentation/actions/action_detail_page.dart'
@@ -112,7 +114,7 @@ import 'package:easy_smi/src/presentation/profile/sensibilisation/profile_sensib
 import 'package:easy_smi/src/presentation/splash/splash.dart' as _i49;
 import 'package:flutter/foundation.dart' as _i56;
 import 'package:flutter/material.dart' as _i53;
-import 'package:flutter/widgets.dart' as _i58;
+import 'package:flutter/widgets.dart' as _i59;
 
 /// generated route for
 /// [_i1.ActionDetailPage]
@@ -704,18 +706,50 @@ class HotPermisRoute extends _i52.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i22.InpectionRecentDetailPage]
-class InpectionRecentDetailRoute extends _i52.PageRouteInfo<void> {
-  const InpectionRecentDetailRoute({List<_i52.PageRouteInfo>? children})
-    : super(InpectionRecentDetailRoute.name, initialChildren: children);
+class InpectionRecentDetailRoute
+    extends _i52.PageRouteInfo<InpectionRecentDetailRouteArgs> {
+  InpectionRecentDetailRoute({
+    _i53.Key? key,
+    required _i58.InspectionFormItem item,
+    List<_i52.PageRouteInfo>? children,
+  }) : super(
+         InpectionRecentDetailRoute.name,
+         args: InpectionRecentDetailRouteArgs(key: key, item: item),
+         initialChildren: children,
+       );
 
   static const String name = 'InpectionRecentDetailRoute';
 
   static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
-      return const _i22.InpectionRecentDetailPage();
+      final args = data.argsAs<InpectionRecentDetailRouteArgs>();
+      return _i22.InpectionRecentDetailPage(key: args.key, item: args.item);
     },
   );
+}
+
+class InpectionRecentDetailRouteArgs {
+  const InpectionRecentDetailRouteArgs({this.key, required this.item});
+
+  final _i53.Key? key;
+
+  final _i58.InspectionFormItem item;
+
+  @override
+  String toString() {
+    return 'InpectionRecentDetailRouteArgs{key: $key, item: $item}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! InpectionRecentDetailRouteArgs) return false;
+    return key == other.key && item == other.item;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ item.hashCode;
 }
 
 /// generated route for
@@ -1107,9 +1141,9 @@ class QuizzResponsesStatsRoute extends _i52.PageRouteInfo<void> {
 /// [_i45.RiskAssessmentPage]
 class RiskAssessmentRoute extends _i52.PageRouteInfo<RiskAssessmentRouteArgs> {
   RiskAssessmentRoute({
-    _i58.Key? key,
+    _i59.Key? key,
     required _i57.PermitItem permit,
-    List<_i59.PermitRiskAssessmentQuestionInput>? initialAnswers,
+    List<_i60.PermitRiskAssessmentQuestionInput>? initialAnswers,
     int? initialIndex,
     List<_i52.PageRouteInfo>? children,
   }) : super(
@@ -1147,11 +1181,11 @@ class RiskAssessmentRouteArgs {
     this.initialIndex,
   });
 
-  final _i58.Key? key;
+  final _i59.Key? key;
 
   final _i57.PermitItem permit;
 
-  final List<_i59.PermitRiskAssessmentQuestionInput>? initialAnswers;
+  final List<_i60.PermitRiskAssessmentQuestionInput>? initialAnswers;
 
   final int? initialIndex;
 
@@ -1166,7 +1200,7 @@ class RiskAssessmentRouteArgs {
     if (other is! RiskAssessmentRouteArgs) return false;
     return key == other.key &&
         permit == other.permit &&
-        const _i60.ListEquality().equals(
+        const _i61.ListEquality().equals(
           initialAnswers,
           other.initialAnswers,
         ) &&
@@ -1177,7 +1211,7 @@ class RiskAssessmentRouteArgs {
   int get hashCode =>
       key.hashCode ^
       permit.hashCode ^
-      const _i60.ListEquality().hash(initialAnswers) ^
+      const _i61.ListEquality().hash(initialAnswers) ^
       initialIndex.hashCode;
 }
 
@@ -1187,7 +1221,7 @@ class RiskAssessmentResultRoute
     extends _i52.PageRouteInfo<RiskAssessmentResultRouteArgs> {
   RiskAssessmentResultRoute({
     _i53.Key? key,
-    required List<_i59.PermitRiskAssessmentQuestionInput> responses,
+    required List<_i60.PermitRiskAssessmentQuestionInput> responses,
     required _i57.PermitItem permit,
     List<_i52.PageRouteInfo>? children,
   }) : super(
@@ -1224,7 +1258,7 @@ class RiskAssessmentResultRouteArgs {
 
   final _i53.Key? key;
 
-  final List<_i59.PermitRiskAssessmentQuestionInput> responses;
+  final List<_i60.PermitRiskAssessmentQuestionInput> responses;
 
   final _i57.PermitItem permit;
 
@@ -1238,14 +1272,14 @@ class RiskAssessmentResultRouteArgs {
     if (identical(this, other)) return true;
     if (other is! RiskAssessmentResultRouteArgs) return false;
     return key == other.key &&
-        const _i60.ListEquality().equals(responses, other.responses) &&
+        const _i61.ListEquality().equals(responses, other.responses) &&
         permit == other.permit;
   }
 
   @override
   int get hashCode =>
       key.hashCode ^
-      const _i60.ListEquality().hash(responses) ^
+      const _i61.ListEquality().hash(responses) ^
       permit.hashCode;
 }
 

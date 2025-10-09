@@ -5,6 +5,8 @@ import '../../domain/_commons/pagination.dart';
 import '../../domain/inspection/i_inspection_repository.dart';
 import '../../domain/inspection/models/inspection_answers_post.dart';
 import '../../domain/inspection/models/inspection_detail.dart';
+import '../../domain/inspection/models/inspection_form_detail.dart';
+import '../../domain/inspection/models/inspection_form_item.dart';
 import '../../domain/inspection/models/inspection_item.dart';
 import '../_commons/exceptions.dart';
 import '../_commons/network/network_info.dart';
@@ -63,6 +65,25 @@ class InspectionRepository implements IInspectionRepository {
   }
 
   @override
+  Future<Either<GlobalFailure, List<InspectionFormItem>>>
+  getInspectionForms() async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        final items = await remoteDataSource.getInspectionForms();
+        return right(items);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
+
+  @override
   Future<Either<GlobalFailure, List<InspectionSectionWithQuestions>>>
   getInspectionFormSections({required int inspectionFormId}) async {
     if (await networkInfo.checkConnection()) {
@@ -71,6 +92,26 @@ class InspectionRepository implements IInspectionRepository {
           inspectionFormId: inspectionFormId,
         );
         return right(sections);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
+
+  @override
+  Future<Either<GlobalFailure, InspectionFormDetail>> getInspectionFormDetail({
+    required int id,
+  }) async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        final item = await remoteDataSource.getInspectionFormDetail(id: id);
+        return right(item);
       } on UnauthorizedException catch (e) {
         return left(GlobalFailure.unauthorized(e.errorText));
       } on ServerException catch (e) {
