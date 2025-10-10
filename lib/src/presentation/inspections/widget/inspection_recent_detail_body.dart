@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +9,11 @@ import '../../../../gen/assets.gen.dart';
 import '../../../../injection_container.dart';
 import '../../../application/communication/comments_bloc.dart';
 import '../../../application/inspection/form/inspection_form_bloc.dart';
+import '../../../application/inspection/inspections_bloc.dart';
 import '../../../domain/inspection/models/inspection_form_item.dart';
+import '../../../domain/inspection/models/inspection_item.dart';
+import '../../_commons/route/app_router.gr.dart';
+import '../../_commons/theming/app_size.dart';
 import '../../_commons_widgets/comments/comment_field.dart';
 import '../../_commons_widgets/empty_widget.dart';
 import '../../_commons_widgets/loading_widget.dart';
@@ -31,37 +36,13 @@ class _InspectionRecentDetailBodyState
   @override
   void initState() {
     super.initState();
+    BlocProvider.of<InspectionsBloc>(
+      context,
+    ).add(const InspectionsEvent.fetch());
   }
 
   @override
   Widget build(BuildContext context) {
-    final history = const [
-      _History(
-        status: _HistoryStatus.nonConforme,
-        title:
-            'Finalisation de la procédure de validation qualité des offres commerciales',
-        date: '30 /08 / 25',
-      ),
-      _History(
-        status: _HistoryStatus.conforme,
-        title:
-            'Finalisation de la procédure de validation qualité des offres commerciales',
-        date: '23 /05 / 24',
-      ),
-      _History(
-        status: _HistoryStatus.nonConforme,
-        title:
-            'Finalisation de la procédure de validation qualité des offres commerciales',
-        date: '30 /08 / 25',
-      ),
-      _History(
-        status: _HistoryStatus.nonConforme,
-        title:
-            'Finalisation de la procédure de validation qualité des offres commerciales',
-        date: '30 /08 / 25',
-      ),
-    ];
-
     return BlocProvider(
       create: (context) =>
           sl<InspectionFormBloc>()
@@ -196,7 +177,6 @@ class _InspectionRecentDetailBodyState
                                 ],
                               ),
                             ),
-                            // list items (fond blanc)
                             Container(
                               decoration: const BoxDecoration(
                                 color: Colors.white,
@@ -206,7 +186,12 @@ class _InspectionRecentDetailBodyState
                               ),
                               child: Column(
                                 children: [
-                                  ...history.map((h) => _HistoryTile(h: h)),
+                                  ...BlocProvider.of<InspectionsBloc>(
+                                        context,
+                                      ).state.items?.map(
+                                        (h) => _HistoryTile(inspectionItem: h),
+                                      ) ??
+                                      [const SizedBox.shrink()],
                                 ],
                               ),
                             ),
@@ -221,8 +206,6 @@ class _InspectionRecentDetailBodyState
     );
   }
 }
-
-/* ==================== Small atoms ==================== */
 
 Container _titleChip(String text) {
   return Container(
@@ -287,26 +270,13 @@ Container _startButton() {
   );
 }
 
-enum _HistoryStatus { conforme, nonConforme }
-
-class _History {
-  final _HistoryStatus status;
-  final String title;
-  final String date;
-  const _History({
-    required this.status,
-    required this.title,
-    required this.date,
-  });
-}
-
 class _HistoryTile extends StatelessWidget {
-  final _History h;
-  const _HistoryTile({required this.h});
+  final InspectionItem inspectionItem;
+  const _HistoryTile({required this.inspectionItem});
 
   @override
   Widget build(BuildContext context) {
-    final isConforme = h.status == _HistoryStatus.conforme;
+    final isConforme = inspectionItem.isConforme;
     final color = isConforme
         ? const Color(0xFF08A87D)
         : const Color(0xFFE9362E);
@@ -331,7 +301,11 @@ class _HistoryTile extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    h.date,
+                    inspectionItem.inspectedAt == null
+                        ? '---'
+                        : DateFormat(
+                            'dd / MM / yyyy',
+                          ).format(DateTime.parse(inspectionItem.inspectedAt!)),
                     style: const TextStyle(
                       color: Colors.black45,
                       fontWeight: FontWeight.w600,
@@ -349,21 +323,45 @@ class _HistoryTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Expanded(
-                child: Text(
-                  h.title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    height: 1.3,
-                    fontWeight: FontWeight.w600,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      inspectionItem.otherRemark ?? '---',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        height: 1.3,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      inspectionItem.recommendation ?? '---',
+                      style: TextStyle(
+                        fontSize: AppSize.getSize(
+                          context: context,
+                          mobileValue: 12,
+                        ),
+                        height: 1.3,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(left: 10),
-                child: Icon(
-                  Icons.download_rounded,
-                  size: 26,
-                  color: Colors.black87,
+              InkWell(
+                onTap: () {
+                  if (inspectionItem.printPath == null) return;
+                  AutoRouter.of(
+                    context,
+                  ).push(FilePreviewRoute(path: inspectionItem.printPath!));
+                },
+                child: const Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Icon(
+                    Icons.download_rounded,
+                    size: 26,
+                    color: Colors.black87,
+                  ),
                 ),
               ),
             ],

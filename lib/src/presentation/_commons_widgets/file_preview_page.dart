@@ -64,7 +64,9 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
       }
 
       // Construire l'URL complète
-      fullUrl = '${orgSettings!.baseUrl}/api/minio/storage/${widget.path}';
+      fullUrl = widget.path.contains('http')
+          ? widget.path
+          : '${orgSettings!.baseUrl}/api/minio/storage/${widget.path}';
 
       // Déterminer l'extension du fichier
       fileExtension = _getFileExtension(widget.path);

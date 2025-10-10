@@ -15,6 +15,8 @@ import 'package:easy_smi/src/domain/action/models/action_item.dart' as _i54;
 import 'package:easy_smi/src/domain/audit/models/audit_item.dart' as _i55;
 import 'package:easy_smi/src/domain/inspection/models/inspection_form_item.dart'
     as _i58;
+import 'package:easy_smi/src/domain/inspection/models/inspection_item.dart'
+    as _i62;
 import 'package:easy_smi/src/domain/permit/models/permit_item.dart' as _i57;
 import 'package:easy_smi/src/domain/permit/models/permit_risk_assessment_request.dart'
     as _i60;
@@ -786,18 +788,68 @@ class InspectionResultSavingRoute extends _i52.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i25.InspectionSectionPage]
-class InspectionSectionRoute extends _i52.PageRouteInfo<void> {
-  const InspectionSectionRoute({List<_i52.PageRouteInfo>? children})
-    : super(InspectionSectionRoute.name, initialChildren: children);
+class InspectionSectionRoute
+    extends _i52.PageRouteInfo<InspectionSectionRouteArgs> {
+  InspectionSectionRoute({
+    _i53.Key? key,
+    required int inspectionId,
+    required int inspectionFormId,
+    List<_i52.PageRouteInfo>? children,
+  }) : super(
+         InspectionSectionRoute.name,
+         args: InspectionSectionRouteArgs(
+           key: key,
+           inspectionId: inspectionId,
+           inspectionFormId: inspectionFormId,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'InspectionSectionRoute';
 
   static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
-      return const _i25.InspectionSectionPage();
+      final args = data.argsAs<InspectionSectionRouteArgs>();
+      return _i25.InspectionSectionPage(
+        key: args.key,
+        inspectionId: args.inspectionId,
+        inspectionFormId: args.inspectionFormId,
+      );
     },
   );
+}
+
+class InspectionSectionRouteArgs {
+  const InspectionSectionRouteArgs({
+    this.key,
+    required this.inspectionId,
+    required this.inspectionFormId,
+  });
+
+  final _i53.Key? key;
+
+  final int inspectionId;
+
+  final int inspectionFormId;
+
+  @override
+  String toString() {
+    return 'InspectionSectionRouteArgs{key: $key, inspectionId: $inspectionId, inspectionFormId: $inspectionFormId}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! InspectionSectionRouteArgs) return false;
+    return key == other.key &&
+        inspectionId == other.inspectionId &&
+        inspectionFormId == other.inspectionFormId;
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^ inspectionId.hashCode ^ inspectionFormId.hashCode;
 }
 
 /// generated route for
@@ -1411,32 +1463,102 @@ class SplashRouteArgs {
 
 /// generated route for
 /// [_i50.StartInspectionDetailPage]
-class StartInspectionDetailRoute extends _i52.PageRouteInfo<void> {
-  const StartInspectionDetailRoute({List<_i52.PageRouteInfo>? children})
-    : super(StartInspectionDetailRoute.name, initialChildren: children);
+class StartInspectionDetailRoute
+    extends _i52.PageRouteInfo<StartInspectionDetailRouteArgs> {
+  StartInspectionDetailRoute({
+    _i53.Key? key,
+    required _i62.InspectionItem inspection,
+    List<_i52.PageRouteInfo>? children,
+  }) : super(
+         StartInspectionDetailRoute.name,
+         args: StartInspectionDetailRouteArgs(key: key, inspection: inspection),
+         initialChildren: children,
+       );
 
   static const String name = 'StartInspectionDetailRoute';
 
   static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
-      return const _i50.StartInspectionDetailPage();
+      final args = data.argsAs<StartInspectionDetailRouteArgs>();
+      return _i50.StartInspectionDetailPage(
+        key: args.key,
+        inspection: args.inspection,
+      );
     },
   );
 }
 
+class StartInspectionDetailRouteArgs {
+  const StartInspectionDetailRouteArgs({this.key, required this.inspection});
+
+  final _i53.Key? key;
+
+  final _i62.InspectionItem inspection;
+
+  @override
+  String toString() {
+    return 'StartInspectionDetailRouteArgs{key: $key, inspection: $inspection}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! StartInspectionDetailRouteArgs) return false;
+    return key == other.key && inspection == other.inspection;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ inspection.hashCode;
+}
+
 /// generated route for
 /// [_i51.StartInspectionPage]
-class StartInspectionRoute extends _i52.PageRouteInfo<void> {
-  const StartInspectionRoute({List<_i52.PageRouteInfo>? children})
-    : super(StartInspectionRoute.name, initialChildren: children);
+class StartInspectionRoute
+    extends _i52.PageRouteInfo<StartInspectionRouteArgs> {
+  StartInspectionRoute({
+    _i53.Key? key,
+    required _i62.InspectionItem inspection,
+    List<_i52.PageRouteInfo>? children,
+  }) : super(
+         StartInspectionRoute.name,
+         args: StartInspectionRouteArgs(key: key, inspection: inspection),
+         initialChildren: children,
+       );
 
   static const String name = 'StartInspectionRoute';
 
   static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
-      return const _i51.StartInspectionPage();
+      final args = data.argsAs<StartInspectionRouteArgs>();
+      return _i51.StartInspectionPage(
+        key: args.key,
+        inspection: args.inspection,
+      );
     },
   );
+}
+
+class StartInspectionRouteArgs {
+  const StartInspectionRouteArgs({this.key, required this.inspection});
+
+  final _i53.Key? key;
+
+  final _i62.InspectionItem inspection;
+
+  @override
+  String toString() {
+    return 'StartInspectionRouteArgs{key: $key, inspection: $inspection}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! StartInspectionRouteArgs) return false;
+    return key == other.key && inspection == other.inspection;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ inspection.hashCode;
 }

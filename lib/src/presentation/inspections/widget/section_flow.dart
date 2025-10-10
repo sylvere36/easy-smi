@@ -10,8 +10,15 @@ import '../../_commons/theming/app_color.dart';
 ///* ==================== SCREEN ==================== */
 
 class SectionFlowScreen extends StatefulWidget {
-  const SectionFlowScreen({super.key, required this.title});
+  const SectionFlowScreen({
+    super.key,
+    required this.title,
+    required this.inspectionId,
+    required this.inspectionFormId,
+  });
   final String title;
+  final int inspectionId;
+  final int inspectionFormId;
 
   @override
   State<SectionFlowScreen> createState() => _SectionFlowScreenState();

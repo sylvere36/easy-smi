@@ -12,6 +12,7 @@ import '../../../application/events/detail/event_detail_bloc.dart';
 import '../../../application/events/events_bloc.dart';
 import '../../../application/inspection/inspections_bloc.dart';
 import '../../../application/permit/permits_bloc.dart';
+import '../../../domain/inspection/models/inspection_item.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
 import '../../_shimmers/action_card_shimmer.dart';
@@ -243,6 +244,7 @@ class _HomeBodyState extends State<HomeBody> {
                                 }(),
                                 site: inspection.summary ?? 'N/A',
                                 statusColor: inspection.statusColorValue,
+                                inspection: inspection,
                               ),
                             ),
                       ],
@@ -454,6 +456,7 @@ class _InspectionCard extends StatelessWidget {
   final String title;
   final String site;
   final Color statusColor;
+  final InspectionItem inspection;
 
   const _InspectionCard({
     required this.date,
@@ -461,13 +464,15 @@ class _InspectionCard extends StatelessWidget {
     required this.title,
     required this.site,
     required this.statusColor,
+    required this.inspection,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.router.push(const StartInspectionRoute());
+        if (inspection.cardAction == null) return;
+        context.router.push(StartInspectionRoute(inspection: inspection));
       },
       child: _CardBase(
         child: Column(

@@ -1,12 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../gen/assets.gen.dart';
 import '../../../application/inspection/inspections_bloc.dart';
 import '../../../domain/inspection/models/inspection_form_item.dart';
+import '../../../domain/inspection/models/inspection_item.dart';
 import '../../_commons/route/app_router.gr.dart';
-import '../../_commons/theming/app_color.dart';
 import '../../_commons_widgets/empty_widget.dart';
 import '../../_shimmers/card_shimmer.dart';
 
@@ -15,36 +16,6 @@ class InspectionsBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final planning = [
-      InspectionItem(
-        date: '22 / 08 / 25',
-        title:
-            'Inspections sur les activités internes liées aux dechargements des marchandises',
-        site: 'Espace vert du PAC',
-        statusLabel: 'En cours',
-        statusColor: AppColors.primary,
-        action: const CardAction.continueFlow(),
-      ),
-      InspectionItem(
-        date: '11 / 09 / 25',
-        title:
-            'Inspections sur les activités internes liées aux dechargements des marchandises',
-        site: 'Espace vert du PAC',
-        statusLabel: 'En cours',
-        statusColor: AppColors.primary,
-        action: const CardAction.startFlow(),
-      ),
-      InspectionItem(
-        date: '30 / 01 / 26',
-        title:
-            'Inspections sur les activités internes liées aux dechargements des marchandises',
-        site: 'Espace vert du PAC',
-        statusLabel: 'Programmé',
-        statusColor: const Color(0xFF02B088),
-        action: const CardAction.countdown('04 JOUR(S)'),
-      ),
-    ];
-
     return BlocBuilder<InspectionsBloc, InspectionsState>(
       builder: (context, state) {
         return ListView(
@@ -52,12 +23,17 @@ class InspectionsBody extends StatelessWidget {
           children: [
             const _SectionHeader(label: 'Inspections'),
             // planning cards
-            ...planning.map(
-              (e) => Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: _PlanningCard(item: e),
-              ),
-            ),
+            if (state.isLoading || state.items == null)
+              ...List.generate(3, (index) => const CardShimmer()),
+            if (state.items != null && state.items!.isEmpty)
+              EmptyWidget.noData(),
+            ...state.items?.map(
+                  (e) => Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: _PlanningCard(inspection: e),
+                  ),
+                ) ??
+                [],
 
             // divider spacing (with padding only)
             Padding(
@@ -81,50 +57,6 @@ class InspectionsBody extends StatelessWidget {
       },
     );
   }
-}
-
-/* =========================  DATA MODELS  ========================= */
-
-class InspectionItem {
-  final String date;
-  final String title;
-  final String site;
-  final String statusLabel;
-  final Color statusColor;
-  final CardAction action;
-  InspectionItem({
-    required this.date,
-    required this.title,
-    required this.site,
-    required this.statusLabel,
-    required this.statusColor,
-    required this.action,
-  });
-}
-
-class CardAction {
-  final _ActionKind kind;
-  final String? countdownText;
-  const CardAction._(this.kind, [this.countdownText]);
-
-  const CardAction.continueFlow() : this._(_ActionKind.continueFlow);
-  const CardAction.startFlow() : this._(_ActionKind.startFlow);
-  const CardAction.countdown(String text) : this._(_ActionKind.countdown, text);
-}
-
-enum _ActionKind { continueFlow, startFlow, countdown }
-
-class RecentItem {
-  final String date;
-  final String title;
-  final String site;
-  final int comments;
-  RecentItem({
-    required this.date,
-    required this.title,
-    required this.site,
-    required this.comments,
-  });
 }
 
 /* =========================  UI WIDGETS  ========================= */
@@ -165,14 +97,15 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _PlanningCard extends StatelessWidget {
-  final InspectionItem item;
-  const _PlanningCard({required this.item});
+  final InspectionItem inspection;
+  const _PlanningCard({required this.inspection});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.router.push(const StartInspectionRoute());
+        // if (inspection.cardAction == null) return;
+        context.router.push(StartInspectionRoute(inspection: inspection));
       },
       child: Container(
         decoration: _cardDecoration(),
@@ -184,7 +117,13 @@ class _PlanningCard extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 2),
               child: Row(
                 children: [
-                  _chipDate(item.date),
+                  _chipDate(
+                    inspection.inspectedAt == null
+                        ? '---'
+                        : DateFormat(
+                            'dd / MM / yy',
+                          ).format(DateTime.parse(inspection.inspectedAt!)),
+                  ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8),
@@ -199,10 +138,10 @@ class _PlanningCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            item.statusLabel,
+                            inspection.readableStatus,
                             style: TextStyle(
                               fontWeight: FontWeight.w800,
-                              color: item.statusColor,
+                              color: inspection.statusColorValue,
                             ),
                           ),
                         ],
@@ -217,7 +156,12 @@ class _PlanningCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
               child: Text(
-                item.title,
+                () {
+                  final text = inspection.mission;
+                  final words = text.trim().split(RegExp(r'\s+'));
+                  if (words.length <= 20) return text;
+                  return '${words.take(20).join(' ')}...';
+                }(),
                 style: const TextStyle(
                   fontSize: 16,
                   height: 1.25,
@@ -227,33 +171,35 @@ class _PlanningCard extends StatelessWidget {
             ),
 
             // site
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
-              child: Row(
-                children: [
-                  const Text(
-                    'Site : ',
-                    style: TextStyle(color: Colors.black54),
-                  ),
-                  Text(
-                    item.site,
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
+            //   child: Row(
+            //     children: [
+            //       const Text(
+            //         'Site : ',
+            //         style: TextStyle(color: Colors.black54),
+            //       ),
+            //       Text(
+            //         item.site,
+            //         style: const TextStyle(fontWeight: FontWeight.w700),
+            //       ),
+            //     ],
+            //   ),
+            // ),
 
             // bottom action bar
             Container(
-              decoration: const BoxDecoration(
-                border: Border(top: BorderSide(color: Color(0xFFE7E7E7))),
-              ),
+              decoration: inspection.cardAction != null
+                  ? const BoxDecoration(
+                      border: Border(top: BorderSide(color: Color(0xFFE7E7E7))),
+                    )
+                  : null,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
                 child: Row(
                   children: [
                     Expanded(child: Container()),
-                    _actionButton(item.action),
+                    _actionButton(inspection.cardAction),
                   ],
                 ),
               ),
@@ -264,23 +210,26 @@ class _PlanningCard extends StatelessWidget {
     );
   }
 
-  Widget _actionButton(CardAction a) {
+  Widget _actionButton(CardAction? a) {
+    if (a == null) {
+      return Container();
+    }
     switch (a.kind) {
-      case _ActionKind.continueFlow:
+      case ActionKind.continueFlow:
         return _pillButton(
           label: 'CONTINUER',
           bg: const Color(0xFFE3EDFF),
           fg: const Color(0xFF1E5AF9),
           icon: Icons.play_circle_fill_rounded,
         );
-      case _ActionKind.startFlow:
+      case ActionKind.startFlow:
         return _pillButton(
           label: 'DEMMARER',
           bg: const Color(0xFFE3EDFF),
           fg: const Color(0xFF1E5AF9),
           icon: Icons.play_circle_fill_rounded,
         );
-      case _ActionKind.countdown:
+      case ActionKind.countdown:
         return _pillButton(
           label: a.countdownText ?? '',
           bg: const Color(0xFFF1F1F6),

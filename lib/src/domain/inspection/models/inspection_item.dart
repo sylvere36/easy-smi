@@ -1,5 +1,17 @@
 import 'package:flutter/material.dart';
 
+enum ActionKind { continueFlow, startFlow, countdown }
+
+class CardAction {
+  final ActionKind kind;
+  final String? countdownText;
+  const CardAction._(this.kind, [this.countdownText]);
+
+  const CardAction.continueFlow() : this._(ActionKind.continueFlow);
+  const CardAction.startFlow() : this._(ActionKind.startFlow);
+  const CardAction.countdown(String text) : this._(ActionKind.countdown, text);
+}
+
 class InspectionStatistics {
   final int totalAnswers;
   final int conformAnswers;
@@ -66,7 +78,7 @@ String humanReadableStatus(String status) {
   switch (status.toLowerCase()) {
     case 'pending':
       return 'En attente';
-    case 'in_progress':
+    case 'inprogress':
       return 'En cours';
     case 'completed':
       return 'Terminé';
@@ -84,6 +96,8 @@ String humanReadableStatus(String status) {
       return 'Annulé';
     case 'tobevalidated':
       return 'À valider';
+    case 'draft':
+      return 'Brouillon';
     default:
       return status;
   }
@@ -93,7 +107,7 @@ Color statusColor(String status) {
   switch (status.toLowerCase()) {
     case 'pending':
       return Colors.orange;
-    case 'in_progress':
+    case 'inprogress':
       return Colors.blue;
     case 'completed':
       return Colors.green;
@@ -111,6 +125,8 @@ Color statusColor(String status) {
       return Colors.redAccent;
     case 'tobevalidated':
       return Colors.orange;
+    case 'draft':
+      return Colors.orangeAccent;
     default:
       return Colors.black;
   }
@@ -208,4 +224,43 @@ class InspectionItem {
   String get readableStatus => humanReadableStatus(status);
 
   Color get statusColorValue => statusColor(status);
+
+  ActionKind get action {
+    if (status.toLowerCase() == 'pending') {
+      return ActionKind.startFlow;
+    } else if (status.toLowerCase() == 'in_progress') {
+      return ActionKind.continueFlow;
+    } else {
+      return ActionKind.countdown;
+    }
+  }
+
+  CardAction? get cardAction {
+    if (['pending', 'draft'].contains(status.toLowerCase())) {
+      return const CardAction.startFlow();
+    } else if (status.toLowerCase() == 'inprogress') {
+      return const CardAction.continueFlow();
+    } else {
+      // If the inspection date is in the future, return a countdown with remaining time
+      if (inspectedAt != null) {
+        final target = DateTime.tryParse(inspectedAt!);
+        if (target != null) {
+          final now = DateTime.now();
+          if (target.isAfter(now)) {
+            final diff = target.difference(now);
+            String two(int n) => n.toString().padLeft(2, '0');
+            final hours = diff.inHours;
+            final minutes = diff.inMinutes % 60;
+            final seconds = diff.inSeconds % 60;
+            final text = '${two(hours)}:${two(minutes)}:${two(seconds)}';
+            return CardAction.countdown(text);
+          }
+        }
+      }
+      return null;
+    }
+  }
+
+  bool get isConforme =>
+      (statistics.nonConformAnswers) / (statistics.totalAnswers) != 1;
 }

@@ -3,12 +3,14 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../domain/inspection/models/inspection_item.dart';
 import '../_commons/route/app_router.gr.dart';
 
 @RoutePage()
 class StartInspectionPage extends StatefulWidget {
   static const String routeName = '/start-inspection';
-  const StartInspectionPage({super.key});
+  final InspectionItem inspection;
+  const StartInspectionPage({super.key, required this.inspection});
 
   @override
   State<StartInspectionPage> createState() => _StartInspectionPageState();
@@ -18,6 +20,8 @@ class _StartInspectionPageState extends State<StartInspectionPage>
     with SingleTickerProviderStateMixin {
   late final AnimationController _pulse;
   bool _running = false;
+
+  InspectionItem get inspection => widget.inspection;
 
   @override
   void initState() {
@@ -36,13 +40,6 @@ class _StartInspectionPageState extends State<StartInspectionPage>
 
   void _toggle() {
     setState(() => _running = !_running);
-    // if (_running) {
-    //   _pulse.repeat();
-
-    // } else {
-    //   _pulse.stop();
-
-    // }
   }
 
   @override
@@ -101,7 +98,7 @@ class _StartInspectionPageState extends State<StartInspectionPage>
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 26, 16, 26),
                     child: Text(
-                      'INSPECTION SUR LA SECURITE\nZONE DES PRODUITS',
+                      inspection.mission,
                       textAlign: TextAlign.center,
                       style: GoogleFonts.montserrat(
                         fontSize: 17,
@@ -137,7 +134,7 @@ class _StartInspectionPageState extends State<StartInspectionPage>
                         _toggle();
                         if (_running) {
                           context.router.push(
-                            const StartInspectionDetailRoute(),
+                            StartInspectionDetailRoute(inspection: inspection),
                           );
                         }
                       },
