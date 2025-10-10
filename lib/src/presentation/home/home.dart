@@ -281,7 +281,11 @@ class _HomePageState extends State<HomePage>
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: BadgeIcon(hasNotification: true, icon: Assets.svgs.bellBold),
+            child: BadgeIcon(
+              hasNotification: true,
+              icon: Assets.svgs.bellBold,
+              onTap: () => context.router.push(const NotificationsRoute()),
+            ),
           ),
         ],
       ),

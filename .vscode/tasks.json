@@ -65,6 +65,82 @@
 				"$dart"
 			],
 			"group": "build"
+		},
+		{
+			"label": "build_runner_perm",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"pub",
+				"run",
+				"build_runner",
+				"build",
+				"--delete-conflicting-outputs"
+			],
+			"group": "build"
+		},
+		{
+			"label": "flutter pub get",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"pub",
+				"get"
+			],
+			"group": "build"
+		},
+		{
+			"label": "analyze build",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"analyze"
+			],
+			"group": "build"
+		},
+		{
+			"label": "build_runner_perm",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"pub",
+				"run",
+				"build_runner",
+				"build",
+				"--delete-conflicting-outputs"
+			],
+			"group": "build"
+		},
+		{
+			"label": "build_runner_perm",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"pub",
+				"run",
+				"build_runner",
+				"build",
+				"--delete-conflicting-outputs"
+			],
+			"group": "build"
+		},
+		{
+			"label": "analyze build",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"analyze"
+			],
+			"group": "build"
+		},
+		{
+			"label": "analyze build",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"analyze"
+			],
+			"group": "build"
 		}
 	]
 }

@@ -9,6 +9,7 @@ import '../application/actions/actions_bloc.dart';
 import '../application/audit/audits_bloc.dart';
 import '../application/auth/user/authenticated_user_bloc.dart';
 import '../application/communication/comments_bloc.dart';
+import '../application/communication/notifications_bloc.dart';
 import '../application/connected/connected_bloc.dart';
 import '../application/evalutaion/evaluation_bloc.dart';
 import '../application/events/detail/event_detail_bloc.dart';
@@ -52,6 +53,11 @@ class _AppState extends State<App> {
           create: (_) => sl<AuditsBloc>()..add(const AuditsEvent.fetch()),
         ),
         BlocProvider(create: (_) => sl<CommentsBloc>()),
+        BlocProvider(
+          create: (_) =>
+              sl<NotificationsBloc>()
+                ..add(const NotificationsEvent.fetchRequested()),
+        ),
         BlocProvider(
           create: (_) =>
               sl<PermitsBloc>()..add(const PermitsEvent.fetchRequested()),

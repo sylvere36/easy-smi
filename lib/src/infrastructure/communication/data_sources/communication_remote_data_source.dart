@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 
 import '../../../domain/communication/models/comment.dart';
+import '../../../domain/communication/models/notification.dart';
 import '../../_commons/exceptions.dart';
 import '../../_commons/files/file_manager.dart';
 import '../../_commons/network/app_requests.dart';
@@ -24,6 +25,13 @@ abstract class ICommunicationRemoteDataSource {
   });
 
   Future<void> addReaction({required int commentId, required String reaction});
+
+  // Notifications
+  Future<NotificationPageResult> getNotifications({
+    int page = 1,
+    int perPage = 10,
+  });
+  Future<void> markNotificationRead({required int id});
 }
 
 class CommunicationRemoteDataSource implements ICommunicationRemoteDataSource {
@@ -137,6 +145,44 @@ class CommunicationRemoteDataSource implements ICommunicationRemoteDataSource {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         return; // success
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  // ---------------- Notifications -----------------
+  @override
+  Future<NotificationPageResult> getNotifications({
+    int page = 1,
+    int perPage = 10,
+  }) async {
+    try {
+      const String request = '/communication/notifications';
+      final Response response = await httpClient.getRequest(
+        request,
+        queryParameters: {'page': page, 'per_page': perPage},
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final dynamic raw = response.data;
+        return NotificationPageResult.fromJson(raw);
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> markNotificationRead({required int id}) async {
+    try {
+      final String request = '/communication/notifications/$id/mark-as-read';
+      final Response response = await httpClient.putRequest(request);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return;
       } else {
         throw ServerException(errorThrow(response));
       }

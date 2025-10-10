@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import '../_commons/global_failure.dart';
 import 'models/comment.dart';
+import 'models/notification.dart';
 
 abstract class ICommunicationRepository {
   Future<Either<GlobalFailure, List<CommentItem>>> getComments({
@@ -22,4 +23,12 @@ abstract class ICommunicationRepository {
     required int commentId,
     required String reaction, // like | good | love | bad
   });
+
+  // Notifications
+  Future<Either<GlobalFailure, NotificationPageResult>> getNotifications({
+    int page = 1,
+    int perPage = 10,
+  });
+
+  Future<Either<GlobalFailure, Unit>> markNotificationRead({required int id});
 }

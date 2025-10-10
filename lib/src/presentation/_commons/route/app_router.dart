@@ -35,6 +35,7 @@ import '../../inspections/inspection_section_page.dart';
 import '../../inspections/inspections_page.dart';
 import '../../inspections/start_inspection_detail_page.dart';
 import '../../inspections/start_inspection_page.dart';
+import '../../notifications/notifications_page.dart';
 import '../../onboarding/onboarding_page.dart';
 import '../../permis/add_hot_permis_page.dart';
 import '../../permis/hot_permis_detail_page.dart';
@@ -208,5 +209,6 @@ class AppRouter extends RootStackRouter {
       page: RiskAssessmentResultRoute.page,
       path: RiskAssessmentResultPage.routeName,
     ),
+    AutoRoute(page: NotificationsRoute.page, path: NotificationsPage.routeName),
   ];
 }

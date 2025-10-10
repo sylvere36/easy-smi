@@ -9,6 +9,7 @@ import 'src/application/audit/detail/audit_detail_bloc.dart';
 import 'src/application/auth/external/external_auth_bloc.dart';
 import 'src/application/auth/user/authenticated_user_bloc.dart';
 import 'src/application/communication/comments_bloc.dart';
+import 'src/application/communication/notifications_bloc.dart';
 import 'src/application/connected/connected_bloc.dart';
 import 'src/application/evalutaion/evaluation_bloc.dart';
 import 'src/application/events/detail/event_detail_bloc.dart';
@@ -177,6 +178,7 @@ Future<void> initCommunication() async {
     () => CommunicationRepository(networkInfo: sl(), remoteDataSource: sl()),
   );
   sl.registerFactory(() => CommentsBloc(repository: sl()));
+  sl.registerFactory(() => NotificationsBloc(repository: sl()));
 }
 
 Future<void> initEvents() async {
