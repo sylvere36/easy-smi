@@ -34,4 +34,10 @@ abstract class IInspectionRepository {
     required int inspectionId,
     required InspectionAnswersPostBody body,
   });
+
+  Future<Either<GlobalFailure, InspectionDetail>> postInspectionRemarks({
+    required int inspectionId,
+    required String otherRemark,
+    required String recommendation,
+  });
 }

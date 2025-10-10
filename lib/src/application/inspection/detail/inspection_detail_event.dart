@@ -7,5 +7,10 @@ class InspectionDetailEvent with _$InspectionDetailEvent {
     required int id,
     required InspectionAnswersPostBody body,
   }) = _PostAnswers;
+  const factory InspectionDetailEvent.addRemark({
+    required int id,
+    required String otherRemark,
+    required String recommendation,
+  }) = _AddRemark;
   const factory InspectionDetailEvent.reset() = _Reset;
 }

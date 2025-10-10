@@ -82,7 +82,7 @@ class InspectionQuestionLite {
   /// Evaluate if a provided raw answer conforms to the expected_answer.
   ///
   /// Rules:
-  /// - yes_no / yes_no_na: compare normalized strings ("yes"/"no"/"na").
+  /// - yes_no / yes_no_na: compare normalized strings ('yes'/'no'/'na').
   /// - measurement: parse numeric answer and evaluate all constraints in
   ///                expected_answer of the form "<4", ">= 3" joined with "et".
   /// - description: if expected_answer is empty -> true, else substring match.

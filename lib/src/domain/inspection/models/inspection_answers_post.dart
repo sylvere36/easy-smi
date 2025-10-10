@@ -1,3 +1,5 @@
+import 'inspection_detail.dart';
+
 class InspectionAnswerPostItem {
   final int? id;
   final int inspectionId;
@@ -8,6 +10,7 @@ class InspectionAnswerPostItem {
   final List<String> imageLinks;
   final String? createdAt;
   final String? updatedAt;
+  final InspectionQuestionLite? inspectionQuestion;
 
   InspectionAnswerPostItem({
     this.id,
@@ -17,6 +20,7 @@ class InspectionAnswerPostItem {
     required this.conformityStatus,
     this.comment,
     this.imageLinks = const [],
+    this.inspectionQuestion,
     this.createdAt,
     this.updatedAt,
   });
@@ -29,8 +33,16 @@ class InspectionAnswerPostItem {
     'conformity_status': conformityStatus,
     if (comment != null) 'comment': comment,
     'image_links': imageLinks,
-    if (createdAt != null) 'created_at': createdAt,
-    if (updatedAt != null) 'updated_at': updatedAt,
+    'created_at': DateTime.now().toIso8601String(),
+    'updated_at': DateTime.now().toIso8601String(),
+  };
+
+  Map<String, dynamic> toJsonPosted() => {
+    'inspection_question_id': inspectionQuestionId,
+    'answer': answer,
+    'conformity_status': conformityStatus,
+    if (comment != null) 'comment': comment,
+    'image_links': imageLinks,
   };
 
   factory InspectionAnswerPostItem.fromJson(Map<String, dynamic> json) =>
@@ -56,7 +68,7 @@ class InspectionAnswersPostBody {
   InspectionAnswersPostBody({required this.answers});
 
   Map<String, dynamic> toJson() => {
-    'answers': answers.map((e) => e.toJson()).toList(),
+    'answers': answers.map((e) => e.toJsonPosted()).toList(),
   };
 
   factory InspectionAnswersPostBody.fromJson(Map<String, dynamic> json) =>

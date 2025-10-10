@@ -1,9 +1,16 @@
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 
+import '../../../application/inspection/form/inspection_form_bloc.dart';
+import '../../../domain/inspection/models/inspection_answers_post.dart';
+import '../../../domain/inspection/models/inspection_detail.dart'
+    show InspectionQuestionLite, InspectionSectionWithQuestions;
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
 
@@ -25,52 +32,22 @@ class SectionFlowScreen extends StatefulWidget {
 }
 
 class _SectionFlowScreenState extends State<SectionFlowScreen> {
-  late final List<SectionData> _sections;
+  List<SectionData> _sections = [];
   int _sectionIndex = 0;
   int _qIndex = -1; // -1 = écran “carte de section”
+  final Map<int, List<InspectionAnswerPostItem>> _answersBySection = {};
+  final Map<int, String> _sectionTitles = {};
+  final Map<int, String> _questionTitles = {};
+  // Persistent input state
+  final Map<int, TextEditingController> _commentCtrls = {};
+  final Map<int, TextEditingController> _textCtrls = {};
+  final Map<int, bool?> _boolAnswers = {}; // true/false/null
+  final Map<int, bool> _naTouched = {}; // for yes_no_na explicit NA
+  final Map<int, List<String>> _imagesByQuestion = {}; // local file paths
 
   @override
   void initState() {
     super.initState();
-    _sections = [
-      SectionData(
-        name: 'Aménagement des salles dans le hall',
-        color: const Color(0xFF17B79B), // vert
-        questions: [
-          Question(
-            title:
-                "Le chantier est il rangé et nettoyé après les travaux effectué par l'équipe delegué pour la tâche?",
-            type: QuestionType.boolean,
-          ),
-          Question(
-            title:
-                "Le chantier est il rangé et nettoyé après les travaux effectué par l'équipe delegué pour la tâche?",
-            type: QuestionType.number,
-          ),
-          Question(
-            title:
-                "Le chantier est il rangé et nettoyé après les travaux effectué par l'équipe delegué pour la tâche?",
-            type: QuestionType.text,
-          ),
-        ],
-      ),
-      SectionData(
-        name: 'Aménagement des salles dans le hall',
-        color: const Color(0xFFFF8A34), // orange
-        questions: [
-          Question(
-            title:
-                "Le chantier est il rangé et nettoyé après les travaux effectué par l'équipe delegué pour la tâche?",
-            type: QuestionType.boolean,
-          ),
-          Question(
-            title:
-                "Le chantier est il rangé et nettoyé après les travaux effectué par l'équipe delegué pour la tâche?",
-            type: QuestionType.text,
-          ),
-        ],
-      ),
-    ];
   }
 
   SectionData get current => _sections[_sectionIndex];
@@ -80,14 +57,35 @@ class _SectionFlowScreenState extends State<SectionFlowScreen> {
       if (_qIndex < 0) {
         _qIndex = 0;
       } else if (_qIndex < current.questions.length - 1) {
+        final q = current.questions[_qIndex];
+        if (!_isAnswered(q)) {
+          // disable navigation when unanswered
+          return;
+        }
+        _saveAnswer(current, q);
         _qIndex++;
       } else {
+        final q = current.questions[_qIndex];
+        if (!_isAnswered(q)) {
+          // disable navigation when unanswered
+          return;
+        }
+        _saveAnswer(current, q);
         // section suivante
         if (_sectionIndex < _sections.length - 1) {
           _sectionIndex++;
           _qIndex = -1;
         } else if (_sectionIndex == _sections.length - 1) {
-          context.router.push(const InspectionResultRoute());
+          _logAnswers();
+          context.router.push(
+            InspectionResultRoute(
+              answersBySection: _answersBySection,
+              sectionTitles: _sectionTitles,
+              questionTitles: _questionTitles,
+              inspectionId: widget.inspectionId,
+              inspectionFormId: widget.inspectionFormId,
+            ),
+          );
         }
       }
     });
@@ -112,11 +110,9 @@ class _SectionFlowScreenState extends State<SectionFlowScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = current.color;
-
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: themeColor,
+        backgroundColor: _sections.isEmpty ? AppColors.primary : current.color,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
@@ -136,32 +132,149 @@ class _SectionFlowScreenState extends State<SectionFlowScreen> {
         ),
         centerTitle: false,
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [themeColor, themeColor.withValues(alpha: .9)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: _qIndex < 0
-            ? _SectionIntroCard(
-                color: themeColor,
-                index: _sectionIndex + 1,
-                title: current.name,
-                onNext: _toNext,
-              )
-            : _QuestionView(
-                color: themeColor,
-                sectionName: current.name,
-                questions: current.questions,
-                qIndex: _qIndex,
-                onPrev: _toPrev,
-                onNext: _toNext,
-                onUpdate: () => setState(() {}),
+      body: BlocBuilder<InspectionFormBloc, InspectionFormState>(
+        builder: (context, state) {
+          if (state.isLoading && state.sections.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (_sections.isEmpty && state.sections.isNotEmpty) {
+            _sections = _mapSections(state.sections);
+            // map titles for result payload
+            for (final s in state.sections) {
+              _sectionTitles[s.id] = s.title;
+              for (final q in s.questions) {
+                _questionTitles[q.id] = q.label;
+              }
+            }
+          }
+          if (_sections.isEmpty) {
+            return const Center(child: Text('Aucune section disponible'));
+          }
+          final themeColor = current.color;
+          return Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [themeColor, themeColor.withValues(alpha: .9)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
+            ),
+            child: _qIndex < 0
+                ? _SectionIntroCard(
+                    color: themeColor,
+                    index: _sectionIndex + 1,
+                    title: current.name,
+                    onNext: _toNext,
+                  )
+                : _QuestionView(
+                    color: themeColor,
+                    sectionName: current.name,
+                    questions: current.questions,
+                    qIndex: _qIndex,
+                    onPrev: _toPrev,
+                    onNext: _toNext,
+                    onUpdate: () => setState(() {}),
+                    commentCtrls: _commentCtrls,
+                    textCtrls: _textCtrls,
+                    boolAnswers: _boolAnswers,
+                    naTouched: _naTouched,
+                    imagesByQuestion: _imagesByQuestion,
+                  ),
+          );
+        },
       ),
     );
+  }
+
+  void _logAnswers() {
+    for (final e in _answersBySection.entries) {
+      // ignore: avoid_print
+      print('Section ${e.key}: ${e.value.length} réponses');
+    }
+  }
+
+  List<SectionData> _mapSections(
+    List<InspectionSectionWithQuestions> sections,
+  ) {
+    final colors = [const Color(0xFF17B79B), const Color(0xFFFF8A34)];
+    return [
+      for (int i = 0; i < sections.length; i++)
+        SectionData(
+          id: sections[i].id,
+          name: sections[i].title,
+          color: colors[i % colors.length],
+          questions: [
+            for (final q in sections[i].questions)
+              Question(
+                id: q.id,
+                meta: q,
+                title: q.label,
+                explanation: q.explanationNote ?? '',
+                type: q.isBoolean || q.isBooleanWithNan
+                    ? QuestionType.boolean
+                    : q.isMeasurement
+                    ? QuestionType.number
+                    : QuestionType.text,
+              ),
+          ],
+        ),
+    ];
+  }
+
+  bool _isAnswered(Question q) {
+    // boolean
+    if (q.type == QuestionType.boolean) {
+      final v = _boolAnswers[q.id ?? -1];
+      final touched = _naTouched[q.id ?? -1] == true;
+      if ((q.meta?.isBooleanWithNan ?? false) && v == null && touched) {
+        return true;
+      }
+      return v != null;
+    }
+    // text/number
+    final ctrl = _textCtrls[q.id ?? -1];
+    if (ctrl != null) return ctrl.text.trim().isNotEmpty;
+    return (q.text ?? '').trim().isNotEmpty;
+  }
+
+  void _saveAnswer(SectionData section, Question q) {
+    final id = q.id ?? -1;
+    String ans;
+    if (q.type == QuestionType.boolean) {
+      final v = _boolAnswers[id];
+      final touched = _naTouched[id] == true;
+      if ((q.meta?.isBooleanWithNan ?? false) && v == null && touched) {
+        ans = 'na';
+      } else {
+        ans = v == null ? '' : (v ? 'yes' : 'no');
+      }
+    } else {
+      ans = (_textCtrls[id]?.text ?? q.text ?? '').trim();
+    }
+    final isOk = q.meta?.isConforme(ans) ?? false;
+    final status = q.meta?.isBooleanWithNan == true && ans == 'na'
+        ? 'na'
+        : (isOk ? 'conform' : 'non_conform');
+    final item = InspectionAnswerPostItem(
+      inspectionId: widget.inspectionId,
+      inspectionQuestionId: q.id ?? 0,
+      answer: ans,
+      conformityStatus: status,
+      comment: _commentCtrls[id]?.text.trim().isEmpty == true
+          ? null
+          : _commentCtrls[id]?.text.trim() ?? q.comment,
+      imageLinks: List<String>.from(_imagesByQuestion[id] ?? const []),
+    );
+    final list = _answersBySection[section.id] ?? <InspectionAnswerPostItem>[];
+    final idx = list.indexWhere(
+      (e) => e.inspectionQuestionId == item.inspectionQuestionId,
+    );
+    if (idx >= 0) {
+      list[idx] = item;
+    } else {
+      list.add(item);
+    }
+    _answersBySection[section.id] = list;
   }
 }
 
@@ -292,6 +405,11 @@ class _QuestionView extends StatelessWidget {
     required this.onPrev,
     required this.onNext,
     required this.onUpdate,
+    required this.commentCtrls,
+    required this.textCtrls,
+    required this.boolAnswers,
+    required this.naTouched,
+    required this.imagesByQuestion,
   });
 
   final Color color;
@@ -301,10 +419,63 @@ class _QuestionView extends StatelessWidget {
   final VoidCallback onPrev;
   final VoidCallback onNext;
   final VoidCallback onUpdate;
+  final Map<int, TextEditingController> commentCtrls;
+  final Map<int, TextEditingController> textCtrls;
+  final Map<int, bool?> boolAnswers;
+  final Map<int, bool> naTouched;
+  final Map<int, List<String>> imagesByQuestion;
 
   @override
   Widget build(BuildContext context) {
     final q = questions[qIndex];
+    final int qid = q.id ?? -1;
+    commentCtrls[qid] ??= TextEditingController(text: q.comment ?? '');
+    if (q.type != QuestionType.boolean) {
+      textCtrls[qid] ??= TextEditingController(text: q.text ?? '');
+    }
+
+    final bool answered = () {
+      // Mirror _isAnswered logic locally using provided maps
+      if (q.type == QuestionType.boolean) {
+        final v = boolAnswers[qid];
+        final touched = naTouched[qid] == true;
+        if ((q.meta?.isBooleanWithNan ?? false) && v == null && touched) {
+          return true;
+        }
+        return v != null;
+      }
+      final ctrl = textCtrls[qid];
+      if (ctrl != null) return ctrl.text.trim().isNotEmpty;
+      return (q.text ?? '').trim().isNotEmpty;
+    }();
+
+    // Compute current answer string and conformity status/color for display
+    String currentAnswerString() {
+      if (q.type == QuestionType.boolean) {
+        final v = boolAnswers[qid];
+        final touched = naTouched[qid] == true;
+        if ((q.meta?.isBooleanWithNan ?? false) && v == null && touched) {
+          return 'na';
+        }
+        if (v == null) return '';
+        return v ? 'yes' : 'no';
+      }
+      return (textCtrls[qid]?.text ?? q.text ?? '').trim();
+    }
+
+    final String ansStr = currentAnswerString();
+    String statusText = '';
+    Color statusColor = Colors.transparent;
+    if (ansStr.isNotEmpty) {
+      if (ansStr == 'na') {
+        statusText = 'N/A';
+        statusColor = Colors.grey;
+      } else {
+        final ok = q.meta?.isConforme(ansStr) ?? false;
+        statusText = ok ? 'Conforme' : 'Non Conforme';
+        statusColor = ok ? const Color(0xFF25B66E) : const Color(0xFFE03B3B);
+      }
+    }
 
     return Stack(
       children: [
@@ -437,21 +608,22 @@ class _QuestionView extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                )..add(const Spacer()),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                        IconButton(
-                          onPressed: () {
-                            _showInfo(context);
-                          },
-                          icon: const Icon(
-                            Icons.info_outline,
-                            color: Colors.black,
-                            size: 25,
+                        if (q.explanation.isNotEmpty)
+                          IconButton(
+                            onPressed: () {
+                              _showInfo(context, q.explanation);
+                            },
+                            icon: const Icon(
+                              Icons.info_outline,
+                              color: Colors.black,
+                              size: 25,
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),
@@ -475,9 +647,14 @@ class _QuestionView extends StatelessWidget {
                             padding: const EdgeInsets.only(top: 18),
                             child: _BooleanRow(
                               color: color,
-                              value: q.yes,
+                              value: boolAnswers[qid],
+                              allowNa: q.meta?.isBooleanWithNan ?? false,
                               onChanged: (v) {
-                                q.yes = v;
+                                boolAnswers[qid] = v;
+                                // record explicit N/A selection for yes_no_na
+                                naTouched[qid] =
+                                    (q.meta?.isBooleanWithNan ?? false) &&
+                                    v == null;
                                 onUpdate();
                               },
                             ),
@@ -488,8 +665,9 @@ class _QuestionView extends StatelessWidget {
                             child: _InputField(
                               hint: 'Saisir une valeur',
                               keyboard: TextInputType.number,
+                              controller: textCtrls[qid],
                               onChanged: (t) {
-                                q.text = t;
+                                // controller already holds text
                                 onUpdate();
                               },
                             ),
@@ -501,25 +679,84 @@ class _QuestionView extends StatelessWidget {
                               hint: 'Texte',
                               keyboard: TextInputType.text,
                               maxLines: 3,
+                              controller: textCtrls[qid],
                               onChanged: (t) {
-                                q.text = t;
+                                // controller already holds text
                                 onUpdate();
                               },
                             ),
                           ),
 
                         // statut à droite
-                        if (q.status.isNotEmpty)
+                        if (statusText.isNotEmpty)
                           Align(
                             alignment: Alignment.centerRight,
                             child: Padding(
                               padding: const EdgeInsets.only(top: 6),
                               child: Text(
-                                q.status,
+                                statusText,
                                 style: TextStyle(
-                                  color: q.statusColor,
+                                  color: statusColor,
                                   fontWeight: FontWeight.w700,
                                 ),
+                              ),
+                            ),
+                          ),
+
+                        // selected images preview above comment
+                        if ((imagesByQuestion[qid] ?? const []).isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: SizedBox(
+                              height: 70,
+                              child: ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (ctx, i) {
+                                  final path = imagesByQuestion[qid]![i];
+                                  return Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: AspectRatio(
+                                          aspectRatio: 4 / 3,
+                                          child: Image.file(
+                                            File(path),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 0,
+                                        right: 0,
+                                        child: GestureDetector(
+                                          behavior: HitTestBehavior.opaque,
+                                          onTap: () {
+                                            imagesByQuestion[qid]!.removeAt(i);
+                                            onUpdate();
+                                          },
+                                          child: Container(
+                                            height: 24,
+                                            width: 24,
+                                            decoration: const BoxDecoration(
+                                              color: Colors.black87,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            alignment: Alignment.center,
+                                            child: const Icon(
+                                              Icons.close,
+                                              size: 14,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                                separatorBuilder: (_, i) =>
+                                    const SizedBox(width: 8),
+                                itemCount: imagesByQuestion[qid]!.length,
                               ),
                             ),
                           ),
@@ -535,17 +772,48 @@ class _QuestionView extends StatelessWidget {
                               // attach/comment icons above field (right aligned)
                               Row(
                                 children: [
-                                  Icon(
-                                    Icons.attachment_rounded,
-                                    size: 25,
-                                    color: Colors.grey.shade700,
+                                  GestureDetector(
+                                    onTap: () async {
+                                      final picker = ImagePicker();
+                                      final pic = await picker.pickImage(
+                                        source: ImageSource.gallery,
+                                      );
+                                      if (pic != null) {
+                                        final list =
+                                            imagesByQuestion[qid] ?? <String>[];
+                                        list.add(pic.path);
+                                        imagesByQuestion[qid] = list;
+                                        onUpdate();
+                                      }
+                                    },
+                                    child: Icon(
+                                      Icons.attachment_rounded,
+                                      size: 25,
+                                      color: Colors.grey.shade700,
+                                    ),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 10),
-                                    child: Icon(
-                                      Icons.photo_camera_outlined,
-                                      size: 25,
-                                      color: Colors.grey.shade700,
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        final picker = ImagePicker();
+                                        final pic = await picker.pickImage(
+                                          source: ImageSource.camera,
+                                        );
+                                        if (pic != null) {
+                                          final list =
+                                              imagesByQuestion[qid] ??
+                                              <String>[];
+                                          list.add(pic.path);
+                                          imagesByQuestion[qid] = list;
+                                          onUpdate();
+                                        }
+                                      },
+                                      child: Icon(
+                                        Icons.photo_camera_outlined,
+                                        size: 25,
+                                        color: Colors.grey.shade700,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -556,7 +824,8 @@ class _QuestionView extends StatelessWidget {
                                 child: _NavBubble(
                                   isLeft: false,
                                   color: color,
-                                  onTap: onNext,
+                                  onTap: answered ? onNext : null,
+                                  disabled: !answered,
                                 ),
                               ),
                             ],
@@ -567,8 +836,9 @@ class _QuestionView extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 30, bottom: 50),
                           child: _CommentField(
+                            controller: commentCtrls[qid],
                             onChanged: (t) {
-                              q.comment = t;
+                              // controller keeps text
                             },
                           ),
                         ),
@@ -584,7 +854,7 @@ class _QuestionView extends StatelessWidget {
     );
   }
 
-  void _showInfo(BuildContext context) {
+  void _showInfo(BuildContext context, String explanation) {
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -633,8 +903,7 @@ class _QuestionView extends StatelessWidget {
                 Expanded(
                   child: SingleChildScrollView(
                     child: Text(
-                      'ConclusLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\n'
-                      'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.ion',
+                      explanation,
                       style: GoogleFonts.mulish(
                         fontWeight: FontWeight.w600,
                         fontSize: 20,
@@ -657,11 +926,13 @@ class _BooleanRow extends StatelessWidget {
   const _BooleanRow({
     required this.color,
     required this.value,
+    this.allowNa = false,
     required this.onChanged,
   });
 
   final Color color;
   final bool? value; // true = oui, false = non, null = n/a
+  final bool allowNa;
   final ValueChanged<bool?> onChanged;
 
   Widget _chip(String label, bool? me) {
@@ -700,10 +971,11 @@ class _BooleanRow extends StatelessWidget {
           padding: const EdgeInsets.only(left: 12),
           child: _chip('NON', false),
         ),
-        Padding(
-          padding: const EdgeInsets.only(left: 12),
-          child: _chip('N/A', null),
-        ),
+        if (allowNa)
+          Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: _chip('N/A', null),
+          ),
       ],
     );
   }
@@ -715,16 +987,19 @@ class _InputField extends StatelessWidget {
     required this.keyboard,
     this.maxLines = 1,
     this.onChanged,
+    this.controller,
   });
 
   final String hint;
   final TextInputType keyboard;
   final int maxLines;
   final ValueChanged<String>? onChanged;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       keyboardType: keyboard,
       maxLines: maxLines,
       onChanged: onChanged,
@@ -751,12 +1026,14 @@ class _InputField extends StatelessWidget {
 }
 
 class _CommentField extends StatelessWidget {
-  const _CommentField({this.onChanged});
+  const _CommentField({this.onChanged, this.controller});
   final ValueChanged<String>? onChanged;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       minLines: 1,
       maxLines: 2,
       onChanged: onChanged,
@@ -790,28 +1067,37 @@ class _CommentField extends StatelessWidget {
 }
 
 class _NavBubble extends StatelessWidget {
-  const _NavBubble({required this.color, this.onTap, this.isLeft = true});
+  const _NavBubble({
+    required this.color,
+    this.onTap,
+    this.isLeft = true,
+    this.disabled = false,
+  });
 
   final Color color;
   final VoidCallback? onTap;
   final bool isLeft;
+  final bool disabled;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: color,
-      shape: const CircleBorder(),
-      child: InkWell(
-        onTap: onTap,
-        customBorder: const CircleBorder(),
-        child: Padding(
-          padding: const EdgeInsets.all(5),
-          child: Transform.rotate(
-            angle: isLeft ? math.pi : 0,
-            child: const Icon(
-              Icons.play_arrow_rounded,
-              color: Colors.white,
-              size: 50,
+    return Opacity(
+      opacity: disabled ? 0.4 : 1,
+      child: Material(
+        color: color,
+        shape: const CircleBorder(),
+        child: InkWell(
+          onTap: disabled ? null : onTap,
+          customBorder: const CircleBorder(),
+          child: Padding(
+            padding: const EdgeInsets.all(5),
+            child: Transform.rotate(
+              angle: isLeft ? math.pi : 0,
+              child: const Icon(
+                Icons.play_arrow_rounded,
+                color: Colors.white,
+                size: 50,
+              ),
             ),
           ),
         ),
@@ -853,28 +1139,48 @@ class _Bubbles extends CustomPainter {
 enum QuestionType { boolean, text, number }
 
 class Question {
-  Question({required this.title, required this.type});
+  Question({
+    required this.title,
+    required this.type,
+    this.id,
+    this.meta,
+    required this.explanation,
+  });
 
+  final int? id;
   final String title;
   final QuestionType type;
+  final InspectionQuestionLite? meta;
+  final String explanation;
 
   /// Responses
   bool? yes; // for boolean
   String? text; // text or number
   String? comment;
+  bool touched = false; // for yes_no_na to record an explicit N/A
+  final List<String> imageLinks = [];
 
-  /// computed status
-  String get status {
+  /// flat answer text for posting
+  String get answerString {
     switch (type) {
       case QuestionType.boolean:
+        if (meta?.isBooleanWithNan == true) {
+          if (yes == null && touched) return 'na';
+        }
         if (yes == null) return '';
-        if (yes == true) return 'Conforme';
-        return 'Non Conforme';
+        return yes == true ? 'yes' : 'no';
       case QuestionType.text:
       case QuestionType.number:
-        if ((text ?? '').trim().isEmpty) return '';
-        return 'Conforme';
+        return (text ?? '').trim();
     }
+  }
+
+  /// computed status via domain helper
+  String get status {
+    final ans = answerString;
+    if (ans.isEmpty) return '';
+    final ok = meta?.isConforme(ans) ?? false;
+    return ok ? 'Conforme' : 'Non Conforme';
   }
 
   Color get statusColor {
@@ -887,11 +1193,13 @@ class Question {
 
 class SectionData {
   SectionData({
+    required this.id,
     required this.name,
     required this.color,
     required this.questions,
   });
 
+  final int id;
   final String name;
   final Color color; // theme (vert / orange)
   final List<Question> questions;

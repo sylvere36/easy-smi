@@ -55,12 +55,13 @@ extension InspectionDetailEventPatterns on InspectionDetailEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _PostAnswers value)?  postAnswers,TResult Function( _Reset value)?  reset,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _PostAnswers value)?  postAnswers,TResult Function( _AddRemark value)?  addRemark,TResult Function( _Reset value)?  reset,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that);case _PostAnswers() when postAnswers != null:
-return postAnswers(_that);case _Reset() when reset != null:
+return postAnswers(_that);case _AddRemark() when addRemark != null:
+return addRemark(_that);case _Reset() when reset != null:
 return reset(_that);case _:
   return orElse();
 
@@ -79,12 +80,13 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _PostAnswers value)  postAnswers,required TResult Function( _Reset value)  reset,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _PostAnswers value)  postAnswers,required TResult Function( _AddRemark value)  addRemark,required TResult Function( _Reset value)  reset,}){
 final _that = this;
 switch (_that) {
 case _Fetch():
 return fetch(_that);case _PostAnswers():
-return postAnswers(_that);case _Reset():
+return postAnswers(_that);case _AddRemark():
+return addRemark(_that);case _Reset():
 return reset(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -102,12 +104,13 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _PostAnswers value)?  postAnswers,TResult? Function( _Reset value)?  reset,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _PostAnswers value)?  postAnswers,TResult? Function( _AddRemark value)?  addRemark,TResult? Function( _Reset value)?  reset,}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that);case _PostAnswers() when postAnswers != null:
-return postAnswers(_that);case _Reset() when reset != null:
+return postAnswers(_that);case _AddRemark() when addRemark != null:
+return addRemark(_that);case _Reset() when reset != null:
 return reset(_that);case _:
   return null;
 
@@ -125,11 +128,12 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int id)?  fetch,TResult Function( int id,  InspectionAnswersPostBody body)?  postAnswers,TResult Function()?  reset,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int id)?  fetch,TResult Function( int id,  InspectionAnswersPostBody body)?  postAnswers,TResult Function( int id,  String otherRemark,  String recommendation)?  addRemark,TResult Function()?  reset,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that.id);case _PostAnswers() when postAnswers != null:
-return postAnswers(_that.id,_that.body);case _Reset() when reset != null:
+return postAnswers(_that.id,_that.body);case _AddRemark() when addRemark != null:
+return addRemark(_that.id,_that.otherRemark,_that.recommendation);case _Reset() when reset != null:
 return reset();case _:
   return orElse();
 
@@ -148,11 +152,12 @@ return reset();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int id)  fetch,required TResult Function( int id,  InspectionAnswersPostBody body)  postAnswers,required TResult Function()  reset,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int id)  fetch,required TResult Function( int id,  InspectionAnswersPostBody body)  postAnswers,required TResult Function( int id,  String otherRemark,  String recommendation)  addRemark,required TResult Function()  reset,}) {final _that = this;
 switch (_that) {
 case _Fetch():
 return fetch(_that.id);case _PostAnswers():
-return postAnswers(_that.id,_that.body);case _Reset():
+return postAnswers(_that.id,_that.body);case _AddRemark():
+return addRemark(_that.id,_that.otherRemark,_that.recommendation);case _Reset():
 return reset();case _:
   throw StateError('Unexpected subclass');
 
@@ -170,11 +175,12 @@ return reset();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int id)?  fetch,TResult? Function( int id,  InspectionAnswersPostBody body)?  postAnswers,TResult? Function()?  reset,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int id)?  fetch,TResult? Function( int id,  InspectionAnswersPostBody body)?  postAnswers,TResult? Function( int id,  String otherRemark,  String recommendation)?  addRemark,TResult? Function()?  reset,}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that.id);case _PostAnswers() when postAnswers != null:
-return postAnswers(_that.id,_that.body);case _Reset() when reset != null:
+return postAnswers(_that.id,_that.body);case _AddRemark() when addRemark != null:
+return addRemark(_that.id,_that.otherRemark,_that.recommendation);case _Reset() when reset != null:
 return reset();case _:
   return null;
 
@@ -320,6 +326,76 @@ as InspectionAnswersPostBody,
 /// @nodoc
 
 
+class _AddRemark implements InspectionDetailEvent {
+  const _AddRemark({required this.id, required this.otherRemark, required this.recommendation});
+  
+
+ final  int id;
+ final  String otherRemark;
+ final  String recommendation;
+
+/// Create a copy of InspectionDetailEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$AddRemarkCopyWith<_AddRemark> get copyWith => __$AddRemarkCopyWithImpl<_AddRemark>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AddRemark&&(identical(other.id, id) || other.id == id)&&(identical(other.otherRemark, otherRemark) || other.otherRemark == otherRemark)&&(identical(other.recommendation, recommendation) || other.recommendation == recommendation));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,otherRemark,recommendation);
+
+@override
+String toString() {
+  return 'InspectionDetailEvent.addRemark(id: $id, otherRemark: $otherRemark, recommendation: $recommendation)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$AddRemarkCopyWith<$Res> implements $InspectionDetailEventCopyWith<$Res> {
+  factory _$AddRemarkCopyWith(_AddRemark value, $Res Function(_AddRemark) _then) = __$AddRemarkCopyWithImpl;
+@useResult
+$Res call({
+ int id, String otherRemark, String recommendation
+});
+
+
+
+
+}
+/// @nodoc
+class __$AddRemarkCopyWithImpl<$Res>
+    implements _$AddRemarkCopyWith<$Res> {
+  __$AddRemarkCopyWithImpl(this._self, this._then);
+
+  final _AddRemark _self;
+  final $Res Function(_AddRemark) _then;
+
+/// Create a copy of InspectionDetailEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? id = null,Object? otherRemark = null,Object? recommendation = null,}) {
+  return _then(_AddRemark(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,otherRemark: null == otherRemark ? _self.otherRemark : otherRemark // ignore: cast_nullable_to_non_nullable
+as String,recommendation: null == recommendation ? _self.recommendation : recommendation // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
 class _Reset implements InspectionDetailEvent {
   const _Reset();
   
@@ -352,7 +428,7 @@ String toString() {
 /// @nodoc
 mixin _$InspectionDetailState {
 
- bool get isLoading; InspectionDetail? get item; Option<Either<GlobalFailure, InspectionDetail>> get resultOption;
+ bool get isLoading; InspectionDetail? get item; Option<Either<GlobalFailure, InspectionDetail>> get resultOption; bool? get answerIsPosted; bool? get remarkIsPosted;
 /// Create a copy of InspectionDetailState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -363,16 +439,16 @@ $InspectionDetailStateCopyWith<InspectionDetailState> get copyWith => _$Inspecti
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InspectionDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InspectionDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.answerIsPosted, answerIsPosted) || other.answerIsPosted == answerIsPosted)&&(identical(other.remarkIsPosted, remarkIsPosted) || other.remarkIsPosted == remarkIsPosted));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,item,resultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,item,resultOption,answerIsPosted,remarkIsPosted);
 
 @override
 String toString() {
-  return 'InspectionDetailState(isLoading: $isLoading, item: $item, resultOption: $resultOption)';
+  return 'InspectionDetailState(isLoading: $isLoading, item: $item, resultOption: $resultOption, answerIsPosted: $answerIsPosted, remarkIsPosted: $remarkIsPosted)';
 }
 
 
@@ -383,7 +459,7 @@ abstract mixin class $InspectionDetailStateCopyWith<$Res>  {
   factory $InspectionDetailStateCopyWith(InspectionDetailState value, $Res Function(InspectionDetailState) _then) = _$InspectionDetailStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, InspectionDetail? item, Option<Either<GlobalFailure, InspectionDetail>> resultOption
+ bool isLoading, InspectionDetail? item, Option<Either<GlobalFailure, InspectionDetail>> resultOption, bool? answerIsPosted, bool? remarkIsPosted
 });
 
 
@@ -400,12 +476,14 @@ class _$InspectionDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of InspectionDetailState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? item = freezed,Object? resultOption = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? item = freezed,Object? resultOption = null,Object? answerIsPosted = freezed,Object? remarkIsPosted = freezed,}) {
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,item: freezed == item ? _self.item : item // ignore: cast_nullable_to_non_nullable
 as InspectionDetail?,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
-as Option<Either<GlobalFailure, InspectionDetail>>,
+as Option<Either<GlobalFailure, InspectionDetail>>,answerIsPosted: freezed == answerIsPosted ? _self.answerIsPosted : answerIsPosted // ignore: cast_nullable_to_non_nullable
+as bool?,remarkIsPosted: freezed == remarkIsPosted ? _self.remarkIsPosted : remarkIsPosted // ignore: cast_nullable_to_non_nullable
+as bool?,
   ));
 }
 
@@ -490,10 +568,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  InspectionDetail? item,  Option<Either<GlobalFailure, InspectionDetail>> resultOption)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  InspectionDetail? item,  Option<Either<GlobalFailure, InspectionDetail>> resultOption,  bool? answerIsPosted,  bool? remarkIsPosted)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _InspectionDetailState() when $default != null:
-return $default(_that.isLoading,_that.item,_that.resultOption);case _:
+return $default(_that.isLoading,_that.item,_that.resultOption,_that.answerIsPosted,_that.remarkIsPosted);case _:
   return orElse();
 
 }
@@ -511,10 +589,10 @@ return $default(_that.isLoading,_that.item,_that.resultOption);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  InspectionDetail? item,  Option<Either<GlobalFailure, InspectionDetail>> resultOption)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  InspectionDetail? item,  Option<Either<GlobalFailure, InspectionDetail>> resultOption,  bool? answerIsPosted,  bool? remarkIsPosted)  $default,) {final _that = this;
 switch (_that) {
 case _InspectionDetailState():
-return $default(_that.isLoading,_that.item,_that.resultOption);case _:
+return $default(_that.isLoading,_that.item,_that.resultOption,_that.answerIsPosted,_that.remarkIsPosted);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -531,10 +609,10 @@ return $default(_that.isLoading,_that.item,_that.resultOption);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  InspectionDetail? item,  Option<Either<GlobalFailure, InspectionDetail>> resultOption)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  InspectionDetail? item,  Option<Either<GlobalFailure, InspectionDetail>> resultOption,  bool? answerIsPosted,  bool? remarkIsPosted)?  $default,) {final _that = this;
 switch (_that) {
 case _InspectionDetailState() when $default != null:
-return $default(_that.isLoading,_that.item,_that.resultOption);case _:
+return $default(_that.isLoading,_that.item,_that.resultOption,_that.answerIsPosted,_that.remarkIsPosted);case _:
   return null;
 
 }
@@ -546,12 +624,14 @@ return $default(_that.isLoading,_that.item,_that.resultOption);case _:
 
 
 class _InspectionDetailState implements InspectionDetailState {
-  const _InspectionDetailState({required this.isLoading, required this.item, required this.resultOption});
+  const _InspectionDetailState({required this.isLoading, required this.item, required this.resultOption, this.answerIsPosted, this.remarkIsPosted});
   
 
 @override final  bool isLoading;
 @override final  InspectionDetail? item;
 @override final  Option<Either<GlobalFailure, InspectionDetail>> resultOption;
+@override final  bool? answerIsPosted;
+@override final  bool? remarkIsPosted;
 
 /// Create a copy of InspectionDetailState
 /// with the given fields replaced by the non-null parameter values.
@@ -563,16 +643,16 @@ _$InspectionDetailStateCopyWith<_InspectionDetailState> get copyWith => __$Inspe
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InspectionDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InspectionDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.answerIsPosted, answerIsPosted) || other.answerIsPosted == answerIsPosted)&&(identical(other.remarkIsPosted, remarkIsPosted) || other.remarkIsPosted == remarkIsPosted));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,item,resultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,item,resultOption,answerIsPosted,remarkIsPosted);
 
 @override
 String toString() {
-  return 'InspectionDetailState(isLoading: $isLoading, item: $item, resultOption: $resultOption)';
+  return 'InspectionDetailState(isLoading: $isLoading, item: $item, resultOption: $resultOption, answerIsPosted: $answerIsPosted, remarkIsPosted: $remarkIsPosted)';
 }
 
 
@@ -583,7 +663,7 @@ abstract mixin class _$InspectionDetailStateCopyWith<$Res> implements $Inspectio
   factory _$InspectionDetailStateCopyWith(_InspectionDetailState value, $Res Function(_InspectionDetailState) _then) = __$InspectionDetailStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, InspectionDetail? item, Option<Either<GlobalFailure, InspectionDetail>> resultOption
+ bool isLoading, InspectionDetail? item, Option<Either<GlobalFailure, InspectionDetail>> resultOption, bool? answerIsPosted, bool? remarkIsPosted
 });
 
 
@@ -600,12 +680,14 @@ class __$InspectionDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of InspectionDetailState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? item = freezed,Object? resultOption = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? item = freezed,Object? resultOption = null,Object? answerIsPosted = freezed,Object? remarkIsPosted = freezed,}) {
   return _then(_InspectionDetailState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,item: freezed == item ? _self.item : item // ignore: cast_nullable_to_non_nullable
 as InspectionDetail?,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
-as Option<Either<GlobalFailure, InspectionDetail>>,
+as Option<Either<GlobalFailure, InspectionDetail>>,answerIsPosted: freezed == answerIsPosted ? _self.answerIsPosted : answerIsPosted // ignore: cast_nullable_to_non_nullable
+as bool?,remarkIsPosted: freezed == remarkIsPosted ? _self.remarkIsPosted : remarkIsPosted // ignore: cast_nullable_to_non_nullable
+as bool?,
   ));
 }
 

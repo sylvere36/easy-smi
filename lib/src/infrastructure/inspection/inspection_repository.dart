@@ -168,4 +168,30 @@ class InspectionRepository implements IInspectionRepository {
     }
     return left(const GlobalFailure.noNetwork());
   }
+
+  @override
+  Future<Either<GlobalFailure, InspectionDetail>> postInspectionRemarks({
+    required int inspectionId,
+    required String otherRemark,
+    required String recommendation,
+  }) async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        final updated = await remoteDataSource.postInspectionRemarks(
+          inspectionId: inspectionId,
+          otherRemark: otherRemark,
+          recommendation: recommendation,
+        );
+        return right(updated);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
 }

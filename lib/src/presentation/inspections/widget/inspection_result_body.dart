@@ -1,15 +1,32 @@
+import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../gen/assets.gen.dart';
+import '../../../application/inspection/detail/inspection_detail_bloc.dart';
+import '../../../domain/inspection/models/inspection_answers_post.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
+import '../../_commons_widgets/loading_widget.dart';
 import '../../_commons_widgets/show_network_image_viewer.dart';
 
-/// ---------- MAIN PAGE ----------
 class InspectionResultBody extends StatefulWidget {
-  const InspectionResultBody({super.key});
+  const InspectionResultBody({
+    super.key,
+    required this.answersBySection,
+    required this.sectionTitles,
+    this.questionTitles = const {},
+    required this.inspectionId,
+    required this.inspectionFormId,
+  });
+
+  final Map<int, List<InspectionAnswerPostItem>> answersBySection;
+  final Map<int, String> sectionTitles;
+  final Map<int, String> questionTitles;
+  final int inspectionId;
+  final int inspectionFormId;
 
   @override
   State<InspectionResultBody> createState() => _InspectionResultBodyState();
@@ -21,99 +38,86 @@ class _InspectionResultBodyState extends State<InspectionResultBody> {
   @override
   void initState() {
     super.initState();
-    // --- fake data (branche tes vraies données ici) ---
-    sections = [
-      ResultSection(
-        title: 'Aménagement du hall',
-        questions: [
-          QuestionResult(
-            id: 'q1',
-            answer: Answer.non,
-            title:
-                'Le chantier est-il rangé et nettoyé après les travaux effectués par l’équipe déléguée pour la tâche ?',
-            comment:
-                'Nous constatons que le chantier est nettoyé et les ouvriers du chantier s’alignent...',
-            evidences: _pics(3),
-          ),
-          QuestionResult(
-            id: 'q2',
-            answer: Answer.non,
-            title:
-                'Le chantier est-il rangé et nettoyé après les travaux effectués par l’équipe déléguée pour la tâche ?',
-            comment:
-                'Constat identique au point précédent, à améliorer pour la suite.',
-            evidences: _pics(1),
-          ),
-          QuestionResult(
-            id: 'q3',
-            title:
-                'Le chantier est-il rangé et nettoyé après les travaux effectués par l’équipe déléguée pour la tâche ?',
-
-            score: 80,
-            comment:
-                'Bon niveau global, quelques écarts mineurs observés à corriger.',
-            evidences: _pics(2),
-          ),
-        ],
-      ),
-      ResultSection(
-        title: 'Aménagement du hall',
-        questions: [
-          QuestionResult(
-            id: 'q4',
-            title:
-                'Le chantier est-il rangé et nettoyé après les travaux effectués par l’équipe déléguée pour la tâche ?',
-            evidences: _pics(3),
-            text: 'Texte libre',
-            comment:
-                'Plusieurs déchets non évacués en fin de journée; sensibilisation nécessaire.',
-          ),
-          QuestionResult(
-            id: 'q5',
-            title:
-                'Le chantier est-il rangé et nettoyé après les travaux effectués par l’équipe déléguée pour la tâche ?',
-            answer: Answer.na,
-            evidences: _pics(2),
-            comment: 'N/A pour cette zone sur la période évaluée.',
-          ),
-        ],
-      ),
-    ];
+    if (widget.answersBySection.isNotEmpty) {
+      sections = _buildFromPayload();
+    } else {
+      // Fallback demo data (shouldn't be used in production)
+      sections = [];
+    }
   }
 
-  // Images stables, pas de 404, seed pour des visuels reproductibles
-  static List<String> _pics(int n, {int w = 400, int h = 300}) =>
-      List.generate(n, (i) => 'https://picsum.photos/seed/pic$i/$w/$h');
+  List<ResultSection> _buildFromPayload() {
+    final List<ResultSection> res = [];
+    widget.answersBySection.forEach((sectionId, items) {
+      final title = widget.sectionTitles[sectionId] ?? 'Section $sectionId';
+      final questions = <QuestionResult>[];
+      for (final it in items) {
+        final qId = it.inspectionQuestionId.toString();
+        final t =
+            widget.questionTitles[it.inspectionQuestionId] ??
+            'Question ${it.inspectionQuestionId}';
+        final ans = it.answer.toLowerCase();
+        Answer? answer;
+        String? text;
+        if (ans == 'yes') {
+          answer = Answer.oui;
+        } else if (ans == 'no') {
+          answer = Answer.non;
+        } else if (ans == 'na') {
+          answer = Answer.na;
+        } else {
+          text = it.answer;
+        }
+        final status = it.conformityStatus.toLowerCase();
+        questions.add(
+          QuestionResult(
+            id: qId,
+            title: t,
+            answer: answer,
+            text: text,
+            comment: it.comment ?? '',
+            evidences: it.imageLinks,
+            status: status.isEmpty ? null : status,
+          ),
+        );
+      }
+      res.add(ResultSection(title: title, questions: questions));
+    });
+    return res;
+  }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          _header(context),
-          for (final s in sections) _section(s),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-            child: _conclusionButton(),
-          ),
-        ],
+      child: BlocBuilder<InspectionDetailBloc, InspectionDetailState>(
+        builder: (context, state) {
+          return state.isLoading == true
+              ? const Center(child: LoadingWidget())
+              : Column(
+                  children: [
+                    _header(context, state.item?.mission ?? ''),
+                    for (final s in sections) _section(s),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 20,
+                      ),
+                      child: _conclusionButton(),
+                    ),
+                  ],
+                );
+        },
       ),
     );
   }
 
   // ---------- Header “pills” ----------
-  Widget _header(BuildContext context) {
+  Widget _header(BuildContext context, String mission) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _pill(
-            context,
-            text:
-                'INSPECTION SUR LA SECURITE ZONE DE STOCKAGE DES PRODUITS CHIMIQUES',
-          ),
-        ],
+        children: [_pill(context, text: mission)],
       ),
     );
   }
@@ -197,10 +201,25 @@ class _InspectionResultBodyState extends State<InspectionResultBody> {
 
   // ---------- Question Tile ----------
   Widget _questionTile({required int index, required QuestionResult q}) {
-    final badgeColor = q.isConform ? _ok : _danger;
-    final badgeText = q.isConform
-        ? 'Conformité détectée'
-        : 'Non conformité détectée';
+    // Badge based on status: conform / non_conform / na
+    final st = (q.status ?? '').toLowerCase();
+    late final Color badgeColor;
+    late final String badgeText;
+    if (st == 'na') {
+      badgeColor = Colors.grey;
+      badgeText = 'N/A';
+    } else if (st == 'conform') {
+      badgeColor = _ok;
+      badgeText = 'Conformité détectée';
+    } else if (st == 'non_conform') {
+      badgeColor = _danger;
+      badgeText = 'Non conformité détectée';
+    } else {
+      // Fallback: infer from answer when no status provided
+      final isOk = q.answer == Answer.oui;
+      badgeColor = isOk ? _ok : _danger;
+      badgeText = isOk ? 'Conformité détectée' : 'Non conformité détectée';
+    }
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(14, 10, 14, 6),
@@ -404,18 +423,74 @@ class _InspectionResultBodyState extends State<InspectionResultBody> {
           itemCount: urls.length,
           separatorBuilder: (_, _) => const SizedBox(width: 8),
           itemBuilder: (_, i) {
-            return InkWell(
-              onTap: () {
-                showNetworkImageViewer(context, initialIndex: i, images: urls);
-              },
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(3),
-                child: AspectRatio(
-                  aspectRatio: 4 / 3,
-                  child: Image.network(urls[i], fit: BoxFit.cover),
+            final u = urls[i];
+            final isFileUri = u.startsWith('file://');
+            final isAbsolutePath =
+                !u.contains('://') &&
+                (u.startsWith('/') ||
+                    u.contains('Library/') ||
+                    u.contains('tmp/'));
+            if (isFileUri || isAbsolutePath) {
+              // Local file
+              final path = isFileUri ? Uri.parse(u).toFilePath() : u;
+              return InkWell(
+                onTap: () {
+                  // Simple fullscreen preview for local file
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => Scaffold(
+                        backgroundColor: Colors.black,
+                        appBar: AppBar(
+                          backgroundColor: Colors.black,
+                          iconTheme: const IconThemeData(color: Colors.white),
+                        ),
+                        body: Center(
+                          child: InteractiveViewer(
+                            child: Image.file(File(path), fit: BoxFit.contain),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(3),
+                  child: AspectRatio(
+                    aspectRatio: 4 / 3,
+                    child: Image.file(
+                      File(path),
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => const ColoredBox(
+                        color: Color(0xFFECEFF1),
+                        child: Center(child: Icon(Icons.broken_image)),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            );
+              );
+            } else {
+              // Network image
+              return InkWell(
+                onTap: () {
+                  // Open only the tapped image to avoid mixing with local paths
+                  showNetworkImageViewer(context, images: [u]);
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(3),
+                  child: AspectRatio(
+                    aspectRatio: 4 / 3,
+                    child: Image.network(
+                      u,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => const ColoredBox(
+                        color: Color(0xFFECEFF1),
+                        child: Center(child: Icon(Icons.broken_image)),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }
           },
         ),
       ),
@@ -649,7 +724,18 @@ class _InspectionResultBodyState extends State<InspectionResultBody> {
         elevation: 0,
       ),
       onPressed: () {
-        context.router.push(const InspectionResultSavingRoute());
+        context.router.push(
+          InspectionResultSavingRoute(
+            inspectionId: widget.inspectionId,
+            inspectionFormId: widget.inspectionFormId,
+            answers: InspectionAnswersPostBody(
+              answers: widget.answersBySection.entries
+                  .map((e) => e.value)
+                  .expand((element) => element)
+                  .toList(),
+            ),
+          ),
+        );
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -683,6 +769,8 @@ class QuestionResult {
   String? text;
   String comment;
   List<String> evidences; // image urls
+  // Optional backend/domain status: 'conform' | 'non_conform' | 'na'
+  final String? status;
   bool get isConform => answer == Answer.oui && (score == null || score! >= 70);
 
   QuestionResult({
@@ -693,6 +781,7 @@ class QuestionResult {
     this.text,
     this.comment = '',
     this.evidences = const [],
+    this.status,
   });
 }
 

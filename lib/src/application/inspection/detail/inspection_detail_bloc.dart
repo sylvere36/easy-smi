@@ -45,13 +45,41 @@ class InspectionDetailBloc
       res.fold(
         (l) =>
             emit(state.copyWith(isLoading: false, resultOption: some(left(l)))),
-        (detail) => emit(
-          state.copyWith(
-            isLoading: false,
-            item: detail,
-            resultOption: some(right(detail)),
-          ),
-        ),
+        (detail) {
+          emit(
+            state.copyWith(
+              isLoading: false,
+              item: detail,
+              answerIsPosted: true,
+              resultOption: some(right(detail)),
+            ),
+          );
+          emit(state.copyWith(answerIsPosted: null));
+        },
+      );
+    });
+
+    on<_AddRemark>((event, emit) async {
+      emit(state.copyWith(isLoading: true, resultOption: none()));
+      final res = await repository.postInspectionRemarks(
+        inspectionId: event.id,
+        otherRemark: event.otherRemark,
+        recommendation: event.recommendation,
+      );
+      res.fold(
+        (l) =>
+            emit(state.copyWith(isLoading: false, resultOption: some(left(l)))),
+        (detail) {
+          emit(
+            state.copyWith(
+              isLoading: false,
+              item: detail,
+              remarkIsPosted: true,
+              resultOption: some(right(detail)),
+            ),
+          );
+          emit(state.copyWith(remarkIsPosted: null));
+        },
       );
     });
   }

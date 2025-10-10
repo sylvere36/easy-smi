@@ -22,6 +22,10 @@ abstract class IFileManager {
   /// Helper: Upload a list of file paths and return only their URLs
   Future<List<String>> uploadManyAndGetUrls({required List<String> filePaths});
 
+  Future<List<String>> uploadManyAndGetFullUrls({
+    required List<String> filePaths,
+  });
+
   /// Delete a previously uploaded file by its storage path
   /// Calls DELETE /minio/media/{path}
   Future<void> delete({required String path});
@@ -39,6 +43,12 @@ class FileManager implements IFileManager {
   @override
   Future<UploadResponse> upload({required String filePath}) async {
     try {
+      if (filePath.trim().isEmpty) {
+        throw ServerException('File path is empty');
+      }
+      if (filePath.contains('http')) {
+        return UploadResponse.fromJson({'path': filePath, 'url': filePath});
+      }
       const String request = '/minio/media';
       final fileName = filePath.split('/').last;
       final formData = FormData.fromMap({
@@ -74,11 +84,27 @@ class FileManager implements IFileManager {
     required List<String> filePaths,
   }) async {
     if (filePaths.isEmpty) return <UploadResponse>[];
-    return Future.wait(filePaths.map((p) => upload(filePath: p)));
+    return Future.wait(
+      filePaths.map((p) {
+        final path = p.trim();
+        if (path.contains('http')) {
+          return Future.value(
+            UploadResponse.fromJson({'path': path, 'url': path}),
+          );
+        }
+        return upload(filePath: path);
+      }),
+    );
   }
 
   @override
   Future<String> uploadAndGetUrl({required String filePath}) async {
+    if (filePath.trim().isEmpty) {
+      throw ServerException('File path is empty');
+    }
+    if (filePath.contains('http')) {
+      return filePath;
+    }
     final up = await upload(filePath: filePath);
     return up.path;
   }
@@ -135,5 +161,23 @@ class FileManager implements IFileManager {
     } catch (e) {
       throw ServerException(e.toString());
     }
+  }
+
+  @override
+  Future<List<String>> uploadManyAndGetFullUrls({
+    required List<String> filePaths,
+  }) {
+    return Future.wait(
+      filePaths.map((path) async {
+        if (path.trim().isEmpty) {
+          throw ServerException('File path is empty');
+        }
+        if (path.contains('http')) {
+          return path;
+        }
+        final up = await upload(filePath: path);
+        return up.url;
+      }).toList(),
+    );
   }
 }

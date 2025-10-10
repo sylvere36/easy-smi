@@ -664,7 +664,9 @@ class _HotPermitDetailBodyState extends State<HotPermitDetailBody> {
   Widget _reportButton() {
     return GestureDetector(
       onTap: () {
-        context.router.push(const InspectionResultRoute());
+        context.router.push(
+          InspectionResultRoute(inspectionId: 0, inspectionFormId: 0),
+        );
       },
       child: Container(
         width: double.infinity,

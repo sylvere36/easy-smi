@@ -83,8 +83,8 @@ class _StartInspectionDetailPageState extends State<StartInspectionDetailPage> {
           onContinue: () {
             context.router.push(
               InspectionSectionRoute(
-                inspectionFormId: widget.inspection.id,
-                inspectionId: widget.inspection.inspectionFormId,
+                inspectionFormId: widget.inspection.inspectionFormId,
+                inspectionId: widget.inspection.id,
               ),
             );
           },

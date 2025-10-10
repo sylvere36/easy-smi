@@ -1,5 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../injection_container.dart';
+import '../../application/inspection/form/inspection_form_bloc.dart';
 
 import 'widget/section_flow.dart';
 
@@ -17,10 +21,15 @@ class InspectionSectionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SectionFlowScreen(
-      inspectionId: inspectionId,
-      inspectionFormId: inspectionFormId,
-      title: 'inspectionItem.mission',
+    return BlocProvider(
+      create: (_) =>
+          sl<InspectionFormBloc>()
+            ..add(InspectionFormEvent.fetchStructure(id: inspectionFormId)),
+      child: SectionFlowScreen(
+        inspectionId: inspectionId,
+        inspectionFormId: inspectionFormId,
+        title: 'inspectionItem.mission',
+      ),
     );
   }
 }

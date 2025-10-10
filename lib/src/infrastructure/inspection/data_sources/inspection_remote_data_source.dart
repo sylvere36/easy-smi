@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 
@@ -9,6 +10,7 @@ import '../../../domain/inspection/models/inspection_form_detail.dart';
 import '../../../domain/inspection/models/inspection_form_item.dart';
 import '../../../domain/inspection/models/inspection_item.dart';
 import '../../_commons/exceptions.dart';
+import '../../_commons/files/file_manager.dart';
 import '../../_commons/network/app_requests.dart';
 import '../../_commons/throw_error.dart';
 
@@ -36,11 +38,21 @@ abstract class IInspectionRemoteDataSource {
     required int inspectionId,
     required InspectionAnswersPostBody body,
   });
+
+  Future<InspectionDetail> postInspectionRemarks({
+    required int inspectionId,
+    required String otherRemark,
+    required String recommendation,
+  });
 }
 
 class InspectionRemoteDataSource implements IInspectionRemoteDataSource {
   final IAppRequests httpClient;
-  InspectionRemoteDataSource({required this.httpClient});
+  final IFileManager fileManager;
+  InspectionRemoteDataSource({
+    required this.httpClient,
+    required this.fileManager,
+  });
 
   @override
   Future<(List<InspectionItem>, Pagination)> getInspections({
@@ -197,10 +209,95 @@ class InspectionRemoteDataSource implements IInspectionRemoteDataSource {
     required InspectionAnswersPostBody body,
   }) async {
     try {
+      // Upload-first: ensure all imageLinks are server paths; keep existing http links as-is
+      final updatedAnswers = <InspectionAnswerPostItem>[];
+      for (final ans in body.answers) {
+        final original = ans.imageLinks;
+        if (original.isEmpty) {
+          updatedAnswers.add(ans);
+          continue;
+        }
+        // Collect non-http paths (local) to upload, preserving order mapping
+        final toUploadPaths = <String>[];
+        for (final link in original) {
+          if (link.startsWith('http')) {
+            continue;
+          }
+          final localPath = link.startsWith('file://')
+              ? Uri.parse(link).toFilePath()
+              : link;
+          toUploadPaths.add(localPath);
+        }
+        // Upload local files and get server paths
+        final uploadedPaths = await fileManager.uploadManyAndGetFullUrls(
+          filePaths: toUploadPaths,
+        );
+        // Rebuild merged list preserving original order
+        final merged = <String>[];
+        int upIdx = 0;
+        for (final link in original) {
+          if (link.startsWith('http')) {
+            merged.add(link);
+          } else {
+            merged.add(uploadedPaths[upIdx]);
+            upIdx++;
+          }
+        }
+        updatedAnswers.add(
+          InspectionAnswerPostItem(
+            id: ans.id,
+            inspectionId: ans.inspectionId,
+            inspectionQuestionId: ans.inspectionQuestionId,
+            answer: ans.answer,
+            conformityStatus: ans.conformityStatus,
+            comment: ans.comment,
+            imageLinks: merged,
+            createdAt: ans.createdAt,
+            updatedAt: ans.updatedAt,
+          ),
+        );
+      }
+
+      // Post answers with updated imageLinks
+      log(
+        'Posting answers with updated imageLinks: ${updatedAnswers.map((e) => e.imageLinks).toList()}',
+      );
+
+      // All answers are ready; post to server
+      log(
+        'Posting answers : ${updatedAnswers.map((e) => e.toJson()).toList()}',
+      );
+
       final String request = '/conformity/inspections/$inspectionId/answers';
       final Response response = await httpClient.postRequest(
         request,
-        body: body.toJson(),
+        body: InspectionAnswersPostBody(answers: updatedAnswers).toJson(),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final raw = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final data = raw['data'] as Map<String, dynamic>? ?? {};
+        return InspectionDetail.fromJson(data);
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<InspectionDetail> postInspectionRemarks({
+    required int inspectionId,
+    required String otherRemark,
+    required String recommendation,
+  }) async {
+    try {
+      final String request = '/conformity/inspections/$inspectionId/remarks';
+      final Response response = await httpClient.postRequest(
+        request,
+        body: {'other_remark': otherRemark, 'recommendation': recommendation},
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final raw = response.data is String

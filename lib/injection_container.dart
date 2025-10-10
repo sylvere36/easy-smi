@@ -213,7 +213,7 @@ Future<void> initPermits() async {
 
 Future<void> initInspections() async {
   sl.registerLazySingleton<IInspectionRemoteDataSource>(
-    () => InspectionRemoteDataSource(httpClient: sl()),
+    () => InspectionRemoteDataSource(httpClient: sl(), fileManager: sl()),
   );
   sl.registerLazySingleton<IInspectionRepository>(
     () => InspectionRepository(networkInfo: sl(), remoteDataSource: sl()),

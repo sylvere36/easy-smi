@@ -1,25 +1,79 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../gen/assets.gen.dart';
+import '../../../injection_container.dart';
+import '../../application/inspection/detail/inspection_detail_bloc.dart';
+import '../../domain/inspection/models/inspection_answers_post.dart';
+import '../_commons_widgets/loading_widget.dart';
 import '../_commons_widgets/my_scaffold.dart';
+import '../_commons_widgets/my_toast.dart';
 
 @RoutePage()
 class InspectionResultSavingPage extends StatelessWidget {
   static const String routeName = '/inspection-result-saving';
-  const InspectionResultSavingPage({super.key});
+  final InspectionAnswersPostBody answers;
+  final int inspectionId;
+  final int inspectionFormId;
+  const InspectionResultSavingPage({
+    super.key,
+    required this.answers,
+    required this.inspectionId,
+    required this.inspectionFormId,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return MyScaffold(
-      appBarTitle: 'RESULTAT DE L\'INSPECTION',
-      paddingHorizontale: 0,
-      body: ResultNotesBody(
-        headerText:
-            'INSPECTION SUR LA SECURITE ZONE DE STOCKAGE DES PRODUITS CHIMIQUES',
-        onSaveDraft: () {},
-        onSend: () {},
+    return BlocProvider(
+      create: (context) =>
+          sl<InspectionDetailBloc>()
+            ..add(InspectionDetailEvent.fetch(id: inspectionId)),
+      child: BlocConsumer<InspectionDetailBloc, InspectionDetailState>(
+        listener: (context, state) {
+          if (state.remarkIsPosted == true) {
+            successToast(
+              context: context,
+              msg: 'Réponses enregistrées avec succès',
+            );
+            AutoRouter.of(context).popUntilRoot();
+          }
+        },
+        builder: (context, state) {
+          return MyScaffold(
+            appBarTitle: 'RESULTAT DE L\'INSPECTION',
+            paddingHorizontale: 0,
+            body: state.item == null
+                ? const Center(child: LoadingWidget())
+                : ResultNotesBody(
+                    headerText: state.item?.mission ?? 'Inspection sans nom',
+                    onSaveDraft: () {},
+                    isLoading: state.isLoading,
+                    onSend: (remarks, recommendations) {
+                      if (remarks == null || recommendations == null) {
+                        errorToast(
+                          context: context,
+                          msg: 'Veuillez remplir tous les champs',
+                        );
+                        return;
+                      }
+                      BlocProvider.of<InspectionDetailBloc>(context).add(
+                        InspectionDetailEvent.postAnswers(
+                          id: inspectionId,
+                          body: answers,
+                        ),
+                      );
+                      // ..add(
+                      //   InspectionDetailEvent.addRemark(
+                      //     id: inspectionId,
+                      //     otherRemark: remarks,
+                      //     recommendation: recommendations,
+                      //   ),
+                      // );
+                    },
+                  ),
+          );
+        },
       ),
     );
   }
@@ -31,11 +85,13 @@ class ResultNotesBody extends StatefulWidget {
     required this.headerText,
     this.onSaveDraft,
     this.onSend,
+    this.isLoading = false,
   });
 
   final String headerText;
   final VoidCallback? onSaveDraft;
-  final VoidCallback? onSend;
+  final Function(String?, String?)? onSend;
+  final bool isLoading;
 
   @override
   State<ResultNotesBody> createState() => _ResultNotesBodyState();
@@ -188,106 +244,82 @@ class _ResultNotesBodyState extends State<ResultNotesBody> {
               child: Row(
                 children: [
                   // Draft button
-                  Expanded(
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        foregroundColor: _navy,
-                        textStyle: GoogleFonts.inter(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      onPressed: () {
-                        FocusScope.of(context).unfocus();
-                        widget.onSaveDraft?.call();
-                        context.pop();
-                        context.pop();
-                        context.pop();
-                        context.pop();
-                        context.pop();
-                      },
-                      child: const Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text('Enregistrer brouillon'),
-                      ),
-                    ),
-                  ),
+                  // Expanded(
+                  //   child: TextButton(
+                  //     style: TextButton.styleFrom(
+                  //       padding: const EdgeInsets.symmetric(vertical: 18),
+                  //       foregroundColor: _navy,
+                  //       textStyle: GoogleFonts.inter(
+                  //         fontSize: 17,
+                  //         fontWeight: FontWeight.w700,
+                  //       ),
+                  //     ),
+                  //     onPressed: () {
+                  //       FocusScope.of(context).unfocus();
+                  //       widget.onSaveDraft?.call();
+                  //       context.pop();
+                  //       context.pop();
+                  //       context.pop();
+                  //       context.pop();
+                  //       context.pop();
+                  //     },
+                  //     child: const Align(
+                  //       alignment: Alignment.centerLeft,
+                  //       child: Text('Enregistrer brouillon'),
+                  //     ),
+                  //   ),
+                  // ),
 
                   // Send button
                   Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: _navy,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          textStyle: GoogleFonts.inter(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        onPressed: () {
-                          FocusScope.of(context).unfocus();
-                          showDialog(
-                            context: context,
-                            builder: (context) => Dialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Assets.svgs.success.svg(),
-                                    Text(
-                                      'Votre inspection a été envoyé en validation',
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    const Padding(
-                                      padding: EdgeInsets.only(top: 10),
-                                      child: Divider(color: Colors.grey),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        widget.onSend?.call();
-                                        context.pop();
-                                        context.pop();
-                                        context.pop();
-                                        context.pop();
-                                        context.pop();
-                                        context.pop();
-                                      },
-                                      child: const Text('OK'),
-                                    ),
-                                  ],
+                    child: widget.isLoading == true
+                        ? const Center(child: LoadingWidget())
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: _navy,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                textStyle: GoogleFonts.inter(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
+                              onPressed: () {
+                                FocusScope.of(context).unfocus();
+                                if (_remarksCtrl.text.isEmpty ||
+                                    _recommendCtrl.text.isEmpty) {
+                                  // Call the onSend callback with remarks and recommendations
+                                  errorToast(
+                                    context: context,
+                                    msg: 'Veuillez remplir tous les champs',
+                                  );
+                                  return;
+                                }
+                                widget.onSend?.call(
+                                  _remarksCtrl.text,
+                                  _recommendCtrl.text,
+                                );
+                              },
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('Envoyer'),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 10),
+                                    child: Icon(Icons.send_rounded, size: 26),
+                                  ),
+                                ],
+                              ),
                             ),
-                          );
-                        },
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('Envoyer'),
-                            Padding(
-                              padding: EdgeInsets.only(left: 10),
-                              child: Icon(Icons.send_rounded, size: 26),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                          ),
                   ),
                 ],
               ),

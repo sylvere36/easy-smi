@@ -6,6 +6,8 @@ abstract class InspectionDetailState with _$InspectionDetailState {
     required bool isLoading,
     required InspectionDetail? item,
     required Option<Either<GlobalFailure, InspectionDetail>> resultOption,
+    bool? answerIsPosted,
+    bool? remarkIsPosted,
   }) = _InspectionDetailState;
 
   factory InspectionDetailState.initial() =>
