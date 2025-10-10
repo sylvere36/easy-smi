@@ -59,5 +59,21 @@ class InspectionFormBloc
         ),
       );
     });
+
+    on<_FetchStructure>((event, emit) async {
+      emit(state.copyWith(isLoading: true, resultOption: none(), sections: []));
+      final res = await repository.getInspectionFormStructure(id: event.id);
+      res.fold(
+        (l) =>
+            emit(state.copyWith(isLoading: false, resultOption: some(left(l)))),
+        (sections) => emit(
+          state.copyWith(
+            isLoading: false,
+            sections: sections,
+            resultOption: some(right(sections)),
+          ),
+        ),
+      );
+    });
   }
 }

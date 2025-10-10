@@ -6,5 +6,7 @@ abstract class InspectionFormEvent with _$InspectionFormEvent {
       _Fetch;
   const factory InspectionFormEvent.fetchDetail({required int id}) =
       _FetchDetail;
+  const factory InspectionFormEvent.fetchStructure({required int id}) =
+      _FetchStructure;
   const factory InspectionFormEvent.reset() = _Reset;
 }

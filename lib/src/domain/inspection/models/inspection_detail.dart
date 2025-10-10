@@ -70,6 +70,106 @@ class InspectionQuestionLite {
         expectedAnswer: json['expected_answer']?.toString(),
         explanationNote: json['explanation_note'] as String?,
       );
+
+  // Helpers for question types
+  bool get isBoolean => questionType.toLowerCase() == 'yes_no';
+  bool get isBooleanWithNan => questionType.toLowerCase() == 'yes_no_na';
+  bool get isMeasurement => questionType.toLowerCase() == 'measurement';
+  // alias to match requested naming
+  bool get isMeasurment => isMeasurement;
+  bool get isDescription => questionType.toLowerCase() == 'description';
+
+  /// Evaluate if a provided raw answer conforms to the expected_answer.
+  ///
+  /// Rules:
+  /// - yes_no / yes_no_na: compare normalized strings ("yes"/"no"/"na").
+  /// - measurement: parse numeric answer and evaluate all constraints in
+  ///                expected_answer of the form "<4", ">= 3" joined with "et".
+  /// - description: if expected_answer is empty -> true, else substring match.
+  bool isConformeWith(String? rawAnswer) {
+    final exp = (expectedAnswer ?? '').trim();
+    final ans = (rawAnswer ?? '').trim();
+
+    if (exp.isEmpty) {
+      // No expectation -> considered conform
+      return true;
+    }
+
+    if (isBoolean || isBooleanWithNan) {
+      final norm = _normalizeYesNoNa(ans);
+      final expNorm = _normalizeYesNoNa(exp);
+      if (norm == null || expNorm == null) return false;
+      return norm == expNorm;
+    }
+
+    if (isMeasurement) {
+      final value = _toDouble(ans);
+      if (value == null) return false;
+      // Support expressions like "<4 et >3" or ">= 2 et <= 5"
+      final clauses = exp
+          .toLowerCase()
+          .replaceAll(',', '.')
+          .split(RegExp(r'\bet\b'))
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
+      for (final c in clauses) {
+        final ok = _evalNumericClause(value, c);
+        if (!ok) return false;
+      }
+      return true;
+    }
+
+    if (isDescription) {
+      // Simple contains check, case-insensitive
+      return ans.toLowerCase().contains(exp.toLowerCase());
+    }
+
+    // Unknown type: fallback to equality
+    return ans.toLowerCase() == exp.toLowerCase();
+  }
+
+  // Convenience wrapper using non-nullable signature as requested
+  bool isConforme(String rawAnswer) => isConformeWith(rawAnswer);
+
+  String? _normalizeYesNoNa(String s) {
+    final v = s.trim().toLowerCase();
+    if (v == 'yes' || v == 'oui' || v == 'o') return 'yes';
+    if (v == 'no' || v == 'non' || v == 'n') return 'no';
+    if (v == 'na' || v == 'n/a') return 'na';
+    return null;
+  }
+
+  double? _toDouble(String s) {
+    final cleaned = s.replaceAll(',', '.');
+    return double.tryParse(cleaned);
+  }
+
+  bool _evalNumericClause(double value, String clause) {
+    final c = clause.replaceAll(' ', '');
+    final regex = RegExp(r'^(<=|>=|<|>|==|!=)(-?\d+(?:\.\d+)?)$');
+    final m = regex.firstMatch(c);
+    if (m == null) return false;
+    final op = m.group(1)!;
+    final numStr = m.group(2)!;
+    final target = double.tryParse(numStr);
+    if (target == null) return false;
+    switch (op) {
+      case '<':
+        return value < target;
+      case '<=':
+        return value <= target;
+      case '>':
+        return value > target;
+      case '>=':
+        return value >= target;
+      case '==':
+        return value == target;
+      case '!=':
+        return value != target;
+    }
+    return false;
+  }
 }
 
 class InspectionSectionWithQuestions {

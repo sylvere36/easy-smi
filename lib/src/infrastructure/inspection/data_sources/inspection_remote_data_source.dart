@@ -26,6 +26,10 @@ abstract class IInspectionRemoteDataSource {
     required int inspectionFormId,
   });
 
+  Future<List<InspectionSectionWithQuestions>> getInspectionFormStructure({
+    required int id,
+  });
+
   Future<InspectionFormDetail> getInspectionFormDetail({required int id});
 
   Future<InspectionDetail> postInspectionAnswers({
@@ -125,6 +129,30 @@ class InspectionRemoteDataSource implements IInspectionRemoteDataSource {
   }) async {
     try {
       final String request = '/conformity/inspection-forms/$inspectionFormId';
+      final Response response = await httpClient.getRequest(request);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final raw = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final list = (raw['data'] as List<dynamic>? ?? [])
+            .whereType<Map<String, dynamic>>()
+            .map(InspectionSectionWithQuestions.fromJson)
+            .toList();
+        return list;
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<InspectionSectionWithQuestions>> getInspectionFormStructure({
+    required int id,
+  }) async {
+    try {
+      final String request = '/conformity/inspection-forms/$id/structure';
       final Response response = await httpClient.getRequest(request);
       if (response.statusCode == 200 || response.statusCode == 201) {
         final raw = response.data is String

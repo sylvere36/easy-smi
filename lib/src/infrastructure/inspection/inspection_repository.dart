@@ -105,6 +105,27 @@ class InspectionRepository implements IInspectionRepository {
   }
 
   @override
+  Future<Either<GlobalFailure, List<InspectionSectionWithQuestions>>>
+  getInspectionFormStructure({required int id}) async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        final sections = await remoteDataSource.getInspectionFormStructure(
+          id: id,
+        );
+        return right(sections);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
+
+  @override
   Future<Either<GlobalFailure, InspectionFormDetail>> getInspectionFormDetail({
     required int id,
   }) async {

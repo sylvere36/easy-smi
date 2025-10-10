@@ -27,6 +27,9 @@ abstract class IInspectionRepository {
   Future<Either<GlobalFailure, List<InspectionSectionWithQuestions>>>
   getInspectionFormSections({required int inspectionFormId});
 
+  Future<Either<GlobalFailure, List<InspectionSectionWithQuestions>>>
+  getInspectionFormStructure({required int id});
+
   Future<Either<GlobalFailure, InspectionDetail>> postInspectionAnswers({
     required int inspectionId,
     required InspectionAnswersPostBody body,

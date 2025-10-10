@@ -55,12 +55,13 @@ extension InspectionFormEventPatterns on InspectionFormEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _FetchDetail value)?  fetchDetail,TResult Function( _Reset value)?  reset,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _FetchDetail value)?  fetchDetail,TResult Function( _FetchStructure value)?  fetchStructure,TResult Function( _Reset value)?  reset,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that);case _FetchDetail() when fetchDetail != null:
-return fetchDetail(_that);case _Reset() when reset != null:
+return fetchDetail(_that);case _FetchStructure() when fetchStructure != null:
+return fetchStructure(_that);case _Reset() when reset != null:
 return reset(_that);case _:
   return orElse();
 
@@ -79,12 +80,13 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _FetchDetail value)  fetchDetail,required TResult Function( _Reset value)  reset,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _FetchDetail value)  fetchDetail,required TResult Function( _FetchStructure value)  fetchStructure,required TResult Function( _Reset value)  reset,}){
 final _that = this;
 switch (_that) {
 case _Fetch():
 return fetch(_that);case _FetchDetail():
-return fetchDetail(_that);case _Reset():
+return fetchDetail(_that);case _FetchStructure():
+return fetchStructure(_that);case _Reset():
 return reset(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -102,12 +104,13 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _FetchDetail value)?  fetchDetail,TResult? Function( _Reset value)?  reset,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _FetchDetail value)?  fetchDetail,TResult? Function( _FetchStructure value)?  fetchStructure,TResult? Function( _Reset value)?  reset,}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that);case _FetchDetail() when fetchDetail != null:
-return fetchDetail(_that);case _Reset() when reset != null:
+return fetchDetail(_that);case _FetchStructure() when fetchStructure != null:
+return fetchStructure(_that);case _Reset() when reset != null:
 return reset(_that);case _:
   return null;
 
@@ -125,11 +128,12 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int inspectionFormId)?  fetch,TResult Function( int id)?  fetchDetail,TResult Function()?  reset,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int inspectionFormId)?  fetch,TResult Function( int id)?  fetchDetail,TResult Function( int id)?  fetchStructure,TResult Function()?  reset,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that.inspectionFormId);case _FetchDetail() when fetchDetail != null:
-return fetchDetail(_that.id);case _Reset() when reset != null:
+return fetchDetail(_that.id);case _FetchStructure() when fetchStructure != null:
+return fetchStructure(_that.id);case _Reset() when reset != null:
 return reset();case _:
   return orElse();
 
@@ -148,11 +152,12 @@ return reset();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int inspectionFormId)  fetch,required TResult Function( int id)  fetchDetail,required TResult Function()  reset,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int inspectionFormId)  fetch,required TResult Function( int id)  fetchDetail,required TResult Function( int id)  fetchStructure,required TResult Function()  reset,}) {final _that = this;
 switch (_that) {
 case _Fetch():
 return fetch(_that.inspectionFormId);case _FetchDetail():
-return fetchDetail(_that.id);case _Reset():
+return fetchDetail(_that.id);case _FetchStructure():
+return fetchStructure(_that.id);case _Reset():
 return reset();case _:
   throw StateError('Unexpected subclass');
 
@@ -170,11 +175,12 @@ return reset();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int inspectionFormId)?  fetch,TResult? Function( int id)?  fetchDetail,TResult? Function()?  reset,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int inspectionFormId)?  fetch,TResult? Function( int id)?  fetchDetail,TResult? Function( int id)?  fetchStructure,TResult? Function()?  reset,}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that.inspectionFormId);case _FetchDetail() when fetchDetail != null:
-return fetchDetail(_that.id);case _Reset() when reset != null:
+return fetchDetail(_that.id);case _FetchStructure() when fetchStructure != null:
+return fetchStructure(_that.id);case _Reset() when reset != null:
 return reset();case _:
   return null;
 
@@ -307,6 +313,72 @@ class __$FetchDetailCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? id = null,}) {
   return _then(_FetchDetail(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class _FetchStructure implements InspectionFormEvent {
+  const _FetchStructure({required this.id});
+  
+
+ final  int id;
+
+/// Create a copy of InspectionFormEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$FetchStructureCopyWith<_FetchStructure> get copyWith => __$FetchStructureCopyWithImpl<_FetchStructure>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FetchStructure&&(identical(other.id, id) || other.id == id));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id);
+
+@override
+String toString() {
+  return 'InspectionFormEvent.fetchStructure(id: $id)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$FetchStructureCopyWith<$Res> implements $InspectionFormEventCopyWith<$Res> {
+  factory _$FetchStructureCopyWith(_FetchStructure value, $Res Function(_FetchStructure) _then) = __$FetchStructureCopyWithImpl;
+@useResult
+$Res call({
+ int id
+});
+
+
+
+
+}
+/// @nodoc
+class __$FetchStructureCopyWithImpl<$Res>
+    implements _$FetchStructureCopyWith<$Res> {
+  __$FetchStructureCopyWithImpl(this._self, this._then);
+
+  final _FetchStructure _self;
+  final $Res Function(_FetchStructure) _then;
+
+/// Create a copy of InspectionFormEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? id = null,}) {
+  return _then(_FetchStructure(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,
   ));
