@@ -1,3 +1,5 @@
+import 'my_formation.dart';
+
 class FormationDetail {
   final int id;
   final String title;
@@ -57,6 +59,9 @@ class FormationDetail {
         createdAt: json['created_at'] as String?,
         participating: json['participating'] == true,
       );
+
+  bool alreadySubscribed(List<MyFormation> myFormations) =>
+      myFormations.any((f) => f.formation.id == id);
 }
 
 class Trainer {

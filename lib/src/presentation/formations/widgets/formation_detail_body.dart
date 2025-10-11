@@ -1,8 +1,17 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../injection_container.dart';
+import '../../../application/formation/detail/formation_detail_bloc.dart';
+import '../../../application/formation/formations_bloc.dart';
+import '../../../domain/formation/models/formation_course.dart';
+import '../../../domain/formation/models/my_formation.dart';
+import '../../_commons/helpers/image_helper.dart';
 import '../../_commons/route/app_router.gr.dart';
+import '../../_commons_widgets/loading_widget.dart';
 
 class CourseBody extends StatefulWidget {
   final int formationId;
@@ -15,29 +24,18 @@ class CourseBody extends StatefulWidget {
 class _CourseBodyState extends State<CourseBody> {
   bool readMore = false;
 
-  // --- Fake data ---
-  final List<String> learnings = const [
-    'Comprendre les différences entre poulets de chair et poules pondeuses',
-    'Concevoir un poulailler fonctionnel et économique',
-    'Gérer l’alimentation et l’hygiène de vos volailles',
-    'Prévenir les maladies et assurer un bon taux de survie',
-  ];
+  MyFormation? myFormation;
 
-  final List<_Lesson> lessons = const [
-    _Lesson('Introduction', 'Vidéo - 03:57 minutes'),
-    _Lesson(
-      'Pourquoi l’élevage est une bonne opportunité',
-      'Vidéo - 03:57 minutes',
-    ),
-    _Lesson(
-      'Pourquoi l’élevage est une bonne opportunité',
-      'Vidéo - 03:57 minutes',
-    ),
-    _Lesson(
-      'Pourquoi l’élevage est une bonne opportunité',
-      'Vidéo - 03:57 minutes',
-    ),
-  ];
+  // --- Fake data ---
+
+  @override
+  void initState() {
+    super.initState();
+
+    BlocProvider.of<FormationsBloc>(
+      context,
+    ).add(const FormationsEvent.fetchMyFormationsRequested());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,219 +51,223 @@ class _CourseBodyState extends State<CourseBody> {
       height: 1.45,
     );
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.only(bottom: 32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header image + Play
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: Image.network(
-                      'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1400&auto=format&fit=crop',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Container(
-                    width: 76,
-                    height: 76,
-                    decoration: const BoxDecoration(
-                      color: Colors.black45,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.play_arrow_rounded,
-                      size: 48,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+    return BlocProvider(
+      create: (context) => sl<FormationDetailBloc>()
+        ..add(FormationDetailEvent.fetchRequested(id: widget.formationId))
+        ..add(FormationDetailEvent.coursesRequested(id: widget.formationId)),
+      child: BlocListener<FormationsBloc, FormationsState>(
+        listener: (context, state) {
+          if (state.itemsMyFormations.isNotEmpty) {
+            MyFormation? found;
+            for (var i = 0; i < state.itemsMyFormations.length; i++) {
+              if (state.itemsMyFormations[i].formation.id ==
+                  widget.formationId) {
+                found = state.itemsMyFormations[i];
+                break;
+              }
+            }
+            setState(() {
+              myFormation = found;
+            });
+          }
+        },
+        child: BlocBuilder<FormationDetailBloc, FormationDetailState>(
+          builder: (context, state) {
+            return state.isLoading
+                ? const Center(child: LoadingWidget())
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.only(bottom: 32),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header image + Play
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                FutureBuilder<String>(
+                                  future: getFullImageUrl(
+                                    state.item?.imageUrl ?? '',
+                                  ),
+                                  builder: (context, asyncSnapshot) {
+                                    if (asyncSnapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: LoadingWidget(),
+                                      );
+                                    } else if (asyncSnapshot.hasError) {
+                                      return const Center(
+                                        child: Icon(Icons.error),
+                                      );
+                                    } else {
+                                      return AspectRatio(
+                                        aspectRatio: 16 / 9,
+                                        child: Image.network(
+                                          asyncSnapshot.data!,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
 
-          // Title
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Introduction aux systemes de management Intégré',
-              style: titleStyle,
-            ),
-          ),
+                        // Title
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            state.item?.title ?? '---',
+                            style: titleStyle,
+                          ),
+                        ),
 
-          // Description + Lire la suite
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  readMore
-                      ? 'Cette formation introduit les concepts clés des systèmes de management intégrés, qui regroupent plusieurs normes............'
-                      : 'Cette formation introduit les concepts clés des systèmes de management intégrés, qui regroupent plusieurs normes .',
-                  style: text,
-                ),
-                TextButton(
-                  onPressed: () => setState(() => readMore = !readMore),
-                  child: Text(
-                    readMore ? 'Lire moins' : 'Lire la suite',
-                    style: GoogleFonts.poppins(
-                      color: const Color(0xFF0B65E3),
-                      fontWeight: FontWeight.w600,
+                        // Description + Lire la suite
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              HtmlWidget(
+                                state.item?.descriptionHtml ?? '',
+                                textStyle: text,
+                              ),
+                              // TextButton(
+                              //   onPressed: () =>
+                              //       setState(() => readMore = !readMore),
+                              //   child: Text(
+                              //     readMore ? 'Lire moins' : 'Lire la suite',
+                              //     style: GoogleFonts.poppins(
+                              //       color: const Color(0xFF0B65E3),
+                              //       fontWeight: FontWeight.w600,
+                              //     ),
+                              //   ),
+                              // ),
+                            ],
+                          ),
+                        ),
+
+                        // Metrics
+                        _MetricRow(
+                          leading: Icons.groups_rounded,
+                          label: '${state.item?.maxParticipants} participants',
+                        ),
+                        _MetricRow(
+                          leading: Icons.person_outline,
+                          label: 'Formateur',
+                          value: '${state.item?.trainer.name}',
+                        ),
+                        _MetricRow(
+                          leading: Icons.verified_outlined,
+                          label: 'Certificat',
+                          value: state.item?.certification == true
+                              ? 'Oui'
+                              : 'Non',
+                        ),
+                        _MetricRow(
+                          leading: Icons.public_outlined,
+                          label: 'Type',
+                          value: state.item?.deliveryMode == 'online'
+                              ? 'En ligne'
+                              : 'Présentiel',
+                        ),
+
+                        // CTA
+                        if (myFormation != null)
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF1663D6),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  if (myFormation != null) {
+                                    context.router.popAndPush(
+                                      FormationDisplayRoute(
+                                        formationId: widget.formationId,
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: Text(
+                                  myFormation == null
+                                      ? 'COMMENCER'
+                                      : 'CONTINUER',
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: .5,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                        // Ce que vous apprendrez
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
+                          child: Text(
+                            'Ce que vous apprendrez',
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        ...state.item?.learningOutcomes.isNotEmpty == true
+                            ? state.item!.learningOutcomes.map(
+                                (e) => _Bullet(text: e),
+                              )
+                            : const [],
+
+                        // Programme header line
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 18, 16, 1),
+                          child: Text(
+                            'Programme',
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 1, 16, 0),
+                          child: _SectionHeader(
+                            title: '',
+                            initExpand: true,
+                            body: Column(
+                              children: List.generate(
+                                state.courses.length,
+                                (i) => _LessonTile(
+                                  index: i + 1,
+                                  lesson: state.courses[i],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Metrics
-          const _MetricRow(
-            leading: Icons.groups_rounded,
-            label: '296 déjà Inscrits',
-          ),
-          const _MetricRow(
-            leading: Icons.person_outline,
-            label: 'Formateur',
-            value: 'Maxime Abou BAKARI',
-          ),
-          const _MetricRow(
-            leading: Icons.verified_outlined,
-            label: 'Certificat',
-            value: 'Oui',
-          ),
-          const _MetricRow(
-            leading: Icons.public_outlined,
-            label: 'Type',
-            value: 'Presentiel + Ligne',
-          ),
-
-          // CTA
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1663D6),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                onPressed: () {
-                  context.router.push(
-                    FormationDisplayRoute(formationId: widget.formationId),
                   );
-                },
-                child: Text(
-                  'COMMENCER',
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: .5,
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // Ce que vous apprendrez
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
-            child: Text(
-              'Ce que vous apprendrez',
-              style: GoogleFonts.poppins(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: Colors.black,
-              ),
-            ),
-          ),
-          ...learnings.map((e) => _Bullet(text: e)),
-
-          // Programme header line
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 18, 16, 6),
-            child: Text(
-              'Programme',
-              style: GoogleFonts.poppins(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: Colors.black,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
-            child: Text(
-              '04 sections • 15 sessions • Durée totale: 23 h 18 min',
-              style: GoogleFonts.poppins(
-                color: Colors.black87.withValues(alpha: .7),
-              ),
-            ),
-          ),
-
-          // Section 1 (ouverte)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: _SectionHeader(
-              title: 'Section 1 - INTRODUCTION A L’ELEVAGE DES VOLAILLES',
-              initExpand: true,
-              body: Column(
-                children: List.generate(
-                  lessons.length,
-                  (i) => _LessonTile(index: i + 1, lesson: lessons[i]),
-                ),
-              ),
-            ),
-          ),
-
-          // Other sections (fermées)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
-            child: _SectionHeader(
-              title: 'Section 2   PREPARER SON ESPACE D’ELEVAGE',
-              body: Column(
-                children: List.generate(
-                  lessons.length,
-                  (i) => _LessonTile(index: i + 1, lesson: lessons[i]),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-            child: _SectionHeader(
-              title: 'Section 3   ALIMENTATION ET SOIN DES VOLAILLES',
-              body: Column(
-                children: List.generate(
-                  lessons.length,
-                  (i) => _LessonTile(index: i + 1, lesson: lessons[i]),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-            child: _SectionHeader(
-              title: 'Section 4   HYGIENE , SANTE  ET VACCINATION',
-              body: Column(
-                children: List.generate(
-                  lessons.length,
-                  (i) => _LessonTile(index: i + 1, lesson: lessons[i]),
-                ),
-              ),
-            ),
-          ),
-        ],
+          },
+        ),
       ),
     );
   }
@@ -360,25 +362,8 @@ class _SectionHeaderState extends State<_SectionHeader> {
 
   @override
   Widget build(BuildContext context) {
-    final t = GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 14.5);
     return Column(
       children: [
-        Row(
-          children: [
-            Expanded(child: Text(widget.title, style: t)),
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  isExpand = !isExpand;
-                });
-              },
-              icon: Icon(
-                isExpand ? Icons.remove_rounded : Icons.add_rounded,
-                color: Colors.black87,
-              ),
-            ),
-          ],
-        ),
         Visibility(
           visible: isExpand,
           child: Padding(
@@ -391,15 +376,9 @@ class _SectionHeaderState extends State<_SectionHeader> {
   }
 }
 
-class _Lesson {
-  final String title;
-  final String duration;
-  const _Lesson(this.title, this.duration);
-}
-
 class _LessonTile extends StatelessWidget {
   final int index;
-  final _Lesson lesson;
+  final FormationCourse lesson;
   const _LessonTile({required this.index, required this.lesson});
 
   @override
@@ -408,7 +387,7 @@ class _LessonTile extends StatelessWidget {
       fontWeight: FontWeight.w700,
       fontSize: 15.5,
     );
-    final sub = GoogleFonts.poppins(color: Colors.black54, fontSize: 13);
+    // final sub = GoogleFonts.poppins(color: Colors.black54, fontSize: 13);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -424,10 +403,10 @@ class _LessonTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(lesson.title, style: title),
-                Padding(
-                  padding: const EdgeInsets.only(top: 2),
-                  child: Text(lesson.duration, style: sub),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.only(top: 2),
+                //   child: Text(lesson.duration, style: sub),
+                // ),
               ],
             ),
           ),

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../injection_container.dart';
@@ -14,7 +15,6 @@ import '../../../application/formation/formations_bloc.dart';
 import '../../../domain/_commons/global_failure.dart';
 import '../../../domain/formation/models/formation_course.dart';
 import '../../../domain/formation/models/my_formation.dart';
-import '../../_commons/helpers/html_view.dart';
 import '../../_commons/helpers/image_helper.dart';
 import '../../_commons/theming/app_color.dart';
 import '../../_commons_widgets/comments/comment_field.dart';
@@ -108,10 +108,19 @@ class _CourseDisplayBodyState extends State<CourseDisplayBody>
       child: BlocConsumer<FormationsBloc, FormationsState>(
         listener: (context, state) {
           if (state.itemsMyFormations.isNotEmpty) {
-            final found = state.itemsMyFormations.firstWhere(
-              (f) => f.formation.id == widget.formationId,
-              orElse: () => state.itemsMyFormations.first,
-            );
+            MyFormation? found;
+            for (var i = 0; i < state.itemsMyFormations.length; i++) {
+              if (state.itemsMyFormations[i].formation.id ==
+                  widget.formationId) {
+                found = state.itemsMyFormations[i];
+                break;
+              }
+            }
+            if (found == null) {
+              errorToast(context: context, msg: 'Formation introuvable');
+              context.router.pop();
+              return;
+            }
             setState(() {
               myFormation = found;
             });
@@ -534,10 +543,8 @@ class _OverviewTab extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        SizedBox(
-          height: 500,
-          child: HtmlView(html: myFormation.formation.descriptionHtml),
-        ),
+        HtmlWidget(myFormation.formation.descriptionHtml),
+
         const SizedBox(height: 16),
       ],
     );
