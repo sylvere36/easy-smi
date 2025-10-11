@@ -141,6 +141,24 @@
 				"analyze"
 			],
 			"group": "build"
+		},
+		{
+			"label": "analyze build",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"analyze"
+			],
+			"group": "build"
+		},
+		{
+			"label": "analyze build",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"analyze"
+			],
+			"group": "build"
 		}
 	]
 }

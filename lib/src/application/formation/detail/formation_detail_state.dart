@@ -12,6 +12,16 @@ abstract class FormationDetailState with _$FormationDetailState {
       Either<GlobalFailure, List<FormationParticipantRegistration>>
     >
     participantsResultOption,
+    @Default(false) bool isLoadingCourses,
+    @Default([]) List<FormationCourse> courses,
+    required Option<Either<GlobalFailure, List<FormationCourse>>>
+    coursesResultOption,
+    @Default(false) bool isStartingCourse,
+    required Option<Either<GlobalFailure, StartCourseResult>>
+    startCourseResultOption,
+    @Default(false) bool isFinishingCourse,
+    required Option<Either<GlobalFailure, FinishCourseResult>>
+    finishCourseResultOption,
   }) = _FormationDetailState;
 
   factory FormationDetailState.initial() => FormationDetailState(
@@ -19,5 +29,8 @@ abstract class FormationDetailState with _$FormationDetailState {
     item: null,
     resultOption: none(),
     participantsResultOption: none(),
+    coursesResultOption: none(),
+    startCourseResultOption: none(),
+    finishCourseResultOption: none(),
   );
 }

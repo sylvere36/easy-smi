@@ -4,8 +4,11 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../domain/_commons/global_failure.dart';
 import '../../../domain/formation/i_formation_repository.dart';
+import '../../../domain/formation/models/finish_course_result.dart';
+import '../../../domain/formation/models/formation_course.dart';
 import '../../../domain/formation/models/formation_detail.dart';
 import '../../../domain/formation/models/formation_participant_registration.dart';
+import '../../../domain/formation/models/start_course_result.dart';
 
 part 'formation_detail_bloc.freezed.dart';
 part 'formation_detail_event.dart';
@@ -54,6 +57,65 @@ class FormationDetailBloc
             isLoadingParticipants: false,
             participants: list,
             participantsResultOption: some(right(list)),
+          ),
+        ),
+      );
+    });
+
+    on<_CoursesRequested>((event, emit) async {
+      emit(state.copyWith(isLoadingCourses: true, coursesResultOption: none()));
+      final res = await repository.getFormationCourses(id: event.id);
+      emit(
+        res.fold(
+          (l) => state.copyWith(
+            isLoadingCourses: false,
+            coursesResultOption: some(left(l)),
+          ),
+          (list) => state.copyWith(
+            isLoadingCourses: false,
+            courses: list,
+            coursesResultOption: some(right(list)),
+          ),
+        ),
+      );
+    });
+
+    on<_StartCourseRequested>((event, emit) async {
+      emit(
+        state.copyWith(isStartingCourse: true, startCourseResultOption: none()),
+      );
+      final res = await repository.startCourse(id: event.id);
+      emit(
+        res.fold(
+          (l) => state.copyWith(
+            isStartingCourse: false,
+            startCourseResultOption: some(left(l)),
+          ),
+          (r) => state.copyWith(
+            isStartingCourse: false,
+            startCourseResultOption: some(right(r)),
+          ),
+        ),
+      );
+    });
+
+    on<_FinishCourseRequested>((event, emit) async {
+      emit(
+        state.copyWith(
+          isFinishingCourse: true,
+          finishCourseResultOption: none(),
+        ),
+      );
+      final res = await repository.finishCourse(id: event.id);
+      emit(
+        res.fold(
+          (l) => state.copyWith(
+            isFinishingCourse: false,
+            finishCourseResultOption: some(left(l)),
+          ),
+          (r) => state.copyWith(
+            isFinishingCourse: false,
+            finishCourseResultOption: some(right(r)),
           ),
         ),
       );

@@ -1,6 +1,7 @@
 class FormationDetail {
   final int id;
   final String title;
+  final String status;
   final String descriptionHtml; // raw HTML
   final String deliveryMode;
   final String imageUrl;
@@ -12,10 +13,12 @@ class FormationDetail {
   final List<String> skillsToAcquire;
   final int maxParticipants;
   final String? createdAt;
+  final bool participating;
 
   FormationDetail({
     required this.id,
     required this.title,
+    required this.status,
     required this.descriptionHtml,
     required this.deliveryMode,
     required this.imageUrl,
@@ -27,12 +30,14 @@ class FormationDetail {
     required this.skillsToAcquire,
     required this.maxParticipants,
     required this.createdAt,
+    required this.participating,
   });
 
   factory FormationDetail.fromJson(Map<String, dynamic> json) =>
       FormationDetail(
         id: (json['id'] as num).toInt(),
         title: (json['title'] as String?) ?? '',
+        status: (json['status'] as String?) ?? '',
         descriptionHtml: (json['description'] as String?) ?? '',
         deliveryMode: (json['delivery_mode'] as String?) ?? '',
         imageUrl: (json['image_url'] as String?) ?? '',
@@ -50,6 +55,7 @@ class FormationDetail {
             .toList(),
         maxParticipants: (json['max_participants'] as num?)?.toInt() ?? 0,
         createdAt: json['created_at'] as String?,
+        participating: json['participating'] == true,
       );
 }
 

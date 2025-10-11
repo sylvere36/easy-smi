@@ -55,12 +55,13 @@ extension FormationsEventPatterns on FormationsEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _FetchRequested value)?  fetchRequested,TResult Function( _FetchNextPage value)?  fetchNextPage,TResult Function( _Reset value)?  reset,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _FetchRequested value)?  fetchRequested,TResult Function( _FetchNextPage value)?  fetchNextPage,TResult Function( _FetchMyFormationsRequested value)?  fetchMyFormationsRequested,TResult Function( _Reset value)?  reset,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested(_that);case _FetchNextPage() when fetchNextPage != null:
-return fetchNextPage(_that);case _Reset() when reset != null:
+return fetchNextPage(_that);case _FetchMyFormationsRequested() when fetchMyFormationsRequested != null:
+return fetchMyFormationsRequested(_that);case _Reset() when reset != null:
 return reset(_that);case _:
   return orElse();
 
@@ -79,12 +80,13 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _FetchRequested value)  fetchRequested,required TResult Function( _FetchNextPage value)  fetchNextPage,required TResult Function( _Reset value)  reset,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _FetchRequested value)  fetchRequested,required TResult Function( _FetchNextPage value)  fetchNextPage,required TResult Function( _FetchMyFormationsRequested value)  fetchMyFormationsRequested,required TResult Function( _Reset value)  reset,}){
 final _that = this;
 switch (_that) {
 case _FetchRequested():
 return fetchRequested(_that);case _FetchNextPage():
-return fetchNextPage(_that);case _Reset():
+return fetchNextPage(_that);case _FetchMyFormationsRequested():
+return fetchMyFormationsRequested(_that);case _Reset():
 return reset(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -102,12 +104,13 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _FetchRequested value)?  fetchRequested,TResult? Function( _FetchNextPage value)?  fetchNextPage,TResult? Function( _Reset value)?  reset,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _FetchRequested value)?  fetchRequested,TResult? Function( _FetchNextPage value)?  fetchNextPage,TResult? Function( _FetchMyFormationsRequested value)?  fetchMyFormationsRequested,TResult? Function( _Reset value)?  reset,}){
 final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested(_that);case _FetchNextPage() when fetchNextPage != null:
-return fetchNextPage(_that);case _Reset() when reset != null:
+return fetchNextPage(_that);case _FetchMyFormationsRequested() when fetchMyFormationsRequested != null:
+return fetchMyFormationsRequested(_that);case _Reset() when reset != null:
 return reset(_that);case _:
   return null;
 
@@ -125,11 +128,12 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  fetchRequested,TResult Function()?  fetchNextPage,TResult Function()?  reset,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  fetchRequested,TResult Function()?  fetchNextPage,TResult Function()?  fetchMyFormationsRequested,TResult Function()?  reset,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested();case _FetchNextPage() when fetchNextPage != null:
-return fetchNextPage();case _Reset() when reset != null:
+return fetchNextPage();case _FetchMyFormationsRequested() when fetchMyFormationsRequested != null:
+return fetchMyFormationsRequested();case _Reset() when reset != null:
 return reset();case _:
   return orElse();
 
@@ -148,11 +152,12 @@ return reset();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  fetchRequested,required TResult Function()  fetchNextPage,required TResult Function()  reset,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  fetchRequested,required TResult Function()  fetchNextPage,required TResult Function()  fetchMyFormationsRequested,required TResult Function()  reset,}) {final _that = this;
 switch (_that) {
 case _FetchRequested():
 return fetchRequested();case _FetchNextPage():
-return fetchNextPage();case _Reset():
+return fetchNextPage();case _FetchMyFormationsRequested():
+return fetchMyFormationsRequested();case _Reset():
 return reset();case _:
   throw StateError('Unexpected subclass');
 
@@ -170,11 +175,12 @@ return reset();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  fetchRequested,TResult? Function()?  fetchNextPage,TResult? Function()?  reset,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  fetchRequested,TResult? Function()?  fetchNextPage,TResult? Function()?  fetchMyFormationsRequested,TResult? Function()?  reset,}) {final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested();case _FetchNextPage() when fetchNextPage != null:
-return fetchNextPage();case _Reset() when reset != null:
+return fetchNextPage();case _FetchMyFormationsRequested() when fetchMyFormationsRequested != null:
+return fetchMyFormationsRequested();case _Reset() when reset != null:
 return reset();case _:
   return null;
 
@@ -239,6 +245,38 @@ int get hashCode => runtimeType.hashCode;
 @override
 String toString() {
   return 'FormationsEvent.fetchNextPage()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _FetchMyFormationsRequested implements FormationsEvent {
+  const _FetchMyFormationsRequested();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FetchMyFormationsRequested);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'FormationsEvent.fetchMyFormationsRequested()';
 }
 
 

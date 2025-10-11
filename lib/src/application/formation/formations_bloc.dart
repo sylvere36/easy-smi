@@ -79,6 +79,56 @@ class FormationsBloc extends Bloc<FormationsEvent, FormationsState> {
       );
     });
 
+    // Fetch My Formations (no pagination)
+    on<_FetchMyFormationsRequested>((event, emit) async {
+      emit(
+        state.copyWith(
+          isLoading: true,
+          resultOption: none(),
+          items: [],
+          currentPage: 1,
+          canLoadMore: false,
+        ),
+      );
+      final res = await repository.getMyFormations();
+      res.fold(
+        (l) =>
+            emit(state.copyWith(isLoading: false, resultOption: some(left(l)))),
+        (list) {
+          // Wrap into Paginated for state.resultOption consistency
+          final paginated = Paginated(
+            items: list
+                .map(
+                  (mf) => FormationItem(
+                    id: mf.formation.id,
+                    title: mf.formation.title,
+                    trainerName: '',
+                    image: mf.formation.imageUrl ?? mf.formation.image,
+                    deliveryMode: mf.formation.deliveryMode,
+                  ),
+                )
+                .toList(),
+            pagination: Pagination(
+              total: list.length,
+              perPage: list.length,
+              currentPage: 1,
+              lastPage: 1,
+            ),
+          );
+          emit(
+            state.copyWith(
+              isLoading: false,
+              items: paginated.items,
+              currentPage: 1,
+              total: paginated.pagination.total,
+              canLoadMore: false,
+              resultOption: some(right(paginated)),
+            ),
+          );
+        },
+      );
+    });
+
     on<_Reset>((event, emit) async {
       emit(FormationsState.initial());
     });
