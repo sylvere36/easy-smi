@@ -13,4 +13,7 @@ class FormationDetailEvent with _$FormationDetailEvent {
       _StartCourseRequested;
   const factory FormationDetailEvent.finishCourseRequested({required int id}) =
       _FinishCourseRequested;
+  const factory FormationDetailEvent.finishFormationRequested({
+    required int id,
+  }) = _FinishFormationRequested;
 }

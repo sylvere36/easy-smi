@@ -5,6 +5,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../../domain/_commons/global_failure.dart';
 import '../../../domain/formation/i_formation_repository.dart';
 import '../../../domain/formation/models/finish_course_result.dart';
+import '../../../domain/formation/models/finish_formation_result.dart';
 import '../../../domain/formation/models/formation_course.dart';
 import '../../../domain/formation/models/formation_detail.dart';
 import '../../../domain/formation/models/formation_participant_registration.dart';
@@ -129,6 +130,37 @@ class FormationDetailBloc
               finishCourseResultOption: some(right(r)),
             ),
           );
+
+          add(_FetchRequested(id: event.id));
+          add(_CoursesRequested(id: event.id));
+        },
+      );
+    });
+
+    on<_FinishFormationRequested>((event, emit) async {
+      emit(
+        state.copyWith(
+          isFinishingFormation: true,
+          finishFormationResultOption: none(),
+        ),
+      );
+      final res = await repository.finishFormation(id: event.id);
+
+      res.fold(
+        (l) => emit(
+          state.copyWith(
+            isFinishingFormation: false,
+            finishFormationResultOption: some(left(l)),
+          ),
+        ),
+        (r) {
+          emit(
+            state.copyWith(
+              isFinishingFormation: false,
+              finishFormationResultOption: some(right(r)),
+            ),
+          );
+          emit(state.copyWith(isFinishingFormation: null));
 
           add(_FetchRequested(id: event.id));
           add(_CoursesRequested(id: event.id));

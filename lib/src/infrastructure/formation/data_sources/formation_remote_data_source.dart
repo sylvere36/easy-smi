@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 
 import '../../../domain/_commons/pagination.dart';
 import '../../../domain/formation/models/finish_course_result.dart';
+import '../../../domain/formation/models/finish_formation_result.dart';
 import '../../../domain/formation/models/formation_course.dart';
 import '../../../domain/formation/models/formation_detail.dart';
 import '../../../domain/formation/models/formation_item.dart';
@@ -27,6 +28,7 @@ abstract class IFormationRemoteDataSource {
   Future<List<FormationCourse>> getFormationCourses({required int id});
   Future<StartCourseResult> startCourse({required int id});
   Future<FinishCourseResult> finishCourse({required int id});
+  Future<FinishFormationResult> finishFormation({required int id});
 }
 
 class FormationRemoteDataSource implements IFormationRemoteDataSource {
@@ -208,6 +210,30 @@ class FormationRemoteDataSource implements IFormationRemoteDataSource {
         }
         final data = root['data'] as Map<String, dynamic>? ?? {};
         return FinishCourseResult.fromJson(data);
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<FinishFormationResult> finishFormation({required int id}) async {
+    try {
+      final String request = '/formation/formations/$id/finish';
+      final Response response = await httpClient.postRequest(request, body: {});
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final Map<String, dynamic> root = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final success = root['success'] == true;
+        if (!success) {
+          final message = (root['message'] as String?) ?? '';
+          throw ServerException(message);
+        }
+        final data = root['data'] as Map<String, dynamic>? ?? {};
+        return FinishFormationResult.fromJson(data);
       } else {
         throw ServerException(errorThrow(response));
       }

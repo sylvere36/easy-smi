@@ -7,4 +7,12 @@ class FormationsEvent with _$FormationsEvent {
   const factory FormationsEvent.fetchMyFormationsRequested() =
       _FetchMyFormationsRequested;
   const factory FormationsEvent.reset() = _Reset;
+
+  const factory FormationsEvent.searchFormationRequested({
+    required String query,
+  }) = _SearchFormationRequested;
+
+  const factory FormationsEvent.searchMyFormationsRequested({
+    required String query,
+  }) = _SearchMyFormationsRequested;
 }

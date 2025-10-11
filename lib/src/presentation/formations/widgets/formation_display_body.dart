@@ -11,6 +11,7 @@ import '../../../../injection_container.dart';
 import '../../../application/communication/comments_bloc.dart';
 import '../../../application/formation/detail/formation_detail_bloc.dart';
 import '../../../application/formation/formations_bloc.dart';
+import '../../../domain/_commons/global_failure.dart';
 import '../../../domain/formation/models/formation_course.dart';
 import '../../../domain/formation/models/my_formation.dart';
 import '../../_commons/helpers/html_view.dart';
@@ -128,178 +129,52 @@ class _CourseDisplayBodyState extends State<CourseDisplayBody>
           }
         },
         builder: (context, state) {
-          return BlocBuilder<FormationDetailBloc, FormationDetailState>(
-            builder: (context, state) {
-              return state.isLoading || myFormation == null
-                  ? const Center(child: LoadingWidget())
-                  : DefaultTabController(
-                      length: 4,
-                      child: NestedScrollView(
-                        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                          // IMAGE + titre + stats + CTA
-                          SliverToBoxAdapter(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Header image
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    8,
-                                    12,
-                                    8,
-                                    12,
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      await openVideoViewer(
-                                        url: state.item?.imageUrl ?? '',
-                                        thumb: state.item?.imageUrl ?? '',
-                                        lesson: myFormation!.getCurrentCourse(
-                                          state.courses,
-                                        )!,
-                                        isCurrent:
-                                            myFormation!.currentLesson ==
-                                            myFormation!
-                                                .getCurrentCourse(
-                                                  state.courses,
-                                                )!
-                                                .id,
-                                        isDone:
-                                            myFormation!.lessonsDone?.contains(
-                                              myFormation!
-                                                  .getCurrentCourse(
-                                                    state.courses,
-                                                  )!
-                                                  .id
-                                                  .toString(),
-                                            ) ??
-                                            false,
-                                      );
-                                    },
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(16),
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          FutureBuilder<String>(
-                                            future: getFullImageUrl(
-                                              state.item?.imageUrl ?? '',
-                                            ),
-                                            builder: (context, asyncSnapshot) {
-                                              if (asyncSnapshot
-                                                      .connectionState ==
-                                                  ConnectionState.waiting) {
-                                                return const Center(
-                                                  child: LoadingWidget(),
-                                                );
-                                              } else if (asyncSnapshot
-                                                  .hasError) {
-                                                return const Center(
-                                                  child: Icon(Icons.error),
-                                                );
-                                              } else {
-                                                return AspectRatio(
-                                                  aspectRatio: 16 / 9,
-                                                  child: Image.network(
-                                                    asyncSnapshot.data!,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                );
-                                              }
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-
-                                // Title
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    16,
-                                    0,
-                                    16,
-                                    8,
-                                  ),
-                                  child: Text(
-                                    state.item?.title ?? '',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 22,
-                                      height: 1.25,
-                                      fontWeight: FontWeight.w700,
-                                      color: onSurface,
-                                    ),
-                                  ),
-                                ),
-
-                                // Progress + text right
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: LinearProgressIndicator(
-                                          borderRadius: BorderRadius.circular(
-                                            20,
-                                          ),
-                                          minHeight: 8,
-                                          value:
-                                              myFormation?.progress ??
-                                              0, // 06 / 10
-                                          backgroundColor: Colors.black12,
-                                          valueColor:
-                                              const AlwaysStoppedAnimation(
-                                                AppColors.primary,
-                                              ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Text(
-                                        '${(myFormation?.totalLessonsDone ?? 0).toString().padLeft(2)} / ${(myFormation?.totalLessons ?? 0).toString().padLeft(2)} terminé',
-                                        style: GoogleFonts.inter(
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                // CTA "Leçon 7"
-                                if (!myFormation!.isCompleted)
+          return BlocListener<FormationDetailBloc, FormationDetailState>(
+            listener: (context, detailState) {
+              detailState.finishFormationResultOption.fold(
+                () {},
+                (either) => either.fold(
+                  (l) {
+                    final msg = l.customMap(
+                      serverError: (e) => e.errorText ?? 'Erreur serveur',
+                      unauthorized: (_) => 'Non autorisé',
+                      noNetwork: (_) => 'Pas de connexion',
+                    );
+                    errorToast(context: context, msg: msg);
+                  },
+                  (r) {
+                    successToast(context: context, msg: 'Formation finalisée');
+                    // Refresh my-formations list to reflect new status
+                    context.read<FormationsBloc>().add(
+                      const FormationsEvent.fetchMyFormationsRequested(),
+                    );
+                  },
+                ),
+              );
+            },
+            child: BlocBuilder<FormationDetailBloc, FormationDetailState>(
+              builder: (context, state) {
+                return state.isLoading || myFormation == null
+                    ? const Center(child: LoadingWidget())
+                    : DefaultTabController(
+                        length: 4,
+                        child: NestedScrollView(
+                          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                            // IMAGE + titre + stats + CTA
+                            SliverToBoxAdapter(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Header image
                                   Padding(
                                     padding: const EdgeInsets.fromLTRB(
-                                      16,
-                                      14,
-                                      16,
-                                      16,
+                                      8,
+                                      12,
+                                      8,
+                                      12,
                                     ),
-                                    child: ElevatedButton.icon(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.black87,
-                                        foregroundColor: Colors.white,
-                                        minimumSize: const Size.fromHeight(52),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            30,
-                                          ),
-                                        ),
-                                        elevation: 0,
-                                      ),
-                                      icon: const Icon(
-                                        Icons.play_circle_fill_rounded,
-                                      ),
-                                      label: Text(
-                                        'Leçon ${myFormation?.myCurrentLesson(state.courses)}',
-                                        style: GoogleFonts.inter(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      onPressed: () async {
+                                    child: GestureDetector(
+                                      onTap: () async {
                                         await openVideoViewer(
                                           url: state.item?.imageUrl ?? '',
                                           thumb: state.item?.imageUrl ?? '',
@@ -326,95 +201,311 @@ class _CourseDisplayBodyState extends State<CourseDisplayBody>
                                               false,
                                         );
                                       },
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(16),
+                                        child: Stack(
+                                          alignment: Alignment.center,
+                                          children: [
+                                            FutureBuilder<String>(
+                                              future: getFullImageUrl(
+                                                state.item?.imageUrl ?? '',
+                                              ),
+                                              builder:
+                                                  (context, asyncSnapshot) {
+                                                    if (asyncSnapshot
+                                                            .connectionState ==
+                                                        ConnectionState
+                                                            .waiting) {
+                                                      return const Center(
+                                                        child: LoadingWidget(),
+                                                      );
+                                                    } else if (asyncSnapshot
+                                                        .hasError) {
+                                                      return const Center(
+                                                        child: Icon(
+                                                          Icons.error,
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      return AspectRatio(
+                                                        aspectRatio: 16 / 9,
+                                                        child: Image.network(
+                                                          asyncSnapshot.data!,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      );
+                                                    }
+                                                  },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ),
 
-                                // Chips des infos (leçons, durée, inscrits)
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    16,
-                                    10,
-                                    16,
-                                    12,
+                                  // Title
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                      16,
+                                      0,
+                                      16,
+                                      8,
+                                    ),
+                                    child: Text(
+                                      state.item?.title ?? '',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 22,
+                                        height: 1.25,
+                                        fontWeight: FontWeight.w700,
+                                        color: onSurface,
+                                      ),
+                                    ),
                                   ),
-                                  child: _InfoColumn(myFormation: myFormation!),
-                                ),
-                              ],
-                            ),
-                          ),
 
-                          // ===== Sticky TabBar juste sous l’AppBar =====
-                          SliverPersistentHeader(
-                            pinned: true,
-                            delegate: _TabBarHeaderDelegate(
-                              TabBar(
-                                controller: _tabs,
-                                isScrollable: true,
-                                tabAlignment: TabAlignment.start,
-                                labelPadding: const EdgeInsets.symmetric(
-                                  horizontal: 18,
-                                ),
-                                indicatorWeight: 3,
-                                indicatorSize: TabBarIndicatorSize.label,
-                                labelStyle: GoogleFonts.inter(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                unselectedLabelStyle: GoogleFonts.inter(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                tabs: const [
-                                  Tab(text: 'Aperçu'),
-                                  Tab(text: 'Leçons'),
-                                  // Tab(text: 'Ressources'),
-                                  Tab(text: 'Temoignages'),
+                                  // Progress + text right
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: LinearProgressIndicator(
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
+                                            minHeight: 8,
+                                            value:
+                                                myFormation?.progress ??
+                                                0, // 06 / 10
+                                            backgroundColor: Colors.black12,
+                                            valueColor:
+                                                const AlwaysStoppedAnimation(
+                                                  AppColors.primary,
+                                                ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Text(
+                                          '${(myFormation?.totalLessonsDone ?? 0).toString().padLeft(2)} / ${(myFormation?.totalLessons ?? 0).toString().padLeft(2)} terminé',
+                                          style: GoogleFonts.inter(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  // CTA "Leçon 7"
+                                  if (!myFormation!.isCompleted)
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                        16,
+                                        14,
+                                        16,
+                                        16,
+                                      ),
+                                      child: ElevatedButton.icon(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.black87,
+                                          foregroundColor: Colors.white,
+                                          minimumSize: const Size.fromHeight(
+                                            52,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              30,
+                                            ),
+                                          ),
+                                          elevation: 0,
+                                        ),
+                                        icon: const Icon(
+                                          Icons.play_circle_fill_rounded,
+                                        ),
+                                        label: Text(
+                                          'Leçon ${myFormation?.myCurrentLesson(state.courses)}',
+                                          style: GoogleFonts.inter(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        onPressed: () async {
+                                          await openVideoViewer(
+                                            url: state.item?.imageUrl ?? '',
+                                            thumb: state.item?.imageUrl ?? '',
+                                            lesson: myFormation!
+                                                .getCurrentCourse(
+                                                  state.courses,
+                                                )!,
+                                            isCurrent:
+                                                myFormation!.currentLesson ==
+                                                myFormation!
+                                                    .getCurrentCourse(
+                                                      state.courses,
+                                                    )!
+                                                    .id,
+                                            isDone:
+                                                myFormation!.lessonsDone
+                                                    ?.contains(
+                                                      myFormation!
+                                                          .getCurrentCourse(
+                                                            state.courses,
+                                                          )!
+                                                          .id
+                                                          .toString(),
+                                                    ) ??
+                                                false,
+                                          );
+                                        },
+                                      ),
+                                    ),
+
+                                  // Finalize formation button
+                                  if (myFormation!.canFinalize)
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                        16,
+                                        10,
+                                        30,
+                                        16,
+                                      ),
+                                      child: ElevatedButton.icon(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.primary,
+                                          foregroundColor: Colors.white,
+                                          minimumSize: const Size.fromHeight(
+                                            52,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              30,
+                                            ),
+                                          ),
+                                          elevation: 0,
+                                        ),
+                                        icon: state.isFinishingFormation == true
+                                            ? const SizedBox(
+                                                width: 18,
+                                                height: 18,
+                                                child: LoadingWidget(
+                                                  color: Colors.black,
+                                                ),
+                                              )
+                                            : const Icon(
+                                                Icons.flag_circle_rounded,
+                                              ),
+                                        label: Text(
+                                          'Finaliser la formation',
+                                          style: GoogleFonts.inter(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        onPressed:
+                                            state.isFinishingFormation == true
+                                            ? null
+                                            : () {
+                                                context
+                                                    .read<FormationDetailBloc>()
+                                                    .add(
+                                                      FormationDetailEvent.finishFormationRequested(
+                                                        id: widget.formationId,
+                                                      ),
+                                                    );
+                                              },
+                                      ),
+                                    ),
+
+                                  // Chips des infos (leçons, durée, inscrits)
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                      16,
+                                      10,
+                                      16,
+                                      12,
+                                    ),
+                                    child: _InfoColumn(
+                                      myFormation: myFormation!,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
-                          ),
-                        ],
 
-                        // ===== Contenu scrollable de chaque tab =====
-                        body: TabBarView(
-                          controller: _tabs,
-                          children: [
-                            // APERÇU
-                            _OverviewTab(myFormation: myFormation!),
-
-                            // LEÇONS
-                            _LessonsTab(
-                              lessons: state.courses,
-                              myFormation: myFormation!,
-                              onLessonTap: (lesson) async {
-                                await openVideoViewer(
-                                  url: lesson.media,
-                                  thumb: lesson.media,
-                                  lesson: lesson,
-                                  isCurrent:
-                                      myFormation!.currentLesson == lesson.id,
-                                  isDone:
-                                      myFormation!.lessonsDone?.contains(
-                                        lesson.id.toString(),
-                                      ) ??
-                                      false,
-                                );
-                              },
-                            ),
-
-                            // RESSOURCES
-                            // _ResourcesTab(),
-
-                            // TÉMOIGNAGES
-                            _ReviewsTab(
-                              id: myFormation!.formation.id,
-                              commentTableType: commentTableType,
+                            // ===== Sticky TabBar juste sous l’AppBar =====
+                            SliverPersistentHeader(
+                              pinned: true,
+                              delegate: _TabBarHeaderDelegate(
+                                TabBar(
+                                  controller: _tabs,
+                                  isScrollable: true,
+                                  tabAlignment: TabAlignment.start,
+                                  labelPadding: const EdgeInsets.symmetric(
+                                    horizontal: 18,
+                                  ),
+                                  indicatorWeight: 3,
+                                  indicatorSize: TabBarIndicatorSize.label,
+                                  labelStyle: GoogleFonts.inter(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  unselectedLabelStyle: GoogleFonts.inter(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  tabs: const [
+                                    Tab(text: 'Aperçu'),
+                                    Tab(text: 'Leçons'),
+                                    // Tab(text: 'Ressources'),
+                                    Tab(text: 'Temoignages'),
+                                  ],
+                                ),
+                              ),
                             ),
                           ],
+
+                          // ===== Contenu scrollable de chaque tab =====
+                          body: TabBarView(
+                            controller: _tabs,
+                            children: [
+                              // APERÇU
+                              _OverviewTab(myFormation: myFormation!),
+
+                              // LEÇONS
+                              _LessonsTab(
+                                lessons: state.courses,
+                                myFormation: myFormation!,
+                                onLessonTap: (lesson) async {
+                                  await openVideoViewer(
+                                    url: lesson.media,
+                                    thumb: lesson.media,
+                                    lesson: lesson,
+                                    isCurrent:
+                                        myFormation!.currentLesson == lesson.id,
+                                    isDone:
+                                        myFormation!.lessonsDone?.contains(
+                                          lesson.id.toString(),
+                                        ) ??
+                                        false,
+                                  );
+                                },
+                              ),
+
+                              // RESSOURCES
+                              // _ResourcesTab(),
+
+                              // TÉMOIGNAGES
+                              _ReviewsTab(
+                                id: myFormation!.formation.id,
+                                commentTableType: commentTableType,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-            },
+                      );
+              },
+            ),
           );
         },
       ),

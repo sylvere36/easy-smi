@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import '../_commons/global_failure.dart';
 import '../_commons/pagination.dart';
 import 'models/finish_course_result.dart';
+import 'models/finish_formation_result.dart';
 import 'models/formation_course.dart';
 import 'models/formation_detail.dart';
 import 'models/formation_item.dart';
@@ -34,6 +35,10 @@ abstract class IFormationRepository {
   });
 
   Future<Either<GlobalFailure, FinishCourseResult>> finishCourse({
+    required int id,
+  });
+
+  Future<Either<GlobalFailure, FinishFormationResult>> finishFormation({
     required int id,
   });
 }

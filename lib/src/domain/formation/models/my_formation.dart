@@ -1,4 +1,33 @@
+import 'package:flutter/material.dart';
+
 import 'formation_course.dart';
+// draft, executed
+
+String statusLabel(String status) {
+  switch (status.toLowerCase()) {
+    case 'draft':
+      return 'Continuer';
+    case 'executed':
+      return 'Finaliser';
+    case 'completed':
+      return 'Terminé';
+    default:
+      return status;
+  }
+}
+
+Color statusColor(String status) {
+  switch (status.toLowerCase()) {
+    case 'draft':
+      return Colors.orangeAccent;
+    case 'executed':
+      return Colors.blue;
+    case 'completed':
+      return Colors.green;
+    default:
+      return Colors.black;
+  }
+}
 
 class MyFormation {
   final int id; // enrollment/registration id
@@ -73,6 +102,13 @@ class MyFormation {
     }
     return courses.first;
   }
+
+  String get humannizeStatus => statusLabel(status);
+  Color get statusColorValue => statusColor(status);
+
+  bool get canContinue =>
+      status.toLowerCase() == 'draft' || status.toLowerCase() == 'executed';
+  bool get canFinalize => isCompleted && status.toLowerCase() == 'draft';
 }
 
 class Formation {

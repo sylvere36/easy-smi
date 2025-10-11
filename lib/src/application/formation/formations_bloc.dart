@@ -42,6 +42,7 @@ class FormationsBloc extends Bloc<FormationsEvent, FormationsState> {
             state.copyWith(
               isLoading: false,
               items: paginated.items,
+              itemsInitial: paginated.items,
               currentPage: paginated.pagination.currentPage,
               total: paginated.pagination.total,
               canLoadMore: canLoadMore,
@@ -127,6 +128,7 @@ class FormationsBloc extends Bloc<FormationsEvent, FormationsState> {
             state.copyWith(
               isLoadingMyFormations: false,
               itemsMyFormations: list,
+              itemsMyFormationsInitial: list,
               currentPageMyFormations: 1,
               totalMyFormations: paginated.pagination.total,
               canLoadMoreMyFormations: false,
@@ -135,6 +137,39 @@ class FormationsBloc extends Bloc<FormationsEvent, FormationsState> {
           );
         },
       );
+    });
+
+    on<_SearchFormationRequested>((event, emit) async {
+      log('Searching formations with query: ${event.query}');
+      final query = event.query.trim().toLowerCase();
+      if (query.isEmpty) {
+        // Reset to initial items when query is empty
+        emit(state.copyWith(items: state.itemsInitial));
+      } else {
+        // Filter initial items based on query
+        final filteredItems = state.itemsInitial.where((item) {
+          return item.title.toLowerCase().contains(query) ||
+              (item.trainerName.toLowerCase().contains(query)) ||
+              (item.deliveryMode.toLowerCase().contains(query));
+        }).toList();
+        emit(state.copyWith(items: filteredItems));
+      }
+    });
+
+    on<_SearchMyFormationsRequested>((event, emit) async {
+      log('Searching my formations with query: ${event.query}');
+      final query = event.query.trim().toLowerCase();
+      if (query.isEmpty) {
+        // Reset to initial items when query is empty
+        emit(state.copyWith(itemsMyFormations: state.itemsMyFormationsInitial));
+      } else {
+        // Filter initial items based on query
+        final filteredItems = state.itemsMyFormationsInitial.where((item) {
+          return item.formation.title.toLowerCase().contains(query) ||
+              (item.formation.deliveryMode.toLowerCase().contains(query));
+        }).toList();
+        emit(state.copyWith(itemsMyFormations: filteredItems));
+      }
     });
 
     on<_Reset>((event, emit) async {

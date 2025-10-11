@@ -5,11 +5,13 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../application/formation/formations_bloc.dart';
 import '../../../domain/formation/models/formation_item.dart';
+import '../../../domain/formation/models/my_formation.dart';
 import '../../_commons/helpers/image_helper.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
 import '../../_commons_widgets/empty_widget.dart';
 import '../../_commons_widgets/loading_widget.dart';
+import '../../_commons_widgets/search_field_widget.dart';
 import '../../_shimmers/card_shimmer.dart';
 
 class FormationsSensibilizationsBody extends StatefulWidget {
@@ -24,7 +26,10 @@ class _FormationsSensibilizationsBodyState
     extends State<FormationsSensibilizationsBody>
     with SingleTickerProviderStateMixin {
   late final TabController _tab;
-  final TextEditingController _search = TextEditingController();
+  final TextEditingController _searchFormations = TextEditingController();
+  final TextEditingController _searchMyFormations = TextEditingController();
+  final TextEditingController _searchMySensibilizations =
+      TextEditingController();
 
   // Dummy data (replace with your API models)
 
@@ -41,7 +46,9 @@ class _FormationsSensibilizationsBodyState
   @override
   void dispose() {
     _tab.dispose();
-    _search.dispose();
+    _searchFormations.dispose();
+    _searchMyFormations.dispose();
+    _searchMySensibilizations.dispose();
     super.dispose();
   }
 
@@ -129,8 +136,26 @@ class _FormationsSensibilizationsBodyState
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                      child: _SearchField(
-                        controller: _search,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 12, bottom: 20),
+                        child: SearchFieldWidget(
+                          controller: _searchMyFormations,
+                          onChanged: (value) {
+                            context.read<FormationsBloc>().add(
+                              FormationsEvent.searchMyFormationsRequested(
+                                query: value,
+                              ),
+                            );
+                          },
+                          onClear: () {
+                            _searchMyFormations.text = '';
+                            context.read<FormationsBloc>().add(
+                              const FormationsEvent.searchMyFormationsRequested(
+                                query: '',
+                              ),
+                            );
+                          },
+                        ),
                       ), // scrolls with content
                     ),
                   ),
@@ -176,6 +201,7 @@ class _FormationsSensibilizationsBodyState
                                   done: c.totalLessonsDone,
                                   total: c.totalLessons,
                                   onPlay: () {},
+                                  myFormation: c,
                                 ),
                               ),
                             );
@@ -191,8 +217,23 @@ class _FormationsSensibilizationsBodyState
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                      child: _SearchField(
-                        controller: _search,
+                      child: SearchFieldWidget(
+                        controller: _searchFormations,
+                        onChanged: (value) {
+                          context.read<FormationsBloc>().add(
+                            FormationsEvent.searchFormationRequested(
+                              query: value,
+                            ),
+                          );
+                        },
+                        onClear: () {
+                          _searchFormations.text = '';
+                          context.read<FormationsBloc>().add(
+                            const FormationsEvent.searchFormationRequested(
+                              query: '',
+                            ),
+                          );
+                        },
                       ), // scrolls with content
                     ),
                   ),
@@ -228,7 +269,9 @@ class _FormationsSensibilizationsBodyState
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                      child: _SearchField(controller: _search),
+                      child: _SearchField(
+                        controller: _searchMySensibilizations,
+                      ),
                     ),
                   ),
                   // _GridCourses(
@@ -622,6 +665,7 @@ class _ProgressCard extends StatelessWidget {
     required this.done,
     required this.total,
     required this.onPlay,
+    required this.myFormation,
   });
 
   final String title;
@@ -629,6 +673,7 @@ class _ProgressCard extends StatelessWidget {
   final int done;
   final int total;
   final VoidCallback onPlay;
+  final MyFormation myFormation;
 
   @override
   Widget build(BuildContext context) {
@@ -717,6 +762,30 @@ class _ProgressCard extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+
+            // Status chip
+            const SizedBox(width: 12),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: myFormation.statusColorValue.withValues(alpha: .1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  myFormation.humannizeStatus.toUpperCase(),
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: myFormation.statusColorValue,
+                  ),
+                ),
               ),
             ),
           ],
