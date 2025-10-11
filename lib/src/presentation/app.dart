@@ -17,6 +17,7 @@ import '../application/events/events_bloc.dart';
 import '../application/formation/formations_bloc.dart';
 import '../application/inspection/inspections_bloc.dart';
 import '../application/permit/permits_bloc.dart';
+import '../application/slider/sliders_bloc.dart';
 import '_commons/route/app_router.dart';
 import '_commons/route/app_router.gr.dart';
 import '_commons/theming/app_theme.dart';
@@ -67,6 +68,11 @@ class _AppState extends State<App> {
           create: (_) => sl<FormationsBloc>()
             ..add(const FormationsEvent.fetchRequested())
             ..add(const FormationsEvent.fetchMyFormationsRequested()),
+        ),
+        BlocProvider(
+          create: (_) =>
+              sl<SlidersBloc>()
+                ..add(const SlidersEvent.fetchRequested(page: 1)),
         ),
       ],
       child: MaterialApp.router(

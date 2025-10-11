@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,10 +13,11 @@ import '../../../application/events/detail/event_detail_bloc.dart';
 import '../../../application/events/events_bloc.dart';
 import '../../../application/inspection/inspections_bloc.dart';
 import '../../../application/permit/permits_bloc.dart';
+import '../../../application/slider/sliders_bloc.dart';
 import '../../../domain/inspection/models/inspection_item.dart';
+import '../../_commons/helpers/image_helper.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
-import '../../_shimmers/action_card_shimmer.dart';
 import '../../_shimmers/card_shimmer.dart';
 import '../../actions/widget/action_card.dart';
 import '../../audits/widgets/audits_widget.dart';
@@ -32,11 +34,6 @@ class HomeBody extends StatefulWidget {
 class _HomeBodyState extends State<HomeBody> {
   final _pageCtrl = PageController();
   late Timer _rotator;
-  final _banners = const [
-    'https://picsum.photos/seed/smi1/1024/420',
-    'https://picsum.photos/seed/smi2/1024/420',
-    'https://picsum.photos/seed/smi3/1024/420',
-  ];
 
   int _index = 0;
 
@@ -45,7 +42,9 @@ class _HomeBodyState extends State<HomeBody> {
     super.initState();
     _rotator = Timer.periodic(const Duration(seconds: 10), (_) {
       if (!mounted) return;
-      _index = (_index + 1) % _banners.length;
+      final items = context.read<SlidersBloc>().state.items;
+      if (items.isEmpty) return;
+      _index = (_index + 1) % items.length;
       _pageCtrl.animateToPage(
         _index,
         duration: const Duration(milliseconds: 450),
@@ -70,64 +69,77 @@ class _HomeBodyState extends State<HomeBody> {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
-              child: Column(
-                spacing: 8,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: AspectRatio(
-                      aspectRatio: 16 / 7,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          PageView.builder(
-                            controller: _pageCtrl,
-                            // onPageChanged: (i) {
-                            //   setState(() {
-                            //     _index = i;
-                            //   });
-                            // },
-                            itemCount: _banners.length,
-                            itemBuilder: (_, i) =>
-                                Image.network(_banners[i], fit: BoxFit.cover),
+              child: BlocBuilder<SlidersBloc, SlidersState>(
+                builder: (context, slidersState) {
+                  final items = slidersState.items;
+                  return Column(
+                    spacing: 8,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: AspectRatio(
+                          aspectRatio: 16 / 7,
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              if (items.isEmpty)
+                                PageView.builder(
+                                  controller: _pageCtrl,
+                                  itemCount: 1,
+                                  itemBuilder: (_, _) =>
+                                      Container(color: Colors.black12),
+                                )
+                              else
+                                PageView.builder(
+                                  controller: _pageCtrl,
+                                  itemCount: items.length,
+                                  itemBuilder: (_, i) => FutureBuilder<String>(
+                                    future: getFullImageUrl(items[i].image),
+                                    builder: (context, snap) {
+                                      final url = snap.data;
+                                      if (url == null || url.isEmpty) {
+                                        return Container(color: Colors.black12);
+                                      }
+                                      return Image.network(
+                                        url,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
+                                  ),
+                                ),
+                            ],
                           ),
-                          // petit indicateur en bas à droite
-                          // Align(
-                          //   alignment: Alignment.bottomRight,
-                          //   child: Padding(
-                          //     padding: const EdgeInsets.all(10),
-                          //     child: Container(
-                          //       padding: const EdgeInsets.symmetric(
-                          //         horizontal: 10,
-                          //         vertical: 6,
-                          //       ),
-                          //       decoration: BoxDecoration(
-                          //         color: Colors.black45,
-                          //         borderRadius: BorderRadius.circular(20),
-                          //       ),
-                          //       child: Text(
-                          //         '${_index + 1}/${_banners.length}',
-                          //         style: GoogleFonts.poppins(
-                          //           color: Colors.white,
-                          //           fontSize: 12,
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                  Text(
-                    'Voir plus',
-                    style: GoogleFonts.nunito(
-                      color: Colors.black54,
-                      fontSize: 15,
-                    ),
-                  ),
-                ],
+                      if (items.length > 1)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 6, right: 6),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: List.generate(
+                              items.length,
+                              (i) => Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 2,
+                                ),
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: i == _index
+                                        ? AppColors.primary
+                                        : Colors.black26,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
               ),
             ),
           ),
@@ -146,11 +158,7 @@ class _HomeBodyState extends State<HomeBody> {
                         },
                       ),
                 children: state.items == null
-                    ? const [
-                        ActionCardShimmer(compact: true),
-                        ActionCardShimmer(compact: true),
-                        ActionCardShimmer(compact: true),
-                      ]
+                    ? List.generate(3, (index) => const CardShimmer())
                     : [
                         ...state.items!
                             .take(3)

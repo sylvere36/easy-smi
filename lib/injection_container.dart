@@ -22,6 +22,7 @@ import 'src/application/inspection/inspections_bloc.dart';
 import 'src/application/organization/organization_bloc.dart';
 import 'src/application/permit/detail/permit_detail_bloc.dart';
 import 'src/application/permit/permits_bloc.dart';
+import 'src/application/slider/sliders_bloc.dart';
 import 'src/application/splash/splash_bloc.dart';
 import 'src/domain/action/i_action_repository.dart';
 import 'src/domain/audit/i_audit_repository.dart';
@@ -35,6 +36,7 @@ import 'src/domain/formation/i_formation_repository.dart';
 import 'src/domain/inspection/i_inspection_repository.dart';
 import 'src/domain/organization/i_organization_repository.dart';
 import 'src/domain/permit/i_permit_repository.dart';
+import 'src/domain/slider/i_slider_repository.dart';
 import 'src/infrastructure/_commons/config/base_url_notifier.dart';
 import 'src/infrastructure/_commons/files/download_service.dart';
 import 'src/infrastructure/_commons/files/file_manager.dart';
@@ -65,6 +67,8 @@ import 'src/infrastructure/organization/data_sources/organization_remote_data_so
 import 'src/infrastructure/organization/organization_repository.dart';
 import 'src/infrastructure/permit/data_sources/permit_remote_data_source.dart';
 import 'src/infrastructure/permit/permit_repository.dart';
+import 'src/infrastructure/slider/data_sources/slider_remote_data_source.dart';
+import 'src/infrastructure/slider/slider_repository.dart';
 
 final sl = GetIt.instance;
 
@@ -85,6 +89,7 @@ Future<void> init() async {
   initPermits();
   initInspections();
   initFormations();
+  initSliders();
 }
 
 void initSplashScreen() {
@@ -240,4 +245,14 @@ Future<void> initFormations() async {
   );
   sl.registerFactory(() => FormationsBloc(repository: sl()));
   sl.registerFactory(() => FormationDetailBloc(repository: sl()));
+}
+
+Future<void> initSliders() async {
+  sl.registerLazySingleton<ISliderRemoteDataSource>(
+    () => SliderRemoteDataSource(httpClient: sl()),
+  );
+  sl.registerLazySingleton<ISliderRepository>(
+    () => SliderRepository(networkInfo: sl(), remoteDataSource: sl()),
+  );
+  sl.registerFactory(() => SlidersBloc(repository: sl()));
 }
