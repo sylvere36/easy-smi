@@ -5,7 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../_commons/route/app_router.gr.dart';
 
 class CourseBody extends StatefulWidget {
-  const CourseBody({super.key});
+  final int formationId;
+  const CourseBody({super.key, required this.formationId});
 
   @override
   State<CourseBody> createState() => _CourseBodyState();
@@ -160,7 +161,9 @@ class _CourseBodyState extends State<CourseBody> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 onPressed: () {
-                  context.router.push(const FormationDisplayRoute());
+                  context.router.push(
+                    FormationDisplayRoute(formationId: widget.formationId),
+                  );
                 },
                 child: Text(
                   'COMMENCER',

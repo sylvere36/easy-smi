@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -6,6 +8,7 @@ import '../../domain/_commons/global_failure.dart';
 import '../../domain/_commons/pagination.dart';
 import '../../domain/formation/i_formation_repository.dart';
 import '../../domain/formation/models/formation_item.dart';
+import '../../domain/formation/models/my_formation.dart';
 
 part 'formations_bloc.freezed.dart';
 part 'formations_event.dart';
@@ -81,19 +84,24 @@ class FormationsBloc extends Bloc<FormationsEvent, FormationsState> {
 
     // Fetch My Formations (no pagination)
     on<_FetchMyFormationsRequested>((event, emit) async {
+      log('Fetching my formations...');
       emit(
         state.copyWith(
-          isLoading: true,
+          isLoadingMyFormations: true,
           resultOption: none(),
-          items: [],
+          itemsMyFormations: [],
           currentPage: 1,
           canLoadMore: false,
         ),
       );
       final res = await repository.getMyFormations();
       res.fold(
-        (l) =>
-            emit(state.copyWith(isLoading: false, resultOption: some(left(l)))),
+        (l) => emit(
+          state.copyWith(
+            isLoadingMyFormations: false,
+            resultOptionMyFormations: some(left(l)),
+          ),
+        ),
         (list) {
           // Wrap into Paginated for state.resultOption consistency
           final paginated = Paginated(
@@ -117,12 +125,12 @@ class FormationsBloc extends Bloc<FormationsEvent, FormationsState> {
           );
           emit(
             state.copyWith(
-              isLoading: false,
-              items: paginated.items,
-              currentPage: 1,
-              total: paginated.pagination.total,
-              canLoadMore: false,
-              resultOption: some(right(paginated)),
+              isLoadingMyFormations: false,
+              itemsMyFormations: list,
+              currentPageMyFormations: 1,
+              totalMyFormations: paginated.pagination.total,
+              canLoadMoreMyFormations: false,
+              resultOptionMyFormations: some(right(paginated)),
             ),
           );
         },

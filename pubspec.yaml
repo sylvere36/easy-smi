@@ -67,10 +67,10 @@ dependencies:
   shared_preferences: ^2.0.5
   shimmer: ^3.0.0
   toastification: ^3.0.3
+  url_launcher: ^6.3.1
   video_player: ^2.10.0
   webview_flutter: ^4.10.0
-  
-  
+  youtube_player_iframe: ^5.2.0
   
 
 dev_dependencies:

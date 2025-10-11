@@ -544,34 +544,104 @@ class FilePreviewRouteArgs {
 
 /// generated route for
 /// [_i16.FormationDetailPage]
-class FormationDetailRoute extends _i53.PageRouteInfo<void> {
-  const FormationDetailRoute({List<_i53.PageRouteInfo>? children})
-    : super(FormationDetailRoute.name, initialChildren: children);
+class FormationDetailRoute
+    extends _i53.PageRouteInfo<FormationDetailRouteArgs> {
+  FormationDetailRoute({
+    _i54.Key? key,
+    required int formationId,
+    List<_i53.PageRouteInfo>? children,
+  }) : super(
+         FormationDetailRoute.name,
+         args: FormationDetailRouteArgs(key: key, formationId: formationId),
+         initialChildren: children,
+       );
 
   static const String name = 'FormationDetailRoute';
 
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i16.FormationDetailPage();
+      final args = data.argsAs<FormationDetailRouteArgs>();
+      return _i16.FormationDetailPage(
+        key: args.key,
+        formationId: args.formationId,
+      );
     },
   );
 }
 
+class FormationDetailRouteArgs {
+  const FormationDetailRouteArgs({this.key, required this.formationId});
+
+  final _i54.Key? key;
+
+  final int formationId;
+
+  @override
+  String toString() {
+    return 'FormationDetailRouteArgs{key: $key, formationId: $formationId}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! FormationDetailRouteArgs) return false;
+    return key == other.key && formationId == other.formationId;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ formationId.hashCode;
+}
+
 /// generated route for
 /// [_i17.FormationDisplayPage]
-class FormationDisplayRoute extends _i53.PageRouteInfo<void> {
-  const FormationDisplayRoute({List<_i53.PageRouteInfo>? children})
-    : super(FormationDisplayRoute.name, initialChildren: children);
+class FormationDisplayRoute
+    extends _i53.PageRouteInfo<FormationDisplayRouteArgs> {
+  FormationDisplayRoute({
+    _i54.Key? key,
+    required int formationId,
+    List<_i53.PageRouteInfo>? children,
+  }) : super(
+         FormationDisplayRoute.name,
+         args: FormationDisplayRouteArgs(key: key, formationId: formationId),
+         initialChildren: children,
+       );
 
   static const String name = 'FormationDisplayRoute';
 
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i17.FormationDisplayPage();
+      final args = data.argsAs<FormationDisplayRouteArgs>();
+      return _i17.FormationDisplayPage(
+        key: args.key,
+        formationId: args.formationId,
+      );
     },
   );
+}
+
+class FormationDisplayRouteArgs {
+  const FormationDisplayRouteArgs({this.key, required this.formationId});
+
+  final _i54.Key? key;
+
+  final int formationId;
+
+  @override
+  String toString() {
+    return 'FormationDisplayRouteArgs{key: $key, formationId: $formationId}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! FormationDisplayRouteArgs) return false;
+    return key == other.key && formationId == other.formationId;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ formationId.hashCode;
 }
 
 /// generated route for

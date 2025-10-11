@@ -1,13 +1,11 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../application/communication/notifications_bloc.dart';
 import '../../domain/communication/models/notification.dart';
+import '../_commons/helpers/html_view.dart';
 
 @RoutePage()
 class NotificationsPage extends StatefulWidget {
@@ -240,67 +238,11 @@ class _NotificationDetailSheet extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              Expanded(child: _HtmlView(html: html)),
+              Expanded(child: HtmlView(html: html)),
             ],
           ),
         );
       },
     );
-  }
-}
-
-class _HtmlView extends StatefulWidget {
-  final String html;
-  const _HtmlView({required this.html});
-
-  @override
-  State<_HtmlView> createState() => _HtmlViewState();
-}
-
-class _HtmlViewState extends State<_HtmlView> {
-  late final WebViewController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(Colors.transparent)
-      ..loadHtmlString(_wrapHtml(widget.html));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return WebViewWidget(
-      controller: _controller,
-      gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-        Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
-      },
-    );
-  }
-
-  // Wrap provided HTML so the WebView doesn't auto-scale text.
-  // - Adds viewport meta to prevent iOS/Android zoomed text
-  // - Forces consistent base font-size and disables text-size adjust
-  // - Ensures images/videos/iframes are responsive
-  String _wrapHtml(String content) {
-    const String head = '''
-      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-      <style>
-        html, body {
-          margin: 0; padding: 0;
-          font-size: 14px; line-height: 1.5; color: #222;
-          -webkit-text-size-adjust: 100%; /* prevent auto text zoom */
-          text-size-adjust: 100%;
-        }
-        * { box-sizing: border-box; max-width: 100%; }
-        img, video, iframe { max-width: 100%; height: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        h1 { font-size: 18px; }
-        h2 { font-size: 16px; }
-        h3 { font-size: 15px; }
-      </style>
-    ''';
-    return '<!DOCTYPE html><html><head>$head</head><body>$content</body></html>';
   }
 }

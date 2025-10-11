@@ -1,3 +1,5 @@
+import 'formation_course.dart';
+
 class MyFormation {
   final int id; // enrollment/registration id
   final Formation formation;
@@ -7,9 +9,9 @@ class MyFormation {
   final String status;
   final String? updatedAt;
   final String? createdAt;
-  final int? currentLesson;
-  final int? lessonsDone;
-  final int totalLessonsDone;
+  int? currentLesson;
+  List<String>? lessonsDone;
+  int totalLessonsDone;
   final int totalLessons;
 
   MyFormation({
@@ -39,10 +41,38 @@ class MyFormation {
     updatedAt: json['updated_at'] as String?,
     createdAt: json['created_at'] as String?,
     currentLesson: (json['current_lesson'] as num?)?.toInt(),
-    lessonsDone: (json['lessons_done'] as num?)?.toInt(),
+    lessonsDone: (json['lessons_done'] as List<dynamic>?)
+        ?.map((e) => e.toString())
+        .toList(),
     totalLessonsDone: (json['total_lessons_done'] as num?)?.toInt() ?? 0,
     totalLessons: (json['total_lessons'] as num?)?.toInt() ?? 0,
   );
+
+  double get progress {
+    if (totalLessons == 0) return 0;
+    return totalLessonsDone / totalLessons;
+  }
+
+  int myCurrentLesson(List<FormationCourse> courses) {
+    if (currentLesson != null) {
+      final idx = courses.indexWhere((c) => c.id == currentLesson);
+      if (idx != -1) return idx + 1;
+    }
+    return 1;
+  }
+
+  bool get isCompleted => totalLessonsDone >= totalLessons && totalLessons > 0;
+
+  FormationCourse? getCurrentCourse(List<FormationCourse> courses) {
+    if (courses.isEmpty) return null;
+    if (currentLesson != null) {
+      return courses.firstWhere(
+        (c) => c.id == currentLesson,
+        orElse: () => courses.first,
+      );
+    }
+    return courses.first;
+  }
 }
 
 class Formation {

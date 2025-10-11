@@ -7,14 +7,15 @@ import 'widgets/formation_detail_body.dart';
 @RoutePage()
 class FormationDetailPage extends StatelessWidget {
   static const String routeName = '/formations_sensibilizations';
-  const FormationDetailPage({super.key});
+  final int formationId;
+  const FormationDetailPage({super.key, required this.formationId});
 
   @override
   Widget build(BuildContext context) {
-    return const MyScaffold(
+    return MyScaffold(
       appBarTitle: 'Formations',
       paddingHorizontale: 0,
-      body: CourseBody(),
+      body: CourseBody(formationId: formationId),
     );
   }
 }

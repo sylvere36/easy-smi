@@ -1,66 +1,158 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import '../../infrastructure/_commons/network/user_session.dart';
+import '../_commons/theming/app_color.dart';
 
 class _VideoSheet extends StatefulWidget {
-  const _VideoSheet({required this.url});
+  const _VideoSheet({
+    required this.url,
+    this.hasBtn = false, // Added optional button parameters
+    this.btnTitle, // Added optional button parameters
+    this.onPressed, // Added optional button parameters
+  });
   final String url;
+  final bool hasBtn;
+  final String? btnTitle;
+  final VoidCallback? onPressed;
 
   @override
   State<_VideoSheet> createState() => _VideoSheetState();
 }
 
 class _VideoSheetState extends State<_VideoSheet> {
-  late final VideoPlayerController _c = VideoPlayerController.networkUrl(
-    Uri.parse(widget.url),
-  );
+  VideoPlayerController? _c;
+  YoutubePlayerController? _yt;
   bool _ready = false;
   bool _showControls = true;
   Timer? _autoHide;
+  String? _errorMessage;
+  bool _isYouTube = false;
+
+  bool hideBoutton = false;
 
   @override
   void initState() {
     super.initState();
+    _isYouTube = _isYouTubeUrl(widget.url);
     _init();
   }
 
   Future<void> _init() async {
-    await _c.initialize();
-    _c.addListener(() => setState(() {}));
-    setState(() => _ready = true);
-    _c.play();
-    _kickAutoHide();
+    log(widget.url);
+    try {
+      // If it's a YouTube URL, initialize the YouTube iframe player inline.
+      if (_isYouTube) {
+        final videoId = _extractYouTubeId(widget.url);
+        if (videoId == null || videoId.isEmpty) {
+          setState(() {
+            _errorMessage = 'Lien YouTube invalide ou non pris en charge.';
+          });
+          return;
+        }
+        _yt = YoutubePlayerController.fromVideoId(
+          videoId: videoId,
+          autoPlay: true,
+          params: const YoutubePlayerParams(showFullscreenButton: true),
+        );
+        // Mark as ready for UI purposes (YouTube widget manages its own state)
+        setState(() {
+          _ready = true;
+          _errorMessage = null;
+        });
+        return;
+      }
+
+      // Build optional auth headers when token is available
+      Map<String, String>? headers;
+      try {
+        final userSession = myUserSession;
+        final token = await userSession.getAuthToken();
+        if (token != null && token.isNotEmpty) {
+          headers = {'Authorization': 'Bearer $token'};
+        }
+      } catch (_) {}
+
+      _c = VideoPlayerController.networkUrl(
+        Uri.parse(widget.url),
+        httpHeaders: headers ?? const <String, String>{},
+      );
+
+      await _c!.initialize();
+      _c!.addListener(() => setState(() {}));
+      setState(() => _ready = true);
+      _c!.play();
+      _kickAutoHide();
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+        _ready = false;
+      });
+    }
+  }
+
+  bool _isYouTubeUrl(String url) {
+    final u = url.toLowerCase();
+    return u.contains('youtube.com/watch') ||
+        u.contains('youtu.be/') ||
+        u.contains('youtube.com/embed') ||
+        u.contains('youtube.com/shorts');
+  }
+
+  String? _extractYouTubeId(String url) {
+    try {
+      final uri = Uri.parse(url);
+      final host = uri.host.toLowerCase();
+      if (host.contains('youtu.be')) {
+        final p = uri.pathSegments;
+        if (p.isNotEmpty) return p.first;
+      }
+      if (host.contains('youtube.com')) {
+        if (uri.path.startsWith('/watch')) {
+          return uri.queryParameters['v'];
+        }
+        final p = uri.pathSegments;
+        if (p.isNotEmpty) {
+          if (p.first == 'embed' && p.length >= 2) return p[1];
+          if (p.first == 'shorts' && p.length >= 2) return p[1];
+        }
+      }
+    } catch (_) {}
+    return null;
   }
 
   @override
   void dispose() {
     _autoHide?.cancel();
-    _c.dispose();
+    _c?.dispose();
+    _yt?.close();
     super.dispose();
   }
 
   void _togglePlay() {
-    if (!_ready) return;
-    if (_c.value.isPlaying) {
-      _c.pause();
+    if (!_ready || _c == null) return;
+    if (_c!.value.isPlaying) {
+      _c!.pause();
     } else {
-      _c.play();
+      _c!.play();
       _kickAutoHide();
     }
     setState(() {});
   }
 
   void _seekBy(Duration delta) {
-    if (!_ready) return;
-    final pos = _c.value.position + delta;
-    _c.seekTo(pos /* .clamp(Duration.zero, _c.value.duration) */);
+    if (!_ready || _c == null) return;
+    final pos = _c!.value.position + delta;
+    _c!.seekTo(pos /* .clamp(Duration.zero, _c.value.duration) */);
     _kickAutoHide();
   }
 
   void _kickAutoHide() {
     _autoHide?.cancel();
     _autoHide = Timer(const Duration(seconds: 3), () {
-      if (mounted && _c.value.isPlaying) {
+      if (mounted && (_c?.value.isPlaying ?? false)) {
         setState(() => _showControls = false);
       }
     });
@@ -77,8 +169,12 @@ class _VideoSheetState extends State<_VideoSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final duration = _c.value.duration;
-    final position = _c.value.position;
+    final duration = (_ready && _c != null)
+        ? _c!.value.duration
+        : Duration.zero;
+    final position = (_ready && _c != null)
+        ? _c!.value.position
+        : Duration.zero;
 
     return SafeArea(
       top: false,
@@ -118,20 +214,77 @@ class _VideoSheetState extends State<_VideoSheet> {
 
               // lecteur avec coins arrondis
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: EdgeInsets.zero,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(2),
                   child: AspectRatio(
-                    aspectRatio: _ready ? _c.value.aspectRatio : 16 / 9,
+                    aspectRatio: _isYouTube
+                        ? 16 / 9
+                        : (_ready && _c != null
+                              ? _c!.value.aspectRatio
+                              : 16 / 9),
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
                         // vidéo
-                        Container(color: Colors.black),
-                        if (_ready) VideoPlayer(_c),
+                        const Positioned.fill(
+                          child: ColoredBox(color: Colors.black),
+                        ),
+                        if (_isYouTube) ...[
+                          if (_yt != null) const SizedBox.shrink(),
+                        ] else ...[
+                          if (_ready && _c != null)
+                            Positioned.fill(child: VideoPlayer(_c!)),
+                        ],
+                        if (_isYouTube && _yt != null)
+                          Positioned.fill(
+                            child: YoutubePlayer(controller: _yt!),
+                          ),
+
+                        // error overlay
+                        if (_errorMessage != null)
+                          Positioned.fill(
+                            child: Container(
+                              color: Colors.black54,
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.error_outline,
+                                    color: Colors.white,
+                                    size: 40,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  const Text(
+                                    'Impossible de lire la vidéo.\nVérifiez la configuration du serveur (Content-Length / Range) ou essayez un autre format (HLS).',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    _errorMessage!,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  FilledButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('Fermer'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
 
                         // overlay contrôles
-                        if (_showControls)
+                        if (!_isYouTube && _showControls)
                           Positioned.fill(
                             child: Container(
                               color: Colors.black45,
@@ -146,7 +299,9 @@ class _VideoSheetState extends State<_VideoSheet> {
                                         _seekBy(const Duration(seconds: -10)),
                                   ),
                                   _playButton(
-                                    playing: _c.value.isPlaying,
+                                    playing:
+                                        _ready &&
+                                        (_c?.value.isPlaying ?? false),
                                     onTap: _togglePlay,
                                   ),
                                   _roundIcon(
@@ -161,7 +316,10 @@ class _VideoSheetState extends State<_VideoSheet> {
                           ),
 
                         // buffering indicateur
-                        if (_ready && _c.value.isBuffering)
+                        if (!_isYouTube &&
+                            _ready &&
+                            _c != null &&
+                            _c!.value.isBuffering)
                           const Center(
                             child: CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation(Colors.white),
@@ -173,7 +331,7 @@ class _VideoSheetState extends State<_VideoSheet> {
                 ),
               ),
 
-              // Slider + timings
+              // Slider + timings (hidden for YouTube)
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -181,46 +339,85 @@ class _VideoSheetState extends State<_VideoSheet> {
                 ),
                 child: Row(
                   children: [
-                    Text(
-                      _fmt(position),
-                      style: const TextStyle(color: Colors.white70),
-                    ),
-                    Expanded(
-                      child: SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          activeTrackColor: Colors.white,
-                          inactiveTrackColor: Colors.white24,
-                          thumbColor: Colors.white,
-                          overlayColor: Colors.white24,
-                          trackHeight: 3,
-                        ),
-                        child: Slider(
-                          max: (_ready ? duration.inMilliseconds : 1)
-                              .toDouble()
-                              .clamp(1.0, double.infinity),
-                          value: (_ready ? position.inMilliseconds : 0)
-                              .toDouble()
-                              .clamp(
-                                0.0,
-                                (_ready ? duration.inMilliseconds : 1)
-                                    .toDouble(),
-                              ),
-                          onChanged: !_ready
-                              ? null
-                              : (v) {
-                                  _c.seekTo(Duration(milliseconds: v.toInt()));
-                                  _kickAutoHide();
-                                },
-                        ),
+                    if (!_isYouTube)
+                      Text(
+                        _fmt(position),
+                        style: const TextStyle(color: Colors.white70),
                       ),
+                    Expanded(
+                      child: _isYouTube
+                          ? const SizedBox.shrink()
+                          : SliderTheme(
+                              data: SliderTheme.of(context).copyWith(
+                                activeTrackColor: Colors.white,
+                                inactiveTrackColor: Colors.white24,
+                                thumbColor: Colors.white,
+                                overlayColor: Colors.white24,
+                                trackHeight: 3,
+                              ),
+                              child: Slider(
+                                max: (_ready ? duration.inMilliseconds : 1)
+                                    .toDouble()
+                                    .clamp(1.0, double.infinity),
+                                value: (_ready ? position.inMilliseconds : 0)
+                                    .toDouble()
+                                    .clamp(
+                                      0.0,
+                                      (_ready ? duration.inMilliseconds : 1)
+                                          .toDouble(),
+                                    ),
+                                onChanged: !_ready
+                                    ? null
+                                    : _c == null
+                                    ? null
+                                    : (v) {
+                                        _c!.seekTo(
+                                          Duration(milliseconds: v.toInt()),
+                                        );
+                                        _kickAutoHide();
+                                      },
+                              ),
+                            ),
                     ),
-                    Text(
-                      _fmt(duration),
-                      style: const TextStyle(color: Colors.white70),
-                    ),
+                    if (!_isYouTube)
+                      Text(
+                        _fmt(duration),
+                        style: const TextStyle(color: Colors.white70),
+                      ),
                   ],
                 ),
               ),
+              if (widget.hasBtn && !hideBoutton)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: widget.onPressed != null
+                          ? () {
+                              widget.onPressed!();
+                              setState(() {
+                                hideBoutton = true;
+                              });
+                            }
+                          : () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        surfaceTintColor: AppColors.primary,
+                      ),
+                      child: Text(
+                        widget.btnTitle ?? 'Continuer',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
               const Spacer(),
             ],
           ),
@@ -290,6 +487,9 @@ Future<void> showNetworkVideoViewer(
   BuildContext context, {
   String url =
       'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+  bool hasBtn = false,
+  String? btnTitle,
+  VoidCallback? onPressed,
 }) {
   return showModalBottomSheet(
     context: context,
@@ -299,6 +499,11 @@ Future<void> showNetworkVideoViewer(
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
-    builder: (_) => _VideoSheet(url: url),
+    builder: (_) => _VideoSheet(
+      url: url,
+      hasBtn: hasBtn,
+      btnTitle: btnTitle,
+      onPressed: onPressed,
+    ),
   );
 }

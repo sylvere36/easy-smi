@@ -1,13 +1,30 @@
+// removed unused import
+
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../_commons/route/app_router.gr.dart';
+import '../../../../injection_container.dart';
+import '../../../application/communication/comments_bloc.dart';
+import '../../../application/formation/detail/formation_detail_bloc.dart';
+import '../../../application/formation/formations_bloc.dart';
+import '../../../domain/formation/models/formation_course.dart';
+import '../../../domain/formation/models/my_formation.dart';
+import '../../_commons/helpers/html_view.dart';
+import '../../_commons/helpers/image_helper.dart';
 import '../../_commons/theming/app_color.dart';
+import '../../_commons_widgets/comments/comment_field.dart';
+import '../../_commons_widgets/loading_widget.dart';
+import '../../_commons_widgets/my_toast.dart';
 import '../../_commons_widgets/network_video_viewer.dart';
+import '../../comments/widgets/resume_comment_widget.dart';
 
 class CourseDisplayBody extends StatefulWidget {
-  const CourseDisplayBody({super.key});
+  final int formationId;
+  const CourseDisplayBody({super.key, required this.formationId});
 
   @override
   State<CourseDisplayBody> createState() => _CourseDisplayBodyState();
@@ -15,7 +32,19 @@ class CourseDisplayBody extends StatefulWidget {
 
 class _CourseDisplayBodyState extends State<CourseDisplayBody>
     with TickerProviderStateMixin {
-  late final TabController _tabs = TabController(length: 4, vsync: this);
+  late final TabController _tabs = TabController(length: 3, vsync: this);
+  MyFormation? myFormation;
+
+  String commentTableType = 'formation';
+
+  @override
+  void initState() {
+    super.initState();
+
+    BlocProvider.of<FormationsBloc>(
+      context,
+    ).add(const FormationsEvent.fetchMyFormationsRequested());
+  }
 
   @override
   void dispose() {
@@ -23,194 +52,371 @@ class _CourseDisplayBodyState extends State<CourseDisplayBody>
     super.dispose();
   }
 
+  Future<void> openVideoViewer({
+    required String url,
+    required String thumb,
+    required FormationCourse lesson,
+    required bool isCurrent,
+    required bool isDone,
+  }) async {
+    // if (widget.isDone) return;
+    final String btnTitle = isCurrent
+        ? 'Terminer la leçon'
+        : 'Démarrer la leçon';
+
+    await showNetworkVideoViewer(
+      context,
+      url: thumb,
+      hasBtn: !isDone,
+      btnTitle: btnTitle,
+      onPressed: () {
+        context.read<FormationDetailBloc>().add(
+          isCurrent
+              ? FormationDetailEvent.finishCourseRequested(id: lesson.id)
+              : FormationDetailEvent.startCourseRequested(id: lesson.id),
+        );
+
+        successToast(
+          context: context,
+          msg: isCurrent ? 'Leçon terminée' : 'Leçon démarrée',
+        );
+        if (isCurrent) {
+          setState(() {
+            myFormation?.currentLesson = lesson.id;
+            if (myFormation!.lessonsDone == null) {
+              myFormation!.lessonsDone = [];
+            }
+            myFormation!.lessonsDone!.add(lesson.id.toString());
+            myFormation!.totalLessonsDone += 1;
+          });
+          AutoRouter.of(context).pop();
+        } else {}
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final onSurface = theme.colorScheme.onSurface;
 
-    return DefaultTabController(
-      length: 4,
-      child: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          // IMAGE + titre + stats + CTA
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header image
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
-                  child: GestureDetector(
-                    onTap: () async {
-                      await showNetworkVideoViewer(context);
-                    },
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          AspectRatio(
-                            aspectRatio: 16 / 9,
-                            child: Image.network(
-                              'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1400&auto=format&fit=crop',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Container(
-                            width: 76,
-                            height: 76,
-                            decoration: const BoxDecoration(
-                              color: Colors.black45,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.play_arrow_rounded,
-                              size: 48,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Positioned(
-                            right: 12,
-                            bottom: 12,
-                            child: Row(
+    return BlocProvider(
+      create: (context) => sl<FormationDetailBloc>()
+        ..add(FormationDetailEvent.fetchRequested(id: widget.formationId))
+        ..add(FormationDetailEvent.coursesRequested(id: widget.formationId)),
+      child: BlocConsumer<FormationsBloc, FormationsState>(
+        listener: (context, state) {
+          if (state.itemsMyFormations.isNotEmpty) {
+            final found = state.itemsMyFormations.firstWhere(
+              (f) => f.formation.id == widget.formationId,
+              orElse: () => state.itemsMyFormations.first,
+            );
+            setState(() {
+              myFormation = found;
+            });
+
+            context.read<CommentsBloc>().add(
+              CommentsEvent.fetchRequested(
+                commentableType: commentTableType,
+                commentableId: myFormation!.formation.id,
+              ),
+            );
+            if (found.formation.id != widget.formationId) {
+              errorToast(context: context, msg: 'Formation introuvable');
+              context.router.pop();
+            }
+          }
+        },
+        builder: (context, state) {
+          return BlocBuilder<FormationDetailBloc, FormationDetailState>(
+            builder: (context, state) {
+              return state.isLoading || myFormation == null
+                  ? const Center(child: LoadingWidget())
+                  : DefaultTabController(
+                      length: 4,
+                      child: NestedScrollView(
+                        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                          // IMAGE + titre + stats + CTA
+                          SliverToBoxAdapter(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _roundSmallIcon(Icons.volume_up_rounded),
-                                const SizedBox(width: 8),
-                                _roundSmallIcon(Icons.fullscreen_rounded),
+                                // Header image
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    8,
+                                    12,
+                                    8,
+                                    12,
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      await openVideoViewer(
+                                        url: state.item?.imageUrl ?? '',
+                                        thumb: state.item?.imageUrl ?? '',
+                                        lesson: myFormation!.getCurrentCourse(
+                                          state.courses,
+                                        )!,
+                                        isCurrent:
+                                            myFormation!.currentLesson ==
+                                            myFormation!
+                                                .getCurrentCourse(
+                                                  state.courses,
+                                                )!
+                                                .id,
+                                        isDone:
+                                            myFormation!.lessonsDone?.contains(
+                                              myFormation!
+                                                  .getCurrentCourse(
+                                                    state.courses,
+                                                  )!
+                                                  .id
+                                                  .toString(),
+                                            ) ??
+                                            false,
+                                      );
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(16),
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          FutureBuilder<String>(
+                                            future: getFullImageUrl(
+                                              state.item?.imageUrl ?? '',
+                                            ),
+                                            builder: (context, asyncSnapshot) {
+                                              if (asyncSnapshot
+                                                      .connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                  child: LoadingWidget(),
+                                                );
+                                              } else if (asyncSnapshot
+                                                  .hasError) {
+                                                return const Center(
+                                                  child: Icon(Icons.error),
+                                                );
+                                              } else {
+                                                return AspectRatio(
+                                                  aspectRatio: 16 / 9,
+                                                  child: Image.network(
+                                                    asyncSnapshot.data!,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                // Title
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    0,
+                                    16,
+                                    8,
+                                  ),
+                                  child: Text(
+                                    state.item?.title ?? '',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 22,
+                                      height: 1.25,
+                                      fontWeight: FontWeight.w700,
+                                      color: onSurface,
+                                    ),
+                                  ),
+                                ),
+
+                                // Progress + text right
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: LinearProgressIndicator(
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                          minHeight: 8,
+                                          value:
+                                              myFormation?.progress ??
+                                              0, // 06 / 10
+                                          backgroundColor: Colors.black12,
+                                          valueColor:
+                                              const AlwaysStoppedAnimation(
+                                                AppColors.primary,
+                                              ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Text(
+                                        '${(myFormation?.totalLessonsDone ?? 0).toString().padLeft(2)} / ${(myFormation?.totalLessons ?? 0).toString().padLeft(2)} terminé',
+                                        style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                // CTA "Leçon 7"
+                                if (!myFormation!.isCompleted)
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                      16,
+                                      14,
+                                      16,
+                                      16,
+                                    ),
+                                    child: ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.black87,
+                                        foregroundColor: Colors.white,
+                                        minimumSize: const Size.fromHeight(52),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            30,
+                                          ),
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      icon: const Icon(
+                                        Icons.play_circle_fill_rounded,
+                                      ),
+                                      label: Text(
+                                        'Leçon ${myFormation?.myCurrentLesson(state.courses)}',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        await openVideoViewer(
+                                          url: state.item?.imageUrl ?? '',
+                                          thumb: state.item?.imageUrl ?? '',
+                                          lesson: myFormation!.getCurrentCourse(
+                                            state.courses,
+                                          )!,
+                                          isCurrent:
+                                              myFormation!.currentLesson ==
+                                              myFormation!
+                                                  .getCurrentCourse(
+                                                    state.courses,
+                                                  )!
+                                                  .id,
+                                          isDone:
+                                              myFormation!.lessonsDone
+                                                  ?.contains(
+                                                    myFormation!
+                                                        .getCurrentCourse(
+                                                          state.courses,
+                                                        )!
+                                                        .id
+                                                        .toString(),
+                                                  ) ??
+                                              false,
+                                        );
+                                      },
+                                    ),
+                                  ),
+
+                                // Chips des infos (leçons, durée, inscrits)
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    10,
+                                    16,
+                                    12,
+                                  ),
+                                  child: _InfoColumn(myFormation: myFormation!),
+                                ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
 
-                // Title
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                  child: Text(
-                    'Introduction aux systemes de\nmanagement Intégré',
-                    style: GoogleFonts.inter(
-                      fontSize: 22,
-                      height: 1.25,
-                      fontWeight: FontWeight.w700,
-                      color: onSurface,
-                    ),
-                  ),
-                ),
-
-                // Progress + text right
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: LinearProgressIndicator(
-                          borderRadius: BorderRadius.circular(20),
-                          minHeight: 8,
-                          value: 0.6, // 06 / 10
-                          backgroundColor: Colors.black12,
-                          valueColor: const AlwaysStoppedAnimation(
-                            AppColors.primary,
+                          // ===== Sticky TabBar juste sous l’AppBar =====
+                          SliverPersistentHeader(
+                            pinned: true,
+                            delegate: _TabBarHeaderDelegate(
+                              TabBar(
+                                controller: _tabs,
+                                isScrollable: true,
+                                tabAlignment: TabAlignment.start,
+                                labelPadding: const EdgeInsets.symmetric(
+                                  horizontal: 18,
+                                ),
+                                indicatorWeight: 3,
+                                indicatorSize: TabBarIndicatorSize.label,
+                                labelStyle: GoogleFonts.inter(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                unselectedLabelStyle: GoogleFonts.inter(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                tabs: const [
+                                  Tab(text: 'Aperçu'),
+                                  Tab(text: 'Leçons'),
+                                  // Tab(text: 'Ressources'),
+                                  Tab(text: 'Temoignages'),
+                                ],
+                              ),
+                            ),
                           ),
+                        ],
+
+                        // ===== Contenu scrollable de chaque tab =====
+                        body: TabBarView(
+                          controller: _tabs,
+                          children: [
+                            // APERÇU
+                            _OverviewTab(myFormation: myFormation!),
+
+                            // LEÇONS
+                            _LessonsTab(
+                              lessons: state.courses,
+                              myFormation: myFormation!,
+                              onLessonTap: (lesson) async {
+                                await openVideoViewer(
+                                  url: lesson.media,
+                                  thumb: lesson.media,
+                                  lesson: lesson,
+                                  isCurrent:
+                                      myFormation!.currentLesson == lesson.id,
+                                  isDone:
+                                      myFormation!.lessonsDone?.contains(
+                                        lesson.id.toString(),
+                                      ) ??
+                                      false,
+                                );
+                              },
+                            ),
+
+                            // RESSOURCES
+                            // _ResourcesTab(),
+
+                            // TÉMOIGNAGES
+                            _ReviewsTab(
+                              id: myFormation!.formation.id,
+                              commentTableType: commentTableType,
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Text(
-                        '06 / 10 terminé',
-                        style: GoogleFonts.inter(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // CTA "Leçon 7"
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black87,
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size.fromHeight(52),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 0,
-                    ),
-                    icon: const Icon(Icons.play_circle_fill_rounded),
-                    label: Text(
-                      'Leçon 7',
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    onPressed: () async {
-                      await showNetworkVideoViewer(context);
-                    },
-                  ),
-                ),
-
-                // Chips des infos (leçons, durée, inscrits)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                  child: _InfoColumn(),
-                ),
-              ],
-            ),
-          ),
-
-          // ===== Sticky TabBar juste sous l’AppBar =====
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _TabBarHeaderDelegate(
-              TabBar(
-                controller: _tabs,
-                isScrollable: true,
-                tabAlignment: TabAlignment.start,
-                labelPadding: const EdgeInsets.symmetric(horizontal: 18),
-                indicatorWeight: 3,
-                indicatorSize: TabBarIndicatorSize.label,
-                labelStyle: GoogleFonts.inter(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                ),
-                unselectedLabelStyle: GoogleFonts.inter(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-                tabs: const [
-                  Tab(text: 'Aperçu'),
-                  Tab(text: 'Leçons'),
-                  Tab(text: 'Ressources'),
-                  Tab(text: 'Temoignages'),
-                ],
-              ),
-            ),
-          ),
-        ],
-
-        // ===== Contenu scrollable de chaque tab =====
-        body: TabBarView(
-          controller: _tabs,
-          children: [
-            // APERÇU
-            _OverviewTab(),
-
-            // LEÇONS
-            _LessonsTab(),
-
-            // RESSOURCES
-            _ResourcesTab(),
-
-            // TÉMOIGNAGES
-            _ReviewsTab(),
-          ],
-        ),
+                    );
+            },
+          );
+        },
       ),
     );
   }
@@ -219,11 +425,15 @@ class _CourseDisplayBodyState extends State<CourseDisplayBody>
 // --------------------------- widgets de sections -----------------------------
 
 class _OverviewTab extends StatelessWidget {
+  final MyFormation myFormation;
+
+  const _OverviewTab({super.key, required this.myFormation});
+
   @override
   Widget build(BuildContext context) {
-    final txt = GoogleFonts.inter(fontSize: 16, height: 1.5);
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+      shrinkWrap: true,
       children: [
         Text(
           'RESUME',
@@ -233,15 +443,26 @@ class _OverviewTab extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Text(_lorem1, style: txt),
+        SizedBox(
+          height: 500,
+          child: HtmlView(html: myFormation.formation.descriptionHtml),
+        ),
         const SizedBox(height: 16),
-        Text(_lorem2, style: txt),
       ],
     );
   }
 }
 
 class _LessonsTab extends StatelessWidget {
+  final List<FormationCourse> lessons;
+  final MyFormation myFormation;
+  final Function(FormationCourse lesson) onLessonTap;
+  const _LessonsTab({
+    super.key,
+    required this.lessons,
+    required this.myFormation,
+    required this.onLessonTap,
+  });
   @override
   Widget build(BuildContext context) {
     final title = GoogleFonts.inter(
@@ -257,120 +478,98 @@ class _LessonsTab extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
       children: [
-        const _SectionHeader(
-          text: 'Section 1: INTRODUCTION AU SYSTEME DE\nMANAGEMENT INTEGRE',
-        ),
         const SizedBox(height: 8),
-        ...List.generate(4, (i) => i + 1).map(
-          (n) => _LessonTile(
-            thumb:
-                'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1600&auto=format&fit=crop',
-            title: 'Introduction au systeme de management',
-            duration: '03:57 minutes',
-            leadingCheck: n <= 2,
-            index: (n).toString(),
-            titleStyle: title,
-            subtitleStyle: subtitle,
-          ),
-        ),
+
+        ...lessons.asMap().entries.map((entry) {
+          final i = entry.key;
+          final lesson = entry.value;
+          return FutureBuilder(
+            future: getVideoDurationLabel(lesson.media),
+            builder: (context, asyncSnapshot) {
+              return _LessonTile(
+                thumb: lesson.media,
+                title: lesson.title,
+                duration: asyncSnapshot.data ?? '00:00',
+                isDone:
+                    myFormation.lessonsDone?.contains(lesson.id.toString()) ??
+                    false,
+                index: (i + 1).toString(),
+                titleStyle: title,
+                subtitleStyle: subtitle,
+                isCurrent: myFormation.currentLesson == lesson.id,
+                lesson: lesson,
+                onTap: () async {
+                  onLessonTap(lesson);
+                },
+              );
+            },
+          );
+        }),
         const SizedBox(height: 16),
-        const _SectionHeader(
-          text: 'Section 2: INTRODUCTION AU SYSTEME DE\nMANAGEMENT INTEGRE',
-        ),
-        const SizedBox(height: 8),
-        ...List.generate(
-          4,
-          (i) => _LessonTile(
-            thumb:
-                'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1600&auto=format&fit=crop',
-            title: 'Introduction au systeme de management',
-            duration: '03:57 minutes',
-            index: (i + 1).toString(),
-            leadingCheck: false,
-            titleStyle: title,
-            subtitleStyle: subtitle,
-          ),
-        ),
       ],
     );
   }
 }
 
-class _ResourcesTab extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final label = GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w700);
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-      children: [
-        Text('Livrets d’exercices', style: label),
-        const SizedBox(height: 12),
-        ...List.generate(2, (i) => _PdfCard()),
-      ],
-    );
-  }
-}
+// class _ResourcesTab extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     final label = GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w700);
+//     return ListView(
+//       padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+//       children: [
+//         Text('Livrets d’exercices', style: label),
+//         const SizedBox(height: 12),
+//         ...List.generate(2, (i) => _PdfCard()),
+//       ],
+//     );
+//   }
+// }
 
 class _ReviewsTab extends StatelessWidget {
+  final String commentTableType;
+  final int id;
+  const _ReviewsTab({
+    super.key,
+    required this.id,
+    required this.commentTableType,
+  });
   @override
   Widget build(BuildContext context) {
-    final chipStyle = GoogleFonts.inter(
-      fontSize: 13,
-      color: Theme.of(context).colorScheme.onSurfaceVariant,
-    );
-
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
       children: [
-        // input
-        GestureDetector(
-          onTap: () {
-            context.router.push(
-              CommentsRoute(commentableType: 'Formation', commentableId: '0'),
+        BlocBuilder<CommentsBloc, CommentsState>(
+          builder: (context, state) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 14),
+              child: CommentFieldWidget(
+                isLoading: state.isSubmitting,
+                onSend: (String text, File? file) {
+                  BlocProvider.of<CommentsBloc>(context).add(
+                    CommentsEvent.addCommentRequested(
+                      commentableType: commentTableType,
+                      commentableId: id,
+                      attachmentPath: file?.path,
+                      body: text,
+                    ),
+                  );
+                },
+              ),
             );
           },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: Colors.black12,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            height: 52,
-            alignment: Alignment.centerLeft,
-            child: Text('Écrire  un commentaire', style: chipStyle),
-          ),
         ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Text(
-              'Commentaire(s) ',
-              style: GoogleFonts.inter(fontWeight: FontWeight.w800),
-            ),
-            const SizedBox(width: 6),
-            _countPill('232'),
-            const Spacer(),
-            TextButton(
-              onPressed: () {
-                context.router.push(
-                  CommentsRoute(
-                    commentableType: 'Formation',
-                    commentableId: '0',
-                  ),
-                );
-              },
-              child: Text(
-                'Voir tout',
-                style: GoogleFonts.inter(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ],
+
+        // Comments header + tiny list
+        ResumeCommentWidget(
+          commentableType: commentTableType,
+          commentableId: id,
+          commentsCount: BlocProvider.of<CommentsBloc>(
+            context,
+            listen: true,
+          ).state.items.length,
+          take: 10,
         ),
-        const SizedBox(height: 12),
-        ...List.generate(7, (i) => const _ReviewItem()),
       ],
     );
   }
@@ -417,6 +616,9 @@ class _TabBarHeaderDelegate extends SliverPersistentHeaderDelegate {
 }
 
 class _InfoColumn extends StatelessWidget {
+  const _InfoColumn({required this.myFormation});
+  final MyFormation myFormation;
+
   @override
   Widget build(BuildContext context) {
     final chipText = GoogleFonts.inter(fontWeight: FontWeight.w700);
@@ -441,27 +643,22 @@ class _InfoColumn extends StatelessWidget {
       child: Column(
         spacing: 10,
         children: [
-          chip(Icons.menu_book_rounded, '10 lecons'),
-          chip(Icons.schedule_rounded, '3 Heures'),
-          chip(Icons.people_alt_rounded, '2 368 personnes inscrites'),
+          chip(Icons.menu_book_rounded, '${myFormation.totalLessons} leçons'),
+          chip(
+            Icons.schedule_rounded,
+            '${myFormation.formation.durationMinutes} minutes',
+          ),
+          chip(
+            Icons.people_alt_rounded,
+            '${myFormation.formation.maxParticipants} personnes ',
+          ),
         ],
       ),
     );
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.text});
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: GoogleFonts.inter(fontWeight: FontWeight.w800, height: 1.25),
-    );
-  }
-}
+// removed unused _SectionHeader
 
 class _LessonTile extends StatefulWidget {
   const _LessonTile({
@@ -469,14 +666,20 @@ class _LessonTile extends StatefulWidget {
     required this.title,
     required this.index,
     required this.duration,
-    required this.leadingCheck,
+    required this.isDone,
     required this.titleStyle,
     required this.subtitleStyle,
+    required this.isCurrent,
+    required this.lesson,
+    required this.onTap,
   });
 
   final String thumb, title, duration, index;
-  final bool leadingCheck;
+  final bool isDone, isCurrent;
   final TextStyle titleStyle, subtitleStyle;
+  final FormationCourse lesson;
+
+  final VoidCallback onTap;
 
   @override
   State<_LessonTile> createState() => _LessonTileState();
@@ -487,19 +690,17 @@ class _LessonTileState extends State<_LessonTile> {
   @override
   void initState() {
     super.initState();
-    isSelect = widget.leadingCheck;
+    isSelect = widget.isDone;
   }
 
   @override
   Widget build(BuildContext context) {
+    final thumbUrl = resolveVideoThumbnail(widget.thumb);
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: GestureDetector(
-        onTap: () async {
-          setState(() {
-            isSelect = !isSelect;
-          });
-          await showNetworkVideoViewer(context);
+        onTap: () {
+          widget.onTap();
         },
         child: Row(
           children: [
@@ -508,10 +709,17 @@ class _LessonTileState extends State<_LessonTile> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.network(
-                    widget.thumb,
+                    thumbUrl,
                     width: 210,
                     height: 110,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stack) => Container(
+                      width: 210,
+                      height: 110,
+                      color: Colors.black12,
+                      alignment: Alignment.center,
+                      child: const Icon(Icons.image_not_supported_outlined),
+                    ),
                   ),
                 ),
                 if (isSelect)
@@ -542,7 +750,13 @@ class _LessonTileState extends State<_LessonTile> {
                   const SizedBox(height: 3),
                   Text(widget.title, style: widget.titleStyle),
                   const SizedBox(height: 6),
-                  Text(widget.duration, style: widget.subtitleStyle),
+                  FutureBuilder<String>(
+                    future: getVideoDurationLabel(widget.thumb),
+                    builder: (context, snapshot) {
+                      final label = snapshot.data ?? widget.duration;
+                      return Text(label, style: widget.subtitleStyle);
+                    },
+                  ),
                 ],
               ),
             ),
@@ -552,140 +766,3 @@ class _LessonTileState extends State<_LessonTile> {
     );
   }
 }
-
-class _PdfCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final onVar = Theme.of(context).colorScheme.onSurfaceVariant;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: onVar.withValues(alpha: .15),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: .06),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: .65),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.picture_as_pdf_rounded,
-                color: Colors.red,
-                size: 36,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              'Guide de preparation -\nLe materiel necessaires à\nmettre en place',
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          CircleAvatar(
-            backgroundColor: Colors.white,
-            child: Icon(
-              Icons.download_rounded,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ReviewItem extends StatelessWidget {
-  const _ReviewItem();
-
-  @override
-  Widget build(BuildContext context) {
-    final grey = Theme.of(context).colorScheme.onSurfaceVariant;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            radius: 18,
-            backgroundColor: const Color(0xFF2BB673),
-            child: Text(
-              'MH',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w800,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Beatrice BOSSOU',
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                    Text(
-                      'Il y a 30 min',
-                      style: GoogleFonts.inter(color: grey),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Les documents fournies ne respectent par les normes internationnales',
-                  style: GoogleFonts.inter(height: 1.35),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// --------------------------- helpers ----------------------------------------
-
-Widget _roundSmallIcon(IconData icon) => CircleAvatar(
-  radius: 16,
-  backgroundColor: Colors.white70,
-  child: Icon(icon, size: 18, color: Colors.black87),
-);
-
-Widget _countPill(String text) => Container(
-  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-  decoration: BoxDecoration(
-    color: Colors.black12,
-    borderRadius: BorderRadius.circular(999),
-  ),
-  child: Text(text, style: GoogleFonts.inter(fontWeight: FontWeight.w700)),
-);
-
-// faux contenu
-const _lorem1 =
-    'La formation est aujourd’hui l’un des petits business les plus accessibles et rentables, surtout dans les zones rurales et semi-urbaines. Il ne nécessite pas de diplôme spécifique ni de gros investissements au départ. En quelques semaines, il est possible de générer des revenus réels grâce à la vente de viande (poulets de chair) ou d’œufs (poules pondeuses). La demande est constante, car la volaille est une source de protéines consommée au quotidien dans de nombreux foyers.';
-const _lorem2 =
-    'Que ce soit pour nourrir sa famille, lancer un microprojet entrepreneurial, ou diversifier ses sources de revenus, l’élevage peut rapidement devenir un véritable levier de développement personnel et communautaire. De plus, il peut être pratiqué à petite échelle avec des moyens simples, puis agrandi progressivement.';

@@ -14,6 +14,7 @@ import '../application/connected/connected_bloc.dart';
 import '../application/evalutaion/evaluation_bloc.dart';
 import '../application/events/detail/event_detail_bloc.dart';
 import '../application/events/events_bloc.dart';
+import '../application/formation/formations_bloc.dart';
 import '../application/inspection/inspections_bloc.dart';
 import '../application/permit/permits_bloc.dart';
 import '_commons/route/app_router.dart';
@@ -61,6 +62,11 @@ class _AppState extends State<App> {
         BlocProvider(
           create: (_) =>
               sl<PermitsBloc>()..add(const PermitsEvent.fetchRequested()),
+        ),
+        BlocProvider(
+          create: (_) => sl<FormationsBloc>()
+            ..add(const FormationsEvent.fetchRequested())
+            ..add(const FormationsEvent.fetchMyFormationsRequested()),
         ),
       ],
       child: MaterialApp.router(

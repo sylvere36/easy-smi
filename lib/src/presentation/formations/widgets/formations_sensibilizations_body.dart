@@ -1,9 +1,16 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../application/formation/formations_bloc.dart';
+import '../../../domain/formation/models/formation_item.dart';
+import '../../_commons/helpers/image_helper.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
+import '../../_commons_widgets/empty_widget.dart';
+import '../../_commons_widgets/loading_widget.dart';
+import '../../_shimmers/card_shimmer.dart';
 
 class FormationsSensibilizationsBody extends StatefulWidget {
   const FormationsSensibilizationsBody({super.key, required this.initialPage});
@@ -20,25 +27,6 @@ class _FormationsSensibilizationsBodyState
   final TextEditingController _search = TextEditingController();
 
   // Dummy data (replace with your API models)
-  final List<_Course> _grid = List.generate(
-    6,
-    (i) => _Course(
-      title: 'Introduction aux systemes de management Intégré',
-      cover:
-          'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1200&auto=format&fit=crop',
-    ),
-  );
-
-  final List<_CourseProgress> _inProgress = List.generate(
-    2,
-    (i) => _CourseProgress(
-      title: 'Introduction aux systemes de management Intégré',
-      cover:
-          'https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=1200&auto=format&fit=crop',
-      done: 6,
-      total: 10,
-    ),
-  );
 
   @override
   void initState() {
@@ -62,153 +50,200 @@ class _FormationsSensibilizationsBodyState
     final theme = Theme.of(context);
     final grey = Colors.grey.shade600;
 
-    return NestedScrollView(
-      headerSliverBuilder: (context, innerBoxIsScrolled) => [
-        // Header card
-        const SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(16, 10, 16, 0),
-            child: _HeaderProfile(
-              name: 'Mon planning de competence',
-              statusLabel: 'CONFORME',
-              statusColor: Color(0xFF1FBF75),
-              expireText: 'expire le 17 Oct 2026',
-              avatarUrl:
-                  'https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=600&q=80',
-            ),
-          ),
-        ),
-
-        // Competences (your 3 rows)
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            child: _CompetencesTable(
-              items: const [
-                'Formation ISO 9001 & ISO 45001',
-                'Formation ISO 9001 & ISO 45001',
-                'Formation ISO 9001 & ISO 45001',
-              ],
-              trailingText: 'Recommandé',
-              onSeeMore: () {},
-            ),
-          ),
-        ),
-
-        // The sticky TabBar
-        SliverPersistentHeader(
-          pinned: true,
-          delegate: _SliverTabBarDelegate(
-            child: Material(
-              color: theme.scaffoldBackgroundColor,
+    return BlocBuilder<FormationsBloc, FormationsState>(
+      builder: (context, state) {
+        return NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            // Header card
+            const SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                child: TabBar(
-                  controller: _tab,
-                  isScrollable: true,
-                  tabAlignment: TabAlignment.start,
-                  labelColor: theme.colorScheme.primary,
-                  unselectedLabelColor: const Color(0xFF475467),
-                  indicatorColor: theme.colorScheme.primary,
-                  labelStyle: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: .1,
-                  ),
-                  tabs: const [
-                    _BadgeTab(text: 'En cours', count: 2),
-                    Tab(text: 'Formations'),
-                    Tab(text: 'Sensibilisations'),
-                  ],
+                padding: EdgeInsets.fromLTRB(16, 10, 16, 0),
+                child: _HeaderProfile(
+                  name: 'Mon planning de competence',
+                  statusLabel: 'CONFORME',
+                  statusColor: Color(0xFF1FBF75),
+                  expireText: 'expire le 17 Oct 2026',
+                  avatarUrl:
+                      'https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=600&q=80',
                 ),
               ),
             ),
-          ),
-        ),
-      ],
 
-      // The inner scrollers (each tab owns its own scroll)
-      body: TabBarView(
-        controller: _tab,
-        children: [
-          // TAB 1 – "En cours": search + list with progress
-          CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                  child: _SearchField(
-                    controller: _search,
-                  ), // scrolls with content
+            // Competences (your 3 rows)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                child: _CompetencesTable(
+                  items: const [
+                    'Formation ISO 9001 & ISO 45001',
+                    'Formation ISO 9001 & ISO 45001',
+                    'Formation ISO 9001 & ISO 45001',
+                  ],
+                  trailingText: 'Recommandé',
+                  onSeeMore: () {},
                 ),
               ),
-              SliverList.separated(
-                itemCount: _inProgress.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 18),
-                itemBuilder: (ctx, i) {
-                  final c = _inProgress[i];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: GestureDetector(
-                      onTap: () {
-                        context.router.push(const FormationDisplayRoute());
-                      },
-                      child: _ProgressCard(
-                        title: c.title,
-                        cover: c.cover,
-                        done: c.done,
-                        total: c.total,
-                        onPlay: () {},
+            ),
+
+            // The sticky TabBar
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _SliverTabBarDelegate(
+                child: Material(
+                  color: theme.scaffoldBackgroundColor,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                    child: TabBar(
+                      controller: _tab,
+                      isScrollable: true,
+                      tabAlignment: TabAlignment.start,
+                      labelColor: theme.colorScheme.primary,
+                      unselectedLabelColor: const Color(0xFF475467),
+                      indicatorColor: theme.colorScheme.primary,
+                      labelStyle: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: .1,
                       ),
+                      tabs: [
+                        _BadgeTab(
+                          text: 'En cours',
+                          count: state.itemsMyFormations.length,
+                        ),
+                        const Tab(text: 'Formations'),
+                        const Tab(text: 'Sensibilisations'),
+                      ],
                     ),
-                  );
-                },
-              ),
-              const SliverToBoxAdapter(child: SizedBox(height: 24)),
-            ],
-          ),
-
-          // Tab 2: Formations (grid)
-          CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                  child: _SearchField(
-                    controller: _search,
-                  ), // scrolls with content
+                  ),
                 ),
               ),
-              _GridCourses(
-                items: _grid,
-                emptyPadding: const EdgeInsets.only(bottom: 24),
-                titleColor: theme.colorScheme.onSurface,
-                subtitleColor: grey,
-              ),
-            ],
-          ),
+            ),
+          ],
 
-          // Tab 3: Sensibilisation (same grid)
-          CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                  child: _SearchField(
-                    controller: _search,
-                  ), // scrolls with content
-                ),
+          // The inner scrollers (each tab owns its own scroll)
+          body: TabBarView(
+            controller: _tab,
+            children: [
+              // TAB 1 – "En cours": search + list with progress
+              CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                      child: _SearchField(
+                        controller: _search,
+                      ), // scrolls with content
+                    ),
+                  ),
+                  state.isLoadingMyFormations == true
+                      ? SliverList.separated(
+                          itemBuilder: (_, _) => const SizedBox(
+                            height: 150,
+                            child: Center(child: CardShimmer()),
+                          ),
+                          itemCount: 6,
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(height: 18),
+                        )
+                      : state.itemsMyFormations.isEmpty
+                      ? SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 50),
+                            child: Center(child: EmptyWidget.noData()),
+                          ),
+                        )
+                      : SliverList.separated(
+                          itemCount: state.itemsMyFormations.length,
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(height: 18),
+                          itemBuilder: (ctx, i) {
+                            final c = state.itemsMyFormations[i];
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: GestureDetector(
+                                onTap: () {
+                                  context.router.push(
+                                    FormationDisplayRoute(
+                                      formationId: c.formation.id,
+                                    ),
+                                  );
+                                },
+                                child: _ProgressCard(
+                                  title: c.formation.title,
+                                  cover:
+                                      c.formation.imageUrl ?? c.formation.image,
+                                  done: c.totalLessonsDone,
+                                  total: c.totalLessons,
+                                  onPlay: () {},
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                ],
               ),
-              _GridCourses(
-                items: _grid,
-                isCourse: false,
-                emptyPadding: const EdgeInsets.only(bottom: 24),
-                titleColor: theme.colorScheme.onSurface,
-                subtitleColor: grey,
+
+              // Tab 2: Formations (grid)
+              CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                      child: _SearchField(
+                        controller: _search,
+                      ), // scrolls with content
+                    ),
+                  ),
+                  state.isLoading == true
+                      ? SliverList.separated(
+                          itemBuilder: (_, _) => const SizedBox(
+                            height: 150,
+                            child: Center(child: CardShimmer()),
+                          ),
+                          itemCount: 6,
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(height: 18),
+                        )
+                      : state.items.isEmpty
+                      ? SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 50),
+                            child: Center(child: EmptyWidget.noData()),
+                          ),
+                        )
+                      : _GridCourses(
+                          items: state.items,
+                          emptyPadding: const EdgeInsets.only(bottom: 24),
+                          titleColor: theme.colorScheme.onSurface,
+                          subtitleColor: grey,
+                        ),
+                ],
+              ),
+
+              // Tab 3: Sensibilisation (same grid)
+              CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                      child: _SearchField(controller: _search),
+                    ),
+                  ),
+                  // _GridCourses(
+                  //   items: _grid,
+                  //   isCourse: false,
+                  //   emptyPadding: const EdgeInsets.only(bottom: 24),
+                  //   titleColor: theme.colorScheme.onSurface,
+                  //   subtitleColor: grey,
+                  // ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -428,24 +463,26 @@ class _BadgeTab extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(text),
-          Padding(
-            padding: const EdgeInsets.only(left: 6),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1769FF),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                '$count',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+          if (count > 0) ...[
+            Padding(
+              padding: const EdgeInsets.only(left: 6),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1769FF),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  '$count',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );
@@ -494,7 +531,7 @@ class _GridCourses extends StatelessWidget {
     this.isCourse = true,
   });
 
-  final List<_Course> items;
+  final List<FormationItem> items;
   final EdgeInsets emptyPadding;
   final Color titleColor;
   final Color subtitleColor;
@@ -518,7 +555,7 @@ class _GridCourses extends StatelessWidget {
           return GestureDetector(
             onTap: () {
               if (isCourse) {
-                context.router.push(const FormationDetailRoute());
+                context.router.push(FormationDetailRoute(formationId: c.id));
               } else {
                 context.router.push(const SensibilizationDetailRoute());
               }
@@ -531,9 +568,26 @@ class _GridCourses extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                   child: Stack(
                     children: [
-                      AspectRatio(
-                        aspectRatio: 1.25,
-                        child: Image.network(c.cover, fit: BoxFit.cover),
+                      FutureBuilder<String>(
+                        future: getFullImageUrl(c.image),
+                        builder: (context, asyncSnapshot) {
+                          if (asyncSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (asyncSnapshot.hasError) {
+                            return const Center(child: Icon(Icons.error));
+                          } else {
+                            return AspectRatio(
+                              aspectRatio: 1.25,
+                              child: Image.network(
+                                asyncSnapshot.data!,
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -602,14 +656,24 @@ class _ProgressCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               child: Stack(
                 children: [
-                  AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: Image.network(cover, fit: BoxFit.cover),
-                  ),
-                  Positioned(
-                    right: 10,
-                    bottom: 10,
-                    child: _PlayButton(onTap: onPlay),
+                  FutureBuilder<String>(
+                    future: getFullImageUrl(cover),
+                    builder: (context, asyncSnapshot) {
+                      if (asyncSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(child: LoadingWidget());
+                      } else if (asyncSnapshot.hasError) {
+                        return const Center(child: Icon(Icons.error));
+                      } else {
+                        return AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: Image.network(
+                            asyncSnapshot.data!,
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      }
+                    },
                   ),
                 ],
               ),
@@ -644,7 +708,7 @@ class _ProgressCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
-                      '${done.toString().padLeft(2, '0')} / $total terminé',
+                      '${done.toString().padLeft(2, '0')} / ${total.toString().padLeft(2, '0')} terminé',
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.black54,
@@ -660,45 +724,4 @@ class _ProgressCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class _PlayButton extends StatelessWidget {
-  const _PlayButton({required this.onTap});
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white.withValues(alpha: .92),
-      shape: const CircleBorder(),
-      child: InkWell(
-        customBorder: const CircleBorder(),
-        onTap: onTap,
-        child: const Padding(
-          padding: EdgeInsets.all(8),
-          child: Icon(Icons.play_arrow_rounded, size: 28),
-        ),
-      ),
-    );
-  }
-}
-
-/// Models (simple)
-class _Course {
-  final String title;
-  final String cover;
-  _Course({required this.title, required this.cover});
-}
-
-class _CourseProgress {
-  final String title;
-  final String cover;
-  final int done;
-  final int total;
-  _CourseProgress({
-    required this.title,
-    required this.cover,
-    required this.done,
-    required this.total,
-  });
 }

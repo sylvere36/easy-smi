@@ -85,17 +85,24 @@ class FormationDetailBloc
         state.copyWith(isStartingCourse: true, startCourseResultOption: none()),
       );
       final res = await repository.startCourse(id: event.id);
-      emit(
-        res.fold(
-          (l) => state.copyWith(
+      res.fold(
+        (l) => emit(
+          state.copyWith(
             isStartingCourse: false,
             startCourseResultOption: some(left(l)),
           ),
-          (r) => state.copyWith(
-            isStartingCourse: false,
-            startCourseResultOption: some(right(r)),
-          ),
         ),
+        (r) {
+          emit(
+            state.copyWith(
+              isStartingCourse: false,
+              startCourseResultOption: some(right(r)),
+            ),
+          );
+
+          add(_FetchRequested(id: event.id));
+          add(_CoursesRequested(id: event.id));
+        },
       );
     });
 
@@ -107,17 +114,25 @@ class FormationDetailBloc
         ),
       );
       final res = await repository.finishCourse(id: event.id);
-      emit(
-        res.fold(
-          (l) => state.copyWith(
+
+      res.fold(
+        (l) => emit(
+          state.copyWith(
             isFinishingCourse: false,
             finishCourseResultOption: some(left(l)),
           ),
-          (r) => state.copyWith(
-            isFinishingCourse: false,
-            finishCourseResultOption: some(right(r)),
-          ),
         ),
+        (r) {
+          emit(
+            state.copyWith(
+              isFinishingCourse: false,
+              finishCourseResultOption: some(right(r)),
+            ),
+          );
+
+          add(_FetchRequested(id: event.id));
+          add(_CoursesRequested(id: event.id));
+        },
       );
     });
   }

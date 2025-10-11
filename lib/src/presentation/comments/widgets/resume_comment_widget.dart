@@ -14,11 +14,13 @@ class ResumeCommentWidget extends StatefulWidget {
   final String commentableType;
   final dynamic commentableId;
   final int? commentsCount;
+  final int take;
   const ResumeCommentWidget({
     super.key,
     required this.commentableType,
     required this.commentableId,
     this.commentsCount,
+    this.take = 3,
   });
 
   @override
@@ -43,7 +45,7 @@ class _ResumeCommentWidgetState extends State<ResumeCommentWidget> {
                 child: _tinyCounter(widget.commentsCount ?? 0),
               ),
               const Spacer(),
-              if ((widget.commentsCount ?? 0) > 3)
+              if ((widget.commentsCount ?? 0) > widget.take)
                 InkWell(
                   onTap: () {
                     context.router.push(
@@ -76,7 +78,7 @@ class _ResumeCommentWidgetState extends State<ResumeCommentWidget> {
             return Column(
               children: [
                 ...state.items
-                    .take(3)
+                    .take(widget.take)
                     .map(
                       (comment) => commentLine(
                         comment.userName ?? 'Inconnu',
