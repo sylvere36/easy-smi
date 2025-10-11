@@ -8,6 +8,7 @@ import 'src/application/audit/audits_bloc.dart';
 import 'src/application/audit/detail/audit_detail_bloc.dart';
 import 'src/application/auth/external/external_auth_bloc.dart';
 import 'src/application/auth/user/authenticated_user_bloc.dart';
+import 'src/application/campaign/campaigns_bloc.dart';
 import 'src/application/communication/comments_bloc.dart';
 import 'src/application/communication/notifications_bloc.dart';
 import 'src/application/connected/connected_bloc.dart';
@@ -29,6 +30,7 @@ import 'src/domain/audit/i_audit_repository.dart';
 import 'src/domain/auth/device/i_auth_device_repository.dart';
 import 'src/domain/auth/external/i_external_auth_repository.dart';
 import 'src/domain/auth/user/i_authenticated_user_repository.dart';
+import 'src/domain/campaign/i_campaign_repository.dart';
 import 'src/domain/communication/i_communication_repository.dart';
 import 'src/domain/evaluation/i_evaluation_repository.dart';
 import 'src/domain/event/i_event_repository.dart';
@@ -53,6 +55,8 @@ import 'src/infrastructure/auth/data_sources/auth_device_remote_data_source.dart
 import 'src/infrastructure/auth/data_sources/authenticated_user_remote_data_source.dart';
 import 'src/infrastructure/auth/data_sources/external_auth_remote_data_source.dart';
 import 'src/infrastructure/auth/external_auth_repository.dart';
+import 'src/infrastructure/campaign/campaign_repository.dart';
+import 'src/infrastructure/campaign/data_sources/campaign_remote_data_source.dart';
 import 'src/infrastructure/communication/communication_repository.dart';
 import 'src/infrastructure/communication/data_sources/communication_remote_data_source.dart';
 import 'src/infrastructure/evaluation/data-source/evaluation_remote_data_source.dart';
@@ -90,6 +94,7 @@ Future<void> init() async {
   initInspections();
   initFormations();
   initSliders();
+  initCampaigns();
 }
 
 void initSplashScreen() {
@@ -255,4 +260,14 @@ Future<void> initSliders() async {
     () => SliderRepository(networkInfo: sl(), remoteDataSource: sl()),
   );
   sl.registerFactory(() => SlidersBloc(repository: sl()));
+}
+
+Future<void> initCampaigns() async {
+  sl.registerLazySingleton<ICampaignRemoteDataSource>(
+    () => CampaignRemoteDataSource(httpClient: sl()),
+  );
+  sl.registerLazySingleton<ICampaignRepository>(
+    () => CampaignRepository(networkInfo: sl(), remoteDataSource: sl()),
+  );
+  sl.registerFactory(() => CampaignsBloc(repository: sl()));
 }

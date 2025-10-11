@@ -8,6 +8,7 @@ import '../../l10n/app_localizations.dart';
 import '../application/actions/actions_bloc.dart';
 import '../application/audit/audits_bloc.dart';
 import '../application/auth/user/authenticated_user_bloc.dart';
+import '../application/campaign/campaigns_bloc.dart';
 import '../application/communication/comments_bloc.dart';
 import '../application/communication/notifications_bloc.dart';
 import '../application/connected/connected_bloc.dart';
@@ -73,6 +74,10 @@ class _AppState extends State<App> {
           create: (_) =>
               sl<SlidersBloc>()
                 ..add(const SlidersEvent.fetchRequested(page: 1)),
+        ),
+        BlocProvider(
+          create: (_) =>
+              sl<CampaignsBloc>()..add(const CampaignsEvent.fetchRequested()),
         ),
       ],
       child: MaterialApp.router(
