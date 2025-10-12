@@ -104,7 +104,7 @@ class _PlanningCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // if (inspection.cardAction == null) return;
+        if (inspection.cardAction == null) return;
         context.router.push(StartInspectionRoute(inspection: inspection));
       },
       child: Container(
