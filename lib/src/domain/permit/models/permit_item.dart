@@ -11,6 +11,17 @@ String humanReadableWorkType(String workType) {
   }
 }
 
+Color workTypeColor(String workType) {
+  switch (workType) {
+    case 'dangerous':
+      return const Color(0xFFD32F2F); // Red
+    case 'normal':
+      return const Color(0xFF388E3C); // Green
+    default:
+      return const Color(0xFF9E9E9E); // Grey
+  }
+}
+
 String humanReadableStatus(String status) {
   switch (status) {
     case 'draft':
@@ -145,4 +156,6 @@ class PermitItem {
   String get statusHumanReadable => humanReadableStatus(status);
 
   Color get statusColorValue => statusColor(status);
+
+  Color get workTypeColorValue => workTypeColor(workType);
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 enum ActionKind { continueFlow, startFlow, countdown }
 
@@ -263,4 +264,42 @@ class InspectionItem {
 
   bool get isConforme =>
       (statistics.nonConformAnswers) / (statistics.totalAnswers) != 1;
+
+  bool get isLate {
+    if (inspectedAt == null) return false;
+    final inspectedDate = DateTime.tryParse(inspectedAt!);
+    if (inspectedDate == null) return false;
+    final now = DateTime.now();
+    return inspectedDate.isBefore(now);
+  }
+
+  String get dueLabel {
+    if (inspectedAt == null) return 'Date non définie';
+    final inspectedDate = DateTime.tryParse(inspectedAt!);
+    if (inspectedDate == null) return 'Date non définie';
+    final now = DateTime.now();
+    final difference = inspectedDate.difference(now);
+    if (difference.inDays > 1) {
+      return 'Dans ${difference.inDays} jours';
+    } else if (difference.inDays == 1) {
+      return 'Demain';
+    } else if (difference.inDays == 0) {
+      return 'Aujourd\'hui';
+    } else if (difference.inDays == -1) {
+      return 'Hier';
+    } else {
+      return 'Il y a ${-difference.inDays} jours';
+    }
+  }
+
+  String get dueDate {
+    if (inspectedAt == null) return 'Date non définie';
+    final inspectedDate = DateTime.tryParse(inspectedAt!);
+    if (inspectedDate == null) return 'Date non définie';
+
+    // Au format jeu 10 Janv 2024
+    // final formatter = DateFormat('EEE dd MMM yyyy', 'fr_FR');
+    // return formatter.format(inspectedDate);
+    return DateFormat('EEE dd MMM yyyy', 'fr_FR').format(inspectedDate);
+  }
 }

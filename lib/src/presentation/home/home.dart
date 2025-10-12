@@ -6,9 +6,14 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../gen/assets.gen.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../application/auth/user/authenticated_user_bloc.dart';
+import '../../application/inspection/inspections_bloc.dart';
+import '../../application/permit/permits_bloc.dart';
+import '../../domain/inspection/models/inspection_item.dart';
+import '../../domain/permit/models/permit_item.dart';
 import '../_commons/route/app_router.gr.dart';
 import '../_commons/theming/app_color.dart';
 import '../_commons_widgets/badge_widget.dart';
+import '../_commons_widgets/loading_widget.dart';
 import 'widgets/app_drawer.dart';
 import 'widgets/home_body.dart';
 
@@ -76,94 +81,85 @@ class _HomePageState extends State<HomePage>
 
   // ---------- DIALOGS ----------
   Future<void> _showInspectionDialog() async {
-    final items = <_InspectionChoice>[
-      _InspectionChoice(
-        dueLabel: 'Prévu pour :',
-        dueDate: 'Jeu 10 Aout 2025',
-        isLate: false,
-        title:
-            'Inspections sur les activités internes liées aux dechargements des marchandises',
-      ),
-      _InspectionChoice(
-        dueLabel: 'Prévu pour :',
-        dueDate: 'Jeu 10 Aout 2025',
-        isLate: false,
-        title:
-            'Inspections sur les activités internes liées aux dechargements des marchandises',
-      ),
-      _InspectionChoice(
-        dueLabel: 'En retard',
-        dueDate: 'Jeu 10 Aout 2025',
-        isLate: true,
-        title:
-            'Inspections sur les activités internes liées aux dechargements des marchandises',
-      ),
-      _InspectionChoice(
-        dueLabel: 'Prévu pour :',
-        dueDate: 'Jeu 10 Aout 2025',
-        isLate: false,
-        title:
-            'Inspections sur les activités internes liées aux dechargements des marchandises',
-      ),
-    ];
-
     await showDialog<void>(
       context: context,
       builder: (_) => _RoundedDialog(
         title: 'Veuillez choisir l’inspection à demarrer',
-        child: ListView.separated(
-          shrinkWrap: true,
-          itemCount: items.length,
-          separatorBuilder: (_, _) => const Divider(height: 12),
-          itemBuilder: (_, i) {
-            final it = items[i];
-            final c = it.isLate ? Colors.red : const Color(0xFF00A651);
-            return InkWell(
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Inspection choisie: ${it.title}')),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Column(
-                  spacing: 4,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // due label
-                    Row(
-                      spacing: 10,
-                      children: [
-                        Text(
-                          it.dueLabel,
-                          style: GoogleFonts.mulish(
-                            color: c,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
+        child: BlocBuilder<InspectionsBloc, InspectionsState>(
+          builder: (context, state) {
+            if (state.items == null) {
+              return const LoadingWidget();
+            }
+            final List<InspectionItem> items = state.items!
+                .where((item) => item.cardAction != null)
+                .toList();
+            return items.isEmpty
+                ? const LoadingWidget()
+                : ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: items.length,
+                    separatorBuilder: (_, _) => const Divider(height: 12),
+                    itemBuilder: (_, i) {
+                      final it = items[i];
+                      final c = it.isLate
+                          ? Colors.red
+                          : const Color(0xFF00A651);
+                      return InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                          if (it.cardAction == null) return;
+                          context.router.push(
+                            StartInspectionRoute(inspection: it),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: Column(
+                            spacing: 4,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // due label
+                              Row(
+                                spacing: 10,
+                                children: [
+                                  Text(
+                                    it.dueLabel,
+                                    style: GoogleFonts.mulish(
+                                      color: c,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  Text(
+                                    it.dueDate,
+                                    style: GoogleFonts.mulish(
+                                      color: Colors.black54,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                () {
+                                  final text = it.mission;
+                                  final words = text.trim().split(
+                                    RegExp(r'\s+'),
+                                  );
+                                  if (words.length <= 20) return text;
+                                  return '${words.take(20).join(' ')}...';
+                                }(),
+                                style: GoogleFonts.dmSans(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        Text(
-                          it.dueDate,
-                          style: GoogleFonts.mulish(
-                            color: Colors.black54,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      it.title,
-                      style: GoogleFonts.dmSans(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
+                      );
+                    },
+                  );
           },
         ),
       ),
@@ -171,98 +167,74 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<void> _showHotWorkDialog() async {
-    final items = <_HotWorkChoice>[
-      _HotWorkChoice(
-        level: 'Normal',
-        levelColor: const Color(0xFF2D7BFF),
-        site: 'Zone Portuaire Nord EST',
-        title:
-            'Soudure du pont metalique du navire S01 lié aux dechargements des marchandises',
-      ),
-      _HotWorkChoice(
-        level: 'Normal',
-        levelColor: const Color(0xFF2D7BFF),
-        site: 'Plage Fidjrossè',
-        title:
-            'Soudure du pont metalique du navire S01 lié aux dechargements des marchandises',
-      ),
-      _HotWorkChoice(
-        level: 'Dangereux',
-        levelColor: Colors.red,
-        site: 'Plage Fidjrossè',
-        title:
-            'Soudure du pont metalique du navire S01 lié aux dechargements des marchandises',
-      ),
-      _HotWorkChoice(
-        level: 'Normal',
-        levelColor: const Color(0xFF2D7BFF),
-        site: 'Zone Portuaire Nord EST',
-        title:
-            'Soudure du pont metalique du navire S01 lié aux dechargements des marchandises',
-      ),
-    ];
-
     await showDialog<void>(
       context: context,
-      builder: (_) => _RoundedDialog(
-        title: 'Veuillez choisir le travail à chaud',
-        child: ListView.separated(
-          shrinkWrap: true,
-          itemCount: items.length,
-          separatorBuilder: (_, _) => const Divider(height: 12),
-          itemBuilder: (_, i) {
-            final it = items[i];
-            return InkWell(
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Travail à chaud: ${it.title}')),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Column(
-                  spacing: 4,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // first line: level + site
-                    Row(
-                      spacing: 10,
+      builder: (_) => BlocBuilder<PermitsBloc, PermitsState>(
+        builder: (context, state) {
+          if (state.items == null) {
+            return const LoadingWidget();
+          }
+          final List<PermitItem>? items = state.items;
+
+          return _RoundedDialog(
+            title: 'Veuillez choisir le travail à chaud',
+            child: ListView.separated(
+              shrinkWrap: true,
+              itemCount: items!.length,
+              separatorBuilder: (_, _) => const Divider(height: 12),
+              itemBuilder: (_, i) {
+                final it = items[i];
+                return InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.router.push(HotPermisDetailRoute(permit: it));
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: Column(
+                      spacing: 4,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          it.level,
-                          style: GoogleFonts.mulish(
-                            color: it.levelColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            it.site,
-                            style: GoogleFonts.mulish(
-                              color: Colors.black54,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
+                        // first line: level + site
+                        Row(
+                          spacing: 10,
+                          children: [
+                            Text(
+                              it.workTypeReadable,
+                              style: GoogleFonts.mulish(
+                                color: it.workTypeColorValue,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
+                            Expanded(
+                              child: Text(
+                                it.location ?? '',
+                                style: GoogleFonts.mulish(
+                                  color: Colors.black54,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        Text(
+                          it.title,
+                          style: GoogleFonts.poppins(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ],
                     ),
-
-                    Text(
-                      it.title,
-                      style: GoogleFonts.poppins(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }
@@ -509,34 +481,4 @@ class _RoundedDialog extends StatelessWidget {
       ),
     );
   }
-}
-
-/* ===================== Models ===================== */
-
-class _InspectionChoice {
-  final String dueLabel;
-  final String dueDate;
-  final bool isLate;
-  final String title;
-
-  _InspectionChoice({
-    required this.dueLabel,
-    required this.dueDate,
-    required this.isLate,
-    required this.title,
-  });
-}
-
-class _HotWorkChoice {
-  final String level;
-  final Color levelColor;
-  final String site;
-  final String title;
-
-  _HotWorkChoice({
-    required this.level,
-    required this.levelColor,
-    required this.site,
-    required this.title,
-  });
 }
