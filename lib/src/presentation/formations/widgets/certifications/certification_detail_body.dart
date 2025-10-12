@@ -264,36 +264,37 @@ class _CertificationDetailBodyState extends State<CertificationDetailBody> {
                   ),
 
                   // Bottom primary button
-                  SafeArea(
-                    top: false,
-                    minimum: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: blue,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                  if (quizzDetail != null)
+                    SafeArea(
+                      top: false,
+                      minimum: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 56,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
                           ),
-                        ),
-                        onPressed: () {
-                          context.router.push(
-                            QuizzRoute(quizzItem: widget.quizzItem),
-                          );
-                        },
-                        child: Text(
-                          'OUVRIR',
-                          style: GoogleFonts.inter(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                            letterSpacing: .2,
+                          onPressed: () {
+                            context.router.push(
+                              QuizzRoute(quizzItem: quizzDetail!),
+                            );
+                          },
+                          child: Text(
+                            'OUVRIR',
+                            style: GoogleFonts.inter(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              letterSpacing: .2,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
                 ],
               );
       },

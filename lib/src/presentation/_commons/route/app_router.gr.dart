@@ -18,11 +18,12 @@ import 'package:easy_smi/src/domain/inspection/models/inspection_answers_post.da
 import 'package:easy_smi/src/domain/inspection/models/inspection_form_item.dart'
     as _i60;
 import 'package:easy_smi/src/domain/inspection/models/inspection_item.dart'
-    as _i65;
+    as _i66;
 import 'package:easy_smi/src/domain/permit/models/permit_item.dart' as _i59;
 import 'package:easy_smi/src/domain/permit/models/permit_risk_assessment_request.dart'
-    as _i64;
+    as _i65;
 import 'package:easy_smi/src/domain/quizz/models/quizz_item.dart' as _i57;
+import 'package:easy_smi/src/domain/quizz/models/quizz_submission.dart' as _i63;
 import 'package:easy_smi/src/presentation/_commons_widgets/file_preview_page.dart'
     as _i15;
 import 'package:easy_smi/src/presentation/actions/action_detail_page.dart'
@@ -121,7 +122,7 @@ import 'package:easy_smi/src/presentation/profile/sensibilisation/profile_sensib
 import 'package:easy_smi/src/presentation/splash/splash.dart' as _i50;
 import 'package:flutter/foundation.dart' as _i58;
 import 'package:flutter/material.dart' as _i54;
-import 'package:flutter/widgets.dart' as _i63;
+import 'package:flutter/widgets.dart' as _i64;
 
 /// generated route for
 /// [_i1.ActionDetailPage]
@@ -1455,43 +1456,140 @@ class QuizzRouteArgs {
 
 /// generated route for
 /// [_i44.QuizzResponsesPage]
-class QuizzResponsesRoute extends _i53.PageRouteInfo<void> {
-  const QuizzResponsesRoute({List<_i53.PageRouteInfo>? children})
-    : super(QuizzResponsesRoute.name, initialChildren: children);
+class QuizzResponsesRoute extends _i53.PageRouteInfo<QuizzResponsesRouteArgs> {
+  QuizzResponsesRoute({
+    _i54.Key? key,
+    required _i63.QuizzSubmissionResult result,
+    required _i57.QuizzItem quizzItem,
+    List<_i53.PageRouteInfo>? children,
+  }) : super(
+         QuizzResponsesRoute.name,
+         args: QuizzResponsesRouteArgs(
+           key: key,
+           result: result,
+           quizzItem: quizzItem,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'QuizzResponsesRoute';
 
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i44.QuizzResponsesPage();
+      final args = data.argsAs<QuizzResponsesRouteArgs>();
+      return _i44.QuizzResponsesPage(
+        key: args.key,
+        result: args.result,
+        quizzItem: args.quizzItem,
+      );
     },
   );
 }
 
+class QuizzResponsesRouteArgs {
+  const QuizzResponsesRouteArgs({
+    this.key,
+    required this.result,
+    required this.quizzItem,
+  });
+
+  final _i54.Key? key;
+
+  final _i63.QuizzSubmissionResult result;
+
+  final _i57.QuizzItem quizzItem;
+
+  @override
+  String toString() {
+    return 'QuizzResponsesRouteArgs{key: $key, result: $result, quizzItem: $quizzItem}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! QuizzResponsesRouteArgs) return false;
+    return key == other.key &&
+        result == other.result &&
+        quizzItem == other.quizzItem;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ result.hashCode ^ quizzItem.hashCode;
+}
+
 /// generated route for
 /// [_i45.QuizzResponsesStatsPage]
-class QuizzResponsesStatsRoute extends _i53.PageRouteInfo<void> {
-  const QuizzResponsesStatsRoute({List<_i53.PageRouteInfo>? children})
-    : super(QuizzResponsesStatsRoute.name, initialChildren: children);
+class QuizzResponsesStatsRoute
+    extends _i53.PageRouteInfo<QuizzResponsesStatsRouteArgs> {
+  QuizzResponsesStatsRoute({
+    _i54.Key? key,
+    required _i63.QuizzSubmissionResult result,
+    required _i57.QuizzItem quizzItem,
+    List<_i53.PageRouteInfo>? children,
+  }) : super(
+         QuizzResponsesStatsRoute.name,
+         args: QuizzResponsesStatsRouteArgs(
+           key: key,
+           result: result,
+           quizzItem: quizzItem,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'QuizzResponsesStatsRoute';
 
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i45.QuizzResponsesStatsPage();
+      final args = data.argsAs<QuizzResponsesStatsRouteArgs>();
+      return _i45.QuizzResponsesStatsPage(
+        key: args.key,
+        result: args.result,
+        quizzItem: args.quizzItem,
+      );
     },
   );
+}
+
+class QuizzResponsesStatsRouteArgs {
+  const QuizzResponsesStatsRouteArgs({
+    this.key,
+    required this.result,
+    required this.quizzItem,
+  });
+
+  final _i54.Key? key;
+
+  final _i63.QuizzSubmissionResult result;
+
+  final _i57.QuizzItem quizzItem;
+
+  @override
+  String toString() {
+    return 'QuizzResponsesStatsRouteArgs{key: $key, result: $result, quizzItem: $quizzItem}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! QuizzResponsesStatsRouteArgs) return false;
+    return key == other.key &&
+        result == other.result &&
+        quizzItem == other.quizzItem;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ result.hashCode ^ quizzItem.hashCode;
 }
 
 /// generated route for
 /// [_i46.RiskAssessmentPage]
 class RiskAssessmentRoute extends _i53.PageRouteInfo<RiskAssessmentRouteArgs> {
   RiskAssessmentRoute({
-    _i63.Key? key,
+    _i64.Key? key,
     required _i59.PermitItem permit,
-    List<_i64.PermitRiskAssessmentQuestionInput>? initialAnswers,
+    List<_i65.PermitRiskAssessmentQuestionInput>? initialAnswers,
     int? initialIndex,
     List<_i53.PageRouteInfo>? children,
   }) : super(
@@ -1529,11 +1627,11 @@ class RiskAssessmentRouteArgs {
     this.initialIndex,
   });
 
-  final _i63.Key? key;
+  final _i64.Key? key;
 
   final _i59.PermitItem permit;
 
-  final List<_i64.PermitRiskAssessmentQuestionInput>? initialAnswers;
+  final List<_i65.PermitRiskAssessmentQuestionInput>? initialAnswers;
 
   final int? initialIndex;
 
@@ -1569,7 +1667,7 @@ class RiskAssessmentResultRoute
     extends _i53.PageRouteInfo<RiskAssessmentResultRouteArgs> {
   RiskAssessmentResultRoute({
     _i54.Key? key,
-    required List<_i64.PermitRiskAssessmentQuestionInput> responses,
+    required List<_i65.PermitRiskAssessmentQuestionInput> responses,
     required _i59.PermitItem permit,
     List<_i53.PageRouteInfo>? children,
   }) : super(
@@ -1606,7 +1704,7 @@ class RiskAssessmentResultRouteArgs {
 
   final _i54.Key? key;
 
-  final List<_i64.PermitRiskAssessmentQuestionInput> responses;
+  final List<_i65.PermitRiskAssessmentQuestionInput> responses;
 
   final _i59.PermitItem permit;
 
@@ -1763,7 +1861,7 @@ class StartInspectionDetailRoute
     extends _i53.PageRouteInfo<StartInspectionDetailRouteArgs> {
   StartInspectionDetailRoute({
     _i54.Key? key,
-    required _i65.InspectionItem inspection,
+    required _i66.InspectionItem inspection,
     List<_i53.PageRouteInfo>? children,
   }) : super(
          StartInspectionDetailRoute.name,
@@ -1790,7 +1888,7 @@ class StartInspectionDetailRouteArgs {
 
   final _i54.Key? key;
 
-  final _i65.InspectionItem inspection;
+  final _i66.InspectionItem inspection;
 
   @override
   String toString() {
@@ -1814,7 +1912,7 @@ class StartInspectionRoute
     extends _i53.PageRouteInfo<StartInspectionRouteArgs> {
   StartInspectionRoute({
     _i54.Key? key,
-    required _i65.InspectionItem inspection,
+    required _i66.InspectionItem inspection,
     List<_i53.PageRouteInfo>? children,
   }) : super(
          StartInspectionRoute.name,
@@ -1841,7 +1939,7 @@ class StartInspectionRouteArgs {
 
   final _i54.Key? key;
 
-  final _i65.InspectionItem inspection;
+  final _i66.InspectionItem inspection;
 
   @override
   String toString() {

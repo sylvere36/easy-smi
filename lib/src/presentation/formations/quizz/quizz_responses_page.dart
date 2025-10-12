@@ -1,15 +1,23 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import '../../../domain/quizz/models/quizz_item.dart';
+import '../../../domain/quizz/models/quizz_submission.dart';
 import '../widgets/quizz/quizz_responses_body.dart';
 
 @RoutePage()
 class QuizzResponsesPage extends StatelessWidget {
   static const String routeName = '/quizz-responses';
-  const QuizzResponsesPage({super.key});
+  final QuizzSubmissionResult result;
+  final QuizzItem quizzItem;
+  const QuizzResponsesPage({
+    super.key,
+    required this.result,
+    required this.quizzItem,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const QuizzResponseBody();
+    return QuizzResponseBody(result: result, quizzItem: quizzItem);
   }
 }

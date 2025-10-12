@@ -2,19 +2,16 @@ import 'dart:math' as math;
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../application/quizz/quizz_bloc.dart';
 import '../../../../domain/quizz/models/quizz_item.dart';
+import '../../../../domain/quizz/models/quizz_question.dart';
+import '../../../../domain/quizz/models/quizz_submission.dart';
+import '../../../../infrastructure/_commons/network/user_session.dart';
 import '../../../_commons/route/app_router.gr.dart';
-
-/// -------------------------------
-/// Model
-/// -------------------------------
-class QuizQuestion {
-  final String title;
-  final List<String> options;
-  QuizQuestion(this.title, this.options);
-}
+import '../../../_commons_widgets/my_toast.dart';
 
 /// -------------------------------
 /// Page (tout-en-un)
@@ -28,39 +25,22 @@ class CertificationQuiz extends StatefulWidget {
 }
 
 class _CertificationQuizState extends State<CertificationQuiz> {
-  // Fake data (3 questions comme sur tes maquettes)
-  final List<QuizQuestion> _questions = [
-    QuizQuestion(
-      'Quelle est la première étape pour instaurer une relation de confiance avec un client ?',
-      [
-        'Lui proposer directement une solution',
-        'Écouter activement ses besoins',
-        'Mettre en avant les atouts de l’entreprise',
-        'Réduire le prix',
-      ],
-    ),
-    QuizQuestion('Un client satisfait en parle en moyenne à :', [
-      '01 Persone',
-      '03 Persones',
-      '05 Personnes',
-      '10 personnes ou plus',
-    ]),
-    QuizQuestion(
-      'Parmi ces comportements, lequel renforce le plus la confiance d’un client ?',
-      [
-        'Être toujours disponible, même sans écoute',
-        'Respecter ses engagements et tenir parole',
-        'Promettre plus que ce que l’on peut offrir',
-        'Parler surtout de soi et de son expertise',
-      ],
-    ),
-  ];
-
+  // Questions réelles du quizz
+  late final List<QuizzQuestion> _questions;
   // Index courant (intro = -1, 0..n-1 = questions, submit = n)
   int _index = -1;
 
-  // Réponses choisies (index d’option ou null)
-  late final List<int?> _answers = List<int?>.filled(_questions.length, null);
+  // Réponse choisie pour chaque question (answerId ou null)
+  late List<int?> _selectedAnswerIds;
+
+  QuizzItem get quizzItem => widget.quizzItem;
+
+  @override
+  void initState() {
+    super.initState();
+    _questions = widget.quizzItem.questions;
+    _selectedAnswerIds = List<int?>.filled(_questions.length, null);
+  }
 
   // ---------- Helpers UI ----------
   TextStyle get _titleStyle => GoogleFonts.montserrat(
@@ -95,25 +75,90 @@ class _CertificationQuizState extends State<CertificationQuiz> {
     }
   }
 
-  void _submit() {
-    // Ici tu feras ton envoi réseau. On affiche juste une notification.
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Réponses soumises ✅')));
-    Navigator.maybePop(context);
-    context.router.push(const QuizzResponsesStatsRoute());
+  Future<void> _submit() async {
+    // Sécurité: vérifier que toutes les questions sont répondues
+    final allAnswered = _selectedAnswerIds.every((id) => id != null);
+    if (!allAnswered) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Veuillez répondre à toutes les questions.'),
+        ),
+      );
+      return;
+    }
+
+    final user = await myUserSession.getAuthenticatedUser();
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Session expirée. Veuillez vous reconnecter.'),
+        ),
+      );
+      return;
+    }
+
+    final answers = <QuizzSubmissionAnswer>[];
+    for (var i = 0; i < _questions.length; i++) {
+      final q = _questions[i];
+      final aId = _selectedAnswerIds[i]!;
+      answers.add(
+        QuizzSubmissionAnswer(questionQuizzId: q.id, answerQuizzId: aId),
+      );
+    }
+
+    final request = QuizzSubmissionRequest(
+      userId: user.id,
+      quizzId: widget.quizzItem.id,
+      reponses: answers,
+    );
+
+    context.read<QuizzBloc>().add(QuizzEvent.submitRequested(request: request));
   }
 
   // ----------------- UI Blocks -----------------
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _primary,
-      body: Stack(
-        children: [
-          _BubblesBackground(gradient: _bgGrad), // bulles floues
-          SafeArea(child: _buildBody()),
-        ],
+    return BlocListener<QuizzBloc, QuizzState>(
+      listenWhen: (prev, curr) =>
+          prev.submitResultOption != curr.submitResultOption,
+      listener: (context, state) {
+        state.submitResultOption.fold(
+          () {},
+          (either) => either.fold(
+            (failure) =>
+                errorToast(context: context, msg: 'Une erreur est survenue.'),
+            (result) {
+              // Aller au résumé avec le résultat
+              context.router.push(
+                QuizzResponsesStatsRoute(
+                  result: result,
+                  quizzItem: widget.quizzItem,
+                ),
+              );
+            },
+          ),
+        );
+      },
+      child: BlocBuilder<QuizzBloc, QuizzState>(
+        buildWhen: (prev, curr) => prev.isSubmitting != curr.isSubmitting,
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: _primary,
+            body: Stack(
+              children: [
+                _BubblesBackground(gradient: _bgGrad), // bulles floues
+                SafeArea(child: _buildBody()),
+                if (state.isSubmitting)
+                  Container(
+                    color: Colors.black54,
+                    child: const Center(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -141,7 +186,7 @@ class _CertificationQuizState extends State<CertificationQuiz> {
           // Titre “cartouche” blanc
           _GlassCard(
             child: Text(
-              'Orientation client – au cœur de la confiance',
+              widget.quizzItem.title,
               style: GoogleFonts.montserrat(
                 fontSize: 25,
                 fontWeight: FontWeight.w700,
@@ -217,19 +262,20 @@ class _CertificationQuizState extends State<CertificationQuiz> {
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.only(bottom: 8),
-              child: Text(q.title, style: _titleStyle),
+              child: Text(q.question, style: _titleStyle),
             ),
           ),
           const SizedBox(height: 8),
           // Options (gros pills)
-          ...List.generate(q.options.length, (idx) {
-            final selected = _answers[i] == idx;
+          ...List.generate(q.answers.length, (idx) {
+            final answer = q.answers[idx];
+            final selected = _selectedAnswerIds[i] == answer.id;
             return Padding(
               padding: const EdgeInsets.only(bottom: 18),
               child: _OptionPill(
-                text: q.options[idx],
+                text: answer.answer,
                 selected: selected,
-                onTap: () => setState(() => _answers[i] = idx),
+                onTap: () => setState(() => _selectedAnswerIds[i] = answer.id),
               ),
             );
           }),
@@ -242,7 +288,7 @@ class _CertificationQuizState extends State<CertificationQuiz> {
               const SizedBox(width: 50),
               _ArrowButton(
                 direction: AxisDirection.right,
-                enabled: _answers[i] != null,
+                enabled: _selectedAnswerIds[i] != null,
                 gradient: _ctaGrad,
                 onTap: _next,
               ),
@@ -270,7 +316,7 @@ class _CertificationQuizState extends State<CertificationQuiz> {
           const Spacer(),
           _GlassCard(
             child: Text(
-              'Orientation client – au cœur de la confiance',
+              widget.quizzItem.title,
               textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(
                 fontSize: 25,

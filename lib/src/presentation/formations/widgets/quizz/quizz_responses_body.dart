@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'quizz_stats_body.dart';
-
-/// ---------- Pages ----------
+import '../../../../domain/quizz/models/quizz_answer.dart';
+import '../../../../domain/quizz/models/quizz_item.dart';
+import '../../../../domain/quizz/models/quizz_question.dart';
+import '../../../../domain/quizz/models/quizz_submission.dart';
 
 class QuizzResponseBody extends StatelessWidget {
-  const QuizzResponseBody({super.key});
+  final QuizzSubmissionResult result;
+  final QuizzItem quizzItem;
+  const QuizzResponseBody({
+    super.key,
+    required this.result,
+    required this.quizzItem,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final List<QuizQuestion> questions = data;
+    final List<QuizzQuestion> questions = quizzItem.questions;
 
     return Scaffold(
       appBar: AppBar(
@@ -34,8 +41,11 @@ class QuizzResponseBody extends StatelessWidget {
           const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
           SliverList.separated(
-            itemBuilder: (_, i) =>
-                _QuestionReviewCard(index: i, data: questions[i]),
+            itemBuilder: (_, i) => _QuestionReviewCard(
+              index: i,
+              data: questions[i],
+              result: result,
+            ),
             separatorBuilder: (_, _) => const SizedBox(height: 14),
             itemCount: questions.length,
           ),
@@ -48,8 +58,13 @@ class QuizzResponseBody extends StatelessWidget {
 
 class _QuestionReviewCard extends StatelessWidget {
   final int index;
-  final QuizQuestion data;
-  const _QuestionReviewCard({required this.index, required this.data});
+  final QuizzQuestion data;
+  final QuizzSubmissionResult result;
+  const _QuestionReviewCard({
+    required this.index,
+    required this.data,
+    required this.result,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -82,16 +97,16 @@ class _QuestionReviewCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          Text(data.title, style: titleStyle),
+          Text(data.question, style: titleStyle),
           const SizedBox(height: 12),
           // Options
           ...List.generate(
-            data.options.length,
+            data.answers.length,
             (i) => Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: _AnswerPill(
-                text: data.options[i],
-                state: _stateFor(i, data),
+                text: data.answers[i].answer,
+                state: _stateFor(result, data.answers[i]),
               ),
             ),
           ),
@@ -101,9 +116,16 @@ class _QuestionReviewCard extends StatelessWidget {
   }
 
   /// UI state logic: highlight correct in green, wrong selection in red.
-  _AnswerState _stateFor(int i, QuizQuestion q) {
-    if (i == q.correctIndex) return _AnswerState.correct;
-    if (q.selectedIndex == i) return _AnswerState.wrong;
+  _AnswerState _stateFor(QuizzSubmissionResult result, QuizzAnswer q) {
+    final detail = result.details.firstWhere(
+      (d) => d.answerQuizzId == q.id,
+      orElse: () => QuizzSubmissionDetailResult(
+        questionQuizzId: q.id,
+        answerQuizzId: q.id,
+        isCorrect: false,
+      ),
+    );
+    if (detail.isCorrect == true) return _AnswerState.correct;
     return _AnswerState.neutral;
   }
 }

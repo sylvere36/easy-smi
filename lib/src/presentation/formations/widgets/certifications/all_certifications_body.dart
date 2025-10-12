@@ -90,7 +90,13 @@ class _CertificationsListBodyState extends State<CertificationsListBody> {
                   child: Column(
                     children: [
                       if (state.isLoading)
-                        ...List.generate(6, (index) => const CardShimmer()),
+                        ...List.generate(
+                          6,
+                          (index) => const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: CardShimmer(),
+                          ),
+                        ),
                       if (state.items.isEmpty) EmptyWidget.noData(),
                       ...state.items.map(
                         (e) => Padding(

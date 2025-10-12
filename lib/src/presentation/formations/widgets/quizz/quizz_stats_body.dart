@@ -2,47 +2,31 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../domain/quizz/models/quizz_item.dart';
+import '../../../../domain/quizz/models/quizz_submission.dart';
 import '../../../_commons/route/app_router.gr.dart';
 
 /// ---------- Model ----------
-
-class QuizQuestion {
-  final String title;
-  final List<String> options;
-  final int correctIndex;
-  final int? selectedIndex;
-
-  const QuizQuestion({
-    required this.title,
-    required this.options,
-    required this.correctIndex,
-    this.selectedIndex,
-  });
-
-  bool get isAnswered => selectedIndex != null;
-  bool get isCorrect => selectedIndex == correctIndex;
-}
-
-/// Helpers
-int totalCorrect(List<QuizQuestion> items) =>
-    items.where((q) => q.isCorrect).length;
-
-double scorePercent(List<QuizQuestion> items) =>
-    items.isEmpty ? 0 : totalCorrect(items) / items.length;
 
 /// ---------- Pages ----------
 
 /// Résumé & score
 class QuizzStatsBody extends StatelessWidget {
-  const QuizzStatsBody({super.key});
+  final QuizzSubmissionResult result;
+  final QuizzItem quizzItem;
+  const QuizzStatsBody({
+    super.key,
+    required this.result,
+    required this.quizzItem,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final List<QuizQuestion> questions = data;
-    final percent = scorePercent(questions);
-    final correct = totalCorrect(questions);
-    final total = questions.length;
-    final wrong = total - correct;
+    // Compute from API result
+    final total = quizzItem.questions.length;
+    final correct = result.details.where((d) => d.isCorrect).length;
+    final wrong = (total - correct).clamp(0, total);
+    final double percent = (result.score / 100).clamp(0, 1.0) as double;
 
     return Scaffold(
       body: Stack(
@@ -66,12 +50,11 @@ class QuizzStatsBody extends StatelessWidget {
                     children: [
                       Positioned(
                         left: 8,
-                        top: 8,
+                        top: 20 + MediaQuery.of(context).padding.top,
                         child: IconButton(
                           onPressed: () {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                            Navigator.pop(context);
+                            // Pop to first page in stack
+                            context.router.popUntilRoot();
                           },
                           icon: const Icon(
                             Icons.arrow_back,
@@ -117,7 +100,7 @@ class QuizzStatsBody extends StatelessWidget {
                     icon: Icons.refresh,
                     color: const Color(0xFF128494),
                     onTap: () {
-                      Navigator.pop(context);
+                      context.router.popUntilRoot();
                       // context.router.push(const QuizzRoute());
                     },
                   ),
@@ -126,7 +109,12 @@ class QuizzStatsBody extends StatelessWidget {
                     icon: Icons.visibility,
                     color: const Color(0xFFB5804F),
                     onTap: () {
-                      context.router.push(const QuizzResponsesRoute());
+                      context.router.push(
+                        QuizzResponsesRoute(
+                          result: result,
+                          quizzItem: quizzItem,
+                        ),
+                      );
                     },
                   ),
                   _ActionIcon(
@@ -383,41 +371,3 @@ class _ActionIcon extends StatelessWidget {
     );
   }
 }
-
-final data = <QuizQuestion>[
-  const QuizQuestion(
-    title:
-        'Quelle est la première étape pour instaurer une relation de confiance avec un client ?',
-    options: [
-      'Lui proposer directement une solution',
-      'Écouter activement ses besoins',
-      'Mettre en avant les atouts de l’entreprise',
-      'Réduire le prix',
-    ],
-    correctIndex: 1,
-    selectedIndex: 1,
-  ),
-  const QuizQuestion(
-    title: 'Un client satisfait en parle en moyenne à :',
-    options: [
-      '01 Personne',
-      '03 Personnes',
-      '05 Personnes',
-      '10 personnes ou plus',
-    ],
-    correctIndex: 3,
-    selectedIndex: 3,
-  ),
-  const QuizQuestion(
-    title:
-        'Parmi ces comportements, lequel renforce le plus la confiance d’un client ?',
-    options: [
-      'Être toujours disponible, même sans écoute',
-      'Respecter ses engagements et tenir parole',
-      'Promettre plus que ce que l’on peut offrir',
-      'Parler surtout de soi et de son expertise',
-    ],
-    correctIndex: 1,
-    selectedIndex: 2,
-  ),
-];
