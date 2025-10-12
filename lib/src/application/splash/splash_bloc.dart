@@ -36,11 +36,9 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         // Ensure device is registered (best-effort)
         try {
           final String? deviceToken = await myUserSession.getDeviceToken();
-          log('Device Token: $deviceToken');
           if (deviceToken == null) {
             final DeviceRegisterRequest req =
                 await DeviceInfoHelper.buildRequest();
-            log('--- Registering device with info: ${req.toJson()}');
             final res = await _deviceRepo.registerDevice(request: req);
             await res.fold(
               (_) async {},
@@ -77,7 +75,6 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         }
 
         // If logged-in, try to fetch the authenticated user (non-blocking route)
-        log('Auth token present: $isLogin');
         if (isLogin) {
           try {
             final res = await _authUserRepo.getAuthenticatedUser();
@@ -86,7 +83,6 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
             ) async {
               if (u.organizationId == null &&
                   u.organizationValidated == false) {
-                log('Joining organization for user: ${u.id}');
                 await _organizationRepo.joinOrganization();
               }
               if (u.organizationValidated == false) {
@@ -97,8 +93,6 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
             log('Authenticated user fetch error: $e');
           }
         }
-
-        log('Navigating to route: $route');
       } catch (e) {
         log('Splash StartLoading error: $e');
       }
