@@ -1,228 +1,302 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../gen/assets.gen.dart';
+import '../../../../application/communication/comments_bloc.dart';
+import '../../../../application/quizz/quizz_bloc.dart';
+import '../../../../domain/quizz/models/quizz_item.dart';
+import '../../../_commons/helpers/image_helper.dart';
 import '../../../_commons/route/app_router.gr.dart';
 import '../../../_commons/theming/app_color.dart';
+import '../../../_commons_widgets/comments/comment_field.dart';
+import '../../../_commons_widgets/loading_widget.dart';
+import '../../../comments/widgets/resume_comment_widget.dart';
 
-class CertificationDetailBody extends StatelessWidget {
-  const CertificationDetailBody({super.key});
+class CertificationDetailBody extends StatefulWidget {
+  const CertificationDetailBody({super.key, required this.quizzItem});
+
+  final QuizzItem quizzItem;
+
+  @override
+  State<CertificationDetailBody> createState() =>
+      _CertificationDetailBodyState();
+}
+
+class _CertificationDetailBodyState extends State<CertificationDetailBody> {
+  QuizzItem? quizzDetail;
+
+  String commentTableType = 'quizz';
+
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<QuizzBloc>(
+      context,
+    ).add(QuizzEvent.fetchDetailRequested(id: widget.quizzItem.id));
+
+    context.read<CommentsBloc>().add(
+      CommentsEvent.fetchRequested(
+        commentableType: commentTableType,
+        commentableId: widget.quizzItem.id,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     const blue = AppColors.primary;
 
-    return Column(
-      children: [
-        // Scrollable content
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header row (thumbnail + title)
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // illustration
-                    Container(
-                      width: 85,
-                      height: 85,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFF1E6),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      alignment: Alignment.center,
-                      child: Assets.images.quizz.image(),
-                    ),
-                    const SizedBox(width: 16),
-                    // title
-                    Expanded(
+    return BlocConsumer<QuizzBloc, QuizzState>(
+      listener: (context, state) {
+        if (state.detail != null) {
+          setState(() {
+            quizzDetail = state.detail;
+          });
+        }
+      },
+      builder: (context, state) {
+        return quizzDetail == null
+            ? const Center(child: LoadingWidget())
+            : Column(
+                children: [
+                  // Scrollable content
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Header row (thumbnail + title)
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // illustration
+                              if (quizzDetail!.image.isNotEmpty)
+                                FutureBuilder<String>(
+                                  future: getFullImageUrl(quizzDetail!.image),
+                                  builder: (context, asyncSnapshot) {
+                                    if (asyncSnapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: LoadingWidget(),
+                                      );
+                                    } else if (asyncSnapshot.hasError) {
+                                      return const Center(
+                                        child: Icon(Icons.error),
+                                      );
+                                    } else {
+                                      return SizedBox(
+                                        width: 85,
+                                        height: 85,
+                                        child: Image.network(
+                                          asyncSnapshot.data!,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                )
+                              else
+                                Container(
+                                  width: 85,
+                                  height: 85,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFFF1E6),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Assets.images.quizz.image(),
+                                ),
+                              const SizedBox(width: 16),
+                              // title
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      quizzDetail!.title,
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                        color: theme.colorScheme.onSurface,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+
+                                    // "Certification" + badge
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          'Certification',
+                                          style: GoogleFonts.roboto(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        quizzDetail!.certification == 1
+                                            ? const Icon(
+                                                Icons.verified_rounded,
+                                                color: blue,
+                                                size: 20,
+                                              )
+                                            : const Icon(
+                                                Icons.shield_rounded,
+                                                color: AppColors.chipRed,
+                                                size: 20,
+                                              ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          // Meta: last update + language
+                          Row(
+                            children: [
+                              _MetaBlock(
+                                label: 'Dernière mise à jour',
+                                value: quizzDetail!.updatedAt == null
+                                    ? 'N/A'
+                                    : '${DateTime.parse(quizzDetail!.updatedAt!).day.toString().padLeft(2, '0')}/${DateTime.parse(quizzDetail!.updatedAt!).month.toString().padLeft(2, '0')}/${DateTime.parse(quizzDetail!.updatedAt!).year}',
+                              ),
+                              const SizedBox(width: 24),
+                              const _MetaBlock(
+                                label: 'Langue',
+                                value: 'Francais',
+                                icon: Icons.language,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Rating
+                          Row(
+                            children: [
+                              _StarRow(
+                                rating:
+                                    quizzDetail!.tauxDeReussite?.toDouble() ??
+                                    0,
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                '${quizzDetail!.tauxDeReussite ?? 0}',
+                                style: GoogleFonts.inter(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Detail title
                           Text(
-                            'Orientation client – au cœur de la confiance',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                              color: theme.colorScheme.onSurface,
+                            'Detail',
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey,
                             ),
                           ),
                           const SizedBox(height: 8),
 
-                          // "Certification" + badge
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'Certification',
-                                style: GoogleFonts.roboto(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              const Icon(
-                                Icons.verified_outlined,
-                                color: blue,
-                                size: 20,
-                              ),
-                            ],
+                          // Long description
+                          HtmlWidget(
+                            quizzDetail!.descriptionHtml ??
+                                '<p style="color: grey; font-size: 16px; line-height: 1.5;">Aucune description disponible pour cette formation.</p>',
+                            textStyle: GoogleFonts.montserrat(
+                              fontSize: 18,
+                              color: theme.colorScheme.onSurface,
+                              height: 1.5,
+                            ),
                           ),
+                          const SizedBox(height: 24),
+
+                          // Comments header
+                          BlocBuilder<CommentsBloc, CommentsState>(
+                            builder: (context, state) {
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 14),
+                                child: CommentFieldWidget(
+                                  isLoading: state.isSubmitting,
+                                  onSend: (String text, File? file) {
+                                    BlocProvider.of<CommentsBloc>(context).add(
+                                      CommentsEvent.addCommentRequested(
+                                        commentableType: commentTableType,
+                                        commentableId: widget.quizzItem.id,
+                                        attachmentPath: file?.path,
+                                        body: text,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+
+                          // Comments header + tiny list
+                          ResumeCommentWidget(
+                            commentableType: commentTableType,
+                            commentableId: widget.quizzItem.id,
+                            commentsCount: BlocProvider.of<CommentsBloc>(
+                              context,
+                              listen: true,
+                            ).state.items.length,
+                          ),
+                          const SizedBox(height: 12),
                         ],
                       ),
                     ),
-                  ],
-                ),
-
-                const SizedBox(height: 12),
-
-                // Meta: last update + language
-                const Row(
-                  children: [
-                    _MetaBlock(label: 'Dernière mise à jour', value: '04/2025'),
-                    SizedBox(width: 24),
-                    _MetaBlock(
-                      label: 'Langue',
-                      value: 'Francais',
-                      icon: Icons.language,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // Rating
-                Row(
-                  children: [
-                    const _StarRow(rating: 4.3),
-                    const SizedBox(width: 12),
-                    Text(
-                      '4,3',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // Detail title
-                Text(
-                  'Detail',
-                  style: GoogleFonts.inter(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey,
                   ),
-                ),
-                const SizedBox(height: 8),
 
-                // Long description
-                Text(
-                  'Capacité à comprendre les besoins du client, à adapter sa communication et à proposer des solutions personnalisées.  '
-                  'Capacité à comprendre les besoins du client, à adapter sa communication et à proposer des solutions personnalisées.',
-                  style: GoogleFonts.montserrat(fontSize: 18),
-                ),
-                const SizedBox(height: 24),
-
-                // Comment input
-                _CommentInput(hint: 'Ecrire  un commentaire', onAttach: () {}),
-                const SizedBox(height: 20),
-
-                // Comments header
-                Row(
-                  children: [
-                    Text(
-                      'Commentaire(s)',
-                      style: GoogleFonts.inter(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    const _CounterChip(count: 2),
-                    const Spacer(),
-                    TextButton(
-                      onPressed: () {
-                        context.router.push(
-                          CommentsRoute(
-                            commentableType: 'Certification',
-                            commentableId: '0',
+                  // Bottom primary button
+                  SafeArea(
+                    top: false,
+                    minimum: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
                           ),
-                        );
-                      },
-                      child: Text(
-                        'Voir tout',
-                        style: GoogleFonts.inter(
-                          fontWeight: FontWeight.w700,
-                          color: blue,
-                          fontSize: 16,
+                        ),
+                        onPressed: () {
+                          context.router.push(
+                            QuizzRoute(quizzItem: widget.quizzItem),
+                          );
+                        },
+                        child: Text(
+                          'OUVRIR',
+                          style: GoogleFonts.inter(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                            letterSpacing: .2,
+                          ),
                         ),
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-
-                // Comments list (samples)
-                const _CommentTile(
-                  initials: 'MH',
-                  name: 'Beatrice BOSSOU',
-                  timeAgo: 'Il y a 30 min',
-                  text:
-                      'Les documents fournies ne respectent par les normes internationnales',
-                ),
-                const SizedBox(height: 16),
-                const _CommentTile(
-                  initials: 'MH',
-                  name: 'Beatrice BOSSOU',
-                  timeAgo: 'Il y a 30 min',
-                  text:
-                      'Les documents fournies ne respectent par les normes internationnales',
-                ),
-                const SizedBox(height: 12),
-              ],
-            ),
-          ),
-        ),
-
-        // Bottom primary button
-        SafeArea(
-          top: false,
-          minimum: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-          child: SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-              onPressed: () {
-                context.router.push(const QuizzRoute());
-              },
-              child: Text(
-                'OUVRIR',
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                  letterSpacing: .2,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
+                  ),
+                ],
+              );
+      },
     );
   }
 }
@@ -290,151 +364,5 @@ class _StarRow extends StatelessWidget {
       stars.add(Icon(data, color: const Color(0xFFFFB300), size: 22));
     }
     return Row(children: stars);
-  }
-}
-
-class _CommentInput extends StatelessWidget {
-  const _CommentInput({required this.hint, required this.onAttach});
-
-  final String hint;
-  final VoidCallback onAttach;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        context.router.push(
-          CommentsRoute(commentableType: 'Certification', commentableId: '0'),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF3F6FA),
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                enabled: false,
-                decoration: InputDecoration(
-                  hintText: hint,
-                  fillColor: const Color(0xFFF3F6FA),
-                  border: InputBorder.none,
-                  hintStyle: GoogleFonts.inter(
-                    color: Colors.black45,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                style: GoogleFonts.inter(fontSize: 16),
-              ),
-            ),
-            IconButton(
-              onPressed: onAttach,
-              icon: const Icon(Icons.attach_file, size: 22),
-              color: Colors.black87,
-              splashRadius: 22,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _CounterChip extends StatelessWidget {
-  const _CounterChip({required this.count});
-
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: const Color(0xFFEFF3F8),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        '$count',
-        style: GoogleFonts.inter(
-          fontWeight: FontWeight.w700,
-          color: Colors.black87,
-        ),
-      ),
-    );
-  }
-}
-
-class _CommentTile extends StatelessWidget {
-  const _CommentTile({
-    required this.initials,
-    required this.name,
-    required this.timeAgo,
-    required this.text,
-  });
-
-  final String initials;
-  final String name;
-  final String timeAgo;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final onSurface = Theme.of(context).colorScheme.onSurface;
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // avatar
-        CircleAvatar(
-          radius: 24,
-          backgroundColor: const Color(0xFF2E8B57),
-          child: Text(
-            initials,
-            style: GoogleFonts.inter(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-
-        // content
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // name + time
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      name,
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: onSurface,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    timeAgo,
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      color: Colors.black54,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Text(text, style: GoogleFonts.inter(fontSize: 15, height: 1.45)),
-            ],
-          ),
-        ),
-      ],
-    );
   }
 }

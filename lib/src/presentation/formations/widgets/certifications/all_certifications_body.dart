@@ -1,9 +1,17 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../gen/assets.gen.dart';
+import '../../../../application/quizz/quizz_bloc.dart';
+import '../../../../domain/quizz/models/quizz_item.dart';
+import '../../../_commons/helpers/image_helper.dart';
 import '../../../_commons/route/app_router.gr.dart';
+import '../../../_commons_widgets/empty_widget.dart';
+import '../../../_commons_widgets/loading_widget.dart';
+import '../../../_commons_widgets/search_field_widget.dart';
+import '../../../_shimmers/card_shimmer.dart';
 
 class CertificationsListBody extends StatefulWidget {
   const CertificationsListBody({super.key});
@@ -14,12 +22,6 @@ class CertificationsListBody extends StatefulWidget {
 
 class _CertificationsListBodyState extends State<CertificationsListBody> {
   final _search = TextEditingController();
-  final _all = List<String>.generate(
-    12,
-    (i) => 'Orientation client  – Au coeur de la confiances',
-  );
-
-  String _q = '';
 
   @override
   void dispose() {
@@ -29,107 +31,103 @@ class _CertificationsListBodyState extends State<CertificationsListBody> {
 
   @override
   Widget build(BuildContext context) {
-    final items = _all
-        .where((e) => e.toLowerCase().contains(_q.toLowerCase()))
-        .toList();
+    return BlocBuilder<QuizzBloc, QuizzState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 12, bottom: 20),
+                        child: SearchFieldWidget(
+                          controller: _search,
+                          onChanged: (value) {
+                            context.read<QuizzBloc>().add(
+                              QuizzEvent.searchRequested(query: value),
+                            );
+                          },
+                          onClear: () {
+                            _search.text = '';
+                            context.read<QuizzBloc>().add(
+                              const QuizzEvent.searchRequested(query: ''),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(left: 12),
+                    //   child: InkWell(
+                    //     onTap: () {},
+                    //     borderRadius: BorderRadius.circular(12),
+                    //     child: Container(
+                    //       width: 44,
+                    //       height: 44,
+                    //       alignment: Alignment.center,
+                    //       decoration: BoxDecoration(
+                    //         color: Colors.white,
+                    //         borderRadius: BorderRadius.circular(12),
+                    //         border: Border.all(color: const Color(0xFFE5E7EB)),
+                    //       ),
+                    //       child: const Icon(
+                    //         Icons.tune,
+                    //         color: Color(0xFF0F172A),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
+                ),
+              ),
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _search,
-                    onChanged: (v) => setState(() => _q = v),
-                    style: GoogleFonts.inter(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF101828),
-                    ),
-                    decoration: InputDecoration(
-                      hintText: 'Recherche',
-                      hintStyle: GoogleFonts.inter(
-                        color: const Color(0xFF98A2B3),
-                        fontWeight: FontWeight.w600,
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      if (state.isLoading)
+                        ...List.generate(6, (index) => const CardShimmer()),
+                      if (state.items.isEmpty) EmptyWidget.noData(),
+                      ...state.items.map(
+                        (e) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: _CertificationTile(
+                            title: e.title,
+                            isCertified: e.certification == 1,
+                            quizzItem: e,
+                            onTap: () => context.router.push(
+                              CertificationDetailRoute(quizzItem: e),
+                            ),
+                          ),
+                        ),
                       ),
-                      prefixIcon: const Icon(
-                        Icons.search,
-                        color: Color(0xFF6B7280),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 14,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: Color(0xFF2563EB)),
-                      ),
-                    ),
+                    ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 12),
-                  child: InkWell(
-                    onTap: () {},
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFFE5E7EB)),
-                      ),
-                      child: const Icon(Icons.tune, color: Color(0xFF0F172A)),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-
-          Expanded(
-            child: ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                final title = items[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: _CertificationTile(
-                    title: title,
-                    onTap: () {
-                      context.router.push(const CertificationDetailRoute());
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
 
 class _CertificationTile extends StatelessWidget {
-  const _CertificationTile({required this.title, required this.onTap});
+  const _CertificationTile({
+    required this.title,
+    required this.isCertified,
+    required this.quizzItem,
+    required this.onTap,
+  });
 
   final String title;
+  final bool isCertified;
+  final QuizzItem quizzItem;
   final VoidCallback onTap;
 
   @override
@@ -158,14 +156,38 @@ class _CertificationTile extends StatelessWidget {
             child: Row(
               children: [
                 // Image arrondie (remplace par ton asset)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Assets.images.quizz.image(
+                if (quizzItem.image.isNotEmpty)
+                  FutureBuilder<String>(
+                    future: getFullImageUrl(quizzItem.image),
+                    builder: (context, asyncSnapshot) {
+                      if (asyncSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(child: LoadingWidget());
+                      } else if (asyncSnapshot.hasError) {
+                        return const Center(child: Icon(Icons.error));
+                      } else {
+                        return SizedBox(
+                          width: 64,
+                          height: 64,
+                          child: Image.network(
+                            asyncSnapshot.data!,
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      }
+                    },
+                  )
+                else
+                  Container(
                     width: 64,
                     height: 64,
-                    fit: BoxFit.cover,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF1E6),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    alignment: Alignment.center,
+                    child: Assets.images.quizz.image(),
                   ),
-                ),
 
                 // Titre + "Certification"
                 Expanded(
@@ -183,29 +205,30 @@ class _CertificationTile extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 6),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.verified_outlined,
-                                size: 18,
-                                color: Color(0xFF6B7280),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 6),
-                                child: Text(
-                                  'Certification',
-                                  style: GoogleFonts.roboto(
-                                    fontSize: 12,
-                                    color: const Color(0xFF6B7280),
-                                    fontWeight: FontWeight.w400,
+                        if (isCertified)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.verified_outlined,
+                                  size: 18,
+                                  color: Color(0xFF6B7280),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 6),
+                                  child: Text(
+                                    'Certification',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 12,
+                                      color: const Color(0xFF6B7280),
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),

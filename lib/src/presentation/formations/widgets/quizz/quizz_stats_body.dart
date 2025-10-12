@@ -118,7 +118,7 @@ class QuizzStatsBody extends StatelessWidget {
                     color: const Color(0xFF128494),
                     onTap: () {
                       Navigator.pop(context);
-                      context.router.push(const QuizzRoute());
+                      // context.router.push(const QuizzRoute());
                     },
                   ),
                   _ActionIcon(

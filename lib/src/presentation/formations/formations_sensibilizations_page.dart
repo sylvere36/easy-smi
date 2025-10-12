@@ -24,7 +24,7 @@ class FormationsSensibilizationsPage extends StatelessWidget {
       ),
       floatingActionButton: GestureDetector(
         onTap: () {
-          context.router.push(const MyCertificationsRoute());
+          context.router.push(const AllCertificationsRoute());
         },
         child: Container(
           width: 120,

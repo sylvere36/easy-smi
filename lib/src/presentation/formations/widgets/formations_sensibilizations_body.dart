@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../application/campaign/campaigns_bloc.dart';
 import '../../../application/formation/formations_bloc.dart';
 import '../../../domain/formation/models/formation_item.dart';
 import '../../../domain/formation/models/my_formation.dart';
@@ -264,24 +265,38 @@ class _FormationsSensibilizationsBodyState
               ),
 
               // Tab 3: Sensibilisation (same grid)
-              CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                      child: _SearchField(
-                        controller: _searchMySensibilizations,
+              BlocBuilder<CampaignsBloc, CampaignsState>(
+                builder: (context, state) {
+                  return CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                          child: _SearchField(
+                            controller: _searchMySensibilizations,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  // _GridCourses(
-                  //   items: _grid,
-                  //   isCourse: false,
-                  //   emptyPadding: const EdgeInsets.only(bottom: 24),
-                  //   titleColor: theme.colorScheme.onSurface,
-                  //   subtitleColor: grey,
-                  // ),
-                ],
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                        sliver: SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 50),
+                            child: Center(child: EmptyWidget.noData()),
+                          ),
+                        ),
+                      ),
+
+                      // _GridCourses(
+                      //   items: _grid,
+                      //   isCourse: false,
+                      //   emptyPadding: const EdgeInsets.only(bottom: 24),
+                      //   titleColor: theme.colorScheme.onSurface,
+                      //   subtitleColor: grey,
+                      // ),
+                    ],
+                  );
+                },
               ),
             ],
           ),

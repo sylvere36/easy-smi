@@ -18,6 +18,7 @@ import '../application/events/events_bloc.dart';
 import '../application/formation/formations_bloc.dart';
 import '../application/inspection/inspections_bloc.dart';
 import '../application/permit/permits_bloc.dart';
+import '../application/quizz/quizz_bloc.dart';
 import '../application/slider/sliders_bloc.dart';
 import '../application/splash/splash_bloc.dart';
 import '_commons/route/app_router.dart';
@@ -81,6 +82,10 @@ class _AppState extends State<App> {
               sl<CampaignsBloc>()..add(const CampaignsEvent.fetchRequested()),
         ),
         BlocProvider<SplashBloc>(create: (_) => sl<SplashBloc>()),
+        BlocProvider<QuizzBloc>(
+          create: (_) =>
+              sl<QuizzBloc>()..add(const QuizzEvent.fetchRequested()),
+        ),
       ],
       child: MaterialApp.router(
         routerDelegate: _appRouter.delegate(),

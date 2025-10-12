@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import '../../../domain/_commons/pagination.dart';
 import '../../../domain/quizz/models/quizz_item.dart';
+import '../../../domain/quizz/models/quizz_submission.dart';
 import '../../_commons/exceptions.dart';
 import '../../_commons/network/app_requests.dart';
 import '../../_commons/throw_error.dart';
@@ -9,6 +10,9 @@ import '../../_commons/throw_error.dart';
 abstract class IQuizzRemoteDataSource {
   Future<(List<QuizzItem>, Pagination)> getQuizzes({int page, int perPage});
   Future<QuizzItem> getQuizzDetail({required int id});
+  Future<QuizzSubmissionResult> submitQuizz({
+    required QuizzSubmissionRequest request,
+  });
 }
 
 class QuizzRemoteDataSource implements IQuizzRemoteDataSource {
@@ -64,6 +68,29 @@ class QuizzRemoteDataSource implements IQuizzRemoteDataSource {
         final Map<String, dynamic> data =
             root['quizz'] as Map<String, dynamic>? ?? <String, dynamic>{};
         return QuizzItem.fromJson(data);
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<QuizzSubmissionResult> submitQuizz({
+    required QuizzSubmissionRequest request,
+  }) async {
+    try {
+      const String endpoint = '/formation/candidats/jouer';
+      final Response response = await httpClient.postRequest(
+        endpoint,
+        body: request.toJson(),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final Map<String, dynamic> root = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        return QuizzSubmissionResult.fromJson(root);
       } else {
         throw ServerException(errorThrow(response));
       }
