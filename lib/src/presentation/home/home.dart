@@ -7,6 +7,7 @@ import '../../../gen/assets.gen.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../application/auth/user/authenticated_user_bloc.dart';
 import '../_commons/route/app_router.gr.dart';
+import '../_commons/theming/app_color.dart';
 import '../_commons_widgets/badge_widget.dart';
 import 'widgets/app_drawer.dart';
 import 'widgets/home_body.dart';
@@ -273,9 +274,16 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       drawer: const CustomDrawer(),
       appBar: AppBar(
+        backgroundColor: AppColors.primary,
         leading: Builder(
           builder: (context) => IconButton(
-            icon: Assets.svgs.menu.svg(),
+            icon: Assets.svgs.menu.svg(
+              colorFilter: const ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcIn,
+              ),
+            ),
+            color: Colors.white,
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
@@ -285,9 +293,10 @@ class _HomePageState extends State<HomePage>
             fontWeight: FontWeight.w700,
             fontSize: 17,
             // ignore: use_full_hex_values_for_flutter_colors
-            color: const Color(0xff0f0f0fa3).withAlpha(134),
+            color: Colors.white,
           ),
         ),
+
         actions: [
           BadgeIcon(
             hasNotification: true,

@@ -22,7 +22,9 @@ class BadgeIcon extends StatelessWidget {
         clipBehavior: Clip.none,
         children: [
           // Icon
-          icon.svg(),
+          icon.svg(
+            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+          ),
 
           // Point rouge
           if (hasNotification)

@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../application/communication/notifications_bloc.dart';
 import '../../domain/communication/models/notification.dart';
 import '../_commons/helpers/html_view.dart';
+import '../_commons_widgets/my_scaffold.dart';
 
 @RoutePage()
 class NotificationsPage extends StatefulWidget {
@@ -28,8 +29,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Notifications')),
+    return MyScaffold(
+      appBarTitle: 'Notifications',
       body: BlocBuilder<NotificationsBloc, NotificationsState>(
         builder: (context, state) {
           if (state.isLoading && state.items.isEmpty) {

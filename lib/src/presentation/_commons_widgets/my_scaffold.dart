@@ -84,18 +84,19 @@ class MyScaffold extends StatelessWidget {
                     onPressed: () => Navigator.maybePop(context),
                     icon: const Icon(
                       Icons.arrow_back_rounded,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
+
                   title: Text(
                     appBarTitle ?? '',
                     style: GoogleFonts.inter(
                       fontWeight: FontWeight.w700,
                       fontSize: 17,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
-                  iconTheme: const IconThemeData(color: Colors.black),
+                  iconTheme: const IconThemeData(color: Colors.white),
                 ),
             body: Padding(
               padding: EdgeInsets.only(
@@ -140,7 +141,7 @@ class _HeaderWavePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()..color = color;
-    final sizeHeight = 725;
+    final sizeHeight = 1350;
 
     // Big header block with a curved bottom edge (wavy)
     final Path p = Path()
@@ -148,16 +149,16 @@ class _HeaderWavePainter extends CustomPainter {
       ..lineTo(0, sizeHeight * 0.03)
       ..quadraticBezierTo(
         size.width * 0.02,
-        sizeHeight * 0.08,
-        size.width * 0.1,
-        sizeHeight * 0.08,
+        sizeHeight * 0.085,
+        size.width * 0.08,
+        sizeHeight * 0.085,
       )
       ..lineTo(size.width * 0.88, sizeHeight * 0.08)
       ..quadraticBezierTo(
         size.width * 0.98,
         sizeHeight * 0.08,
         size.width,
-        sizeHeight * 0.12,
+        sizeHeight * 0.09,
       )
       ..lineTo(size.width, 0)
       ..close();
