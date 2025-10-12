@@ -10,6 +10,7 @@ import 'models/formation_item.dart';
 import 'models/formation_participant_registration.dart';
 import 'models/my_formation.dart';
 import 'models/start_course_result.dart';
+import 'models/user_formations_registrations.dart';
 
 abstract class IFormationRepository {
   Future<Either<GlobalFailure, Paginated<FormationItem>>> getFormations({
@@ -41,4 +42,7 @@ abstract class IFormationRepository {
   Future<Either<GlobalFailure, FinishFormationResult>> finishFormation({
     required int id,
   });
+
+  Future<Either<GlobalFailure, UserFormationsRegistrations>>
+  getUserFormationsRegistrations();
 }

@@ -11,6 +11,7 @@ import '../../../domain/formation/models/formation_item.dart';
 import '../../../domain/formation/models/formation_participant_registration.dart';
 import '../../../domain/formation/models/my_formation.dart';
 import '../../../domain/formation/models/start_course_result.dart';
+import '../../../domain/formation/models/user_formations_registrations.dart';
 import '../../_commons/exceptions.dart';
 import '../../_commons/network/app_requests.dart';
 import '../../_commons/throw_error.dart';
@@ -29,6 +30,7 @@ abstract class IFormationRemoteDataSource {
   Future<StartCourseResult> startCourse({required int id});
   Future<FinishCourseResult> finishCourse({required int id});
   Future<FinishFormationResult> finishFormation({required int id});
+  Future<UserFormationsRegistrations> getUserFormationsRegistrations();
 }
 
 class FormationRemoteDataSource implements IFormationRemoteDataSource {
@@ -234,6 +236,29 @@ class FormationRemoteDataSource implements IFormationRemoteDataSource {
         }
         final data = root['data'] as Map<String, dynamic>? ?? {};
         return FinishFormationResult.fromJson(data);
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<UserFormationsRegistrations> getUserFormationsRegistrations() async {
+    try {
+      const String request = '/formation/registrations/user/formations';
+      final Response response = await httpClient.getRequest(request);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final Map<String, dynamic> root = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final success = root['success'] == true;
+        if (!success) {
+          final message = (root['message'] as String?) ?? '';
+          throw ServerException(message);
+        }
+        return UserFormationsRegistrations.fromJson(root);
       } else {
         throw ServerException(errorThrow(response));
       }

@@ -11,6 +11,7 @@ import '../../domain/formation/models/formation_item.dart';
 import '../../domain/formation/models/formation_participant_registration.dart';
 import '../../domain/formation/models/my_formation.dart';
 import '../../domain/formation/models/start_course_result.dart';
+import '../../domain/formation/models/user_formations_registrations.dart';
 import '../_commons/exceptions.dart';
 import '../_commons/network/network_info.dart';
 import 'data_sources/formation_remote_data_source.dart';
@@ -171,6 +172,25 @@ class FormationRepository implements IFormationRepository {
     if (await networkInfo.checkConnection()) {
       try {
         final res = await remoteDataSource.finishFormation(id: id);
+        return right(res);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
+
+  @override
+  Future<Either<GlobalFailure, UserFormationsRegistrations>>
+  getUserFormationsRegistrations() async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        final res = await remoteDataSource.getUserFormationsRegistrations();
         return right(res);
       } on UnauthorizedException catch (e) {
         return left(GlobalFailure.unauthorized(e.errorText));

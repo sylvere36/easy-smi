@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../injection_container.dart';
 import '../../application/connected/connected_bloc.dart';
+import '../../application/formation/formations_bloc.dart';
 import '../../application/splash/splash_bloc.dart';
 import 'widgets/splash_body_widget.dart';
 
@@ -37,6 +38,9 @@ class _SplashPageState extends State<SplashPage> {
                   return;
                 }
                 if (state is Loaded) {
+                  BlocProvider.of<FormationsBloc>(context).add(
+                    const FormationsEvent.fetchUserRegistrationsRequested(),
+                  );
                   AutoRouter.of(context).replace(state.route);
                 }
               },

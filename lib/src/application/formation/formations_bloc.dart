@@ -9,6 +9,7 @@ import '../../domain/_commons/pagination.dart';
 import '../../domain/formation/i_formation_repository.dart';
 import '../../domain/formation/models/formation_item.dart';
 import '../../domain/formation/models/my_formation.dart';
+import '../../domain/formation/models/user_formations_registrations.dart';
 
 part 'formations_bloc.freezed.dart';
 part 'formations_event.dart';
@@ -170,6 +171,25 @@ class FormationsBloc extends Bloc<FormationsEvent, FormationsState> {
         }).toList();
         emit(state.copyWith(itemsMyFormations: filteredItems));
       }
+    });
+
+    // Fetch user registrations summary (profile -> formations registrations)
+    on<_FetchUserRegistrationsRequested>((event, emit) async {
+      emit(state.copyWith(
+        isLoadingUserRegistrations: true,
+        resultOptionUserRegistrations: none(),
+      ));
+      final res = await repository.getUserFormationsRegistrations();
+      res.fold(
+        (l) => emit(state.copyWith(
+          isLoadingUserRegistrations: false,
+          resultOptionUserRegistrations: some(left(l)),
+        )),
+        (summary) => emit(state.copyWith(
+          isLoadingUserRegistrations: false,
+          resultOptionUserRegistrations: some(right(summary)),
+        )),
+      );
     });
 
     on<_Reset>((event, emit) async {

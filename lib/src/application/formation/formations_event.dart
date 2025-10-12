@@ -6,6 +6,8 @@ class FormationsEvent with _$FormationsEvent {
   const factory FormationsEvent.fetchNextPage() = _FetchNextPage;
   const factory FormationsEvent.fetchMyFormationsRequested() =
       _FetchMyFormationsRequested;
+  const factory FormationsEvent.fetchUserRegistrationsRequested() =
+      _FetchUserRegistrationsRequested;
   const factory FormationsEvent.reset() = _Reset;
 
   const factory FormationsEvent.searchFormationRequested({

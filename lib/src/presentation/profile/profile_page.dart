@@ -1,10 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../gen/assets.gen.dart';
+import '../../application/auth/user/authenticated_user_bloc.dart';
 import '../_commons/route/app_router.gr.dart';
 import '../_commons/theming/app_color.dart';
+import '../_commons_widgets/comments/avatar.dart';
+import '../_commons_widgets/loading_widget.dart';
 import '../_commons_widgets/my_scaffold.dart';
 
 @RoutePage()
@@ -26,178 +30,196 @@ class _ProfilePageState extends State<ProfilePage> {
   final bool _showNew = false;
 
   @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<AuthenticatedUserBloc>(
+      context,
+    ).add(const AuthenticatedUserEvent.fetchRequested());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MyScaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-      // ----- AppBar with large curved bottom -----
-      appBarTitle: 'MON PLANNING',
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: _ProfileHeader(
-                name: 'AMOUSSOU Jean',
-                email: 'amoussoujean@gmail.com',
-                statusText: 'CONFORME',
-                statusColor: kGreen,
-                expireText: 'expire le 17 Oct 2026',
-                avatarUrl:
-                    'https://picsum.photos/seed/avatarcc/240/240', // replace with real picture
+    return BlocBuilder<AuthenticatedUserBloc, AuthenticatedUserState>(
+      builder: (context, state) {
+        return MyScaffold(
+          backgroundColor: const Color(0xFFF5F7FA),
+          appBarTitle: 'MON PLANNING',
+          body: state.user == null
+              ? const Center(child: LoadingWidget())
+              : CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: _ProfileHeader(
+                          name: state.user?.name ?? '---',
+                          email: state.user?.email ?? '---',
+                          statusText: 'CONFORME',
+                          statusColor: kGreen,
+                          expireText: 'expire le 17 Oct 2026',
+                          avatarUrl:
+                              'https://picsum.photos/seed/avatarcc/240/240', // replace with real picture
 
-                expanded: _showNew,
-                // onTapAction: () => setState(() => _showNew = !_showNew),
-              ),
-            ),
-          ),
-
-          // ---- Competences table ----
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 14, 0, 8),
-              child: _CompetencesBox(
-                onSeeMore: () {},
-                rows: const [
-                  _CompRow(title: 'Formation ISO 9001 & ISO 45001'),
-                  _CompRow(title: 'Formation ISO 9001 & ISO 45001'),
-                  _CompRow(title: 'Formation ISO 9001 & ISO 45001'),
-                ],
-              ),
-            ),
-          ),
-
-          // ---- Section: Parcours de competence ----
-          const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.only(top: 45, bottom: 10),
-              child: _SectionHeader(
-                emojiIcon: Icons.star_border_rounded,
-                title: 'Parcours de  competence',
-              ),
-            ),
-          ),
-          const SliverToBoxAdapter(
-            child: _PlainHeader(title: 'Diplôme / Certificat'),
-          ),
-          SliverList.list(
-            children: const [
-              _SectionBlock(
-                children: [
-                  _TimelineItem(
-                    title: 'Systeme de Management de Qualité',
-                    status: _Status.valid,
-                    dateLabel: 'Mars 2025',
-                  ),
-                  _DashedSeparator(),
-                  _TimelineItem(
-                    title: 'Comptabilté',
-                    status: _Status.expired,
-                    dateLabel: 'Mars 2025',
-                  ),
-                  _DashedSeparator(),
-                  _TimelineItem(
-                    title: 'Manager SMI',
-                    status: _Status.notValid,
-                    dateLabel: null,
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          // ---- Formations ----
-          const SliverToBoxAdapter(child: _PlainHeader(title: 'Formations')),
-          SliverList.list(
-            children: const [
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
-                child: _SectionBlock(
-                  children: [
-                    _TimelineItem(
-                      title: 'Formation de Management de Qualité',
-                      status: _Status.valid,
-                      dateLabel: 'Mars 2025',
+                          expanded: _showNew,
+                          // onTapAction: () => setState(() => _showNew = !_showNew),
+                        ),
+                      ),
                     ),
-                    _DashedSeparator(),
-                    _TimelineItem(
-                      title: 'Formation Comptabilté',
-                      status: _Status.expired,
-                      dateLabel: 'Mars 2025',
+
+                    // ---- Competences table ----
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 14, 0, 8),
+                        child: _CompetencesBox(
+                          onSeeMore: () {},
+                          rows: const [
+                            _CompRow(title: 'Formation ISO 9001 & ISO 45001'),
+                            _CompRow(title: 'Formation ISO 9001 & ISO 45001'),
+                            _CompRow(title: 'Formation ISO 9001 & ISO 45001'),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // ---- Section: Parcours de competence ----
+                    const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 45, bottom: 10),
+                        child: _SectionHeader(
+                          emojiIcon: Icons.star_border_rounded,
+                          title: 'Parcours de  competence',
+                        ),
+                      ),
+                    ),
+                    const SliverToBoxAdapter(
+                      child: _PlainHeader(title: 'Diplôme / Certificat'),
+                    ),
+                    SliverList.list(
+                      children: const [
+                        _SectionBlock(
+                          children: [
+                            _TimelineItem(
+                              title: 'Systeme de Management de Qualité',
+                              status: _Status.valid,
+                              dateLabel: 'Mars 2025',
+                            ),
+                            _DashedSeparator(),
+                            _TimelineItem(
+                              title: 'Comptabilté',
+                              status: _Status.expired,
+                              dateLabel: 'Mars 2025',
+                            ),
+                            _DashedSeparator(),
+                            _TimelineItem(
+                              title: 'Manager SMI',
+                              status: _Status.notValid,
+                              dateLabel: null,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    // ---- Formations ----
+                    const SliverToBoxAdapter(
+                      child: _PlainHeader(title: 'Formations'),
+                    ),
+                    SliverList.list(
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: _SectionBlock(
+                            children: [
+                              _TimelineItem(
+                                title: 'Formation de Management de Qualité',
+                                status: _Status.valid,
+                                dateLabel: 'Mars 2025',
+                              ),
+                              _DashedSeparator(),
+                              _TimelineItem(
+                                title: 'Formation Comptabilté',
+                                status: _Status.expired,
+                                dateLabel: 'Mars 2025',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // ---- Sensibilisations ----
+                    const SliverToBoxAdapter(
+                      child: _PlainHeader(title: 'Sensibilisations'),
+                    ),
+                    SliverList.list(
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: _SectionBlock(
+                            children: [
+                              _TimelineItem(
+                                title:
+                                    'Sensibilisation de Management de Qualité',
+                                status: _Status.valid,
+                                dateLabel: 'Mars 2025',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // ---- Evaluation ----
+                    const SliverToBoxAdapter(
+                      child: _PlainHeader(title: 'Evaluation'),
+                    ),
+                    SliverList.list(
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: _SectionBlock(
+                            children: [
+                              _TimelineItem(
+                                title: 'Quizz de formation audit',
+                                status: _Status.valid,
+                                dateLabel: 'Mars 2025',
+                              ),
+                              _DashedSeparator(),
+
+                              _TimelineItem(
+                                title: 'Quizz de formation audit',
+                                status: _Status.valid,
+                                dateLabel: 'Mars 2025',
+                              ),
+                              _DashedSeparator(),
+
+                              _TimelineItem(
+                                title: 'Quizz de formation audit',
+                                status: _Status.valid,
+                                dateLabel: 'Mars 2025',
+                              ),
+                              _DashedSeparator(),
+                              _TimelineItem(
+                                title: 'Quizz de formation audit',
+                                status: _Status.valid,
+                                dateLabel: 'Mars 2025',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 24),
+                        child: Container(),
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-
-          // ---- Sensibilisations ----
-          const SliverToBoxAdapter(
-            child: _PlainHeader(title: 'Sensibilisations'),
-          ),
-          SliverList.list(
-            children: const [
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
-                child: _SectionBlock(
-                  children: [
-                    _TimelineItem(
-                      title: 'Sensibilisation de Management de Qualité',
-                      status: _Status.valid,
-                      dateLabel: 'Mars 2025',
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          // ---- Evaluation ----
-          const SliverToBoxAdapter(child: _PlainHeader(title: 'Evaluation')),
-          SliverList.list(
-            children: const [
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
-                child: _SectionBlock(
-                  children: [
-                    _TimelineItem(
-                      title: 'Quizz de formation audit',
-                      status: _Status.valid,
-                      dateLabel: 'Mars 2025',
-                    ),
-                    _DashedSeparator(),
-
-                    _TimelineItem(
-                      title: 'Quizz de formation audit',
-                      status: _Status.valid,
-                      dateLabel: 'Mars 2025',
-                    ),
-                    _DashedSeparator(),
-
-                    _TimelineItem(
-                      title: 'Quizz de formation audit',
-                      status: _Status.valid,
-                      dateLabel: 'Mars 2025',
-                    ),
-                    _DashedSeparator(),
-                    _TimelineItem(
-                      title: 'Quizz de formation audit',
-                      status: _Status.valid,
-                      dateLabel: 'Mars 2025',
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 24),
-              child: Container(),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -242,10 +264,7 @@ class _ProfileHeader extends StatelessWidget {
                 border: Border.all(color: const Color(0xFF4A77CF), width: 3),
                 shape: BoxShape.circle,
               ),
-              child: CircleAvatar(
-                radius: 140 / 2,
-                backgroundImage: Assets.images.man.provider(),
-              ),
+              child: avatar(name, radius: 70),
             ),
             Expanded(
               flex: 2,

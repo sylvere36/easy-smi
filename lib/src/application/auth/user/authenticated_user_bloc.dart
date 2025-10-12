@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -18,6 +20,7 @@ class AuthenticatedUserBloc
     on<_FetchRequested>((event, emit) async {
       emit(state.copyWith(isLoading: true, resultOption: none(), user: null));
       final res = await _repo.getAuthenticatedUser();
+      log('AuthenticatedUserBloc: Fetched user: $res');
       emit(
         res.fold(
           (l) => state.copyWith(isLoading: false, resultOption: some(left(l))),

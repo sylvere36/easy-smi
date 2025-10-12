@@ -55,13 +55,14 @@ extension FormationsEventPatterns on FormationsEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _FetchRequested value)?  fetchRequested,TResult Function( _FetchNextPage value)?  fetchNextPage,TResult Function( _FetchMyFormationsRequested value)?  fetchMyFormationsRequested,TResult Function( _Reset value)?  reset,TResult Function( _SearchFormationRequested value)?  searchFormationRequested,TResult Function( _SearchMyFormationsRequested value)?  searchMyFormationsRequested,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _FetchRequested value)?  fetchRequested,TResult Function( _FetchNextPage value)?  fetchNextPage,TResult Function( _FetchMyFormationsRequested value)?  fetchMyFormationsRequested,TResult Function( _FetchUserRegistrationsRequested value)?  fetchUserRegistrationsRequested,TResult Function( _Reset value)?  reset,TResult Function( _SearchFormationRequested value)?  searchFormationRequested,TResult Function( _SearchMyFormationsRequested value)?  searchMyFormationsRequested,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested(_that);case _FetchNextPage() when fetchNextPage != null:
 return fetchNextPage(_that);case _FetchMyFormationsRequested() when fetchMyFormationsRequested != null:
-return fetchMyFormationsRequested(_that);case _Reset() when reset != null:
+return fetchMyFormationsRequested(_that);case _FetchUserRegistrationsRequested() when fetchUserRegistrationsRequested != null:
+return fetchUserRegistrationsRequested(_that);case _Reset() when reset != null:
 return reset(_that);case _SearchFormationRequested() when searchFormationRequested != null:
 return searchFormationRequested(_that);case _SearchMyFormationsRequested() when searchMyFormationsRequested != null:
 return searchMyFormationsRequested(_that);case _:
@@ -82,13 +83,14 @@ return searchMyFormationsRequested(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _FetchRequested value)  fetchRequested,required TResult Function( _FetchNextPage value)  fetchNextPage,required TResult Function( _FetchMyFormationsRequested value)  fetchMyFormationsRequested,required TResult Function( _Reset value)  reset,required TResult Function( _SearchFormationRequested value)  searchFormationRequested,required TResult Function( _SearchMyFormationsRequested value)  searchMyFormationsRequested,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _FetchRequested value)  fetchRequested,required TResult Function( _FetchNextPage value)  fetchNextPage,required TResult Function( _FetchMyFormationsRequested value)  fetchMyFormationsRequested,required TResult Function( _FetchUserRegistrationsRequested value)  fetchUserRegistrationsRequested,required TResult Function( _Reset value)  reset,required TResult Function( _SearchFormationRequested value)  searchFormationRequested,required TResult Function( _SearchMyFormationsRequested value)  searchMyFormationsRequested,}){
 final _that = this;
 switch (_that) {
 case _FetchRequested():
 return fetchRequested(_that);case _FetchNextPage():
 return fetchNextPage(_that);case _FetchMyFormationsRequested():
-return fetchMyFormationsRequested(_that);case _Reset():
+return fetchMyFormationsRequested(_that);case _FetchUserRegistrationsRequested():
+return fetchUserRegistrationsRequested(_that);case _Reset():
 return reset(_that);case _SearchFormationRequested():
 return searchFormationRequested(_that);case _SearchMyFormationsRequested():
 return searchMyFormationsRequested(_that);case _:
@@ -108,13 +110,14 @@ return searchMyFormationsRequested(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _FetchRequested value)?  fetchRequested,TResult? Function( _FetchNextPage value)?  fetchNextPage,TResult? Function( _FetchMyFormationsRequested value)?  fetchMyFormationsRequested,TResult? Function( _Reset value)?  reset,TResult? Function( _SearchFormationRequested value)?  searchFormationRequested,TResult? Function( _SearchMyFormationsRequested value)?  searchMyFormationsRequested,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _FetchRequested value)?  fetchRequested,TResult? Function( _FetchNextPage value)?  fetchNextPage,TResult? Function( _FetchMyFormationsRequested value)?  fetchMyFormationsRequested,TResult? Function( _FetchUserRegistrationsRequested value)?  fetchUserRegistrationsRequested,TResult? Function( _Reset value)?  reset,TResult? Function( _SearchFormationRequested value)?  searchFormationRequested,TResult? Function( _SearchMyFormationsRequested value)?  searchMyFormationsRequested,}){
 final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested(_that);case _FetchNextPage() when fetchNextPage != null:
 return fetchNextPage(_that);case _FetchMyFormationsRequested() when fetchMyFormationsRequested != null:
-return fetchMyFormationsRequested(_that);case _Reset() when reset != null:
+return fetchMyFormationsRequested(_that);case _FetchUserRegistrationsRequested() when fetchUserRegistrationsRequested != null:
+return fetchUserRegistrationsRequested(_that);case _Reset() when reset != null:
 return reset(_that);case _SearchFormationRequested() when searchFormationRequested != null:
 return searchFormationRequested(_that);case _SearchMyFormationsRequested() when searchMyFormationsRequested != null:
 return searchMyFormationsRequested(_that);case _:
@@ -134,12 +137,13 @@ return searchMyFormationsRequested(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  fetchRequested,TResult Function()?  fetchNextPage,TResult Function()?  fetchMyFormationsRequested,TResult Function()?  reset,TResult Function( String query)?  searchFormationRequested,TResult Function( String query)?  searchMyFormationsRequested,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  fetchRequested,TResult Function()?  fetchNextPage,TResult Function()?  fetchMyFormationsRequested,TResult Function()?  fetchUserRegistrationsRequested,TResult Function()?  reset,TResult Function( String query)?  searchFormationRequested,TResult Function( String query)?  searchMyFormationsRequested,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested();case _FetchNextPage() when fetchNextPage != null:
 return fetchNextPage();case _FetchMyFormationsRequested() when fetchMyFormationsRequested != null:
-return fetchMyFormationsRequested();case _Reset() when reset != null:
+return fetchMyFormationsRequested();case _FetchUserRegistrationsRequested() when fetchUserRegistrationsRequested != null:
+return fetchUserRegistrationsRequested();case _Reset() when reset != null:
 return reset();case _SearchFormationRequested() when searchFormationRequested != null:
 return searchFormationRequested(_that.query);case _SearchMyFormationsRequested() when searchMyFormationsRequested != null:
 return searchMyFormationsRequested(_that.query);case _:
@@ -160,12 +164,13 @@ return searchMyFormationsRequested(_that.query);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  fetchRequested,required TResult Function()  fetchNextPage,required TResult Function()  fetchMyFormationsRequested,required TResult Function()  reset,required TResult Function( String query)  searchFormationRequested,required TResult Function( String query)  searchMyFormationsRequested,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  fetchRequested,required TResult Function()  fetchNextPage,required TResult Function()  fetchMyFormationsRequested,required TResult Function()  fetchUserRegistrationsRequested,required TResult Function()  reset,required TResult Function( String query)  searchFormationRequested,required TResult Function( String query)  searchMyFormationsRequested,}) {final _that = this;
 switch (_that) {
 case _FetchRequested():
 return fetchRequested();case _FetchNextPage():
 return fetchNextPage();case _FetchMyFormationsRequested():
-return fetchMyFormationsRequested();case _Reset():
+return fetchMyFormationsRequested();case _FetchUserRegistrationsRequested():
+return fetchUserRegistrationsRequested();case _Reset():
 return reset();case _SearchFormationRequested():
 return searchFormationRequested(_that.query);case _SearchMyFormationsRequested():
 return searchMyFormationsRequested(_that.query);case _:
@@ -185,12 +190,13 @@ return searchMyFormationsRequested(_that.query);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  fetchRequested,TResult? Function()?  fetchNextPage,TResult? Function()?  fetchMyFormationsRequested,TResult? Function()?  reset,TResult? Function( String query)?  searchFormationRequested,TResult? Function( String query)?  searchMyFormationsRequested,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  fetchRequested,TResult? Function()?  fetchNextPage,TResult? Function()?  fetchMyFormationsRequested,TResult? Function()?  fetchUserRegistrationsRequested,TResult? Function()?  reset,TResult? Function( String query)?  searchFormationRequested,TResult? Function( String query)?  searchMyFormationsRequested,}) {final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested();case _FetchNextPage() when fetchNextPage != null:
 return fetchNextPage();case _FetchMyFormationsRequested() when fetchMyFormationsRequested != null:
-return fetchMyFormationsRequested();case _Reset() when reset != null:
+return fetchMyFormationsRequested();case _FetchUserRegistrationsRequested() when fetchUserRegistrationsRequested != null:
+return fetchUserRegistrationsRequested();case _Reset() when reset != null:
 return reset();case _SearchFormationRequested() when searchFormationRequested != null:
 return searchFormationRequested(_that.query);case _SearchMyFormationsRequested() when searchMyFormationsRequested != null:
 return searchMyFormationsRequested(_that.query);case _:
@@ -289,6 +295,38 @@ int get hashCode => runtimeType.hashCode;
 @override
 String toString() {
   return 'FormationsEvent.fetchMyFormationsRequested()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _FetchUserRegistrationsRequested implements FormationsEvent {
+  const _FetchUserRegistrationsRequested();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FetchUserRegistrationsRequested);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'FormationsEvent.fetchUserRegistrationsRequested()';
 }
 
 
@@ -464,7 +502,7 @@ as String,
 /// @nodoc
 mixin _$FormationsState {
 
- bool get isLoading; bool get isLoadingMyFormations; List<FormationItem> get items; List<FormationItem> get itemsInitial; List<MyFormation> get itemsMyFormations; List<MyFormation> get itemsMyFormationsInitial; int get currentPage; int get currentPageMyFormations; int get perPage; int get perPageMyFormations; int get total; int get totalMyFormations; bool get canLoadMore; bool get canLoadMoreMyFormations; Option<Either<GlobalFailure, Paginated<FormationItem>>> get resultOption; Option<Either<GlobalFailure, Paginated<FormationItem>>> get resultOptionMyFormations;
+ bool get isLoading; bool get isLoadingMyFormations; bool get isLoadingUserRegistrations; List<FormationItem> get items; List<FormationItem> get itemsInitial; List<MyFormation> get itemsMyFormations; List<MyFormation> get itemsMyFormationsInitial; Option<Either<GlobalFailure, UserFormationsRegistrations>> get resultOptionUserRegistrations; int get currentPage; int get currentPageMyFormations; int get perPage; int get perPageMyFormations; int get total; int get totalMyFormations; bool get canLoadMore; bool get canLoadMoreMyFormations; Option<Either<GlobalFailure, Paginated<FormationItem>>> get resultOption; Option<Either<GlobalFailure, Paginated<FormationItem>>> get resultOptionMyFormations;
 /// Create a copy of FormationsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -475,16 +513,16 @@ $FormationsStateCopyWith<FormationsState> get copyWith => _$FormationsStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FormationsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isLoadingMyFormations, isLoadingMyFormations) || other.isLoadingMyFormations == isLoadingMyFormations)&&const DeepCollectionEquality().equals(other.items, items)&&const DeepCollectionEquality().equals(other.itemsInitial, itemsInitial)&&const DeepCollectionEquality().equals(other.itemsMyFormations, itemsMyFormations)&&const DeepCollectionEquality().equals(other.itemsMyFormationsInitial, itemsMyFormationsInitial)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.currentPageMyFormations, currentPageMyFormations) || other.currentPageMyFormations == currentPageMyFormations)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.perPageMyFormations, perPageMyFormations) || other.perPageMyFormations == perPageMyFormations)&&(identical(other.total, total) || other.total == total)&&(identical(other.totalMyFormations, totalMyFormations) || other.totalMyFormations == totalMyFormations)&&(identical(other.canLoadMore, canLoadMore) || other.canLoadMore == canLoadMore)&&(identical(other.canLoadMoreMyFormations, canLoadMoreMyFormations) || other.canLoadMoreMyFormations == canLoadMoreMyFormations)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.resultOptionMyFormations, resultOptionMyFormations) || other.resultOptionMyFormations == resultOptionMyFormations));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FormationsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isLoadingMyFormations, isLoadingMyFormations) || other.isLoadingMyFormations == isLoadingMyFormations)&&(identical(other.isLoadingUserRegistrations, isLoadingUserRegistrations) || other.isLoadingUserRegistrations == isLoadingUserRegistrations)&&const DeepCollectionEquality().equals(other.items, items)&&const DeepCollectionEquality().equals(other.itemsInitial, itemsInitial)&&const DeepCollectionEquality().equals(other.itemsMyFormations, itemsMyFormations)&&const DeepCollectionEquality().equals(other.itemsMyFormationsInitial, itemsMyFormationsInitial)&&(identical(other.resultOptionUserRegistrations, resultOptionUserRegistrations) || other.resultOptionUserRegistrations == resultOptionUserRegistrations)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.currentPageMyFormations, currentPageMyFormations) || other.currentPageMyFormations == currentPageMyFormations)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.perPageMyFormations, perPageMyFormations) || other.perPageMyFormations == perPageMyFormations)&&(identical(other.total, total) || other.total == total)&&(identical(other.totalMyFormations, totalMyFormations) || other.totalMyFormations == totalMyFormations)&&(identical(other.canLoadMore, canLoadMore) || other.canLoadMore == canLoadMore)&&(identical(other.canLoadMoreMyFormations, canLoadMoreMyFormations) || other.canLoadMoreMyFormations == canLoadMoreMyFormations)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.resultOptionMyFormations, resultOptionMyFormations) || other.resultOptionMyFormations == resultOptionMyFormations));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,isLoadingMyFormations,const DeepCollectionEquality().hash(items),const DeepCollectionEquality().hash(itemsInitial),const DeepCollectionEquality().hash(itemsMyFormations),const DeepCollectionEquality().hash(itemsMyFormationsInitial),currentPage,currentPageMyFormations,perPage,perPageMyFormations,total,totalMyFormations,canLoadMore,canLoadMoreMyFormations,resultOption,resultOptionMyFormations);
+int get hashCode => Object.hash(runtimeType,isLoading,isLoadingMyFormations,isLoadingUserRegistrations,const DeepCollectionEquality().hash(items),const DeepCollectionEquality().hash(itemsInitial),const DeepCollectionEquality().hash(itemsMyFormations),const DeepCollectionEquality().hash(itemsMyFormationsInitial),resultOptionUserRegistrations,currentPage,currentPageMyFormations,perPage,perPageMyFormations,total,totalMyFormations,canLoadMore,canLoadMoreMyFormations,resultOption,resultOptionMyFormations);
 
 @override
 String toString() {
-  return 'FormationsState(isLoading: $isLoading, isLoadingMyFormations: $isLoadingMyFormations, items: $items, itemsInitial: $itemsInitial, itemsMyFormations: $itemsMyFormations, itemsMyFormationsInitial: $itemsMyFormationsInitial, currentPage: $currentPage, currentPageMyFormations: $currentPageMyFormations, perPage: $perPage, perPageMyFormations: $perPageMyFormations, total: $total, totalMyFormations: $totalMyFormations, canLoadMore: $canLoadMore, canLoadMoreMyFormations: $canLoadMoreMyFormations, resultOption: $resultOption, resultOptionMyFormations: $resultOptionMyFormations)';
+  return 'FormationsState(isLoading: $isLoading, isLoadingMyFormations: $isLoadingMyFormations, isLoadingUserRegistrations: $isLoadingUserRegistrations, items: $items, itemsInitial: $itemsInitial, itemsMyFormations: $itemsMyFormations, itemsMyFormationsInitial: $itemsMyFormationsInitial, resultOptionUserRegistrations: $resultOptionUserRegistrations, currentPage: $currentPage, currentPageMyFormations: $currentPageMyFormations, perPage: $perPage, perPageMyFormations: $perPageMyFormations, total: $total, totalMyFormations: $totalMyFormations, canLoadMore: $canLoadMore, canLoadMoreMyFormations: $canLoadMoreMyFormations, resultOption: $resultOption, resultOptionMyFormations: $resultOptionMyFormations)';
 }
 
 
@@ -495,7 +533,7 @@ abstract mixin class $FormationsStateCopyWith<$Res>  {
   factory $FormationsStateCopyWith(FormationsState value, $Res Function(FormationsState) _then) = _$FormationsStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, bool isLoadingMyFormations, List<FormationItem> items, List<FormationItem> itemsInitial, List<MyFormation> itemsMyFormations, List<MyFormation> itemsMyFormationsInitial, int currentPage, int currentPageMyFormations, int perPage, int perPageMyFormations, int total, int totalMyFormations, bool canLoadMore, bool canLoadMoreMyFormations, Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOption, Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOptionMyFormations
+ bool isLoading, bool isLoadingMyFormations, bool isLoadingUserRegistrations, List<FormationItem> items, List<FormationItem> itemsInitial, List<MyFormation> itemsMyFormations, List<MyFormation> itemsMyFormationsInitial, Option<Either<GlobalFailure, UserFormationsRegistrations>> resultOptionUserRegistrations, int currentPage, int currentPageMyFormations, int perPage, int perPageMyFormations, int total, int totalMyFormations, bool canLoadMore, bool canLoadMoreMyFormations, Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOption, Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOptionMyFormations
 });
 
 
@@ -512,15 +550,17 @@ class _$FormationsStateCopyWithImpl<$Res>
 
 /// Create a copy of FormationsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? isLoadingMyFormations = null,Object? items = null,Object? itemsInitial = null,Object? itemsMyFormations = null,Object? itemsMyFormationsInitial = null,Object? currentPage = null,Object? currentPageMyFormations = null,Object? perPage = null,Object? perPageMyFormations = null,Object? total = null,Object? totalMyFormations = null,Object? canLoadMore = null,Object? canLoadMoreMyFormations = null,Object? resultOption = null,Object? resultOptionMyFormations = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? isLoadingMyFormations = null,Object? isLoadingUserRegistrations = null,Object? items = null,Object? itemsInitial = null,Object? itemsMyFormations = null,Object? itemsMyFormationsInitial = null,Object? resultOptionUserRegistrations = null,Object? currentPage = null,Object? currentPageMyFormations = null,Object? perPage = null,Object? perPageMyFormations = null,Object? total = null,Object? totalMyFormations = null,Object? canLoadMore = null,Object? canLoadMoreMyFormations = null,Object? resultOption = null,Object? resultOptionMyFormations = null,}) {
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,isLoadingMyFormations: null == isLoadingMyFormations ? _self.isLoadingMyFormations : isLoadingMyFormations // ignore: cast_nullable_to_non_nullable
+as bool,isLoadingUserRegistrations: null == isLoadingUserRegistrations ? _self.isLoadingUserRegistrations : isLoadingUserRegistrations // ignore: cast_nullable_to_non_nullable
 as bool,items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
 as List<FormationItem>,itemsInitial: null == itemsInitial ? _self.itemsInitial : itemsInitial // ignore: cast_nullable_to_non_nullable
 as List<FormationItem>,itemsMyFormations: null == itemsMyFormations ? _self.itemsMyFormations : itemsMyFormations // ignore: cast_nullable_to_non_nullable
 as List<MyFormation>,itemsMyFormationsInitial: null == itemsMyFormationsInitial ? _self.itemsMyFormationsInitial : itemsMyFormationsInitial // ignore: cast_nullable_to_non_nullable
-as List<MyFormation>,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
+as List<MyFormation>,resultOptionUserRegistrations: null == resultOptionUserRegistrations ? _self.resultOptionUserRegistrations : resultOptionUserRegistrations // ignore: cast_nullable_to_non_nullable
+as Option<Either<GlobalFailure, UserFormationsRegistrations>>,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int,currentPageMyFormations: null == currentPageMyFormations ? _self.currentPageMyFormations : currentPageMyFormations // ignore: cast_nullable_to_non_nullable
 as int,perPage: null == perPage ? _self.perPage : perPage // ignore: cast_nullable_to_non_nullable
 as int,perPageMyFormations: null == perPageMyFormations ? _self.perPageMyFormations : perPageMyFormations // ignore: cast_nullable_to_non_nullable
@@ -615,10 +655,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  bool isLoadingMyFormations,  List<FormationItem> items,  List<FormationItem> itemsInitial,  List<MyFormation> itemsMyFormations,  List<MyFormation> itemsMyFormationsInitial,  int currentPage,  int currentPageMyFormations,  int perPage,  int perPageMyFormations,  int total,  int totalMyFormations,  bool canLoadMore,  bool canLoadMoreMyFormations,  Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOption,  Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOptionMyFormations)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  bool isLoadingMyFormations,  bool isLoadingUserRegistrations,  List<FormationItem> items,  List<FormationItem> itemsInitial,  List<MyFormation> itemsMyFormations,  List<MyFormation> itemsMyFormationsInitial,  Option<Either<GlobalFailure, UserFormationsRegistrations>> resultOptionUserRegistrations,  int currentPage,  int currentPageMyFormations,  int perPage,  int perPageMyFormations,  int total,  int totalMyFormations,  bool canLoadMore,  bool canLoadMoreMyFormations,  Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOption,  Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOptionMyFormations)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FormationsState() when $default != null:
-return $default(_that.isLoading,_that.isLoadingMyFormations,_that.items,_that.itemsInitial,_that.itemsMyFormations,_that.itemsMyFormationsInitial,_that.currentPage,_that.currentPageMyFormations,_that.perPage,_that.perPageMyFormations,_that.total,_that.totalMyFormations,_that.canLoadMore,_that.canLoadMoreMyFormations,_that.resultOption,_that.resultOptionMyFormations);case _:
+return $default(_that.isLoading,_that.isLoadingMyFormations,_that.isLoadingUserRegistrations,_that.items,_that.itemsInitial,_that.itemsMyFormations,_that.itemsMyFormationsInitial,_that.resultOptionUserRegistrations,_that.currentPage,_that.currentPageMyFormations,_that.perPage,_that.perPageMyFormations,_that.total,_that.totalMyFormations,_that.canLoadMore,_that.canLoadMoreMyFormations,_that.resultOption,_that.resultOptionMyFormations);case _:
   return orElse();
 
 }
@@ -636,10 +676,10 @@ return $default(_that.isLoading,_that.isLoadingMyFormations,_that.items,_that.it
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  bool isLoadingMyFormations,  List<FormationItem> items,  List<FormationItem> itemsInitial,  List<MyFormation> itemsMyFormations,  List<MyFormation> itemsMyFormationsInitial,  int currentPage,  int currentPageMyFormations,  int perPage,  int perPageMyFormations,  int total,  int totalMyFormations,  bool canLoadMore,  bool canLoadMoreMyFormations,  Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOption,  Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOptionMyFormations)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  bool isLoadingMyFormations,  bool isLoadingUserRegistrations,  List<FormationItem> items,  List<FormationItem> itemsInitial,  List<MyFormation> itemsMyFormations,  List<MyFormation> itemsMyFormationsInitial,  Option<Either<GlobalFailure, UserFormationsRegistrations>> resultOptionUserRegistrations,  int currentPage,  int currentPageMyFormations,  int perPage,  int perPageMyFormations,  int total,  int totalMyFormations,  bool canLoadMore,  bool canLoadMoreMyFormations,  Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOption,  Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOptionMyFormations)  $default,) {final _that = this;
 switch (_that) {
 case _FormationsState():
-return $default(_that.isLoading,_that.isLoadingMyFormations,_that.items,_that.itemsInitial,_that.itemsMyFormations,_that.itemsMyFormationsInitial,_that.currentPage,_that.currentPageMyFormations,_that.perPage,_that.perPageMyFormations,_that.total,_that.totalMyFormations,_that.canLoadMore,_that.canLoadMoreMyFormations,_that.resultOption,_that.resultOptionMyFormations);case _:
+return $default(_that.isLoading,_that.isLoadingMyFormations,_that.isLoadingUserRegistrations,_that.items,_that.itemsInitial,_that.itemsMyFormations,_that.itemsMyFormationsInitial,_that.resultOptionUserRegistrations,_that.currentPage,_that.currentPageMyFormations,_that.perPage,_that.perPageMyFormations,_that.total,_that.totalMyFormations,_that.canLoadMore,_that.canLoadMoreMyFormations,_that.resultOption,_that.resultOptionMyFormations);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -656,10 +696,10 @@ return $default(_that.isLoading,_that.isLoadingMyFormations,_that.items,_that.it
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  bool isLoadingMyFormations,  List<FormationItem> items,  List<FormationItem> itemsInitial,  List<MyFormation> itemsMyFormations,  List<MyFormation> itemsMyFormationsInitial,  int currentPage,  int currentPageMyFormations,  int perPage,  int perPageMyFormations,  int total,  int totalMyFormations,  bool canLoadMore,  bool canLoadMoreMyFormations,  Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOption,  Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOptionMyFormations)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  bool isLoadingMyFormations,  bool isLoadingUserRegistrations,  List<FormationItem> items,  List<FormationItem> itemsInitial,  List<MyFormation> itemsMyFormations,  List<MyFormation> itemsMyFormationsInitial,  Option<Either<GlobalFailure, UserFormationsRegistrations>> resultOptionUserRegistrations,  int currentPage,  int currentPageMyFormations,  int perPage,  int perPageMyFormations,  int total,  int totalMyFormations,  bool canLoadMore,  bool canLoadMoreMyFormations,  Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOption,  Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOptionMyFormations)?  $default,) {final _that = this;
 switch (_that) {
 case _FormationsState() when $default != null:
-return $default(_that.isLoading,_that.isLoadingMyFormations,_that.items,_that.itemsInitial,_that.itemsMyFormations,_that.itemsMyFormationsInitial,_that.currentPage,_that.currentPageMyFormations,_that.perPage,_that.perPageMyFormations,_that.total,_that.totalMyFormations,_that.canLoadMore,_that.canLoadMoreMyFormations,_that.resultOption,_that.resultOptionMyFormations);case _:
+return $default(_that.isLoading,_that.isLoadingMyFormations,_that.isLoadingUserRegistrations,_that.items,_that.itemsInitial,_that.itemsMyFormations,_that.itemsMyFormationsInitial,_that.resultOptionUserRegistrations,_that.currentPage,_that.currentPageMyFormations,_that.perPage,_that.perPageMyFormations,_that.total,_that.totalMyFormations,_that.canLoadMore,_that.canLoadMoreMyFormations,_that.resultOption,_that.resultOptionMyFormations);case _:
   return null;
 
 }
@@ -671,11 +711,12 @@ return $default(_that.isLoading,_that.isLoadingMyFormations,_that.items,_that.it
 
 
 class _FormationsState implements FormationsState {
-  const _FormationsState({required this.isLoading, required this.isLoadingMyFormations, required final  List<FormationItem> items, required final  List<FormationItem> itemsInitial, required final  List<MyFormation> itemsMyFormations, required final  List<MyFormation> itemsMyFormationsInitial, required this.currentPage, required this.currentPageMyFormations, required this.perPage, required this.perPageMyFormations, required this.total, required this.totalMyFormations, required this.canLoadMore, required this.canLoadMoreMyFormations, required this.resultOption, required this.resultOptionMyFormations}): _items = items,_itemsInitial = itemsInitial,_itemsMyFormations = itemsMyFormations,_itemsMyFormationsInitial = itemsMyFormationsInitial;
+  const _FormationsState({required this.isLoading, required this.isLoadingMyFormations, required this.isLoadingUserRegistrations, required final  List<FormationItem> items, required final  List<FormationItem> itemsInitial, required final  List<MyFormation> itemsMyFormations, required final  List<MyFormation> itemsMyFormationsInitial, required this.resultOptionUserRegistrations, required this.currentPage, required this.currentPageMyFormations, required this.perPage, required this.perPageMyFormations, required this.total, required this.totalMyFormations, required this.canLoadMore, required this.canLoadMoreMyFormations, required this.resultOption, required this.resultOptionMyFormations}): _items = items,_itemsInitial = itemsInitial,_itemsMyFormations = itemsMyFormations,_itemsMyFormationsInitial = itemsMyFormationsInitial;
   
 
 @override final  bool isLoading;
 @override final  bool isLoadingMyFormations;
+@override final  bool isLoadingUserRegistrations;
  final  List<FormationItem> _items;
 @override List<FormationItem> get items {
   if (_items is EqualUnmodifiableListView) return _items;
@@ -704,6 +745,7 @@ class _FormationsState implements FormationsState {
   return EqualUnmodifiableListView(_itemsMyFormationsInitial);
 }
 
+@override final  Option<Either<GlobalFailure, UserFormationsRegistrations>> resultOptionUserRegistrations;
 @override final  int currentPage;
 @override final  int currentPageMyFormations;
 @override final  int perPage;
@@ -725,16 +767,16 @@ _$FormationsStateCopyWith<_FormationsState> get copyWith => __$FormationsStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FormationsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isLoadingMyFormations, isLoadingMyFormations) || other.isLoadingMyFormations == isLoadingMyFormations)&&const DeepCollectionEquality().equals(other._items, _items)&&const DeepCollectionEquality().equals(other._itemsInitial, _itemsInitial)&&const DeepCollectionEquality().equals(other._itemsMyFormations, _itemsMyFormations)&&const DeepCollectionEquality().equals(other._itemsMyFormationsInitial, _itemsMyFormationsInitial)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.currentPageMyFormations, currentPageMyFormations) || other.currentPageMyFormations == currentPageMyFormations)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.perPageMyFormations, perPageMyFormations) || other.perPageMyFormations == perPageMyFormations)&&(identical(other.total, total) || other.total == total)&&(identical(other.totalMyFormations, totalMyFormations) || other.totalMyFormations == totalMyFormations)&&(identical(other.canLoadMore, canLoadMore) || other.canLoadMore == canLoadMore)&&(identical(other.canLoadMoreMyFormations, canLoadMoreMyFormations) || other.canLoadMoreMyFormations == canLoadMoreMyFormations)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.resultOptionMyFormations, resultOptionMyFormations) || other.resultOptionMyFormations == resultOptionMyFormations));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FormationsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isLoadingMyFormations, isLoadingMyFormations) || other.isLoadingMyFormations == isLoadingMyFormations)&&(identical(other.isLoadingUserRegistrations, isLoadingUserRegistrations) || other.isLoadingUserRegistrations == isLoadingUserRegistrations)&&const DeepCollectionEquality().equals(other._items, _items)&&const DeepCollectionEquality().equals(other._itemsInitial, _itemsInitial)&&const DeepCollectionEquality().equals(other._itemsMyFormations, _itemsMyFormations)&&const DeepCollectionEquality().equals(other._itemsMyFormationsInitial, _itemsMyFormationsInitial)&&(identical(other.resultOptionUserRegistrations, resultOptionUserRegistrations) || other.resultOptionUserRegistrations == resultOptionUserRegistrations)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.currentPageMyFormations, currentPageMyFormations) || other.currentPageMyFormations == currentPageMyFormations)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.perPageMyFormations, perPageMyFormations) || other.perPageMyFormations == perPageMyFormations)&&(identical(other.total, total) || other.total == total)&&(identical(other.totalMyFormations, totalMyFormations) || other.totalMyFormations == totalMyFormations)&&(identical(other.canLoadMore, canLoadMore) || other.canLoadMore == canLoadMore)&&(identical(other.canLoadMoreMyFormations, canLoadMoreMyFormations) || other.canLoadMoreMyFormations == canLoadMoreMyFormations)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.resultOptionMyFormations, resultOptionMyFormations) || other.resultOptionMyFormations == resultOptionMyFormations));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,isLoadingMyFormations,const DeepCollectionEquality().hash(_items),const DeepCollectionEquality().hash(_itemsInitial),const DeepCollectionEquality().hash(_itemsMyFormations),const DeepCollectionEquality().hash(_itemsMyFormationsInitial),currentPage,currentPageMyFormations,perPage,perPageMyFormations,total,totalMyFormations,canLoadMore,canLoadMoreMyFormations,resultOption,resultOptionMyFormations);
+int get hashCode => Object.hash(runtimeType,isLoading,isLoadingMyFormations,isLoadingUserRegistrations,const DeepCollectionEquality().hash(_items),const DeepCollectionEquality().hash(_itemsInitial),const DeepCollectionEquality().hash(_itemsMyFormations),const DeepCollectionEquality().hash(_itemsMyFormationsInitial),resultOptionUserRegistrations,currentPage,currentPageMyFormations,perPage,perPageMyFormations,total,totalMyFormations,canLoadMore,canLoadMoreMyFormations,resultOption,resultOptionMyFormations);
 
 @override
 String toString() {
-  return 'FormationsState(isLoading: $isLoading, isLoadingMyFormations: $isLoadingMyFormations, items: $items, itemsInitial: $itemsInitial, itemsMyFormations: $itemsMyFormations, itemsMyFormationsInitial: $itemsMyFormationsInitial, currentPage: $currentPage, currentPageMyFormations: $currentPageMyFormations, perPage: $perPage, perPageMyFormations: $perPageMyFormations, total: $total, totalMyFormations: $totalMyFormations, canLoadMore: $canLoadMore, canLoadMoreMyFormations: $canLoadMoreMyFormations, resultOption: $resultOption, resultOptionMyFormations: $resultOptionMyFormations)';
+  return 'FormationsState(isLoading: $isLoading, isLoadingMyFormations: $isLoadingMyFormations, isLoadingUserRegistrations: $isLoadingUserRegistrations, items: $items, itemsInitial: $itemsInitial, itemsMyFormations: $itemsMyFormations, itemsMyFormationsInitial: $itemsMyFormationsInitial, resultOptionUserRegistrations: $resultOptionUserRegistrations, currentPage: $currentPage, currentPageMyFormations: $currentPageMyFormations, perPage: $perPage, perPageMyFormations: $perPageMyFormations, total: $total, totalMyFormations: $totalMyFormations, canLoadMore: $canLoadMore, canLoadMoreMyFormations: $canLoadMoreMyFormations, resultOption: $resultOption, resultOptionMyFormations: $resultOptionMyFormations)';
 }
 
 
@@ -745,7 +787,7 @@ abstract mixin class _$FormationsStateCopyWith<$Res> implements $FormationsState
   factory _$FormationsStateCopyWith(_FormationsState value, $Res Function(_FormationsState) _then) = __$FormationsStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, bool isLoadingMyFormations, List<FormationItem> items, List<FormationItem> itemsInitial, List<MyFormation> itemsMyFormations, List<MyFormation> itemsMyFormationsInitial, int currentPage, int currentPageMyFormations, int perPage, int perPageMyFormations, int total, int totalMyFormations, bool canLoadMore, bool canLoadMoreMyFormations, Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOption, Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOptionMyFormations
+ bool isLoading, bool isLoadingMyFormations, bool isLoadingUserRegistrations, List<FormationItem> items, List<FormationItem> itemsInitial, List<MyFormation> itemsMyFormations, List<MyFormation> itemsMyFormationsInitial, Option<Either<GlobalFailure, UserFormationsRegistrations>> resultOptionUserRegistrations, int currentPage, int currentPageMyFormations, int perPage, int perPageMyFormations, int total, int totalMyFormations, bool canLoadMore, bool canLoadMoreMyFormations, Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOption, Option<Either<GlobalFailure, Paginated<FormationItem>>> resultOptionMyFormations
 });
 
 
@@ -762,15 +804,17 @@ class __$FormationsStateCopyWithImpl<$Res>
 
 /// Create a copy of FormationsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? isLoadingMyFormations = null,Object? items = null,Object? itemsInitial = null,Object? itemsMyFormations = null,Object? itemsMyFormationsInitial = null,Object? currentPage = null,Object? currentPageMyFormations = null,Object? perPage = null,Object? perPageMyFormations = null,Object? total = null,Object? totalMyFormations = null,Object? canLoadMore = null,Object? canLoadMoreMyFormations = null,Object? resultOption = null,Object? resultOptionMyFormations = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? isLoadingMyFormations = null,Object? isLoadingUserRegistrations = null,Object? items = null,Object? itemsInitial = null,Object? itemsMyFormations = null,Object? itemsMyFormationsInitial = null,Object? resultOptionUserRegistrations = null,Object? currentPage = null,Object? currentPageMyFormations = null,Object? perPage = null,Object? perPageMyFormations = null,Object? total = null,Object? totalMyFormations = null,Object? canLoadMore = null,Object? canLoadMoreMyFormations = null,Object? resultOption = null,Object? resultOptionMyFormations = null,}) {
   return _then(_FormationsState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,isLoadingMyFormations: null == isLoadingMyFormations ? _self.isLoadingMyFormations : isLoadingMyFormations // ignore: cast_nullable_to_non_nullable
+as bool,isLoadingUserRegistrations: null == isLoadingUserRegistrations ? _self.isLoadingUserRegistrations : isLoadingUserRegistrations // ignore: cast_nullable_to_non_nullable
 as bool,items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
 as List<FormationItem>,itemsInitial: null == itemsInitial ? _self._itemsInitial : itemsInitial // ignore: cast_nullable_to_non_nullable
 as List<FormationItem>,itemsMyFormations: null == itemsMyFormations ? _self._itemsMyFormations : itemsMyFormations // ignore: cast_nullable_to_non_nullable
 as List<MyFormation>,itemsMyFormationsInitial: null == itemsMyFormationsInitial ? _self._itemsMyFormationsInitial : itemsMyFormationsInitial // ignore: cast_nullable_to_non_nullable
-as List<MyFormation>,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
+as List<MyFormation>,resultOptionUserRegistrations: null == resultOptionUserRegistrations ? _self.resultOptionUserRegistrations : resultOptionUserRegistrations // ignore: cast_nullable_to_non_nullable
+as Option<Either<GlobalFailure, UserFormationsRegistrations>>,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int,currentPageMyFormations: null == currentPageMyFormations ? _self.currentPageMyFormations : currentPageMyFormations // ignore: cast_nullable_to_non_nullable
 as int,perPage: null == perPage ? _self.perPage : perPage // ignore: cast_nullable_to_non_nullable
 as int,perPageMyFormations: null == perPageMyFormations ? _self.perPageMyFormations : perPageMyFormations // ignore: cast_nullable_to_non_nullable

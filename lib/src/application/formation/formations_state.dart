@@ -5,10 +5,13 @@ abstract class FormationsState with _$FormationsState {
   const factory FormationsState({
     required bool isLoading,
     required bool isLoadingMyFormations,
+    required bool isLoadingUserRegistrations,
     required List<FormationItem> items,
     required List<FormationItem> itemsInitial,
     required List<MyFormation> itemsMyFormations,
     required List<MyFormation> itemsMyFormationsInitial,
+    required Option<Either<GlobalFailure, UserFormationsRegistrations>>
+        resultOptionUserRegistrations,
     required int currentPage,
     required int currentPageMyFormations,
     required int perPage,
@@ -29,6 +32,8 @@ abstract class FormationsState with _$FormationsState {
     itemsInitial: const [],
     itemsMyFormations: const [],
     itemsMyFormationsInitial: const [],
+    isLoadingUserRegistrations: false,
+    resultOptionUserRegistrations: none(),
     currentPage: 1,
     perPage: 10,
     total: 0,

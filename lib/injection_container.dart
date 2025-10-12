@@ -23,6 +23,7 @@ import 'src/application/inspection/inspections_bloc.dart';
 import 'src/application/organization/organization_bloc.dart';
 import 'src/application/permit/detail/permit_detail_bloc.dart';
 import 'src/application/permit/permits_bloc.dart';
+import 'src/application/quizz/quizz_bloc.dart';
 import 'src/application/slider/sliders_bloc.dart';
 import 'src/application/splash/splash_bloc.dart';
 import 'src/domain/action/i_action_repository.dart';
@@ -38,6 +39,7 @@ import 'src/domain/formation/i_formation_repository.dart';
 import 'src/domain/inspection/i_inspection_repository.dart';
 import 'src/domain/organization/i_organization_repository.dart';
 import 'src/domain/permit/i_permit_repository.dart';
+import 'src/domain/quizz/i_quizz_repository.dart';
 import 'src/domain/slider/i_slider_repository.dart';
 import 'src/infrastructure/_commons/config/base_url_notifier.dart';
 import 'src/infrastructure/_commons/files/download_service.dart';
@@ -71,6 +73,8 @@ import 'src/infrastructure/organization/data_sources/organization_remote_data_so
 import 'src/infrastructure/organization/organization_repository.dart';
 import 'src/infrastructure/permit/data_sources/permit_remote_data_source.dart';
 import 'src/infrastructure/permit/permit_repository.dart';
+import 'src/infrastructure/quizz/data_sources/quizz_remote_data_source.dart';
+import 'src/infrastructure/quizz/quizz_repository.dart';
 import 'src/infrastructure/slider/data_sources/slider_remote_data_source.dart';
 import 'src/infrastructure/slider/slider_repository.dart';
 
@@ -95,6 +99,7 @@ Future<void> init() async {
   initFormations();
   initSliders();
   initCampaigns();
+  initQuizz();
 }
 
 void initSplashScreen() {
@@ -270,4 +275,14 @@ Future<void> initCampaigns() async {
     () => CampaignRepository(networkInfo: sl(), remoteDataSource: sl()),
   );
   sl.registerFactory(() => CampaignsBloc(repository: sl()));
+}
+
+Future<void> initQuizz() async {
+  sl.registerLazySingleton<IQuizzRemoteDataSource>(
+    () => QuizzRemoteDataSource(httpClient: sl()),
+  );
+  sl.registerLazySingleton<IQuizzRepository>(
+    () => QuizzRepository(networkInfo: sl(), remoteDataSource: sl()),
+  );
+  sl.registerFactory(() => QuizzBloc(repository: sl()));
 }
