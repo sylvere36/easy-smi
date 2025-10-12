@@ -55,8 +55,18 @@ class UserSession {
   }
 
   Future<bool?> logout() async {
+    final OrganizationSettings? settings = await getOrganizationSettings();
+    final OrganizationLicense? license = await getOrganizationLicense();
+    await clearAuthenticatedUser();
+
     preferences = preferences ?? await SharedPreferences.getInstance();
-    return await preferences?.clear();
+    await preferences?.clear();
+    // Re-cache organization settings and license after clearing all preferences
+    // to avoid fetching them again from the server if already cached
+    if (settings != null && license != null) {
+      await cacheOrganization(settings: settings, license: license);
+    }
+    return true;
   }
 
   // Organization storage ----------------------------------------------------

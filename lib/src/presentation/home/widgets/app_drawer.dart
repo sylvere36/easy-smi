@@ -13,173 +13,184 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthenticatedUserBloc, AuthenticatedUserState>(
+    return BlocConsumer<AuthenticatedUserBloc, AuthenticatedUserState>(
+      listener: (context, state) {
+        if (state.canLogout == true) {
+          Scaffold.of(context).closeDrawer();
+          // Navigate to login and clear stack
+          context.router.replaceAll([SplashRoute()]);
+        }
+      },
       builder: (context, state) {
-        return Drawer(
-          shape: const RoundedRectangleBorder(),
-          child: SafeArea(
-            child: Column(
-              children: [
-                // Header logo + title
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return BlocBuilder<AuthenticatedUserBloc, AuthenticatedUserState>(
+          builder: (context, state) {
+            return Drawer(
+              shape: const RoundedRectangleBorder(),
+              child: SafeArea(
+                child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                      ).copyWith(left: 25),
-                      child: Column(
-                        children: [
-                          Assets.images.portCotonou.image(
-                            height: 107,
-                            width: 119,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'EASY SMI',
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => Scaffold.of(context).closeDrawer(),
-                      icon: const Icon(
-                        Icons.close,
-                        size: 35,
-                        color: Colors.black54,
-                      ),
-                    ),
-                  ],
-                ),
-
-                // Menu items
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    children: [
-                      _drawerItem(
-                        icon: Assets.svgs.home,
-                        text: 'Inspections',
-                        onTap: () {
-                          context.router.push(const InspectionsRoute());
-                          Scaffold.of(context).closeDrawer();
-                        },
-                      ),
-                      _drawerItem(
-                        icon: Assets.svgs.document,
-                        text: 'Audits',
-                        onTap: () {
-                          context.router.push(const AuditsRoute());
-                          Scaffold.of(context).closeDrawer();
-                        },
-                      ),
-                      _drawerItem(
-                        icon: Assets.svgs.formation,
-                        text: 'Formations',
-                        onTap: () {
-                          context.router.push(
-                            FormationsSensibilizationsRoute(),
-                          );
-                          Scaffold.of(context).closeDrawer();
-                        },
-                      ),
-                      _drawerItem(
-                        icon: Assets.svgs.bell,
-                        text: 'Sensibilisations',
-                        onTap: () {
-                          context.router.push(
-                            FormationsSensibilizationsRoute(initialPage: 3),
-                          );
-                          Scaffold.of(context).closeDrawer();
-                        },
-                      ),
-                      _drawerItem(
-                        icon: Assets.svgs.event,
-                        text: 'Evenements',
-                        onTap: () {
-                          context.router.push(const NewBadEventsRoute());
-                          Scaffold.of(context).closeDrawer();
-                        },
-                      ),
-                      _drawerItem(
-                        icon: Assets.svgs.hot,
-                        text: 'Travail à chaud',
-                        onTap: () {
-                          context.router.push(const HotPermisRoute());
-                          Scaffold.of(context).closeDrawer();
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-
-                // User info
-                if (state.user != null)
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
+                    // Header logo + title
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            Scaffold.of(context).closeDrawer();
-                            // Navigate to profile
-                            context.router.push(const ProfileRoute());
-                          },
-                          child: avatar(state.user!.name, radius: 70),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          state.user!.name,
-                          style: GoogleFonts.poppins(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 24),
-                          child: Text(
-                            state.user!.email,
-                            style: GoogleFonts.poppins(
-                              fontSize: 13,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                        ),
-
-                        // Logout
-                        GestureDetector(
-                          onTap: () {
-                            Scaffold.of(context).closeDrawer();
-                            // Navigate to login and clear stack
-                            context.router.replaceAll([SplashRoute()]);
-                          },
-                          child: Row(
-                            spacing: 6,
-                            mainAxisAlignment: MainAxisAlignment.end,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                          ).copyWith(left: 25),
+                          child: Column(
                             children: [
+                              Assets.images.portCotonou.image(
+                                height: 107,
+                                width: 119,
+                              ),
+                              const SizedBox(height: 8),
                               Text(
-                                'Se deconnecter',
-                                style: GoogleFonts.inter(
+                                'EASY SMI',
+                                style: GoogleFonts.poppins(
                                   fontSize: 16,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              Assets.svgs.logOut.svg(),
                             ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Scaffold.of(context).closeDrawer(),
+                          icon: const Icon(
+                            Icons.close,
+                            size: 35,
+                            color: Colors.black54,
                           ),
                         ),
                       ],
                     ),
-                  ),
-              ],
-            ),
-          ),
+
+                    // Menu items
+                    Expanded(
+                      child: ListView(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        children: [
+                          _drawerItem(
+                            icon: Assets.svgs.home,
+                            text: 'Inspections',
+                            onTap: () {
+                              context.router.push(const InspectionsRoute());
+                              Scaffold.of(context).closeDrawer();
+                            },
+                          ),
+                          _drawerItem(
+                            icon: Assets.svgs.document,
+                            text: 'Audits',
+                            onTap: () {
+                              context.router.push(const AuditsRoute());
+                              Scaffold.of(context).closeDrawer();
+                            },
+                          ),
+                          _drawerItem(
+                            icon: Assets.svgs.formation,
+                            text: 'Formations',
+                            onTap: () {
+                              context.router.push(
+                                FormationsSensibilizationsRoute(),
+                              );
+                              Scaffold.of(context).closeDrawer();
+                            },
+                          ),
+                          _drawerItem(
+                            icon: Assets.svgs.bell,
+                            text: 'Sensibilisations',
+                            onTap: () {
+                              context.router.push(
+                                FormationsSensibilizationsRoute(initialPage: 3),
+                              );
+                              Scaffold.of(context).closeDrawer();
+                            },
+                          ),
+                          _drawerItem(
+                            icon: Assets.svgs.event,
+                            text: 'Evenements',
+                            onTap: () {
+                              context.router.push(const NewBadEventsRoute());
+                              Scaffold.of(context).closeDrawer();
+                            },
+                          ),
+                          _drawerItem(
+                            icon: Assets.svgs.hot,
+                            text: 'Travail à chaud',
+                            onTap: () {
+                              context.router.push(const HotPermisRoute());
+                              Scaffold.of(context).closeDrawer();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // User info
+                    if (state.user != null)
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Scaffold.of(context).closeDrawer();
+                                // Navigate to profile
+                                context.router.push(const ProfileRoute());
+                              },
+                              child: avatar(state.user!.name, radius: 70),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              state.user!.name,
+                              style: GoogleFonts.poppins(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 24),
+                              child: Text(
+                                state.user!.email,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ),
+
+                            // Logout
+                            GestureDetector(
+                              onTap: () {
+                                context.read<AuthenticatedUserBloc>().add(
+                                  const AuthenticatedUserEvent.logoutRequested(),
+                                );
+                              },
+                              child: Row(
+                                spacing: 6,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'Se deconnecter',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  Assets.svgs.logOut.svg(),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );

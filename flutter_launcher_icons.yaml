@@ -1,7 +1,7 @@
 # dart run flutter_launcher_icons:generate
 # flutter pub run flutter_launcher_icons
 flutter_launcher_icons:
-  image_path: "assets/icon/icon.jpg"
+  image_path: "assets/icon/easysmi.png"
 
   android: "launcher_icon"
   # image_path_android: "assets/icon/icon.png"
@@ -17,7 +17,8 @@ flutter_launcher_icons:
   # image_path_ios_dark_transparent: "assets/icon/icon_dark.png"
   # image_path_ios_tinted_grayscale: "assets/icon/icon_tinted.png"
   # desaturate_tinted_to_grayscale_ios: true
-  # background_color_ios: "#ffffff"
+  background_color: "#ffffff"
+  background_color_ios: "#ffffff"
 
   # web:
   #   generate: true

@@ -1,10 +1,9 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../injection_container.dart';
-import '../../application/connected/connected_bloc.dart';
-import '../../application/formation/formations_bloc.dart';
 import '../../application/splash/splash_bloc.dart';
 import 'widgets/splash_body_widget.dart';
 
@@ -20,34 +19,39 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  static const splashLength = 5;
+  bool _navigated = false;
+  @override
+  void initState() {
+    super.initState();
+    // Ensure StartLoading is dispatched after the page is built so
+    // we don't miss the Loaded state when hot/app restarting.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final bloc = context.read<SplashBloc>();
+      // Always (re)start loading when entering Splash, including after login
+      // when we navigate back to Splash to recompute the initial route.
+      bloc.add(const StartLoading());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocProvider<SplashBloc>(
-        create: (_) =>
-            sl<SplashBloc>()
-              ..add(StartLoading(splashLength, 'fr', widget.withDeepLink)),
-        child: BlocConsumer<ConnectedBloc, ConnectedState>(
-          listener: (context, stateConnected) {},
-          builder: (context, stateConnected) {
-            return BlocListener<SplashBloc, SplashState>(
-              listener: (context, state) async {
-                if (stateConnected is ConnectedFailureState) {
-                  //alertNoConnexion(context);
-                  return;
-                }
-                if (state is Loaded) {
-                  BlocProvider.of<FormationsBloc>(context).add(
-                    const FormationsEvent.fetchUserRegistrationsRequested(),
-                  );
-                  AutoRouter.of(context).replace(state.route);
-                }
-              },
-              child: const SplashBodyWidget(),
-            );
-          },
-        ),
+      body: BlocListener<SplashBloc, SplashState>(
+        listener: (context, state) async {
+          if (state is Loaded) {
+            if (_navigated) return;
+            _navigated = true;
+            log('Splash: Navigating to ${state.route}');
+            // Use root router and replaceAll to ensure navigation always occurs
+            // from the splash as the initial route. Defer to next frame.
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!mounted) return;
+              log('Splash after mounted: Navigating to ${state.route}');
+              context.router.replaceAll([state.route]);
+            });
+          }
+        },
+        child: const SplashBodyWidget(),
       ),
     );
   }

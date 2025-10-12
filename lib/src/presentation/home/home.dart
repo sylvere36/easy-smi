@@ -23,32 +23,36 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   bool _menuOpen = false;
-  late final AnimationController _ctrl = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 260),
-  );
-  late final Animation<double> _fade = CurvedAnimation(
-    parent: _ctrl,
-    curve: Curves.easeOut,
-  );
-  late final Animation<Offset> _slide1 = Tween(
-    begin: const Offset(0, .15),
-    end: Offset.zero,
-  ).animate(_fade);
-  late final Animation<Offset> _slide2 = Tween(
-    begin: const Offset(0, .25),
-    end: Offset.zero,
-  ).animate(_fade);
-  late final Animation<Offset> _slide3 = Tween(
-    begin: const Offset(0, .35),
-    end: Offset.zero,
-  ).animate(_fade);
+  late final AnimationController _ctrl;
+  late Animation<double> _fade;
+  late Animation<Offset> _slide1;
+  late Animation<Offset> _slide2;
+  late Animation<Offset> _slide3;
 
   final Color _navy = const Color(0xFF1E2A47);
 
   @override
   void initState() {
     super.initState();
+    // Initialize animations eagerly to avoid creating AnimationController
+    // for the first time during dispose, which would attempt ancestor lookups.
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 260),
+    );
+    _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+    _slide1 = Tween(
+      begin: const Offset(0, .15),
+      end: Offset.zero,
+    ).animate(_fade);
+    _slide2 = Tween(
+      begin: const Offset(0, .25),
+      end: Offset.zero,
+    ).animate(_fade);
+    _slide3 = Tween(
+      begin: const Offset(0, .35),
+      end: Offset.zero,
+    ).animate(_fade);
     BlocProvider.of<AuthenticatedUserBloc>(
       context,
     ).add(const AuthenticatedUserEvent.fetchRequested());

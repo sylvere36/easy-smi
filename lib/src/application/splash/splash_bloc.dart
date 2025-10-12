@@ -25,58 +25,86 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   final IOrganizationRepository _organizationRepo;
   SplashBloc(this._deviceRepo, this._authUserRepo, this._organizationRepo)
     : super(const SplashState.loading()) {
-    on<SplashEvent>((event, emit) {});
+    // Handle only specific events to avoid swallowing them accidentally.
     on<StartLoading>((event, emit) async {
-      final String? token = await myUserSession.getAuthToken();
+      bool isLogin = false;
+      PageRouteInfo<dynamic> route = OnboardingRoute();
+      try {
+        final String? token = await myUserSession.getAuthToken();
+        isLogin = token != null;
 
-      final String? deviceToken = await myUserSession.getDeviceToken();
-      log('Device Token: $deviceToken');
-      if (deviceToken == null) {
-        final DeviceRegisterRequest req = await DeviceInfoHelper.buildRequest();
-        log('--- Registering device with info: ${req.toJson()}');
-        final res = await _deviceRepo.registerDevice(request: req);
-        await res.fold(
-          (_) async {},
-          (token) async => myUserSession.cacheDeviceToken(token),
-        );
-      }
-
-      final OrganizationLicense? organizationLicense = await myUserSession
-          .getOrganizationLicense();
-
-      final OrganizationSettings? organizationSettings = await myUserSession
-          .getOrganizationSettings();
-      if (organizationSettings != null) {
-        baseUrlNotifier.baseUrl = organizationSettings.baseUrl;
-      }
-
-      PageRouteInfo<dynamic> route = token != null
-          ? const HomeRoute()
-          : organizationLicense != null
-          ? SignInRoute(email: organizationLicense.adminEmail)
-          : OnboardingRoute();
-
-      // If logged-in, try to fetch the authenticated user (non-blocking route)
-      if (token != null) {
+        // Ensure device is registered (best-effort)
         try {
-          final res = await _authUserRepo.getAuthenticatedUser();
-          res.fold((f) => log('Authenticated user fetch failed: $f'), (
-            u,
-          ) async {
-            if (u.organizationId == null && u.organizationValidated == false) {
-              log('Joining organization for user: ${u.id}');
-              await _organizationRepo.joinOrganization();
-            }
-            if (u.organizationValidated == false) {
-              route = const PendingJoinOrganisationRoute();
-            }
-          });
+          final String? deviceToken = await myUserSession.getDeviceToken();
+          log('Device Token: $deviceToken');
+          if (deviceToken == null) {
+            final DeviceRegisterRequest req =
+                await DeviceInfoHelper.buildRequest();
+            log('--- Registering device with info: ${req.toJson()}');
+            final res = await _deviceRepo.registerDevice(request: req);
+            await res.fold(
+              (_) async {},
+              (token) async => myUserSession.cacheDeviceToken(token),
+            );
+          }
         } catch (e) {
-          log('Authenticated user fetch error: $e');
+          log('Device registration skipped/error: $e');
         }
+
+        // Load org settings and set base URL (best-effort)
+        try {
+          final OrganizationSettings? organizationSettings = await myUserSession
+              .getOrganizationSettings();
+          if (organizationSettings != null) {
+            baseUrlNotifier.baseUrl = organizationSettings.baseUrl;
+          }
+        } catch (e) {
+          log('Organization settings load error: $e');
+        }
+
+        // Determine initial route based on token and stored license
+        try {
+          final OrganizationLicense? organizationLicense = await myUserSession
+              .getOrganizationLicense();
+          route = isLogin
+              ? const HomeRoute()
+              : (organizationLicense != null
+                    ? SignInRoute(email: organizationLicense.adminEmail)
+                    : OnboardingRoute());
+        } catch (e) {
+          log('Organization license load error: $e');
+          route = isLogin ? const HomeRoute() : OnboardingRoute();
+        }
+
+        // If logged-in, try to fetch the authenticated user (non-blocking route)
+        log('Auth token present: $isLogin');
+        if (isLogin) {
+          try {
+            final res = await _authUserRepo.getAuthenticatedUser();
+            res.fold((f) => log('Authenticated user fetch failed: $f'), (
+              u,
+            ) async {
+              if (u.organizationId == null &&
+                  u.organizationValidated == false) {
+                log('Joining organization for user: ${u.id}');
+                await _organizationRepo.joinOrganization();
+              }
+              if (u.organizationValidated == false) {
+                route = const PendingJoinOrganisationRoute();
+              }
+            });
+          } catch (e) {
+            log('Authenticated user fetch error: $e');
+          }
+        }
+
+        log('Navigating to route: $route');
+      } catch (e) {
+        log('Splash StartLoading error: $e');
       }
 
-      emit(SplashState.loaded(token != null, route));
+      // Always emit a route so the app proceeds beyond splash
+      emit(SplashState.loaded(isLogin, route));
     });
   }
 }

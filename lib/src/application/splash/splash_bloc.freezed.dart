@@ -14,63 +14,30 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SplashEvent {
 
- int get splashTime; String get currentLangue; bool? get withDeepLink;
-/// Create a copy of SplashEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$SplashEventCopyWith<SplashEvent> get copyWith => _$SplashEventCopyWithImpl<SplashEvent>(this as SplashEvent, _$identity);
+
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SplashEvent&&(identical(other.splashTime, splashTime) || other.splashTime == splashTime)&&(identical(other.currentLangue, currentLangue) || other.currentLangue == currentLangue)&&(identical(other.withDeepLink, withDeepLink) || other.withDeepLink == withDeepLink));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SplashEvent);
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,splashTime,currentLangue,withDeepLink);
+int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'SplashEvent(splashTime: $splashTime, currentLangue: $currentLangue, withDeepLink: $withDeepLink)';
+  return 'SplashEvent()';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $SplashEventCopyWith<$Res>  {
-  factory $SplashEventCopyWith(SplashEvent value, $Res Function(SplashEvent) _then) = _$SplashEventCopyWithImpl;
-@useResult
-$Res call({
- int splashTime, String currentLangue, bool? withDeepLink
-});
-
-
-
-
-}
-/// @nodoc
-class _$SplashEventCopyWithImpl<$Res>
-    implements $SplashEventCopyWith<$Res> {
-  _$SplashEventCopyWithImpl(this._self, this._then);
-
-  final SplashEvent _self;
-  final $Res Function(SplashEvent) _then;
-
-/// Create a copy of SplashEvent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? splashTime = null,Object? currentLangue = null,Object? withDeepLink = freezed,}) {
-  return _then(_self.copyWith(
-splashTime: null == splashTime ? _self.splashTime : splashTime // ignore: cast_nullable_to_non_nullable
-as int,currentLangue: null == currentLangue ? _self.currentLangue : currentLangue // ignore: cast_nullable_to_non_nullable
-as String,withDeepLink: freezed == withDeepLink ? _self.withDeepLink : withDeepLink // ignore: cast_nullable_to_non_nullable
-as bool?,
-  ));
-}
-
+class $SplashEventCopyWith<$Res>  {
+$SplashEventCopyWith(SplashEvent _, $Res Function(SplashEvent) __);
 }
 
 
@@ -152,10 +119,10 @@ return startLoading(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int splashTime,  String currentLangue,  bool? withDeepLink)?  startLoading,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  startLoading,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case StartLoading() when startLoading != null:
-return startLoading(_that.splashTime,_that.currentLangue,_that.withDeepLink);case _:
+return startLoading();case _:
   return orElse();
 
 }
@@ -173,10 +140,10 @@ return startLoading(_that.splashTime,_that.currentLangue,_that.withDeepLink);cas
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int splashTime,  String currentLangue,  bool? withDeepLink)  startLoading,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  startLoading,}) {final _that = this;
 switch (_that) {
 case StartLoading():
-return startLoading(_that.splashTime,_that.currentLangue,_that.withDeepLink);case _:
+return startLoading();case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +160,10 @@ return startLoading(_that.splashTime,_that.currentLangue,_that.withDeepLink);cas
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int splashTime,  String currentLangue,  bool? withDeepLink)?  startLoading,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  startLoading,}) {final _that = this;
 switch (_that) {
 case StartLoading() when startLoading != null:
-return startLoading(_that.splashTime,_that.currentLangue,_that.withDeepLink);case _:
+return startLoading();case _:
   return null;
 
 }
@@ -208,71 +175,33 @@ return startLoading(_that.splashTime,_that.currentLangue,_that.withDeepLink);cas
 
 
 class StartLoading implements SplashEvent {
-  const StartLoading(this.splashTime, this.currentLangue, this.withDeepLink);
+  const StartLoading();
   
 
-@override final  int splashTime;
-@override final  String currentLangue;
-@override final  bool? withDeepLink;
 
-/// Create a copy of SplashEvent
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$StartLoadingCopyWith<StartLoading> get copyWith => _$StartLoadingCopyWithImpl<StartLoading>(this, _$identity);
+
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is StartLoading&&(identical(other.splashTime, splashTime) || other.splashTime == splashTime)&&(identical(other.currentLangue, currentLangue) || other.currentLangue == currentLangue)&&(identical(other.withDeepLink, withDeepLink) || other.withDeepLink == withDeepLink));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is StartLoading);
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,splashTime,currentLangue,withDeepLink);
+int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'SplashEvent.startLoading(splashTime: $splashTime, currentLangue: $currentLangue, withDeepLink: $withDeepLink)';
+  return 'SplashEvent.startLoading()';
 }
 
 
 }
 
-/// @nodoc
-abstract mixin class $StartLoadingCopyWith<$Res> implements $SplashEventCopyWith<$Res> {
-  factory $StartLoadingCopyWith(StartLoading value, $Res Function(StartLoading) _then) = _$StartLoadingCopyWithImpl;
-@override @useResult
-$Res call({
- int splashTime, String currentLangue, bool? withDeepLink
-});
 
 
-
-
-}
-/// @nodoc
-class _$StartLoadingCopyWithImpl<$Res>
-    implements $StartLoadingCopyWith<$Res> {
-  _$StartLoadingCopyWithImpl(this._self, this._then);
-
-  final StartLoading _self;
-  final $Res Function(StartLoading) _then;
-
-/// Create a copy of SplashEvent
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? splashTime = null,Object? currentLangue = null,Object? withDeepLink = freezed,}) {
-  return _then(StartLoading(
-null == splashTime ? _self.splashTime : splashTime // ignore: cast_nullable_to_non_nullable
-as int,null == currentLangue ? _self.currentLangue : currentLangue // ignore: cast_nullable_to_non_nullable
-as String,freezed == withDeepLink ? _self.withDeepLink : withDeepLink // ignore: cast_nullable_to_non_nullable
-as bool?,
-  ));
-}
-
-
-}
 
 /// @nodoc
 mixin _$SplashState {

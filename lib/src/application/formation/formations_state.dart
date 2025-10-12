@@ -11,7 +11,7 @@ abstract class FormationsState with _$FormationsState {
     required List<MyFormation> itemsMyFormations,
     required List<MyFormation> itemsMyFormationsInitial,
     required Option<Either<GlobalFailure, UserFormationsRegistrations>>
-        resultOptionUserRegistrations,
+    resultOptionUserRegistrations,
     required int currentPage,
     required int currentPageMyFormations,
     required int perPage,

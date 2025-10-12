@@ -175,20 +175,26 @@ class FormationsBloc extends Bloc<FormationsEvent, FormationsState> {
 
     // Fetch user registrations summary (profile -> formations registrations)
     on<_FetchUserRegistrationsRequested>((event, emit) async {
-      emit(state.copyWith(
-        isLoadingUserRegistrations: true,
-        resultOptionUserRegistrations: none(),
-      ));
+      emit(
+        state.copyWith(
+          isLoadingUserRegistrations: true,
+          resultOptionUserRegistrations: none(),
+        ),
+      );
       final res = await repository.getUserFormationsRegistrations();
       res.fold(
-        (l) => emit(state.copyWith(
-          isLoadingUserRegistrations: false,
-          resultOptionUserRegistrations: some(left(l)),
-        )),
-        (summary) => emit(state.copyWith(
-          isLoadingUserRegistrations: false,
-          resultOptionUserRegistrations: some(right(summary)),
-        )),
+        (l) => emit(
+          state.copyWith(
+            isLoadingUserRegistrations: false,
+            resultOptionUserRegistrations: some(left(l)),
+          ),
+        ),
+        (summary) => emit(
+          state.copyWith(
+            isLoadingUserRegistrations: false,
+            resultOptionUserRegistrations: some(right(summary)),
+          ),
+        ),
       );
     });
 

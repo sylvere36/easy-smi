@@ -19,6 +19,7 @@ import '../application/formation/formations_bloc.dart';
 import '../application/inspection/inspections_bloc.dart';
 import '../application/permit/permits_bloc.dart';
 import '../application/slider/sliders_bloc.dart';
+import '../application/splash/splash_bloc.dart';
 import '_commons/route/app_router.dart';
 import '_commons/route/app_router.gr.dart';
 import '_commons/theming/app_theme.dart';
@@ -79,6 +80,7 @@ class _AppState extends State<App> {
           create: (_) =>
               sl<CampaignsBloc>()..add(const CampaignsEvent.fetchRequested()),
         ),
+        BlocProvider<SplashBloc>(create: (_) => sl<SplashBloc>()),
       ],
       child: MaterialApp.router(
         routerDelegate: _appRouter.delegate(),
@@ -99,7 +101,11 @@ class _AppState extends State<App> {
             BlocListener<ConnectedBloc, ConnectedState>(
               listener: (context, state) {
                 if (state is ConnectedFailureState) {
-                  _appRouter.replace(SplashRoute(withDeepLink: false));
+                  final current = _appRouter.current;
+                  // Avoid fighting with splash navigation; only replace if not already on Splash
+                  if (current.name != SplashRoute.name) {
+                    _appRouter.replace(SplashRoute(withDeepLink: false));
+                  }
                 }
               },
             ),
