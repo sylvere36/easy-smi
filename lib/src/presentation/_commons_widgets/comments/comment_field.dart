@@ -51,6 +51,7 @@ class _CommentFieldWidgetState extends State<CommentFieldWidget> {
     setState(() {
       _attachedFile = null;
     });
+    FocusScope.of(context).unfocus();
   }
 
   Widget _attachmentChip() {

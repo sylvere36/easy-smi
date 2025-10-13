@@ -218,73 +218,73 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
                 ),
 
                 // Section: Rapports
-                Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: _sectionCard(
-                    title: 'Rapports',
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          spacing: 10,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _labelValue('Date :', const SizedBox()),
-                            Text(
-                              '12 Août 2025',
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: _labelValue(
-                            'Conclusion',
-                            Text(
-                              'Finalisation de la procédure de validation qualité des offres commerciales Finalisation de la procédure de validation qualité des offres commercialesFinalisation de la procédure de validation qualité des offres commercialesFinalisation de la procédure de validation qualité des offres commerciales',
-                              style: GoogleFonts.poppins(),
-                            ),
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 12),
-                          child: Divider(color: AppColors.divider, height: 1),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: Text(
-                            'Piece jointe',
-                            style: GoogleFonts.poppins(color: AppColors.sub),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Row(
-                            children: [
-                              Assets.svgs.pdf.svg(),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8),
-                                child: Text(
-                                  'FicheDeNote.pdf',
-                                  style: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              const Spacer(),
-                              appColorsrimaryButton(
-                                'Terminer',
-                                onTap: _openReportSheet,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.only(top: 16),
+                //   child: _sectionCard(
+                //     title: 'Rapports',
+                //     child: Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         Row(
+                //           spacing: 10,
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //             _labelValue('Date :', const SizedBox()),
+                //             Text(
+                //               '12 Août 2025',
+                //               style: GoogleFonts.poppins(
+                //                 fontWeight: FontWeight.w600,
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //         Padding(
+                //           padding: const EdgeInsets.only(top: 12),
+                //           child: _labelValue(
+                //             'Conclusion',
+                //             Text(
+                //               'Finalisation de la procédure de validation qualité des offres commerciales Finalisation de la procédure de validation qualité des offres commercialesFinalisation de la procédure de validation qualité des offres commercialesFinalisation de la procédure de validation qualité des offres commerciales',
+                //               style: GoogleFonts.poppins(),
+                //             ),
+                //           ),
+                //         ),
+                //         const Padding(
+                //           padding: EdgeInsets.only(top: 12),
+                //           child: Divider(color: AppColors.divider, height: 1),
+                //         ),
+                //         Padding(
+                //           padding: const EdgeInsets.only(top: 12),
+                //           child: Text(
+                //             'Piece jointe',
+                //             style: GoogleFonts.poppins(color: AppColors.sub),
+                //           ),
+                //         ),
+                //         Padding(
+                //           padding: const EdgeInsets.only(top: 8),
+                //           child: Row(
+                //             children: [
+                //               Assets.svgs.pdf.svg(),
+                //               Padding(
+                //                 padding: const EdgeInsets.only(left: 8),
+                //                 child: Text(
+                //                   'FicheDeNote.pdf',
+                //                   style: GoogleFonts.poppins(
+                //                     fontWeight: FontWeight.w600,
+                //                   ),
+                //                 ),
+                //               ),
+                //               const Spacer(),
+                //               appColorsrimaryButton(
+                //                 'Terminer',
+                //                 onTap: _openReportSheet,
+                //               ),
+                //             ],
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           );

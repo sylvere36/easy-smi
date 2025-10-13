@@ -39,6 +39,10 @@ class SignInPage extends StatelessWidget {
                     final callbackUrl = await FlutterWebAuth2.authenticate(
                       url: redirectUrl,
                       callbackUrlScheme: 'easysmi',
+                      options: const FlutterWebAuth2Options(
+                        preferEphemeral: true,
+                        useWebview: false,
+                      ),
                     );
                     final uri = Uri.parse(callbackUrl);
                     String? token =

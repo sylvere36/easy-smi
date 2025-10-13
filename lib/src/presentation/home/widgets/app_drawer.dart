@@ -139,7 +139,7 @@ class CustomDrawer extends StatelessWidget {
                                 // Navigate to profile
                                 context.router.push(const ProfileRoute());
                               },
-                              child: avatar(state.user!.name, radius: 70),
+                              child: avatar(state.user!.name, radius: 50),
                             ),
                             const SizedBox(height: 10),
                             Text(

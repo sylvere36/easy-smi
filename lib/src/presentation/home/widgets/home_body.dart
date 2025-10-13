@@ -11,6 +11,7 @@ import '../../../application/actions/actions_bloc.dart';
 import '../../../application/audit/audits_bloc.dart';
 import '../../../application/events/detail/event_detail_bloc.dart';
 import '../../../application/events/events_bloc.dart';
+import '../../../application/formation/formations_bloc.dart';
 import '../../../application/inspection/inspections_bloc.dart';
 import '../../../application/permit/permits_bloc.dart';
 import '../../../application/slider/sliders_bloc.dart';
@@ -51,6 +52,10 @@ class _HomeBodyState extends State<HomeBody> {
         curve: Curves.easeOut,
       );
     });
+
+    BlocProvider.of<FormationsBloc>(
+      context,
+    ).add(const FormationsEvent.fetchMyFormationsRequested());
   }
 
   @override
@@ -94,19 +99,123 @@ class _HomeBodyState extends State<HomeBody> {
                                 PageView.builder(
                                   controller: _pageCtrl,
                                   itemCount: items.length,
-                                  itemBuilder: (_, i) => FutureBuilder<String>(
-                                    future: getFullImageUrl(items[i].image),
-                                    builder: (context, snap) {
-                                      final url = snap.data;
-                                      if (url == null || url.isEmpty) {
-                                        return Container(color: Colors.black12);
-                                      }
-                                      return Image.network(
-                                        url,
-                                        fit: BoxFit.cover,
-                                      );
-                                    },
-                                  ),
+                                  itemBuilder: (_, i) {
+                                    final slider = items[i];
+                                    return FutureBuilder<String>(
+                                      future: getFullImageUrl(slider.image),
+                                      builder: (context, snap) {
+                                        final url = snap.data;
+                                        if (url == null || url.isEmpty) {
+                                          return Container(
+                                            color: Colors.black12,
+                                          );
+                                        }
+                                        return GestureDetector(
+                                          onTap: () {
+                                            if (slider.type == 'formation' &&
+                                                slider.formation != null) {
+                                              context.router.push(
+                                                FormationDetailRoute(
+                                                  formationId:
+                                                      slider.formation!.id,
+                                                ),
+                                              );
+                                            } else if (slider.type ==
+                                                    'campaign' &&
+                                                slider.campaign != null) {
+                                              context.router.push(
+                                                FormationsSensibilizationsRoute(
+                                                  initialPage: 3,
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          child: Stack(
+                                            fit: StackFit.expand,
+                                            children: [
+                                              Image.network(
+                                                url,
+                                                fit: BoxFit.cover,
+                                              ),
+                                              // Petite carte en bas à droite
+                                              Positioned(
+                                                bottom: 12,
+                                                right: 12,
+                                                child: Container(
+                                                  constraints:
+                                                      const BoxConstraints(
+                                                        maxWidth: 200,
+                                                      ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 12,
+                                                        vertical: 8,
+                                                      ),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.black
+                                                        .withValues(
+                                                          alpha: 0.65,
+                                                        ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        slider.titleFromType,
+                                                        style:
+                                                            GoogleFonts.dmSans(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                            ),
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              top: 2,
+                                                            ),
+                                                        child: Text(
+                                                          slider
+                                                              .subtitleFromType,
+                                                          style:
+                                                              GoogleFonts.dmSans(
+                                                                color: Colors
+                                                                    .white70,
+                                                                fontSize: 11,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                              ),
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
                                 ),
                             ],
                           ),
