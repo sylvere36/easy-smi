@@ -53,6 +53,7 @@ dependencies:
   flutter_svg: ^2.0.2
   flutter_web_auth_2: ^4.0.1
   flutter_widget_from_html: ^0.17.1
+  focus_detector: ^2.0.1
   form_builder_validators: ^11.2.0
   freezed_annotation: ^3.0.0
   get_it: ^8.0.3

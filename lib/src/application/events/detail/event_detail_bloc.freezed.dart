@@ -352,7 +352,7 @@ as String?,
 /// @nodoc
 mixin _$EventDetailState {
 
- bool get isLoading; EventItem? get item; List<CauseAnalysis>? get causes; Option<Either<GlobalFailure, List<CauseAnalysis>>> get resultOption;
+ bool get isLoading; bool get isLoadingValidation; EventItem? get item; List<CauseAnalysis>? get causes; bool? get validationIsRequested; Option<Either<GlobalFailure, List<CauseAnalysis>>> get resultOption;
 /// Create a copy of EventDetailState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -363,16 +363,16 @@ $EventDetailStateCopyWith<EventDetailState> get copyWith => _$EventDetailStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&const DeepCollectionEquality().equals(other.causes, causes)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isLoadingValidation, isLoadingValidation) || other.isLoadingValidation == isLoadingValidation)&&(identical(other.item, item) || other.item == item)&&const DeepCollectionEquality().equals(other.causes, causes)&&(identical(other.validationIsRequested, validationIsRequested) || other.validationIsRequested == validationIsRequested)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,item,const DeepCollectionEquality().hash(causes),resultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,isLoadingValidation,item,const DeepCollectionEquality().hash(causes),validationIsRequested,resultOption);
 
 @override
 String toString() {
-  return 'EventDetailState(isLoading: $isLoading, item: $item, causes: $causes, resultOption: $resultOption)';
+  return 'EventDetailState(isLoading: $isLoading, isLoadingValidation: $isLoadingValidation, item: $item, causes: $causes, validationIsRequested: $validationIsRequested, resultOption: $resultOption)';
 }
 
 
@@ -383,7 +383,7 @@ abstract mixin class $EventDetailStateCopyWith<$Res>  {
   factory $EventDetailStateCopyWith(EventDetailState value, $Res Function(EventDetailState) _then) = _$EventDetailStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, EventItem? item, List<CauseAnalysis>? causes, Option<Either<GlobalFailure, List<CauseAnalysis>>> resultOption
+ bool isLoading, bool isLoadingValidation, EventItem? item, List<CauseAnalysis>? causes, bool? validationIsRequested, Option<Either<GlobalFailure, List<CauseAnalysis>>> resultOption
 });
 
 
@@ -400,12 +400,14 @@ class _$EventDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of EventDetailState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? item = freezed,Object? causes = freezed,Object? resultOption = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? isLoadingValidation = null,Object? item = freezed,Object? causes = freezed,Object? validationIsRequested = freezed,Object? resultOption = null,}) {
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,isLoadingValidation: null == isLoadingValidation ? _self.isLoadingValidation : isLoadingValidation // ignore: cast_nullable_to_non_nullable
 as bool,item: freezed == item ? _self.item : item // ignore: cast_nullable_to_non_nullable
 as EventItem?,causes: freezed == causes ? _self.causes : causes // ignore: cast_nullable_to_non_nullable
-as List<CauseAnalysis>?,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
+as List<CauseAnalysis>?,validationIsRequested: freezed == validationIsRequested ? _self.validationIsRequested : validationIsRequested // ignore: cast_nullable_to_non_nullable
+as bool?,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
 as Option<Either<GlobalFailure, List<CauseAnalysis>>>,
   ));
 }
@@ -491,10 +493,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  EventItem? item,  List<CauseAnalysis>? causes,  Option<Either<GlobalFailure, List<CauseAnalysis>>> resultOption)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  bool isLoadingValidation,  EventItem? item,  List<CauseAnalysis>? causes,  bool? validationIsRequested,  Option<Either<GlobalFailure, List<CauseAnalysis>>> resultOption)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EventDetailState() when $default != null:
-return $default(_that.isLoading,_that.item,_that.causes,_that.resultOption);case _:
+return $default(_that.isLoading,_that.isLoadingValidation,_that.item,_that.causes,_that.validationIsRequested,_that.resultOption);case _:
   return orElse();
 
 }
@@ -512,10 +514,10 @@ return $default(_that.isLoading,_that.item,_that.causes,_that.resultOption);case
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  EventItem? item,  List<CauseAnalysis>? causes,  Option<Either<GlobalFailure, List<CauseAnalysis>>> resultOption)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  bool isLoadingValidation,  EventItem? item,  List<CauseAnalysis>? causes,  bool? validationIsRequested,  Option<Either<GlobalFailure, List<CauseAnalysis>>> resultOption)  $default,) {final _that = this;
 switch (_that) {
 case _EventDetailState():
-return $default(_that.isLoading,_that.item,_that.causes,_that.resultOption);case _:
+return $default(_that.isLoading,_that.isLoadingValidation,_that.item,_that.causes,_that.validationIsRequested,_that.resultOption);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -532,10 +534,10 @@ return $default(_that.isLoading,_that.item,_that.causes,_that.resultOption);case
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  EventItem? item,  List<CauseAnalysis>? causes,  Option<Either<GlobalFailure, List<CauseAnalysis>>> resultOption)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  bool isLoadingValidation,  EventItem? item,  List<CauseAnalysis>? causes,  bool? validationIsRequested,  Option<Either<GlobalFailure, List<CauseAnalysis>>> resultOption)?  $default,) {final _that = this;
 switch (_that) {
 case _EventDetailState() when $default != null:
-return $default(_that.isLoading,_that.item,_that.causes,_that.resultOption);case _:
+return $default(_that.isLoading,_that.isLoadingValidation,_that.item,_that.causes,_that.validationIsRequested,_that.resultOption);case _:
   return null;
 
 }
@@ -547,10 +549,11 @@ return $default(_that.isLoading,_that.item,_that.causes,_that.resultOption);case
 
 
 class _EventDetailState implements EventDetailState {
-  const _EventDetailState({required this.isLoading, required this.item, required final  List<CauseAnalysis>? causes, required this.resultOption}): _causes = causes;
+  const _EventDetailState({required this.isLoading, required this.isLoadingValidation, required this.item, required final  List<CauseAnalysis>? causes, this.validationIsRequested, required this.resultOption}): _causes = causes;
   
 
 @override final  bool isLoading;
+@override final  bool isLoadingValidation;
 @override final  EventItem? item;
  final  List<CauseAnalysis>? _causes;
 @override List<CauseAnalysis>? get causes {
@@ -561,6 +564,7 @@ class _EventDetailState implements EventDetailState {
   return EqualUnmodifiableListView(value);
 }
 
+@override final  bool? validationIsRequested;
 @override final  Option<Either<GlobalFailure, List<CauseAnalysis>>> resultOption;
 
 /// Create a copy of EventDetailState
@@ -573,16 +577,16 @@ _$EventDetailStateCopyWith<_EventDetailState> get copyWith => __$EventDetailStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&const DeepCollectionEquality().equals(other._causes, _causes)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isLoadingValidation, isLoadingValidation) || other.isLoadingValidation == isLoadingValidation)&&(identical(other.item, item) || other.item == item)&&const DeepCollectionEquality().equals(other._causes, _causes)&&(identical(other.validationIsRequested, validationIsRequested) || other.validationIsRequested == validationIsRequested)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,item,const DeepCollectionEquality().hash(_causes),resultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,isLoadingValidation,item,const DeepCollectionEquality().hash(_causes),validationIsRequested,resultOption);
 
 @override
 String toString() {
-  return 'EventDetailState(isLoading: $isLoading, item: $item, causes: $causes, resultOption: $resultOption)';
+  return 'EventDetailState(isLoading: $isLoading, isLoadingValidation: $isLoadingValidation, item: $item, causes: $causes, validationIsRequested: $validationIsRequested, resultOption: $resultOption)';
 }
 
 
@@ -593,7 +597,7 @@ abstract mixin class _$EventDetailStateCopyWith<$Res> implements $EventDetailSta
   factory _$EventDetailStateCopyWith(_EventDetailState value, $Res Function(_EventDetailState) _then) = __$EventDetailStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, EventItem? item, List<CauseAnalysis>? causes, Option<Either<GlobalFailure, List<CauseAnalysis>>> resultOption
+ bool isLoading, bool isLoadingValidation, EventItem? item, List<CauseAnalysis>? causes, bool? validationIsRequested, Option<Either<GlobalFailure, List<CauseAnalysis>>> resultOption
 });
 
 
@@ -610,12 +614,14 @@ class __$EventDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of EventDetailState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? item = freezed,Object? causes = freezed,Object? resultOption = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? isLoadingValidation = null,Object? item = freezed,Object? causes = freezed,Object? validationIsRequested = freezed,Object? resultOption = null,}) {
   return _then(_EventDetailState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,isLoadingValidation: null == isLoadingValidation ? _self.isLoadingValidation : isLoadingValidation // ignore: cast_nullable_to_non_nullable
 as bool,item: freezed == item ? _self.item : item // ignore: cast_nullable_to_non_nullable
 as EventItem?,causes: freezed == causes ? _self._causes : causes // ignore: cast_nullable_to_non_nullable
-as List<CauseAnalysis>?,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
+as List<CauseAnalysis>?,validationIsRequested: freezed == validationIsRequested ? _self.validationIsRequested : validationIsRequested // ignore: cast_nullable_to_non_nullable
+as bool?,resultOption: null == resultOption ? _self.resultOption : resultOption // ignore: cast_nullable_to_non_nullable
 as Option<Either<GlobalFailure, List<CauseAnalysis>>>,
   ));
 }

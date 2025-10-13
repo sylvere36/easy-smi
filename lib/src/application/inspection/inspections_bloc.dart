@@ -21,7 +21,7 @@ class InspectionsBloc extends Bloc<InspectionsEvent, InspectionsState> {
         state.copyWith(
           isLoading: true,
           resultOption: none(),
-          items: [],
+          items: state.items,
           currentPage: 1,
           canLoadMore: true,
         ),

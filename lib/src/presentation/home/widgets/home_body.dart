@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,9 +12,7 @@ import '../../../application/events/events_bloc.dart';
 import '../../../application/formation/formations_bloc.dart';
 import '../../../application/inspection/inspections_bloc.dart';
 import '../../../application/permit/permits_bloc.dart';
-import '../../../application/slider/sliders_bloc.dart';
 import '../../../domain/inspection/models/inspection_item.dart';
-import '../../_commons/helpers/image_helper.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
 import '../../_shimmers/card_shimmer.dart';
@@ -24,6 +20,7 @@ import '../../actions/widget/action_card.dart';
 import '../../audits/widgets/audits_widget.dart';
 import '../../events/widgets/event_card.dart';
 import '../../permis/widgets/hot_work_card.dart';
+import 'sliders_widget.dart';
 
 class HomeBody extends StatefulWidget {
   const HomeBody({super.key});
@@ -33,25 +30,9 @@ class HomeBody extends StatefulWidget {
 }
 
 class _HomeBodyState extends State<HomeBody> {
-  final _pageCtrl = PageController();
-  late Timer _rotator;
-
-  int _index = 0;
-
   @override
   void initState() {
     super.initState();
-    _rotator = Timer.periodic(const Duration(seconds: 10), (_) {
-      if (!mounted) return;
-      final items = context.read<SlidersBloc>().state.items;
-      if (items.isEmpty) return;
-      _index = (_index + 1) % items.length;
-      _pageCtrl.animateToPage(
-        _index,
-        duration: const Duration(milliseconds: 450),
-        curve: Curves.easeOut,
-      );
-    });
 
     BlocProvider.of<FormationsBloc>(
       context,
@@ -60,8 +41,6 @@ class _HomeBodyState extends State<HomeBody> {
 
   @override
   void dispose() {
-    _rotator.cancel();
-    _pageCtrl.dispose();
     super.dispose();
   }
 
@@ -71,187 +50,7 @@ class _HomeBodyState extends State<HomeBody> {
       child: CustomScrollView(
         slivers: [
           // Bannière rotative
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
-              child: BlocBuilder<SlidersBloc, SlidersState>(
-                builder: (context, slidersState) {
-                  final items = slidersState.items;
-                  return Column(
-                    spacing: 8,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: AspectRatio(
-                          aspectRatio: 16 / 7,
-                          child: Stack(
-                            fit: StackFit.expand,
-                            children: [
-                              if (items.isEmpty)
-                                PageView.builder(
-                                  controller: _pageCtrl,
-                                  itemCount: 1,
-                                  itemBuilder: (_, _) =>
-                                      Container(color: Colors.black12),
-                                )
-                              else
-                                PageView.builder(
-                                  controller: _pageCtrl,
-                                  itemCount: items.length,
-                                  itemBuilder: (_, i) {
-                                    final slider = items[i];
-                                    return FutureBuilder<String>(
-                                      future: getFullImageUrl(slider.image),
-                                      builder: (context, snap) {
-                                        final url = snap.data;
-                                        if (url == null || url.isEmpty) {
-                                          return Container(
-                                            color: Colors.black12,
-                                          );
-                                        }
-                                        return GestureDetector(
-                                          onTap: () {
-                                            if (slider.type == 'formation' &&
-                                                slider.formation != null) {
-                                              context.router.push(
-                                                FormationDetailRoute(
-                                                  formationId:
-                                                      slider.formation!.id,
-                                                ),
-                                              );
-                                            } else if (slider.type ==
-                                                    'campaign' &&
-                                                slider.campaign != null) {
-                                              context.router.push(
-                                                FormationsSensibilizationsRoute(
-                                                  initialPage: 3,
-                                                ),
-                                              );
-                                            }
-                                          },
-                                          child: Stack(
-                                            fit: StackFit.expand,
-                                            children: [
-                                              Image.network(
-                                                url,
-                                                fit: BoxFit.cover,
-                                              ),
-                                              // Petite carte en bas à droite
-                                              Positioned(
-                                                bottom: 12,
-                                                right: 12,
-                                                child: Container(
-                                                  constraints:
-                                                      const BoxConstraints(
-                                                        maxWidth: 200,
-                                                      ),
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 12,
-                                                        vertical: 8,
-                                                      ),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.black
-                                                        .withValues(
-                                                          alpha: 0.65,
-                                                        ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          8,
-                                                        ),
-                                                  ),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        slider.titleFromType,
-                                                        style:
-                                                            GoogleFonts.dmSans(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 13,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                            ),
-                                                        maxLines: 2,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets.only(
-                                                              top: 2,
-                                                            ),
-                                                        child: Text(
-                                                          slider
-                                                              .subtitleFromType,
-                                                          style:
-                                                              GoogleFonts.dmSans(
-                                                                color: Colors
-                                                                    .white70,
-                                                                fontSize: 11,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                              ),
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      if (items.length > 1)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 6, right: 6),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: List.generate(
-                              items.length,
-                              (i) => Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 2,
-                                ),
-                                child: Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: i == _index
-                                        ? AppColors.primary
-                                        : Colors.black26,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
+          const SliverToBoxAdapter(child: SlidersWidget()),
 
           BlocBuilder<ActionsBloc, ActionsState>(
             builder: (context, state) {

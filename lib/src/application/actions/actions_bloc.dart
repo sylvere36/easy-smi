@@ -19,8 +19,8 @@ class ActionsBloc extends Bloc<ActionsEvent, ActionsState> {
         state.copyWith(
           isLoading: true,
           resultOption: none(),
-          items: null,
-          initialItems: null,
+          items: state.items,
+          initialItems: state.items,
         ),
       );
       final res = await repository.getActions();

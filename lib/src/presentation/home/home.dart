@@ -1,11 +1,15 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../gen/assets.gen.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../application/actions/actions_bloc.dart';
+import '../../application/audit/audits_bloc.dart';
 import '../../application/auth/user/authenticated_user_bloc.dart';
+import '../../application/events/events_bloc.dart';
 import '../../application/inspection/inspections_bloc.dart';
 import '../../application/permit/permits_bloc.dart';
 import '../../domain/inspection/models/inspection_item.dart';
@@ -284,7 +288,15 @@ class _HomePageState extends State<HomePage>
           ),
         ],
       ),
-      body: const HomeBody(),
+      body: FocusDetector(
+        onFocusGained: () {
+          context.read<EventsBloc>().add(const EventsEvent.fetch());
+          context.read<ActionsBloc>().add(const ActionsEvent.fetch());
+          context.read<InspectionsBloc>().add(const InspectionsEvent.fetch());
+          context.read<AuditsBloc>().add(const AuditsEvent.fetch());
+        },
+        child: const HomeBody(),
+      ),
       // FAB with glow and toggling icon
       floatingActionButton: Column(
         spacing: 12,

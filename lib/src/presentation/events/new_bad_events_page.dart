@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../application/events/detail/event_detail_bloc.dart';
@@ -22,37 +23,43 @@ class NewBadEventsPage extends StatelessWidget {
     return MyScaffold(
       appBarTitle: 'NOUVEL EVENEMENT NON DESIRABLE',
       paddingHorizontale: 0,
-      body: BlocBuilder<EventsBloc, EventsState>(
-        builder: (contextE, state) {
-          return PagedList<EventItem>(
-            items: state.items ?? [], // List<EventItem>
-            isInitialLoading: state.isLoading && state.items == null, // bool
-            isLoadingMore: state.isLoading && state.items != null, // bool
-            isLastPage: state.canLoadMore, // bool
-            onLoadMore: () => context.read<EventsBloc>().add(
-              const EventsEvent.fetchNextPage(),
-            ),
-            onRefresh: () async {
-              context.read<EventsBloc>().add(const EventsEvent.reset());
-              context.read<EventsBloc>().add(const EventsEvent.fetch());
-            },
-            itemBuilder: (ctx, i, event) => EventCard(
-              onTap: () {
-                context.read<EventDetailsBloc>().add(
-                  EventDetailsEvent.getEvent(event: event),
-                );
-              },
-              imageUrl: event.attachments.isEmpty
-                  ? null
-                  : event.attachments.first,
-              level: event.humanGravity,
-              status: event.humanStatus,
-              title: event.title,
-              site: event.site,
-            ),
-            empty: const SizedBox.shrink(),
-          );
+      body: FocusDetector(
+        onFocusGained: () {
+          context.read<EventsBloc>().add(const EventsEvent.reset());
+          context.read<EventsBloc>().add(const EventsEvent.fetch());
         },
+        child: BlocBuilder<EventsBloc, EventsState>(
+          builder: (contextE, state) {
+            return PagedList<EventItem>(
+              items: state.items ?? [], // List<EventItem>
+              isInitialLoading: state.isLoading && state.items == null, // bool
+              isLoadingMore: state.isLoading && state.items != null, // bool
+              isLastPage: state.canLoadMore, // bool
+              onLoadMore: () => context.read<EventsBloc>().add(
+                const EventsEvent.fetchNextPage(),
+              ),
+              onRefresh: () async {
+                context.read<EventsBloc>().add(const EventsEvent.reset());
+                context.read<EventsBloc>().add(const EventsEvent.fetch());
+              },
+              itemBuilder: (ctx, i, event) => EventCard(
+                onTap: () {
+                  context.read<EventDetailsBloc>().add(
+                    EventDetailsEvent.getEvent(event: event),
+                  );
+                },
+                imageUrl: event.attachments.isEmpty
+                    ? null
+                    : event.attachments.first,
+                level: event.humanGravity,
+                status: event.humanStatus,
+                title: event.title,
+                site: event.site,
+              ),
+              empty: const SizedBox.shrink(),
+            );
+          },
+        ),
       ),
 
       floatingActionButton: GestureDetector(

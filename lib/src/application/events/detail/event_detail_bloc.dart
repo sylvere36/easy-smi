@@ -13,7 +13,8 @@ part 'event_detail_state.dart';
 
 class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailState> {
   final IEventRepository repository;
-  EventDetailsBloc({required this.repository}) : super(EventDetailState.initial()) {
+  EventDetailsBloc({required this.repository})
+    : super(EventDetailState.initial()) {
     on<_GetEventDetail>((event, emit) async {
       emit(
         state.copyWith(
@@ -23,9 +24,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailState> {
         ),
       );
 
-      final res = await repository.getCauseAnalysis(
-        event: event.event.id,
-      );
+      final res = await repository.getCauseAnalysis(event: event.event.id);
 
       res.fold(
         (l) =>
@@ -47,13 +46,30 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailState> {
     });
 
     on<_RequestValidation>((event, emit) async {
-      emit(state.copyWith(isLoading: true, resultOption: none()));
-      final res = await repository.requestValidation(id: event.id, comment: event.comment);
+      emit(state.copyWith(isLoadingValidation: true, resultOption: none()));
+      final res = await repository.requestValidation(
+        id: event.id,
+        comment: event.comment,
+      );
       res.fold(
-        (l) => emit(state.copyWith(isLoading: false, resultOption: some(left(l)))) ,
+        (l) => emit(
+          state.copyWith(
+            isLoadingValidation: false,
+            resultOption: some(left(l)),
+          ),
+        ),
         (message) {
-          // Optionally could store message in state via a new field; for now, just stop loading
-          emit(state.copyWith(isLoading: false));
+          EventItem item = state.item!;
+          item = item.copyWith(status: EventStatus.toBeValidated);
+          emit(
+            state.copyWith(
+              isLoadingValidation: false,
+              validationIsRequested: true,
+              item: item,
+            ),
+          );
+          emit(state.copyWith(validationIsRequested: null));
+          add(_GetEventDetail(event: state.item!));
         },
       );
     });

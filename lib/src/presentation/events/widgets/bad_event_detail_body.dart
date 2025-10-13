@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,10 +14,12 @@ import '../../../application/evalutaion/evaluation_bloc.dart';
 import '../../../application/events/detail/event_detail_bloc.dart';
 import '../../../domain/action/i_action_repository.dart';
 import '../../../domain/evaluation/models/evaluation.dart';
+import '../../../domain/event/models/event_item.dart';
 import '../../_commons/theming/app_color.dart';
 import '../../_commons/utils/app_constants.dart';
 import '../../_commons_widgets/comments/comment_field.dart';
 import '../../_commons_widgets/loading_widget.dart';
+import '../../_commons_widgets/my_toast.dart';
 import '../../_commons_widgets/show_network_image_viewer.dart';
 import '../../comments/widgets/resume_comment_widget.dart';
 
@@ -73,6 +76,14 @@ class _BadEventDetailBodyState extends State<BadEventDetailBody> {
 
           isInit = false;
         }
+
+        if (detailState.validationIsRequested == true) {
+          successToast(
+            context: context,
+            msg: 'La demande de validation a été envoyée avec succès.',
+          );
+          AutoRouter.of(context).pop();
+        }
       },
       builder: (contextEventDetail, detailState) {
         if (detailState.item == null) {
@@ -91,11 +102,12 @@ class _BadEventDetailBodyState extends State<BadEventDetailBody> {
               onValidate: () {
                 final id = detailState.item?.id;
                 if (id != null) {
-                  contextEventDetail
-                      .read<EventDetailsBloc>()
-                      .add(EventDetailsEvent.requestValidation(id: id));
+                  contextEventDetail.read<EventDetailsBloc>().add(
+                    EventDetailsEvent.requestValidation(id: id),
+                  );
                 }
               },
+              event: detailState.item!,
             ),
 
             // ----------- zone commentaire -----------
@@ -368,12 +380,14 @@ class _HeaderCard extends StatelessWidget {
   final String version;
   final String date;
   final VoidCallback onValidate;
+  final EventItem event;
   const _HeaderCard({
     required this.title,
     required this.date,
     required this.ref,
     required this.version,
     required this.onValidate,
+    required this.event,
   });
 
   @override
@@ -383,64 +397,82 @@ class _HeaderCard extends StatelessWidget {
       fontSize: 18,
     );
 
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: titleStyle),
-            const SizedBox(height: 6),
-            Wrap(
+    return BlocBuilder<EventDetailsBloc, EventDetailState>(
+      builder: (context, state) {
+        return Card(
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _pill('Date: ', date),
+                Text(title, style: titleStyle),
+                const SizedBox(height: 6),
+                Wrap(
+                  children: [
+                    _pill('Date: ', date),
 
-                _pill('REF: ', ref),
+                    _pill('REF: ', ref),
 
-                _pill('Ver: ', version),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                SizedBox(
-                  width: 180,
-                  child: ElevatedButton(
-                    onPressed: onValidate,
-                    style: ButtonStyle(
-                      padding: const WidgetStatePropertyAll(
-                        EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      ),
-                      backgroundColor: const WidgetStatePropertyAll(
-                        Colors.white,
-                      ),
-                      foregroundColor: const WidgetStatePropertyAll(
-                        Color(0xFF2563EB),
-                      ),
-                      shape: WidgetStatePropertyAll(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          side: const BorderSide(color: AppColors.primary),
-                        ),
-                      ),
-                    ),
-                    child: Text(
-                      'Soumettre à validation',
-                      style: GoogleFonts.inter(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
+                    _pill('Ver: ', version),
+                  ],
                 ),
+                const SizedBox(height: 8),
+                if (event.status == EventStatus.draft)
+                  if (state.isLoadingValidation)
+                    const Center(child: LoadingWidget())
+                  else
+                    InkWell(
+                      onTap: onValidate,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            width: 180,
+                            child: ElevatedButton(
+                              onPressed: onValidate,
+                              style: ButtonStyle(
+                                padding: const WidgetStatePropertyAll(
+                                  EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                ),
+                                backgroundColor: const WidgetStatePropertyAll(
+                                  Colors.white,
+                                ),
+                                foregroundColor: const WidgetStatePropertyAll(
+                                  Color(0xFF2563EB),
+                                ),
+                                shape: WidgetStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    side: const BorderSide(
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              child: Text(
+                                'Soumettre à validation',
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 

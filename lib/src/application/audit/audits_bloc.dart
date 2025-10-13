@@ -21,7 +21,7 @@ class AuditsBloc extends Bloc<AuditsEvent, AuditsState> {
         state.copyWith(
           isLoading: true,
           resultOption: none(),
-          items: null,
+          items: state.items,
           currentPage: 1,
           canLoadMore: true,
           mode: AuditListMode.all,

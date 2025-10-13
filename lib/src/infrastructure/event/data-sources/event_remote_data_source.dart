@@ -158,7 +158,9 @@ class EventRemoteDataSource implements IEventRemoteDataSource {
   Future<String> requestValidation({required int id, String? comment}) async {
     try {
       final String request = '/conformity/event-forms/$id/requestValidation';
-      final dynamic body = comment == null ? null : jsonEncode({'comment': comment});
+      final dynamic body = comment == null
+          ? null
+          : jsonEncode({'comment': comment});
       final Response response = await httpClient.postRequest(
         request,
         body: body,
