@@ -16,6 +16,7 @@ const orgLicenseKey = 'ORG_LICENSE';
 const deviceTokenKey = 'DEVICE_TOKEN';
 const accessTokenKey = 'ACCESS_TOKEN';
 const authenticatedUserKey = 'AUTHENTICATED_USER';
+const refreshTokenKey = 'REFRESH_TOKEN';
 
 final myUserSession = sl<UserSession>();
 
@@ -37,6 +38,16 @@ class UserSession {
   Future<String?> getAuthToken() async {
     preferences = preferences ?? await SharedPreferences.getInstance();
     return preferences?.getString(accessTokenKey);
+  }
+
+  Future<bool?> cacheRefreshToken(String token) async {
+    preferences = preferences ?? await SharedPreferences.getInstance();
+    return await preferences?.setString(refreshTokenKey, token);
+  }
+
+  Future<String?> getRefreshToken() async {
+    preferences = preferences ?? await SharedPreferences.getInstance();
+    return preferences?.getString(refreshTokenKey);
   }
 
   Future<bool?> checkIntroIsShow() async {

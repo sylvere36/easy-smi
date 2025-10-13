@@ -62,6 +62,29 @@ class SignInPage extends StatelessWidget {
                         }
                       }
                     }
+                    // Get Refresh Token From URL
+                    String? refreshToken =
+                        uri.queryParameters['refreshToken'] ??
+                        uri.queryParameters['refresh_token'];
+                    if (refreshToken == null || refreshToken.isEmpty) {
+                      final frag = uri.fragment;
+                      if (frag.isNotEmpty) {
+                        for (final part in frag.split('&')) {
+                          final kv = part.split('=');
+                          if (kv.length == 2 &&
+                              (kv[0] == 'refreshToken' ||
+                                  kv[0] == 'refresh_token')) {
+                            refreshToken = Uri.decodeComponent(kv[1]);
+                            break;
+                          }
+                        }
+                      }
+                    }
+                    if (refreshToken != null && refreshToken.isNotEmpty) {
+                      await myUserSession.cacheRefreshToken(refreshToken);
+                    }
+
+                    // End Get Refresh Token
                     if (token == null || token.isEmpty) {
                       errorToast(context: context, msg: 'Token manquant');
                     } else {
