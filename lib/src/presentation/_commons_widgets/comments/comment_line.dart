@@ -4,12 +4,17 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../_commons/theming/app_color.dart';
 import 'avatar.dart';
 
-Widget commentLine(String name, String time, String text) => Padding(
+Widget commentLine(
+  String name,
+  String time,
+  String text, {
+  String? avatarName,
+}) => Padding(
   padding: const EdgeInsets.only(bottom: 12),
   child: Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      avatar(name),
+      avatar(avatarName ?? name),
       Expanded(
         child: Padding(
           padding: const EdgeInsets.only(left: 10),

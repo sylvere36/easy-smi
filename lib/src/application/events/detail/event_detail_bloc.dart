@@ -45,5 +45,17 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailState> {
     on<_Reset>((event, emit) async {
       emit(EventDetailState.initial());
     });
+
+    on<_RequestValidation>((event, emit) async {
+      emit(state.copyWith(isLoading: true, resultOption: none()));
+      final res = await repository.requestValidation(id: event.id, comment: event.comment);
+      res.fold(
+        (l) => emit(state.copyWith(isLoading: false, resultOption: some(left(l)))) ,
+        (message) {
+          // Optionally could store message in state via a new field; for now, just stop loading
+          emit(state.copyWith(isLoading: false));
+        },
+      );
+    });
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../application/auth/user/authenticated_user_bloc.dart';
 import '../../../application/communication/comments_bloc.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons/theming/app_color.dart';
@@ -81,9 +82,15 @@ class _ResumeCommentWidgetState extends State<ResumeCommentWidget> {
                     .take(widget.take)
                     .map(
                       (comment) => commentLine(
-                        comment.userName ?? 'Inconnu',
+                        BlocProvider.of<AuthenticatedUserBloc>(
+                                  context,
+                                ).state.user?.id ==
+                                comment.userId
+                            ? 'Vous'
+                            : comment.userName ?? '😎',
                         comment.humanReadableDate,
                         comment.body,
+                        avatarName: comment.userName ?? '😎',
                       ),
                     ),
               ],

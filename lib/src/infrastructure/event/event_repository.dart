@@ -91,4 +91,28 @@ class EventRepository implements IEventRepository {
     }
     return left(const GlobalFailure.noNetwork());
   }
+
+  @override
+  Future<Either<GlobalFailure, String>> requestValidation({
+    required int id,
+    String? comment,
+  }) async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        final message = await remoteDataSource.requestValidation(
+          id: id,
+          comment: comment,
+        );
+        return right(message);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
 }

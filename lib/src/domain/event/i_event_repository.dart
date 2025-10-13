@@ -22,4 +22,10 @@ abstract class IEventRepository {
     required String gravity,
     required List<String> files,
   });
+
+  // Request validation for an event form
+  Future<Either<GlobalFailure, String>> requestValidation({
+    required int id,
+    String? comment,
+  });
 }

@@ -40,12 +40,12 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
     );
   }
 
-  void _openReportSheet() => _openBottomSheet(
-    context,
-    title: 'Rapport',
-    firstLabel: 'Conclusion',
-    onSubmit: () => Navigator.pop(context),
-  );
+  // void _openReportSheet() => _openBottomSheet(
+  //   context,
+  //   title: 'Rapport',
+  //   firstLabel: 'Conclusion',
+  //   onSubmit: () => Navigator.pop(context),
+  // );
 
   void _openAddPlanningSheet() => _openBottomSheet(
     context,
@@ -326,22 +326,22 @@ class _ActionDetailBodyState extends State<ActionDetailBody> {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 18),
-                child: _meta('Ref :', '${action.reference}'),
+                child: _meta('Ref :', action.reference ?? '---'),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 18),
-                child: _meta('Ver :', '${action.version}'),
+                child: _meta('Ver :', action.version ?? '---'),
               ),
               const Spacer(),
             ],
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            appColorsrimaryButton('Terminer', onTap: _openReportSheet),
-          ],
-        ),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.end,
+        //   children: [
+        //     appColorsrimaryButton('Terminer', onTap: _openReportSheet),
+        //   ],
+        // ),
       ],
     );
   }

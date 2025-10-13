@@ -25,6 +25,7 @@ abstract class IEventRemoteDataSource {
     required String gravity,
     required List<String> files,
   });
+  Future<String> requestValidation({required int id, String? comment});
 }
 
 class EventRemoteDataSource implements IEventRemoteDataSource {
@@ -148,6 +149,33 @@ class EventRemoteDataSource implements IEventRemoteDataSource {
       }
     } on ServerException catch (e) {
       throw ServerException(e.errorText);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<String> requestValidation({required int id, String? comment}) async {
+    try {
+      final String request = '/conformity/event-forms/$id/requestValidation';
+      final dynamic body = comment == null ? null : jsonEncode({'comment': comment});
+      final Response response = await httpClient.postRequest(
+        request,
+        body: body,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final bool success = data['success'] == true;
+        final String message = (data['message'] as String?) ?? '';
+        if (!success) {
+          throw ServerException(message);
+        }
+        return message;
+      } else {
+        throw ServerException(errorThrow(response));
+      }
     } catch (e) {
       throw ServerException(e.toString());
     }

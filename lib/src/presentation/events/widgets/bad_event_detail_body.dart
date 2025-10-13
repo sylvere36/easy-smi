@@ -51,8 +51,6 @@ class _BadEventDetailBodyState extends State<BadEventDetailBody> {
 
   @override
   Widget build(BuildContext context) {
-    // final action = sl<ActionsBloc>();
-    // final action2 = sl<ActionsBloc>();
     return BlocConsumer<EventDetailsBloc, EventDetailState>(
       listener: (contextEventDetail, detailState) {
         if (isInit && detailState.item != null) {
@@ -90,7 +88,14 @@ class _BadEventDetailBodyState extends State<BadEventDetailBody> {
                   ? DateFormat('dd-MM-yy').format(detailState.item!.date!)
                   : '',
               version: detailState.item?.version ?? '',
-              onValidate: () {},
+              onValidate: () {
+                final id = detailState.item?.id;
+                if (id != null) {
+                  contextEventDetail
+                      .read<EventDetailsBloc>()
+                      .add(EventDetailsEvent.requestValidation(id: id));
+                }
+              },
             ),
 
             // ----------- zone commentaire -----------

@@ -55,12 +55,13 @@ extension EventDetailsEventPatterns on EventDetailsEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _GetEventDetail value)?  getEvent,TResult Function( _Reset value)?  reset,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _GetEventDetail value)?  getEvent,TResult Function( _Reset value)?  reset,TResult Function( _RequestValidation value)?  requestValidation,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _GetEventDetail() when getEvent != null:
 return getEvent(_that);case _Reset() when reset != null:
-return reset(_that);case _:
+return reset(_that);case _RequestValidation() when requestValidation != null:
+return requestValidation(_that);case _:
   return orElse();
 
 }
@@ -78,12 +79,13 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _GetEventDetail value)  getEvent,required TResult Function( _Reset value)  reset,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _GetEventDetail value)  getEvent,required TResult Function( _Reset value)  reset,required TResult Function( _RequestValidation value)  requestValidation,}){
 final _that = this;
 switch (_that) {
 case _GetEventDetail():
 return getEvent(_that);case _Reset():
-return reset(_that);case _:
+return reset(_that);case _RequestValidation():
+return requestValidation(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -100,12 +102,13 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _GetEventDetail value)?  getEvent,TResult? Function( _Reset value)?  reset,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _GetEventDetail value)?  getEvent,TResult? Function( _Reset value)?  reset,TResult? Function( _RequestValidation value)?  requestValidation,}){
 final _that = this;
 switch (_that) {
 case _GetEventDetail() when getEvent != null:
 return getEvent(_that);case _Reset() when reset != null:
-return reset(_that);case _:
+return reset(_that);case _RequestValidation() when requestValidation != null:
+return requestValidation(_that);case _:
   return null;
 
 }
@@ -122,11 +125,12 @@ return reset(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( EventItem event)?  getEvent,TResult Function()?  reset,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( EventItem event)?  getEvent,TResult Function()?  reset,TResult Function( int id,  String? comment)?  requestValidation,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GetEventDetail() when getEvent != null:
 return getEvent(_that.event);case _Reset() when reset != null:
-return reset();case _:
+return reset();case _RequestValidation() when requestValidation != null:
+return requestValidation(_that.id,_that.comment);case _:
   return orElse();
 
 }
@@ -144,11 +148,12 @@ return reset();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( EventItem event)  getEvent,required TResult Function()  reset,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( EventItem event)  getEvent,required TResult Function()  reset,required TResult Function( int id,  String? comment)  requestValidation,}) {final _that = this;
 switch (_that) {
 case _GetEventDetail():
 return getEvent(_that.event);case _Reset():
-return reset();case _:
+return reset();case _RequestValidation():
+return requestValidation(_that.id,_that.comment);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -165,11 +170,12 @@ return reset();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( EventItem event)?  getEvent,TResult? Function()?  reset,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( EventItem event)?  getEvent,TResult? Function()?  reset,TResult? Function( int id,  String? comment)?  requestValidation,}) {final _that = this;
 switch (_that) {
 case _GetEventDetail() when getEvent != null:
 return getEvent(_that.event);case _Reset() when reset != null:
-return reset();case _:
+return reset();case _RequestValidation() when requestValidation != null:
+return requestValidation(_that.id,_that.comment);case _:
   return null;
 
 }
@@ -274,6 +280,74 @@ String toString() {
 
 
 
+
+/// @nodoc
+
+
+class _RequestValidation implements EventDetailsEvent {
+  const _RequestValidation({required this.id, this.comment});
+  
+
+ final  int id;
+ final  String? comment;
+
+/// Create a copy of EventDetailsEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$RequestValidationCopyWith<_RequestValidation> get copyWith => __$RequestValidationCopyWithImpl<_RequestValidation>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RequestValidation&&(identical(other.id, id) || other.id == id)&&(identical(other.comment, comment) || other.comment == comment));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,comment);
+
+@override
+String toString() {
+  return 'EventDetailsEvent.requestValidation(id: $id, comment: $comment)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$RequestValidationCopyWith<$Res> implements $EventDetailsEventCopyWith<$Res> {
+  factory _$RequestValidationCopyWith(_RequestValidation value, $Res Function(_RequestValidation) _then) = __$RequestValidationCopyWithImpl;
+@useResult
+$Res call({
+ int id, String? comment
+});
+
+
+
+
+}
+/// @nodoc
+class __$RequestValidationCopyWithImpl<$Res>
+    implements _$RequestValidationCopyWith<$Res> {
+  __$RequestValidationCopyWithImpl(this._self, this._then);
+
+  final _RequestValidation _self;
+  final $Res Function(_RequestValidation) _then;
+
+/// Create a copy of EventDetailsEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? id = null,Object? comment = freezed,}) {
+  return _then(_RequestValidation(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,comment: freezed == comment ? _self.comment : comment // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
 
 /// @nodoc
 mixin _$EventDetailState {
