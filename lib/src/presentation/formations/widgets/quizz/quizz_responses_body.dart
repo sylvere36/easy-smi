@@ -17,7 +17,12 @@ class QuizzResponseBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<QuizzQuestion> questions = quizzItem.questions;
+    // Map questionId -> selected answerId & correctness
+    final Map<int, QuizzSubmissionDetailResult> detailByQuestion = {
+      for (final d in result.details) d.questionQuizzId: d,
+    };
+
+    final questions = quizzItem.questions;
 
     return Scaffold(
       appBar: AppBar(
@@ -41,11 +46,15 @@ class QuizzResponseBody extends StatelessWidget {
           const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
           SliverList.separated(
-            itemBuilder: (_, i) => _QuestionReviewCard(
-              index: i,
-              data: questions[i],
-              result: result,
-            ),
+            itemBuilder: (_, i) {
+              final q = questions[i];
+              final selected = detailByQuestion[q.id]?.answerQuizzId;
+              return _QuestionReviewCard(
+                index: i,
+                question: q,
+                selectedAnswerId: selected,
+              );
+            },
             separatorBuilder: (_, _) => const SizedBox(height: 14),
             itemCount: questions.length,
           ),
@@ -58,12 +67,12 @@ class QuizzResponseBody extends StatelessWidget {
 
 class _QuestionReviewCard extends StatelessWidget {
   final int index;
-  final QuizzQuestion data;
-  final QuizzSubmissionResult result;
+  final QuizzQuestion question;
+  final int? selectedAnswerId;
   const _QuestionReviewCard({
     required this.index,
-    required this.data,
-    required this.result,
+    required this.question,
+    required this.selectedAnswerId,
   });
 
   @override
@@ -97,35 +106,34 @@ class _QuestionReviewCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          Text(data.question, style: titleStyle),
+          Text(question.question, style: titleStyle),
           const SizedBox(height: 12),
           // Options
-          ...List.generate(
-            data.answers.length,
-            (i) => Padding(
+          ...question.answers.map((a) {
+            final state = _stateFor(a, question.answers, selectedAnswerId);
+            return Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: _AnswerPill(
-                text: data.answers[i].answer,
-                state: _stateFor(result, data.answers[i]),
-              ),
-            ),
-          ),
+              child: _AnswerPill(text: a.answer, state: state),
+            );
+          }),
         ],
       ),
     );
   }
 
   /// UI state logic: highlight correct in green, wrong selection in red.
-  _AnswerState _stateFor(QuizzSubmissionResult result, QuizzAnswer q) {
-    final detail = result.details.firstWhere(
-      (d) => d.answerQuizzId == q.id,
-      orElse: () => QuizzSubmissionDetailResult(
-        questionQuizzId: q.id,
-        answerQuizzId: q.id,
-        isCorrect: false,
-      ),
-    );
-    if (detail.isCorrect == true) return _AnswerState.correct;
+  _AnswerState _stateFor(
+    QuizzAnswer answer,
+    List<QuizzAnswer> answers,
+    int? selectedId,
+  ) {
+    final int correctId = answers
+        .firstWhere((e) => (e.isCorrect ?? 0) == 1, orElse: () => answers.first)
+        .id; // fallback to first if unknown
+    if (answer.id == correctId) return _AnswerState.correct;
+    if (selectedId != null && answer.id == selectedId) {
+      return _AnswerState.wrong;
+    }
     return _AnswerState.neutral;
   }
 }
