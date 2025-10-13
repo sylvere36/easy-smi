@@ -4,6 +4,9 @@ import 'package:dio/dio.dart';
 
 import '../app_http_service.dart';
 import '../user_session.dart';
+import '../../../../../injection_container.dart';
+import '../../../../../src/presentation/_commons/route/app_router.dart';
+import '../../../../../src/presentation/_commons/route/app_router.gr.dart';
 
 enum ContentType { json, formData, wwwFormUrlEncode }
 
@@ -59,6 +62,15 @@ class RequestHeaderInterceptorJsonImpl extends InterceptorsWrapper {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
+    // If forbidden, log out and redirect to splash
+    if (err.response?.statusCode == 403) {
+      await myUserSession.logout();
+      try {
+        final appRouter = sl<AppRouter>();
+        appRouter.replaceAll([SplashRoute()]);
+      } catch (_) {}
+      return handler.next(err);
+    }
     // Only attempt refresh if 401 and we have a refresh token
     if (err.response?.statusCode == 401) {
       final refreshToken = await myUserSession.getRefreshToken();

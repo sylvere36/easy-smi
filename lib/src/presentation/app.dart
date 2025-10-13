@@ -36,6 +36,15 @@ class _AppState extends State<App> {
   final _appRouter = AppRouter();
 
   @override
+  void initState() {
+    super.initState();
+    // Expose AppRouter globally for use outside widget tree (e.g., interceptors)
+    if (!sl.isRegistered<AppRouter>()) {
+      sl.registerSingleton<AppRouter>(_appRouter);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
