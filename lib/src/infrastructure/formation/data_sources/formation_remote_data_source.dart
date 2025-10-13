@@ -31,6 +31,7 @@ abstract class IFormationRemoteDataSource {
   Future<FinishCourseResult> finishCourse({required int id});
   Future<FinishFormationResult> finishFormation({required int id});
   Future<UserFormationsRegistrations> getUserFormationsRegistrations();
+  Future<void> registerToFormation({required Map<String, dynamic> body});
 }
 
 class FormationRemoteDataSource implements IFormationRemoteDataSource {
@@ -259,6 +260,32 @@ class FormationRemoteDataSource implements IFormationRemoteDataSource {
           throw ServerException(message);
         }
         return UserFormationsRegistrations.fromJson(root);
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> registerToFormation({required Map<String, dynamic> body}) async {
+    try {
+      const String request = '/formation/registrations';
+      final Response response = await httpClient.postRequest(
+        request,
+        body: body,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final Map<String, dynamic> root = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final success = root['success'] == true;
+        if (!success) {
+          final message = (root['message'] as String?) ?? '';
+          throw ServerException(message);
+        }
+        return;
       } else {
         throw ServerException(errorThrow(response));
       }

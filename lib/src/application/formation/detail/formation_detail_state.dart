@@ -25,6 +25,8 @@ abstract class FormationDetailState with _$FormationDetailState {
     @Default(false) bool? isFinishingFormation,
     required Option<Either<GlobalFailure, FinishFormationResult>>
     finishFormationResultOption,
+    @Default(false) bool isRegistering,
+    required Option<Either<GlobalFailure, Unit>> registerResultOption,
   }) = _FormationDetailState;
 
   factory FormationDetailState.initial() => FormationDetailState(
@@ -34,5 +36,6 @@ abstract class FormationDetailState with _$FormationDetailState {
     startCourseResultOption: none(),
     finishCourseResultOption: none(),
     finishFormationResultOption: none(),
+    registerResultOption: none(),
   );
 }

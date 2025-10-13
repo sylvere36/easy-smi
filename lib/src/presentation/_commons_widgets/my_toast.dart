@@ -30,7 +30,7 @@ void successToast({required BuildContext context, required String msg}) {
   toastification.show(
     type: ToastificationType.success,
     style: ToastificationStyle.fillColored,
-    autoCloseDuration: const Duration(seconds: 3),
+    autoCloseDuration: const Duration(seconds: 2),
     description: RichText(
       text: TextSpan(
         text: msg,

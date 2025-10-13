@@ -203,4 +203,24 @@ class FormationRepository implements IFormationRepository {
     }
     return left(const GlobalFailure.noNetwork());
   }
+
+  @override
+  Future<Either<GlobalFailure, Unit>> registerToFormation({
+    required Map<String, dynamic> body,
+  }) async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        await remoteDataSource.registerToFormation(body: body);
+        return right(unit);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
 }

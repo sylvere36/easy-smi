@@ -45,4 +45,8 @@ abstract class IFormationRepository {
 
   Future<Either<GlobalFailure, UserFormationsRegistrations>>
   getUserFormationsRegistrations();
+
+  Future<Either<GlobalFailure, Unit>> registerToFormation({
+    required Map<String, dynamic> body,
+  });
 }

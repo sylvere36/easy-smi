@@ -12,6 +12,7 @@ import '../../../domain/formation/models/my_formation.dart';
 import '../../_commons/helpers/image_helper.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons_widgets/loading_widget.dart';
+import 'formation_registration_sheet.dart';
 
 class CourseBody extends StatefulWidget {
   final int formationId;
@@ -178,43 +179,47 @@ class _CourseBodyState extends State<CourseBody> {
                         ),
 
                         // CTA
-                        if (myFormation != null)
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF1663D6),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 16,
-                                  ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF1663D6),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                onPressed: () {
-                                  if (myFormation != null) {
-                                    context.router.popAndPush(
-                                      FormationDisplayRoute(
-                                        formationId: widget.formationId,
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: Text(
-                                  myFormation == null
-                                      ? 'COMMENCER'
-                                      : 'CONTINUER',
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: .5,
-                                  ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                              ),
+                              onPressed: () {
+                                if (myFormation != null) {
+                                  context.router.popAndPush(
+                                    FormationDisplayRoute(
+                                      formationId: widget.formationId,
+                                    ),
+                                  );
+                                } else {
+                                  FormationRegistrationSheet.show(
+                                    context: context,
+                                    formationId: widget.formationId,
+                                  );
+                                }
+                              },
+                              child: Text(
+                                myFormation == null
+                                    ? 'S\'inscrire'.toUpperCase()
+                                    : 'CONTINUER'.toUpperCase(),
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: .5,
                                 ),
                               ),
                             ),
                           ),
+                        ),
 
                         // Ce que vous apprendrez
                         Padding(

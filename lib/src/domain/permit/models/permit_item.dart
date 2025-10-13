@@ -34,6 +34,8 @@ String humanReadableStatus(String status) {
       return 'Rejeté';
     case 'in_progress':
       return 'En cours';
+    case 'inProgress_Revision':
+      return 'En cours de Revision';
     case 'completed':
       return 'Terminé';
     case 'validated':

@@ -16,4 +16,8 @@ class FormationDetailEvent with _$FormationDetailEvent {
   const factory FormationDetailEvent.finishFormationRequested({
     required int id,
   }) = _FinishFormationRequested;
+
+  const factory FormationDetailEvent.registerRequested({
+    required Map<String, dynamic> body,
+  }) = _RegisterRequested;
 }

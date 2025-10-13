@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../domain/permit/models/permit_item.dart';
 import '../../_commons/route/app_router.gr.dart';
+import '../../_commons/theming/app_size.dart';
 import '../../_commons/theming/app_theme.dart';
 import '../hot_permis_page.dart';
 
@@ -39,7 +40,8 @@ class HotWorkCard extends StatelessWidget {
           children: [
             // level + statut
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
                   margin: const EdgeInsets.only(top: 2),
@@ -64,28 +66,40 @@ class HotWorkCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8, right: 8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Statut :  ',
-                        style: GoogleFonts.nunito(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 13,
-                          color: const Color(0xFF6E7787),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8, right: 8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Statut :  ',
+                          style: GoogleFonts.nunito(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                            color: const Color(0xFF6E7787),
+                          ),
                         ),
-                      ),
-                      Text(
-                        status,
-                        style: GoogleFonts.nunito(
-                          color: permit.statusColorValue,
-                          fontWeight: FontWeight.w900,
+                        SizedBox(
+                          width: AppSize.getSize(
+                            context: context,
+                            mobileValue: 60,
+                            tabletValue: 100,
+                          ),
+                          child: Text(
+                            status,
+                            style: GoogleFonts.nunito(
+                              color: permit.statusColorValue,
+                              fontWeight: FontWeight.w900,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],

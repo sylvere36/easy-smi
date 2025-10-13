@@ -167,5 +167,26 @@ class FormationDetailBloc
         },
       );
     });
+
+    on<_RegisterRequested>((event, emit) async {
+      emit(state.copyWith(isRegistering: true, registerResultOption: none()));
+      final res = await repository.registerToFormation(body: event.body);
+      emit(
+        res.fold(
+          (l) => state.copyWith(
+            isRegistering: false,
+            registerResultOption: some(left(l)),
+          ),
+          (r) => state.copyWith(
+            isRegistering: false,
+            registerResultOption: some(right(r)),
+          ),
+        ),
+      );
+
+      if (state.item != null) {
+        add(_FetchRequested(id: state.item!.id));
+      }
+    });
   }
 }

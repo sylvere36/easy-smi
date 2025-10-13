@@ -55,7 +55,7 @@ extension FormationDetailEventPatterns on FormationDetailEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _FetchRequested value)?  fetchRequested,TResult Function( _Reset value)?  reset,TResult Function( _ParticipantsRequested value)?  participantsRequested,TResult Function( _CoursesRequested value)?  coursesRequested,TResult Function( _StartCourseRequested value)?  startCourseRequested,TResult Function( _FinishCourseRequested value)?  finishCourseRequested,TResult Function( _FinishFormationRequested value)?  finishFormationRequested,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _FetchRequested value)?  fetchRequested,TResult Function( _Reset value)?  reset,TResult Function( _ParticipantsRequested value)?  participantsRequested,TResult Function( _CoursesRequested value)?  coursesRequested,TResult Function( _StartCourseRequested value)?  startCourseRequested,TResult Function( _FinishCourseRequested value)?  finishCourseRequested,TResult Function( _FinishFormationRequested value)?  finishFormationRequested,TResult Function( _RegisterRequested value)?  registerRequested,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
@@ -65,7 +65,8 @@ return participantsRequested(_that);case _CoursesRequested() when coursesRequest
 return coursesRequested(_that);case _StartCourseRequested() when startCourseRequested != null:
 return startCourseRequested(_that);case _FinishCourseRequested() when finishCourseRequested != null:
 return finishCourseRequested(_that);case _FinishFormationRequested() when finishFormationRequested != null:
-return finishFormationRequested(_that);case _:
+return finishFormationRequested(_that);case _RegisterRequested() when registerRequested != null:
+return registerRequested(_that);case _:
   return orElse();
 
 }
@@ -83,7 +84,7 @@ return finishFormationRequested(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _FetchRequested value)  fetchRequested,required TResult Function( _Reset value)  reset,required TResult Function( _ParticipantsRequested value)  participantsRequested,required TResult Function( _CoursesRequested value)  coursesRequested,required TResult Function( _StartCourseRequested value)  startCourseRequested,required TResult Function( _FinishCourseRequested value)  finishCourseRequested,required TResult Function( _FinishFormationRequested value)  finishFormationRequested,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _FetchRequested value)  fetchRequested,required TResult Function( _Reset value)  reset,required TResult Function( _ParticipantsRequested value)  participantsRequested,required TResult Function( _CoursesRequested value)  coursesRequested,required TResult Function( _StartCourseRequested value)  startCourseRequested,required TResult Function( _FinishCourseRequested value)  finishCourseRequested,required TResult Function( _FinishFormationRequested value)  finishFormationRequested,required TResult Function( _RegisterRequested value)  registerRequested,}){
 final _that = this;
 switch (_that) {
 case _FetchRequested():
@@ -93,7 +94,8 @@ return participantsRequested(_that);case _CoursesRequested():
 return coursesRequested(_that);case _StartCourseRequested():
 return startCourseRequested(_that);case _FinishCourseRequested():
 return finishCourseRequested(_that);case _FinishFormationRequested():
-return finishFormationRequested(_that);case _:
+return finishFormationRequested(_that);case _RegisterRequested():
+return registerRequested(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -110,7 +112,7 @@ return finishFormationRequested(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _FetchRequested value)?  fetchRequested,TResult? Function( _Reset value)?  reset,TResult? Function( _ParticipantsRequested value)?  participantsRequested,TResult? Function( _CoursesRequested value)?  coursesRequested,TResult? Function( _StartCourseRequested value)?  startCourseRequested,TResult? Function( _FinishCourseRequested value)?  finishCourseRequested,TResult? Function( _FinishFormationRequested value)?  finishFormationRequested,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _FetchRequested value)?  fetchRequested,TResult? Function( _Reset value)?  reset,TResult? Function( _ParticipantsRequested value)?  participantsRequested,TResult? Function( _CoursesRequested value)?  coursesRequested,TResult? Function( _StartCourseRequested value)?  startCourseRequested,TResult? Function( _FinishCourseRequested value)?  finishCourseRequested,TResult? Function( _FinishFormationRequested value)?  finishFormationRequested,TResult? Function( _RegisterRequested value)?  registerRequested,}){
 final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
@@ -120,7 +122,8 @@ return participantsRequested(_that);case _CoursesRequested() when coursesRequest
 return coursesRequested(_that);case _StartCourseRequested() when startCourseRequested != null:
 return startCourseRequested(_that);case _FinishCourseRequested() when finishCourseRequested != null:
 return finishCourseRequested(_that);case _FinishFormationRequested() when finishFormationRequested != null:
-return finishFormationRequested(_that);case _:
+return finishFormationRequested(_that);case _RegisterRequested() when registerRequested != null:
+return registerRequested(_that);case _:
   return null;
 
 }
@@ -137,7 +140,7 @@ return finishFormationRequested(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int id)?  fetchRequested,TResult Function()?  reset,TResult Function( int id)?  participantsRequested,TResult Function( int id)?  coursesRequested,TResult Function( int id)?  startCourseRequested,TResult Function( int id)?  finishCourseRequested,TResult Function( int id)?  finishFormationRequested,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int id)?  fetchRequested,TResult Function()?  reset,TResult Function( int id)?  participantsRequested,TResult Function( int id)?  coursesRequested,TResult Function( int id)?  startCourseRequested,TResult Function( int id)?  finishCourseRequested,TResult Function( int id)?  finishFormationRequested,TResult Function( Map<String, dynamic> body)?  registerRequested,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested(_that.id);case _Reset() when reset != null:
@@ -146,7 +149,8 @@ return participantsRequested(_that.id);case _CoursesRequested() when coursesRequ
 return coursesRequested(_that.id);case _StartCourseRequested() when startCourseRequested != null:
 return startCourseRequested(_that.id);case _FinishCourseRequested() when finishCourseRequested != null:
 return finishCourseRequested(_that.id);case _FinishFormationRequested() when finishFormationRequested != null:
-return finishFormationRequested(_that.id);case _:
+return finishFormationRequested(_that.id);case _RegisterRequested() when registerRequested != null:
+return registerRequested(_that.body);case _:
   return orElse();
 
 }
@@ -164,7 +168,7 @@ return finishFormationRequested(_that.id);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int id)  fetchRequested,required TResult Function()  reset,required TResult Function( int id)  participantsRequested,required TResult Function( int id)  coursesRequested,required TResult Function( int id)  startCourseRequested,required TResult Function( int id)  finishCourseRequested,required TResult Function( int id)  finishFormationRequested,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int id)  fetchRequested,required TResult Function()  reset,required TResult Function( int id)  participantsRequested,required TResult Function( int id)  coursesRequested,required TResult Function( int id)  startCourseRequested,required TResult Function( int id)  finishCourseRequested,required TResult Function( int id)  finishFormationRequested,required TResult Function( Map<String, dynamic> body)  registerRequested,}) {final _that = this;
 switch (_that) {
 case _FetchRequested():
 return fetchRequested(_that.id);case _Reset():
@@ -173,7 +177,8 @@ return participantsRequested(_that.id);case _CoursesRequested():
 return coursesRequested(_that.id);case _StartCourseRequested():
 return startCourseRequested(_that.id);case _FinishCourseRequested():
 return finishCourseRequested(_that.id);case _FinishFormationRequested():
-return finishFormationRequested(_that.id);case _:
+return finishFormationRequested(_that.id);case _RegisterRequested():
+return registerRequested(_that.body);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -190,7 +195,7 @@ return finishFormationRequested(_that.id);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int id)?  fetchRequested,TResult? Function()?  reset,TResult? Function( int id)?  participantsRequested,TResult? Function( int id)?  coursesRequested,TResult? Function( int id)?  startCourseRequested,TResult? Function( int id)?  finishCourseRequested,TResult? Function( int id)?  finishFormationRequested,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int id)?  fetchRequested,TResult? Function()?  reset,TResult? Function( int id)?  participantsRequested,TResult? Function( int id)?  coursesRequested,TResult? Function( int id)?  startCourseRequested,TResult? Function( int id)?  finishCourseRequested,TResult? Function( int id)?  finishFormationRequested,TResult? Function( Map<String, dynamic> body)?  registerRequested,}) {final _that = this;
 switch (_that) {
 case _FetchRequested() when fetchRequested != null:
 return fetchRequested(_that.id);case _Reset() when reset != null:
@@ -199,7 +204,8 @@ return participantsRequested(_that.id);case _CoursesRequested() when coursesRequ
 return coursesRequested(_that.id);case _StartCourseRequested() when startCourseRequested != null:
 return startCourseRequested(_that.id);case _FinishCourseRequested() when finishCourseRequested != null:
 return finishCourseRequested(_that.id);case _FinishFormationRequested() when finishFormationRequested != null:
-return finishFormationRequested(_that.id);case _:
+return finishFormationRequested(_that.id);case _RegisterRequested() when registerRequested != null:
+return registerRequested(_that.body);case _:
   return null;
 
 }
@@ -636,9 +642,81 @@ as int,
 }
 
 /// @nodoc
+
+
+class _RegisterRequested implements FormationDetailEvent {
+  const _RegisterRequested({required final  Map<String, dynamic> body}): _body = body;
+  
+
+ final  Map<String, dynamic> _body;
+ Map<String, dynamic> get body {
+  if (_body is EqualUnmodifiableMapView) return _body;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(_body);
+}
+
+
+/// Create a copy of FormationDetailEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$RegisterRequestedCopyWith<_RegisterRequested> get copyWith => __$RegisterRequestedCopyWithImpl<_RegisterRequested>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RegisterRequested&&const DeepCollectionEquality().equals(other._body, _body));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_body));
+
+@override
+String toString() {
+  return 'FormationDetailEvent.registerRequested(body: $body)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$RegisterRequestedCopyWith<$Res> implements $FormationDetailEventCopyWith<$Res> {
+  factory _$RegisterRequestedCopyWith(_RegisterRequested value, $Res Function(_RegisterRequested) _then) = __$RegisterRequestedCopyWithImpl;
+@useResult
+$Res call({
+ Map<String, dynamic> body
+});
+
+
+
+
+}
+/// @nodoc
+class __$RegisterRequestedCopyWithImpl<$Res>
+    implements _$RegisterRequestedCopyWith<$Res> {
+  __$RegisterRequestedCopyWithImpl(this._self, this._then);
+
+  final _RegisterRequested _self;
+  final $Res Function(_RegisterRequested) _then;
+
+/// Create a copy of FormationDetailEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? body = null,}) {
+  return _then(_RegisterRequested(
+body: null == body ? _self._body : body // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>,
+  ));
+}
+
+
+}
+
+/// @nodoc
 mixin _$FormationDetailState {
 
- bool get isLoading; FormationDetail? get item; Option<Either<GlobalFailure, FormationDetail>> get resultOption; bool get isLoadingParticipants; List<FormationParticipantRegistration> get participants; Option<Either<GlobalFailure, List<FormationParticipantRegistration>>> get participantsResultOption; bool get isLoadingCourses; List<FormationCourse> get courses; Option<Either<GlobalFailure, List<FormationCourse>>> get coursesResultOption; bool get isStartingCourse; Option<Either<GlobalFailure, StartCourseResult>> get startCourseResultOption; bool get isFinishingCourse; Option<Either<GlobalFailure, FinishCourseResult>> get finishCourseResultOption; bool? get isFinishingFormation; Option<Either<GlobalFailure, FinishFormationResult>> get finishFormationResultOption;
+ bool get isLoading; FormationDetail? get item; Option<Either<GlobalFailure, FormationDetail>> get resultOption; bool get isLoadingParticipants; List<FormationParticipantRegistration> get participants; Option<Either<GlobalFailure, List<FormationParticipantRegistration>>> get participantsResultOption; bool get isLoadingCourses; List<FormationCourse> get courses; Option<Either<GlobalFailure, List<FormationCourse>>> get coursesResultOption; bool get isStartingCourse; Option<Either<GlobalFailure, StartCourseResult>> get startCourseResultOption; bool get isFinishingCourse; Option<Either<GlobalFailure, FinishCourseResult>> get finishCourseResultOption; bool? get isFinishingFormation; Option<Either<GlobalFailure, FinishFormationResult>> get finishFormationResultOption; bool get isRegistering; Option<Either<GlobalFailure, Unit>> get registerResultOption;
 /// Create a copy of FormationDetailState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -649,16 +727,16 @@ $FormationDetailStateCopyWith<FormationDetailState> get copyWith => _$FormationD
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FormationDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.isLoadingParticipants, isLoadingParticipants) || other.isLoadingParticipants == isLoadingParticipants)&&const DeepCollectionEquality().equals(other.participants, participants)&&(identical(other.participantsResultOption, participantsResultOption) || other.participantsResultOption == participantsResultOption)&&(identical(other.isLoadingCourses, isLoadingCourses) || other.isLoadingCourses == isLoadingCourses)&&const DeepCollectionEquality().equals(other.courses, courses)&&(identical(other.coursesResultOption, coursesResultOption) || other.coursesResultOption == coursesResultOption)&&(identical(other.isStartingCourse, isStartingCourse) || other.isStartingCourse == isStartingCourse)&&(identical(other.startCourseResultOption, startCourseResultOption) || other.startCourseResultOption == startCourseResultOption)&&(identical(other.isFinishingCourse, isFinishingCourse) || other.isFinishingCourse == isFinishingCourse)&&(identical(other.finishCourseResultOption, finishCourseResultOption) || other.finishCourseResultOption == finishCourseResultOption)&&(identical(other.isFinishingFormation, isFinishingFormation) || other.isFinishingFormation == isFinishingFormation)&&(identical(other.finishFormationResultOption, finishFormationResultOption) || other.finishFormationResultOption == finishFormationResultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FormationDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.isLoadingParticipants, isLoadingParticipants) || other.isLoadingParticipants == isLoadingParticipants)&&const DeepCollectionEquality().equals(other.participants, participants)&&(identical(other.participantsResultOption, participantsResultOption) || other.participantsResultOption == participantsResultOption)&&(identical(other.isLoadingCourses, isLoadingCourses) || other.isLoadingCourses == isLoadingCourses)&&const DeepCollectionEquality().equals(other.courses, courses)&&(identical(other.coursesResultOption, coursesResultOption) || other.coursesResultOption == coursesResultOption)&&(identical(other.isStartingCourse, isStartingCourse) || other.isStartingCourse == isStartingCourse)&&(identical(other.startCourseResultOption, startCourseResultOption) || other.startCourseResultOption == startCourseResultOption)&&(identical(other.isFinishingCourse, isFinishingCourse) || other.isFinishingCourse == isFinishingCourse)&&(identical(other.finishCourseResultOption, finishCourseResultOption) || other.finishCourseResultOption == finishCourseResultOption)&&(identical(other.isFinishingFormation, isFinishingFormation) || other.isFinishingFormation == isFinishingFormation)&&(identical(other.finishFormationResultOption, finishFormationResultOption) || other.finishFormationResultOption == finishFormationResultOption)&&(identical(other.isRegistering, isRegistering) || other.isRegistering == isRegistering)&&(identical(other.registerResultOption, registerResultOption) || other.registerResultOption == registerResultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,item,resultOption,isLoadingParticipants,const DeepCollectionEquality().hash(participants),participantsResultOption,isLoadingCourses,const DeepCollectionEquality().hash(courses),coursesResultOption,isStartingCourse,startCourseResultOption,isFinishingCourse,finishCourseResultOption,isFinishingFormation,finishFormationResultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,item,resultOption,isLoadingParticipants,const DeepCollectionEquality().hash(participants),participantsResultOption,isLoadingCourses,const DeepCollectionEquality().hash(courses),coursesResultOption,isStartingCourse,startCourseResultOption,isFinishingCourse,finishCourseResultOption,isFinishingFormation,finishFormationResultOption,isRegistering,registerResultOption);
 
 @override
 String toString() {
-  return 'FormationDetailState(isLoading: $isLoading, item: $item, resultOption: $resultOption, isLoadingParticipants: $isLoadingParticipants, participants: $participants, participantsResultOption: $participantsResultOption, isLoadingCourses: $isLoadingCourses, courses: $courses, coursesResultOption: $coursesResultOption, isStartingCourse: $isStartingCourse, startCourseResultOption: $startCourseResultOption, isFinishingCourse: $isFinishingCourse, finishCourseResultOption: $finishCourseResultOption, isFinishingFormation: $isFinishingFormation, finishFormationResultOption: $finishFormationResultOption)';
+  return 'FormationDetailState(isLoading: $isLoading, item: $item, resultOption: $resultOption, isLoadingParticipants: $isLoadingParticipants, participants: $participants, participantsResultOption: $participantsResultOption, isLoadingCourses: $isLoadingCourses, courses: $courses, coursesResultOption: $coursesResultOption, isStartingCourse: $isStartingCourse, startCourseResultOption: $startCourseResultOption, isFinishingCourse: $isFinishingCourse, finishCourseResultOption: $finishCourseResultOption, isFinishingFormation: $isFinishingFormation, finishFormationResultOption: $finishFormationResultOption, isRegistering: $isRegistering, registerResultOption: $registerResultOption)';
 }
 
 
@@ -669,7 +747,7 @@ abstract mixin class $FormationDetailStateCopyWith<$Res>  {
   factory $FormationDetailStateCopyWith(FormationDetailState value, $Res Function(FormationDetailState) _then) = _$FormationDetailStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, FormationDetail? item, Option<Either<GlobalFailure, FormationDetail>> resultOption, bool isLoadingParticipants, List<FormationParticipantRegistration> participants, Option<Either<GlobalFailure, List<FormationParticipantRegistration>>> participantsResultOption, bool isLoadingCourses, List<FormationCourse> courses, Option<Either<GlobalFailure, List<FormationCourse>>> coursesResultOption, bool isStartingCourse, Option<Either<GlobalFailure, StartCourseResult>> startCourseResultOption, bool isFinishingCourse, Option<Either<GlobalFailure, FinishCourseResult>> finishCourseResultOption, bool? isFinishingFormation, Option<Either<GlobalFailure, FinishFormationResult>> finishFormationResultOption
+ bool isLoading, FormationDetail? item, Option<Either<GlobalFailure, FormationDetail>> resultOption, bool isLoadingParticipants, List<FormationParticipantRegistration> participants, Option<Either<GlobalFailure, List<FormationParticipantRegistration>>> participantsResultOption, bool isLoadingCourses, List<FormationCourse> courses, Option<Either<GlobalFailure, List<FormationCourse>>> coursesResultOption, bool isStartingCourse, Option<Either<GlobalFailure, StartCourseResult>> startCourseResultOption, bool isFinishingCourse, Option<Either<GlobalFailure, FinishCourseResult>> finishCourseResultOption, bool? isFinishingFormation, Option<Either<GlobalFailure, FinishFormationResult>> finishFormationResultOption, bool isRegistering, Option<Either<GlobalFailure, Unit>> registerResultOption
 });
 
 
@@ -686,7 +764,7 @@ class _$FormationDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of FormationDetailState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? item = freezed,Object? resultOption = null,Object? isLoadingParticipants = null,Object? participants = null,Object? participantsResultOption = null,Object? isLoadingCourses = null,Object? courses = null,Object? coursesResultOption = null,Object? isStartingCourse = null,Object? startCourseResultOption = null,Object? isFinishingCourse = null,Object? finishCourseResultOption = null,Object? isFinishingFormation = freezed,Object? finishFormationResultOption = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? item = freezed,Object? resultOption = null,Object? isLoadingParticipants = null,Object? participants = null,Object? participantsResultOption = null,Object? isLoadingCourses = null,Object? courses = null,Object? coursesResultOption = null,Object? isStartingCourse = null,Object? startCourseResultOption = null,Object? isFinishingCourse = null,Object? finishCourseResultOption = null,Object? isFinishingFormation = freezed,Object? finishFormationResultOption = null,Object? isRegistering = null,Object? registerResultOption = null,}) {
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,item: freezed == item ? _self.item : item // ignore: cast_nullable_to_non_nullable
@@ -703,7 +781,9 @@ as Option<Either<GlobalFailure, StartCourseResult>>,isFinishingCourse: null == i
 as bool,finishCourseResultOption: null == finishCourseResultOption ? _self.finishCourseResultOption : finishCourseResultOption // ignore: cast_nullable_to_non_nullable
 as Option<Either<GlobalFailure, FinishCourseResult>>,isFinishingFormation: freezed == isFinishingFormation ? _self.isFinishingFormation : isFinishingFormation // ignore: cast_nullable_to_non_nullable
 as bool?,finishFormationResultOption: null == finishFormationResultOption ? _self.finishFormationResultOption : finishFormationResultOption // ignore: cast_nullable_to_non_nullable
-as Option<Either<GlobalFailure, FinishFormationResult>>,
+as Option<Either<GlobalFailure, FinishFormationResult>>,isRegistering: null == isRegistering ? _self.isRegistering : isRegistering // ignore: cast_nullable_to_non_nullable
+as bool,registerResultOption: null == registerResultOption ? _self.registerResultOption : registerResultOption // ignore: cast_nullable_to_non_nullable
+as Option<Either<GlobalFailure, Unit>>,
   ));
 }
 
@@ -788,10 +868,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  FormationDetail? item,  Option<Either<GlobalFailure, FormationDetail>> resultOption,  bool isLoadingParticipants,  List<FormationParticipantRegistration> participants,  Option<Either<GlobalFailure, List<FormationParticipantRegistration>>> participantsResultOption,  bool isLoadingCourses,  List<FormationCourse> courses,  Option<Either<GlobalFailure, List<FormationCourse>>> coursesResultOption,  bool isStartingCourse,  Option<Either<GlobalFailure, StartCourseResult>> startCourseResultOption,  bool isFinishingCourse,  Option<Either<GlobalFailure, FinishCourseResult>> finishCourseResultOption,  bool? isFinishingFormation,  Option<Either<GlobalFailure, FinishFormationResult>> finishFormationResultOption)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  FormationDetail? item,  Option<Either<GlobalFailure, FormationDetail>> resultOption,  bool isLoadingParticipants,  List<FormationParticipantRegistration> participants,  Option<Either<GlobalFailure, List<FormationParticipantRegistration>>> participantsResultOption,  bool isLoadingCourses,  List<FormationCourse> courses,  Option<Either<GlobalFailure, List<FormationCourse>>> coursesResultOption,  bool isStartingCourse,  Option<Either<GlobalFailure, StartCourseResult>> startCourseResultOption,  bool isFinishingCourse,  Option<Either<GlobalFailure, FinishCourseResult>> finishCourseResultOption,  bool? isFinishingFormation,  Option<Either<GlobalFailure, FinishFormationResult>> finishFormationResultOption,  bool isRegistering,  Option<Either<GlobalFailure, Unit>> registerResultOption)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FormationDetailState() when $default != null:
-return $default(_that.isLoading,_that.item,_that.resultOption,_that.isLoadingParticipants,_that.participants,_that.participantsResultOption,_that.isLoadingCourses,_that.courses,_that.coursesResultOption,_that.isStartingCourse,_that.startCourseResultOption,_that.isFinishingCourse,_that.finishCourseResultOption,_that.isFinishingFormation,_that.finishFormationResultOption);case _:
+return $default(_that.isLoading,_that.item,_that.resultOption,_that.isLoadingParticipants,_that.participants,_that.participantsResultOption,_that.isLoadingCourses,_that.courses,_that.coursesResultOption,_that.isStartingCourse,_that.startCourseResultOption,_that.isFinishingCourse,_that.finishCourseResultOption,_that.isFinishingFormation,_that.finishFormationResultOption,_that.isRegistering,_that.registerResultOption);case _:
   return orElse();
 
 }
@@ -809,10 +889,10 @@ return $default(_that.isLoading,_that.item,_that.resultOption,_that.isLoadingPar
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  FormationDetail? item,  Option<Either<GlobalFailure, FormationDetail>> resultOption,  bool isLoadingParticipants,  List<FormationParticipantRegistration> participants,  Option<Either<GlobalFailure, List<FormationParticipantRegistration>>> participantsResultOption,  bool isLoadingCourses,  List<FormationCourse> courses,  Option<Either<GlobalFailure, List<FormationCourse>>> coursesResultOption,  bool isStartingCourse,  Option<Either<GlobalFailure, StartCourseResult>> startCourseResultOption,  bool isFinishingCourse,  Option<Either<GlobalFailure, FinishCourseResult>> finishCourseResultOption,  bool? isFinishingFormation,  Option<Either<GlobalFailure, FinishFormationResult>> finishFormationResultOption)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  FormationDetail? item,  Option<Either<GlobalFailure, FormationDetail>> resultOption,  bool isLoadingParticipants,  List<FormationParticipantRegistration> participants,  Option<Either<GlobalFailure, List<FormationParticipantRegistration>>> participantsResultOption,  bool isLoadingCourses,  List<FormationCourse> courses,  Option<Either<GlobalFailure, List<FormationCourse>>> coursesResultOption,  bool isStartingCourse,  Option<Either<GlobalFailure, StartCourseResult>> startCourseResultOption,  bool isFinishingCourse,  Option<Either<GlobalFailure, FinishCourseResult>> finishCourseResultOption,  bool? isFinishingFormation,  Option<Either<GlobalFailure, FinishFormationResult>> finishFormationResultOption,  bool isRegistering,  Option<Either<GlobalFailure, Unit>> registerResultOption)  $default,) {final _that = this;
 switch (_that) {
 case _FormationDetailState():
-return $default(_that.isLoading,_that.item,_that.resultOption,_that.isLoadingParticipants,_that.participants,_that.participantsResultOption,_that.isLoadingCourses,_that.courses,_that.coursesResultOption,_that.isStartingCourse,_that.startCourseResultOption,_that.isFinishingCourse,_that.finishCourseResultOption,_that.isFinishingFormation,_that.finishFormationResultOption);case _:
+return $default(_that.isLoading,_that.item,_that.resultOption,_that.isLoadingParticipants,_that.participants,_that.participantsResultOption,_that.isLoadingCourses,_that.courses,_that.coursesResultOption,_that.isStartingCourse,_that.startCourseResultOption,_that.isFinishingCourse,_that.finishCourseResultOption,_that.isFinishingFormation,_that.finishFormationResultOption,_that.isRegistering,_that.registerResultOption);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -829,10 +909,10 @@ return $default(_that.isLoading,_that.item,_that.resultOption,_that.isLoadingPar
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  FormationDetail? item,  Option<Either<GlobalFailure, FormationDetail>> resultOption,  bool isLoadingParticipants,  List<FormationParticipantRegistration> participants,  Option<Either<GlobalFailure, List<FormationParticipantRegistration>>> participantsResultOption,  bool isLoadingCourses,  List<FormationCourse> courses,  Option<Either<GlobalFailure, List<FormationCourse>>> coursesResultOption,  bool isStartingCourse,  Option<Either<GlobalFailure, StartCourseResult>> startCourseResultOption,  bool isFinishingCourse,  Option<Either<GlobalFailure, FinishCourseResult>> finishCourseResultOption,  bool? isFinishingFormation,  Option<Either<GlobalFailure, FinishFormationResult>> finishFormationResultOption)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  FormationDetail? item,  Option<Either<GlobalFailure, FormationDetail>> resultOption,  bool isLoadingParticipants,  List<FormationParticipantRegistration> participants,  Option<Either<GlobalFailure, List<FormationParticipantRegistration>>> participantsResultOption,  bool isLoadingCourses,  List<FormationCourse> courses,  Option<Either<GlobalFailure, List<FormationCourse>>> coursesResultOption,  bool isStartingCourse,  Option<Either<GlobalFailure, StartCourseResult>> startCourseResultOption,  bool isFinishingCourse,  Option<Either<GlobalFailure, FinishCourseResult>> finishCourseResultOption,  bool? isFinishingFormation,  Option<Either<GlobalFailure, FinishFormationResult>> finishFormationResultOption,  bool isRegistering,  Option<Either<GlobalFailure, Unit>> registerResultOption)?  $default,) {final _that = this;
 switch (_that) {
 case _FormationDetailState() when $default != null:
-return $default(_that.isLoading,_that.item,_that.resultOption,_that.isLoadingParticipants,_that.participants,_that.participantsResultOption,_that.isLoadingCourses,_that.courses,_that.coursesResultOption,_that.isStartingCourse,_that.startCourseResultOption,_that.isFinishingCourse,_that.finishCourseResultOption,_that.isFinishingFormation,_that.finishFormationResultOption);case _:
+return $default(_that.isLoading,_that.item,_that.resultOption,_that.isLoadingParticipants,_that.participants,_that.participantsResultOption,_that.isLoadingCourses,_that.courses,_that.coursesResultOption,_that.isStartingCourse,_that.startCourseResultOption,_that.isFinishingCourse,_that.finishCourseResultOption,_that.isFinishingFormation,_that.finishFormationResultOption,_that.isRegistering,_that.registerResultOption);case _:
   return null;
 
 }
@@ -844,7 +924,7 @@ return $default(_that.isLoading,_that.item,_that.resultOption,_that.isLoadingPar
 
 
 class _FormationDetailState implements FormationDetailState {
-  const _FormationDetailState({this.isLoading = false, this.item, required this.resultOption, this.isLoadingParticipants = false, final  List<FormationParticipantRegistration> participants = const [], required this.participantsResultOption, this.isLoadingCourses = false, final  List<FormationCourse> courses = const [], required this.coursesResultOption, this.isStartingCourse = false, required this.startCourseResultOption, this.isFinishingCourse = false, required this.finishCourseResultOption, this.isFinishingFormation = false, required this.finishFormationResultOption}): _participants = participants,_courses = courses;
+  const _FormationDetailState({this.isLoading = false, this.item, required this.resultOption, this.isLoadingParticipants = false, final  List<FormationParticipantRegistration> participants = const [], required this.participantsResultOption, this.isLoadingCourses = false, final  List<FormationCourse> courses = const [], required this.coursesResultOption, this.isStartingCourse = false, required this.startCourseResultOption, this.isFinishingCourse = false, required this.finishCourseResultOption, this.isFinishingFormation = false, required this.finishFormationResultOption, this.isRegistering = false, required this.registerResultOption}): _participants = participants,_courses = courses;
   
 
 @override@JsonKey() final  bool isLoading;
@@ -874,6 +954,8 @@ class _FormationDetailState implements FormationDetailState {
 @override final  Option<Either<GlobalFailure, FinishCourseResult>> finishCourseResultOption;
 @override@JsonKey() final  bool? isFinishingFormation;
 @override final  Option<Either<GlobalFailure, FinishFormationResult>> finishFormationResultOption;
+@override@JsonKey() final  bool isRegistering;
+@override final  Option<Either<GlobalFailure, Unit>> registerResultOption;
 
 /// Create a copy of FormationDetailState
 /// with the given fields replaced by the non-null parameter values.
@@ -885,16 +967,16 @@ _$FormationDetailStateCopyWith<_FormationDetailState> get copyWith => __$Formati
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FormationDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.isLoadingParticipants, isLoadingParticipants) || other.isLoadingParticipants == isLoadingParticipants)&&const DeepCollectionEquality().equals(other._participants, _participants)&&(identical(other.participantsResultOption, participantsResultOption) || other.participantsResultOption == participantsResultOption)&&(identical(other.isLoadingCourses, isLoadingCourses) || other.isLoadingCourses == isLoadingCourses)&&const DeepCollectionEquality().equals(other._courses, _courses)&&(identical(other.coursesResultOption, coursesResultOption) || other.coursesResultOption == coursesResultOption)&&(identical(other.isStartingCourse, isStartingCourse) || other.isStartingCourse == isStartingCourse)&&(identical(other.startCourseResultOption, startCourseResultOption) || other.startCourseResultOption == startCourseResultOption)&&(identical(other.isFinishingCourse, isFinishingCourse) || other.isFinishingCourse == isFinishingCourse)&&(identical(other.finishCourseResultOption, finishCourseResultOption) || other.finishCourseResultOption == finishCourseResultOption)&&(identical(other.isFinishingFormation, isFinishingFormation) || other.isFinishingFormation == isFinishingFormation)&&(identical(other.finishFormationResultOption, finishFormationResultOption) || other.finishFormationResultOption == finishFormationResultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FormationDetailState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.item, item) || other.item == item)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.isLoadingParticipants, isLoadingParticipants) || other.isLoadingParticipants == isLoadingParticipants)&&const DeepCollectionEquality().equals(other._participants, _participants)&&(identical(other.participantsResultOption, participantsResultOption) || other.participantsResultOption == participantsResultOption)&&(identical(other.isLoadingCourses, isLoadingCourses) || other.isLoadingCourses == isLoadingCourses)&&const DeepCollectionEquality().equals(other._courses, _courses)&&(identical(other.coursesResultOption, coursesResultOption) || other.coursesResultOption == coursesResultOption)&&(identical(other.isStartingCourse, isStartingCourse) || other.isStartingCourse == isStartingCourse)&&(identical(other.startCourseResultOption, startCourseResultOption) || other.startCourseResultOption == startCourseResultOption)&&(identical(other.isFinishingCourse, isFinishingCourse) || other.isFinishingCourse == isFinishingCourse)&&(identical(other.finishCourseResultOption, finishCourseResultOption) || other.finishCourseResultOption == finishCourseResultOption)&&(identical(other.isFinishingFormation, isFinishingFormation) || other.isFinishingFormation == isFinishingFormation)&&(identical(other.finishFormationResultOption, finishFormationResultOption) || other.finishFormationResultOption == finishFormationResultOption)&&(identical(other.isRegistering, isRegistering) || other.isRegistering == isRegistering)&&(identical(other.registerResultOption, registerResultOption) || other.registerResultOption == registerResultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,item,resultOption,isLoadingParticipants,const DeepCollectionEquality().hash(_participants),participantsResultOption,isLoadingCourses,const DeepCollectionEquality().hash(_courses),coursesResultOption,isStartingCourse,startCourseResultOption,isFinishingCourse,finishCourseResultOption,isFinishingFormation,finishFormationResultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,item,resultOption,isLoadingParticipants,const DeepCollectionEquality().hash(_participants),participantsResultOption,isLoadingCourses,const DeepCollectionEquality().hash(_courses),coursesResultOption,isStartingCourse,startCourseResultOption,isFinishingCourse,finishCourseResultOption,isFinishingFormation,finishFormationResultOption,isRegistering,registerResultOption);
 
 @override
 String toString() {
-  return 'FormationDetailState(isLoading: $isLoading, item: $item, resultOption: $resultOption, isLoadingParticipants: $isLoadingParticipants, participants: $participants, participantsResultOption: $participantsResultOption, isLoadingCourses: $isLoadingCourses, courses: $courses, coursesResultOption: $coursesResultOption, isStartingCourse: $isStartingCourse, startCourseResultOption: $startCourseResultOption, isFinishingCourse: $isFinishingCourse, finishCourseResultOption: $finishCourseResultOption, isFinishingFormation: $isFinishingFormation, finishFormationResultOption: $finishFormationResultOption)';
+  return 'FormationDetailState(isLoading: $isLoading, item: $item, resultOption: $resultOption, isLoadingParticipants: $isLoadingParticipants, participants: $participants, participantsResultOption: $participantsResultOption, isLoadingCourses: $isLoadingCourses, courses: $courses, coursesResultOption: $coursesResultOption, isStartingCourse: $isStartingCourse, startCourseResultOption: $startCourseResultOption, isFinishingCourse: $isFinishingCourse, finishCourseResultOption: $finishCourseResultOption, isFinishingFormation: $isFinishingFormation, finishFormationResultOption: $finishFormationResultOption, isRegistering: $isRegistering, registerResultOption: $registerResultOption)';
 }
 
 
@@ -905,7 +987,7 @@ abstract mixin class _$FormationDetailStateCopyWith<$Res> implements $FormationD
   factory _$FormationDetailStateCopyWith(_FormationDetailState value, $Res Function(_FormationDetailState) _then) = __$FormationDetailStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, FormationDetail? item, Option<Either<GlobalFailure, FormationDetail>> resultOption, bool isLoadingParticipants, List<FormationParticipantRegistration> participants, Option<Either<GlobalFailure, List<FormationParticipantRegistration>>> participantsResultOption, bool isLoadingCourses, List<FormationCourse> courses, Option<Either<GlobalFailure, List<FormationCourse>>> coursesResultOption, bool isStartingCourse, Option<Either<GlobalFailure, StartCourseResult>> startCourseResultOption, bool isFinishingCourse, Option<Either<GlobalFailure, FinishCourseResult>> finishCourseResultOption, bool? isFinishingFormation, Option<Either<GlobalFailure, FinishFormationResult>> finishFormationResultOption
+ bool isLoading, FormationDetail? item, Option<Either<GlobalFailure, FormationDetail>> resultOption, bool isLoadingParticipants, List<FormationParticipantRegistration> participants, Option<Either<GlobalFailure, List<FormationParticipantRegistration>>> participantsResultOption, bool isLoadingCourses, List<FormationCourse> courses, Option<Either<GlobalFailure, List<FormationCourse>>> coursesResultOption, bool isStartingCourse, Option<Either<GlobalFailure, StartCourseResult>> startCourseResultOption, bool isFinishingCourse, Option<Either<GlobalFailure, FinishCourseResult>> finishCourseResultOption, bool? isFinishingFormation, Option<Either<GlobalFailure, FinishFormationResult>> finishFormationResultOption, bool isRegistering, Option<Either<GlobalFailure, Unit>> registerResultOption
 });
 
 
@@ -922,7 +1004,7 @@ class __$FormationDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of FormationDetailState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? item = freezed,Object? resultOption = null,Object? isLoadingParticipants = null,Object? participants = null,Object? participantsResultOption = null,Object? isLoadingCourses = null,Object? courses = null,Object? coursesResultOption = null,Object? isStartingCourse = null,Object? startCourseResultOption = null,Object? isFinishingCourse = null,Object? finishCourseResultOption = null,Object? isFinishingFormation = freezed,Object? finishFormationResultOption = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? item = freezed,Object? resultOption = null,Object? isLoadingParticipants = null,Object? participants = null,Object? participantsResultOption = null,Object? isLoadingCourses = null,Object? courses = null,Object? coursesResultOption = null,Object? isStartingCourse = null,Object? startCourseResultOption = null,Object? isFinishingCourse = null,Object? finishCourseResultOption = null,Object? isFinishingFormation = freezed,Object? finishFormationResultOption = null,Object? isRegistering = null,Object? registerResultOption = null,}) {
   return _then(_FormationDetailState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,item: freezed == item ? _self.item : item // ignore: cast_nullable_to_non_nullable
@@ -939,7 +1021,9 @@ as Option<Either<GlobalFailure, StartCourseResult>>,isFinishingCourse: null == i
 as bool,finishCourseResultOption: null == finishCourseResultOption ? _self.finishCourseResultOption : finishCourseResultOption // ignore: cast_nullable_to_non_nullable
 as Option<Either<GlobalFailure, FinishCourseResult>>,isFinishingFormation: freezed == isFinishingFormation ? _self.isFinishingFormation : isFinishingFormation // ignore: cast_nullable_to_non_nullable
 as bool?,finishFormationResultOption: null == finishFormationResultOption ? _self.finishFormationResultOption : finishFormationResultOption // ignore: cast_nullable_to_non_nullable
-as Option<Either<GlobalFailure, FinishFormationResult>>,
+as Option<Either<GlobalFailure, FinishFormationResult>>,isRegistering: null == isRegistering ? _self.isRegistering : isRegistering // ignore: cast_nullable_to_non_nullable
+as bool,registerResultOption: null == registerResultOption ? _self.registerResultOption : registerResultOption // ignore: cast_nullable_to_non_nullable
+as Option<Either<GlobalFailure, Unit>>,
   ));
 }
 

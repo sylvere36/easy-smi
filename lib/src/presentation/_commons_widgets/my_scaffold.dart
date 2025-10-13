@@ -68,17 +68,17 @@ class MyScaffold extends StatelessWidget {
       body: Stack(
         children: [
           // ---- Blue curved background
-          Positioned.fill(
-            child: CustomPaint(
-              painter: _HeaderWavePainter(color: AppColors.primary),
-            ),
-          ),
+          // Positioned.fill(
+          //   child: CustomPaint(
+          //     painter: HeaderWavePainter(color: AppColors.primary),
+          //   ),
+          // ),
           Scaffold(
-            backgroundColor: Colors.transparent,
+            // backgroundColor: Colors.transparent,
             appBar:
                 appBar ??
                 AppBar(
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: AppColors.primary,
                   centerTitle: false,
                   leading: IconButton(
                     onPressed: () => Navigator.maybePop(context),
@@ -134,9 +134,9 @@ class MyScaffold extends StatelessWidget {
   }
 }
 
-class _HeaderWavePainter extends CustomPainter {
+class HeaderWavePainter extends CustomPainter {
   final Color color;
-  _HeaderWavePainter({required this.color});
+  HeaderWavePainter({required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -167,6 +167,6 @@ class _HeaderWavePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _HeaderWavePainter oldDelegate) =>
+  bool shouldRepaint(covariant HeaderWavePainter oldDelegate) =>
       oldDelegate.color != color;
 }
