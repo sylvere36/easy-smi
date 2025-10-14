@@ -1,8 +1,13 @@
 import 'dart:async';
 import 'dart:developer';
+
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+
 import '../../infrastructure/_commons/network/user_session.dart';
 import '../_commons/theming/app_color.dart';
 
@@ -65,19 +70,37 @@ class _VideoSheetState extends State<_VideoSheet> {
         return;
       }
 
-      // Build optional auth headers when token is available
-      Map<String, String>? headers;
+      // Build headers (auth + browser-like UA improves CDN compatibility)
+      final Map<String, String> headers = {};
       try {
         final userSession = myUserSession;
         final token = await userSession.getAuthToken();
         if (token != null && token.isNotEmpty) {
-          headers = {'Authorization': 'Bearer $token'};
+          headers['Authorization'] = 'Bearer $token';
         }
       } catch (_) {}
 
+      // Add a realistic User-Agent and Accept to bypass restrictive CDNs/origins
+      String userAgent;
+      switch (defaultTargetPlatform) {
+        case TargetPlatform.iOS:
+          userAgent =
+              'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1';
+          break;
+        case TargetPlatform.android:
+          userAgent =
+              'Mozilla/5.0 (Linux; Android 12; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36';
+          break;
+        default:
+          userAgent =
+              'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
+      }
+      headers['User-Agent'] = userAgent;
+      headers['Accept'] = 'video/*;q=0.9,*/*;q=0.8';
+
       _c = VideoPlayerController.networkUrl(
         Uri.parse(widget.url),
-        httpHeaders: headers ?? const <String, String>{},
+        httpHeaders: headers,
       );
 
       await _c!.initialize();
@@ -241,6 +264,35 @@ class _VideoSheetState extends State<_VideoSheet> {
                             child: YoutubePlayer(controller: _yt!),
                           ),
 
+                        // Bouton fallback: ouvrir dans YouTube/app navigateur
+                        if (_isYouTube)
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: IconButton.filled(
+                              onPressed: () async {
+                                // Ouvre l'URL originale (watch/shorts/...) dans l'app YouTube si possible
+                                final uri = Uri.tryParse(widget.url);
+                                if (uri != null) {
+                                  await launchUrl(
+                                    uri,
+                                    mode: LaunchMode.externalApplication,
+                                  );
+                                }
+                              },
+                              icon: const Icon(
+                                Icons.open_in_new_rounded,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                              style: IconButton.styleFrom(
+                                backgroundColor: Colors.black45,
+                                foregroundColor: Colors.white,
+                              ),
+                              tooltip: 'Ouvrir dans YouTube',
+                            ),
+                          ),
+
                         // error overlay
                         if (_errorMessage != null)
                           Positioned.fill(
@@ -274,9 +326,41 @@ class _VideoSheetState extends State<_VideoSheet> {
                                     ),
                                   ),
                                   const SizedBox(height: 16),
-                                  FilledButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text('Fermer'),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      FilledButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('Fermer'),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      OutlinedButton.icon(
+                                        onPressed: () async {
+                                          final uri = Uri.tryParse(widget.url);
+                                          if (uri != null) {
+                                            await launchUrl(
+                                              uri,
+                                              mode: LaunchMode
+                                                  .externalApplication,
+                                            );
+                                          }
+                                        },
+                                        style: OutlinedButton.styleFrom(
+                                          foregroundColor: Colors.white,
+                                          side: const BorderSide(
+                                            color: Colors.white24,
+                                          ),
+                                        ),
+                                        icon: const Icon(
+                                          Icons.open_in_new_rounded,
+                                          color: Colors.white,
+                                        ),
+                                        label: const Text(
+                                          'Ouvrir dans le navigateur',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),

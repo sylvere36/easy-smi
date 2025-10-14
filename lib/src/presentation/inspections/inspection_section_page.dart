@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../injection_container.dart';
 import '../../application/inspection/form/inspection_form_bloc.dart';
 
-import '../../domain/inspection/models/inspection_answers_post.dart';
 import 'widget/section_flow.dart';
 
 @RoutePage()

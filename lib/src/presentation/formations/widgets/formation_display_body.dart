@@ -25,7 +25,8 @@ import '../../comments/widgets/resume_comment_widget.dart';
 
 class CourseDisplayBody extends StatefulWidget {
   final int formationId;
-  const CourseDisplayBody({super.key, required this.formationId});
+  final FormationCourse? course;
+  const CourseDisplayBody({super.key, required this.formationId, this.course});
 
   @override
   State<CourseDisplayBody> createState() => _CourseDisplayBodyState();
@@ -59,6 +60,7 @@ class _CourseDisplayBodyState extends State<CourseDisplayBody>
     required FormationCourse lesson,
     required bool isCurrent,
     required bool isDone,
+    required FormationDetailBloc? formationDetailBloc,
   }) async {
     // if (widget.isDone) return;
     final String btnTitle = isCurrent
@@ -67,11 +69,11 @@ class _CourseDisplayBodyState extends State<CourseDisplayBody>
 
     await showNetworkVideoViewer(
       context,
-      url: thumb,
+      url: url,
       hasBtn: !isDone,
       btnTitle: btnTitle,
       onPressed: () {
-        context.read<FormationDetailBloc>().add(
+        sl<FormationDetailBloc>().add(
           isCurrent
               ? FormationDetailEvent.finishCourseRequested(id: lesson.id)
               : FormationDetailEvent.startCourseRequested(id: lesson.id),
@@ -184,12 +186,16 @@ class _CourseDisplayBodyState extends State<CourseDisplayBody>
                                     ),
                                     child: GestureDetector(
                                       onTap: () async {
+                                        final firstCourse = myFormation!
+                                            .getCurrentCourse(state.courses);
                                         await openVideoViewer(
-                                          url: state.item?.imageUrl ?? '',
+                                          url: firstCourse?.media ?? '',
                                           thumb: state.item?.imageUrl ?? '',
-                                          lesson: myFormation!.getCurrentCourse(
-                                            state.courses,
-                                          )!,
+                                          formationDetailBloc:
+                                              BlocProvider.of<
+                                                FormationDetailBloc
+                                              >(context),
+                                          lesson: firstCourse!,
                                           isCurrent:
                                               myFormation!.currentLesson ==
                                               myFormation!
@@ -333,20 +339,25 @@ class _CourseDisplayBodyState extends State<CourseDisplayBody>
                                           Icons.play_circle_fill_rounded,
                                         ),
                                         label: Text(
-                                          'Leçon ${myFormation?.myCurrentLesson(state.courses)}',
+                                          'Lancer Leçon ${myFormation?.myCurrentLesson(state.courses)}',
                                           style: GoogleFonts.inter(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w700,
                                           ),
                                         ),
                                         onPressed: () async {
+                                          final FormationCourse? course =
+                                              myFormation!.getCurrentCourse(
+                                                state.courses,
+                                              );
                                           await openVideoViewer(
-                                            url: state.item?.imageUrl ?? '',
+                                            url: course?.media ?? '',
                                             thumb: state.item?.imageUrl ?? '',
-                                            lesson: myFormation!
-                                                .getCurrentCourse(
-                                                  state.courses,
-                                                )!,
+                                            lesson: course!,
+                                            formationDetailBloc:
+                                                BlocProvider.of<
+                                                  FormationDetailBloc
+                                                >(context),
                                             isCurrent:
                                                 myFormation!.currentLesson ==
                                                 myFormation!
@@ -490,6 +501,10 @@ class _CourseDisplayBodyState extends State<CourseDisplayBody>
                                     url: lesson.media,
                                     thumb: lesson.media,
                                     lesson: lesson,
+                                    formationDetailBloc:
+                                        BlocProvider.of<FormationDetailBloc>(
+                                          context,
+                                        ),
                                     isCurrent:
                                         myFormation!.currentLesson == lesson.id,
                                     isDone:

@@ -10,20 +10,22 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i53;
-import 'package:collection/collection.dart' as _i62;
+import 'package:collection/collection.dart' as _i63;
 import 'package:easy_smi/src/domain/action/models/action_item.dart' as _i55;
 import 'package:easy_smi/src/domain/audit/models/audit_item.dart' as _i56;
+import 'package:easy_smi/src/domain/formation/models/formation_course.dart'
+    as _i59;
 import 'package:easy_smi/src/domain/inspection/models/inspection_answers_post.dart'
-    as _i61;
+    as _i62;
 import 'package:easy_smi/src/domain/inspection/models/inspection_form_item.dart'
-    as _i60;
+    as _i61;
 import 'package:easy_smi/src/domain/inspection/models/inspection_item.dart'
-    as _i66;
-import 'package:easy_smi/src/domain/permit/models/permit_item.dart' as _i59;
+    as _i67;
+import 'package:easy_smi/src/domain/permit/models/permit_item.dart' as _i60;
 import 'package:easy_smi/src/domain/permit/models/permit_risk_assessment_request.dart'
-    as _i65;
+    as _i66;
 import 'package:easy_smi/src/domain/quizz/models/quizz_item.dart' as _i57;
-import 'package:easy_smi/src/domain/quizz/models/quizz_submission.dart' as _i63;
+import 'package:easy_smi/src/domain/quizz/models/quizz_submission.dart' as _i64;
 import 'package:easy_smi/src/presentation/_commons_widgets/file_preview_page.dart'
     as _i15;
 import 'package:easy_smi/src/presentation/actions/action_detail_page.dart'
@@ -122,7 +124,7 @@ import 'package:easy_smi/src/presentation/profile/sensibilisation/profile_sensib
 import 'package:easy_smi/src/presentation/splash/splash.dart' as _i50;
 import 'package:flutter/foundation.dart' as _i58;
 import 'package:flutter/material.dart' as _i54;
-import 'package:flutter/widgets.dart' as _i64;
+import 'package:flutter/widgets.dart' as _i65;
 
 /// generated route for
 /// [_i1.ActionDetailPage]
@@ -637,10 +639,15 @@ class FormationDisplayRoute
   FormationDisplayRoute({
     _i54.Key? key,
     required int formationId,
+    _i59.FormationCourse? course,
     List<_i53.PageRouteInfo>? children,
   }) : super(
          FormationDisplayRoute.name,
-         args: FormationDisplayRouteArgs(key: key, formationId: formationId),
+         args: FormationDisplayRouteArgs(
+           key: key,
+           formationId: formationId,
+           course: course,
+         ),
          initialChildren: children,
        );
 
@@ -653,32 +660,41 @@ class FormationDisplayRoute
       return _i17.FormationDisplayPage(
         key: args.key,
         formationId: args.formationId,
+        course: args.course,
       );
     },
   );
 }
 
 class FormationDisplayRouteArgs {
-  const FormationDisplayRouteArgs({this.key, required this.formationId});
+  const FormationDisplayRouteArgs({
+    this.key,
+    required this.formationId,
+    this.course,
+  });
 
   final _i54.Key? key;
 
   final int formationId;
 
+  final _i59.FormationCourse? course;
+
   @override
   String toString() {
-    return 'FormationDisplayRouteArgs{key: $key, formationId: $formationId}';
+    return 'FormationDisplayRouteArgs{key: $key, formationId: $formationId, course: $course}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! FormationDisplayRouteArgs) return false;
-    return key == other.key && formationId == other.formationId;
+    return key == other.key &&
+        formationId == other.formationId &&
+        course == other.course;
   }
 
   @override
-  int get hashCode => key.hashCode ^ formationId.hashCode;
+  int get hashCode => key.hashCode ^ formationId.hashCode ^ course.hashCode;
 }
 
 /// generated route for
@@ -759,7 +775,7 @@ class HotPermisDetailRoute
     extends _i53.PageRouteInfo<HotPermisDetailRouteArgs> {
   HotPermisDetailRoute({
     _i54.Key? key,
-    required _i59.PermitItem permit,
+    required _i60.PermitItem permit,
     List<_i53.PageRouteInfo>? children,
   }) : super(
          HotPermisDetailRoute.name,
@@ -783,7 +799,7 @@ class HotPermisDetailRouteArgs {
 
   final _i54.Key? key;
 
-  final _i59.PermitItem permit;
+  final _i60.PermitItem permit;
 
   @override
   String toString() {
@@ -823,7 +839,7 @@ class InpectionRecentDetailRoute
     extends _i53.PageRouteInfo<InpectionRecentDetailRouteArgs> {
   InpectionRecentDetailRoute({
     _i54.Key? key,
-    required _i60.InspectionFormItem item,
+    required _i61.InspectionFormItem item,
     List<_i53.PageRouteInfo>? children,
   }) : super(
          InpectionRecentDetailRoute.name,
@@ -847,7 +863,7 @@ class InpectionRecentDetailRouteArgs {
 
   final _i54.Key? key;
 
-  final _i60.InspectionFormItem item;
+  final _i61.InspectionFormItem item;
 
   @override
   String toString() {
@@ -871,7 +887,7 @@ class InspectionResultRoute
     extends _i53.PageRouteInfo<InspectionResultRouteArgs> {
   InspectionResultRoute({
     _i54.Key? key,
-    Map<int, List<_i61.InspectionAnswerPostItem>> answersBySection = const {},
+    Map<int, List<_i62.InspectionAnswerPostItem>> answersBySection = const {},
     Map<int, String> sectionTitles = const {},
     Map<int, String> questionTitles = const {},
     required int inspectionId,
@@ -920,7 +936,7 @@ class InspectionResultRouteArgs {
 
   final _i54.Key? key;
 
-  final Map<int, List<_i61.InspectionAnswerPostItem>> answersBySection;
+  final Map<int, List<_i62.InspectionAnswerPostItem>> answersBySection;
 
   final Map<int, String> sectionTitles;
 
@@ -940,12 +956,12 @@ class InspectionResultRouteArgs {
     if (identical(this, other)) return true;
     if (other is! InspectionResultRouteArgs) return false;
     return key == other.key &&
-        const _i62.MapEquality().equals(
+        const _i63.MapEquality().equals(
           answersBySection,
           other.answersBySection,
         ) &&
-        const _i62.MapEquality().equals(sectionTitles, other.sectionTitles) &&
-        const _i62.MapEquality().equals(questionTitles, other.questionTitles) &&
+        const _i63.MapEquality().equals(sectionTitles, other.sectionTitles) &&
+        const _i63.MapEquality().equals(questionTitles, other.questionTitles) &&
         inspectionId == other.inspectionId &&
         inspectionFormId == other.inspectionFormId;
   }
@@ -953,9 +969,9 @@ class InspectionResultRouteArgs {
   @override
   int get hashCode =>
       key.hashCode ^
-      const _i62.MapEquality().hash(answersBySection) ^
-      const _i62.MapEquality().hash(sectionTitles) ^
-      const _i62.MapEquality().hash(questionTitles) ^
+      const _i63.MapEquality().hash(answersBySection) ^
+      const _i63.MapEquality().hash(sectionTitles) ^
+      const _i63.MapEquality().hash(questionTitles) ^
       inspectionId.hashCode ^
       inspectionFormId.hashCode;
 }
@@ -966,7 +982,7 @@ class InspectionResultSavingRoute
     extends _i53.PageRouteInfo<InspectionResultSavingRouteArgs> {
   InspectionResultSavingRoute({
     _i54.Key? key,
-    required _i61.InspectionAnswersPostBody answers,
+    required _i62.InspectionAnswersPostBody answers,
     required int inspectionId,
     required int inspectionFormId,
     List<_i53.PageRouteInfo>? children,
@@ -1007,7 +1023,7 @@ class InspectionResultSavingRouteArgs {
 
   final _i54.Key? key;
 
-  final _i61.InspectionAnswersPostBody answers;
+  final _i62.InspectionAnswersPostBody answers;
 
   final int inspectionId;
 
@@ -1459,7 +1475,7 @@ class QuizzRouteArgs {
 class QuizzResponsesRoute extends _i53.PageRouteInfo<QuizzResponsesRouteArgs> {
   QuizzResponsesRoute({
     _i54.Key? key,
-    required _i63.QuizzSubmissionResult result,
+    required _i64.QuizzSubmissionResult result,
     required _i57.QuizzItem quizzItem,
     List<_i53.PageRouteInfo>? children,
   }) : super(
@@ -1496,7 +1512,7 @@ class QuizzResponsesRouteArgs {
 
   final _i54.Key? key;
 
-  final _i63.QuizzSubmissionResult result;
+  final _i64.QuizzSubmissionResult result;
 
   final _i57.QuizzItem quizzItem;
 
@@ -1524,7 +1540,7 @@ class QuizzResponsesStatsRoute
     extends _i53.PageRouteInfo<QuizzResponsesStatsRouteArgs> {
   QuizzResponsesStatsRoute({
     _i54.Key? key,
-    required _i63.QuizzSubmissionResult result,
+    required _i64.QuizzSubmissionResult result,
     required _i57.QuizzItem quizzItem,
     List<_i53.PageRouteInfo>? children,
   }) : super(
@@ -1561,7 +1577,7 @@ class QuizzResponsesStatsRouteArgs {
 
   final _i54.Key? key;
 
-  final _i63.QuizzSubmissionResult result;
+  final _i64.QuizzSubmissionResult result;
 
   final _i57.QuizzItem quizzItem;
 
@@ -1587,9 +1603,9 @@ class QuizzResponsesStatsRouteArgs {
 /// [_i46.RiskAssessmentPage]
 class RiskAssessmentRoute extends _i53.PageRouteInfo<RiskAssessmentRouteArgs> {
   RiskAssessmentRoute({
-    _i64.Key? key,
-    required _i59.PermitItem permit,
-    List<_i65.PermitRiskAssessmentQuestionInput>? initialAnswers,
+    _i65.Key? key,
+    required _i60.PermitItem permit,
+    List<_i66.PermitRiskAssessmentQuestionInput>? initialAnswers,
     int? initialIndex,
     List<_i53.PageRouteInfo>? children,
   }) : super(
@@ -1627,11 +1643,11 @@ class RiskAssessmentRouteArgs {
     this.initialIndex,
   });
 
-  final _i64.Key? key;
+  final _i65.Key? key;
 
-  final _i59.PermitItem permit;
+  final _i60.PermitItem permit;
 
-  final List<_i65.PermitRiskAssessmentQuestionInput>? initialAnswers;
+  final List<_i66.PermitRiskAssessmentQuestionInput>? initialAnswers;
 
   final int? initialIndex;
 
@@ -1646,7 +1662,7 @@ class RiskAssessmentRouteArgs {
     if (other is! RiskAssessmentRouteArgs) return false;
     return key == other.key &&
         permit == other.permit &&
-        const _i62.ListEquality().equals(
+        const _i63.ListEquality().equals(
           initialAnswers,
           other.initialAnswers,
         ) &&
@@ -1657,7 +1673,7 @@ class RiskAssessmentRouteArgs {
   int get hashCode =>
       key.hashCode ^
       permit.hashCode ^
-      const _i62.ListEquality().hash(initialAnswers) ^
+      const _i63.ListEquality().hash(initialAnswers) ^
       initialIndex.hashCode;
 }
 
@@ -1667,8 +1683,8 @@ class RiskAssessmentResultRoute
     extends _i53.PageRouteInfo<RiskAssessmentResultRouteArgs> {
   RiskAssessmentResultRoute({
     _i54.Key? key,
-    required List<_i65.PermitRiskAssessmentQuestionInput> responses,
-    required _i59.PermitItem permit,
+    required List<_i66.PermitRiskAssessmentQuestionInput> responses,
+    required _i60.PermitItem permit,
     List<_i53.PageRouteInfo>? children,
   }) : super(
          RiskAssessmentResultRoute.name,
@@ -1704,9 +1720,9 @@ class RiskAssessmentResultRouteArgs {
 
   final _i54.Key? key;
 
-  final List<_i65.PermitRiskAssessmentQuestionInput> responses;
+  final List<_i66.PermitRiskAssessmentQuestionInput> responses;
 
-  final _i59.PermitItem permit;
+  final _i60.PermitItem permit;
 
   @override
   String toString() {
@@ -1718,14 +1734,14 @@ class RiskAssessmentResultRouteArgs {
     if (identical(this, other)) return true;
     if (other is! RiskAssessmentResultRouteArgs) return false;
     return key == other.key &&
-        const _i62.ListEquality().equals(responses, other.responses) &&
+        const _i63.ListEquality().equals(responses, other.responses) &&
         permit == other.permit;
   }
 
   @override
   int get hashCode =>
       key.hashCode ^
-      const _i62.ListEquality().hash(responses) ^
+      const _i63.ListEquality().hash(responses) ^
       permit.hashCode;
 }
 
@@ -1861,7 +1877,7 @@ class StartInspectionDetailRoute
     extends _i53.PageRouteInfo<StartInspectionDetailRouteArgs> {
   StartInspectionDetailRoute({
     _i54.Key? key,
-    required _i66.InspectionItem inspection,
+    required _i67.InspectionItem inspection,
     List<_i53.PageRouteInfo>? children,
   }) : super(
          StartInspectionDetailRoute.name,
@@ -1888,7 +1904,7 @@ class StartInspectionDetailRouteArgs {
 
   final _i54.Key? key;
 
-  final _i66.InspectionItem inspection;
+  final _i67.InspectionItem inspection;
 
   @override
   String toString() {
@@ -1912,7 +1928,7 @@ class StartInspectionRoute
     extends _i53.PageRouteInfo<StartInspectionRouteArgs> {
   StartInspectionRoute({
     _i54.Key? key,
-    required _i66.InspectionItem inspection,
+    required _i67.InspectionItem inspection,
     List<_i53.PageRouteInfo>? children,
   }) : super(
          StartInspectionRoute.name,
@@ -1939,7 +1955,7 @@ class StartInspectionRouteArgs {
 
   final _i54.Key? key;
 
-  final _i66.InspectionItem inspection;
+  final _i67.InspectionItem inspection;
 
   @override
   String toString() {

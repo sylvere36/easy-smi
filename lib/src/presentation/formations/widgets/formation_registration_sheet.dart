@@ -1,20 +1,29 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../application/formation/detail/formation_detail_bloc.dart';
 import '../../../application/formation/formations_bloc.dart';
+import '../../../domain/formation/models/formation_course.dart';
 import '../../../infrastructure/_commons/network/user_session.dart';
+import '../../_commons/route/app_router.gr.dart';
 import '../../_commons_widgets/loading_widget.dart';
 import '../../_commons_widgets/my_toast.dart';
 
 class FormationRegistrationSheet extends StatefulWidget {
   final int formationId;
-  const FormationRegistrationSheet({super.key, required this.formationId});
+  final FormationCourse? firstCourse;
+  const FormationRegistrationSheet({
+    super.key,
+    required this.formationId,
+    this.firstCourse,
+  });
 
   static Future<void> show({
     required BuildContext context,
     required int formationId,
+    FormationCourse? firstCourse,
   }) async {
     final bloc = context.read<FormationDetailBloc>();
     await showModalBottomSheet(
@@ -23,7 +32,10 @@ class FormationRegistrationSheet extends StatefulWidget {
       useSafeArea: true,
       builder: (sheetCtx) => BlocProvider.value(
         value: bloc,
-        child: FormationRegistrationSheet(formationId: formationId),
+        child: FormationRegistrationSheet(
+          formationId: formationId,
+          firstCourse: firstCourse,
+        ),
       ),
     );
   }
@@ -125,13 +137,19 @@ class _FormationRegistrationSheetState
             (_) {
               successToast(
                 context: context,
-                msg: 'Inscription créée avec succès',
+                msg: 'Inscription réussie avec succès',
               );
               context.read<FormationsBloc>()
                 ..add(const FormationsEvent.fetchMyFormationsRequested())
                 ..add(const FormationsEvent.fetchRequested());
 
               Navigator.of(context).maybePop();
+              AutoRouter.of(context).popAndPush(
+                FormationDisplayRoute(
+                  formationId: widget.formationId,
+                  course: widget.firstCourse,
+                ),
+              );
             },
           ),
         );

@@ -12,6 +12,7 @@ import '../../../domain/formation/models/my_formation.dart';
 import '../../_commons/helpers/image_helper.dart';
 import '../../_commons/route/app_router.gr.dart';
 import '../../_commons_widgets/loading_widget.dart';
+import '../../_commons_widgets/my_toast.dart';
 import 'formation_registration_sheet.dart';
 
 class CourseBody extends StatefulWidget {
@@ -201,9 +202,19 @@ class _CourseBodyState extends State<CourseBody> {
                                     ),
                                   );
                                 } else {
+                                  if (state.courses.isEmpty) {
+                                    errorToast(
+                                      context: context,
+                                      msg: 'Aucun cours disponible',
+                                    );
+                                    return;
+                                  }
                                   FormationRegistrationSheet.show(
                                     context: context,
                                     formationId: widget.formationId,
+                                    firstCourse: state.courses.isNotEmpty
+                                        ? state.courses[0]
+                                        : null,
                                   );
                                 }
                               },

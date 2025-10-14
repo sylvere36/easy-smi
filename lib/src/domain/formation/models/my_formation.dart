@@ -90,6 +90,8 @@ class MyFormation {
     return 1;
   }
 
+  
+
   bool get isCompleted => totalLessonsDone >= totalLessons && totalLessons > 0;
 
   FormationCourse? getCurrentCourse(List<FormationCourse> courses) {
