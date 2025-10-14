@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 
@@ -381,8 +382,11 @@ class AuditRemoteDataSource implements IAuditRemoteDataSource {
       final body = jsonEncode({
         'description': description,
         if (commentaireId != null) 'commentaire_id': commentaireId,
-        'documents': documents,
+        'documents': documents.isNotEmpty ? documents : null,
       });
+
+      log('Sending observation...');
+      log('Request body: $body');
       final Response response = await httpClient.postRequest(
         request,
         body: body,
