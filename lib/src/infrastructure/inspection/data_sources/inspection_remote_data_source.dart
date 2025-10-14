@@ -265,7 +265,7 @@ class InspectionRemoteDataSource implements IInspectionRemoteDataSource {
 
       // All answers are ready; post to server
       log(
-        'Posting answers : ${updatedAnswers.map((e) => e.toJson()).toList()}',
+        'Posting answers : ${updatedAnswers.map((e) => e.toJsonPosted()).toList()}',
       );
 
       final String request = '/conformity/inspections/$inspectionId/answers';
@@ -306,9 +306,11 @@ class InspectionRemoteDataSource implements IInspectionRemoteDataSource {
         final data = raw['data'] as Map<String, dynamic>? ?? {};
         return InspectionDetail.fromJson(data);
       } else {
+        log('Error posting inspection remarks: ${response.statusCode}');
         throw ServerException(errorThrow(response));
       }
     } catch (e) {
+      log('Error posting inspection remarks: $e');
       throw ServerException(e.toString());
     }
   }

@@ -201,17 +201,17 @@ class _InspectionResultBodyState extends State<InspectionResultBody> {
 
   // ---------- Question Tile ----------
   Widget _questionTile({required int index, required QuestionResult q}) {
-    // Badge based on status: conform / non_conform / na
+    // Badge based on status: conforme / non_conform / na
     final st = (q.status ?? '').toLowerCase();
     late final Color badgeColor;
     late final String badgeText;
     if (st == 'na') {
       badgeColor = Colors.grey;
       badgeText = 'N/A';
-    } else if (st == 'conform') {
+    } else if (st == 'conforme') {
       badgeColor = _ok;
       badgeText = 'Conformité détectée';
-    } else if (st == 'non_conform') {
+    } else if (st == 'non_conforme') {
       badgeColor = _danger;
       badgeText = 'Non conformité détectée';
     } else {
@@ -268,7 +268,7 @@ class _InspectionResultBodyState extends State<InspectionResultBody> {
                         'OUI',
                         selected: q.answer == Answer.oui,
                         selectedColor: _ok,
-                        onTap: () => setState(() => q.answer = Answer.oui),
+                        onTap: () {},
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 6),
@@ -276,7 +276,7 @@ class _InspectionResultBodyState extends State<InspectionResultBody> {
                           'NON',
                           selected: q.answer == Answer.non,
                           selectedColor: _danger,
-                          onTap: () => setState(() => q.answer = Answer.non),
+                          onTap: () {},
                         ),
                       ),
                       Padding(
@@ -285,14 +285,16 @@ class _InspectionResultBodyState extends State<InspectionResultBody> {
                           'N/A',
                           selected: q.answer == Answer.na,
                           selectedColor: _warning,
-                          onTap: () => setState(() => q.answer = Answer.na),
+                          onTap: () {},
                         ),
                       ),
                     ],
                   ),
                 if (q.score != null)
                   GestureDetector(
-                    onTap: () => _editScore(q),
+                    onTap: () {
+                      AutoRouter.of(context).pop(int.tryParse(q.id));
+                    },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 12),
                       child: Row(
@@ -313,7 +315,7 @@ class _InspectionResultBodyState extends State<InspectionResultBody> {
 
                 if (q.text != null)
                   GestureDetector(
-                    onTap: () => _editResponseText(q),
+                    onTap: () => AutoRouter.of(context).pop(int.tryParse(q.id)),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 12),
                       child: Row(
@@ -346,7 +348,7 @@ class _InspectionResultBodyState extends State<InspectionResultBody> {
               children: [
                 Text('Votre commentaire', style: _labelSmall(context)),
                 GestureDetector(
-                  onTap: () => _editComment(q),
+                  onTap: () => AutoRouter.of(context).pop(int.tryParse(q.id)),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 6),
                     child: Assets.svgs.pen.svg(),
@@ -497,223 +499,6 @@ class _InspectionResultBodyState extends State<InspectionResultBody> {
     );
   }
 
-  // ---------- Editors ----------
-  Future<void> _editComment(QuestionResult q) async {
-    final controller = TextEditingController(text: q.comment);
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (c) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(c).viewInsets.bottom + 16,
-            left: 16,
-            right: 16,
-            top: 16,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Modifier le commentaire', style: _title(c)),
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: TextField(
-                  controller: controller,
-                  maxLines: 5,
-                  decoration: InputDecoration(
-                    hintText: 'Écrire…',
-                    filled: true,
-                    fillColor: const Color(0xFFF4F6F8),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _primary,
-                    minimumSize: const Size.fromHeight(44),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onPressed: () {
-                    setState(() => q.comment = controller.text.trim());
-                    Navigator.pop(c);
-                  },
-                  child: Text(
-                    'Enregistrer',
-                    style: GoogleFonts.inter(
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _editScore(QuestionResult q) async {
-    final controller = TextEditingController(text: (q.score ?? 0).toString());
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (c) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(c).viewInsets.bottom + 16,
-            left: 16,
-            right: 16,
-            top: 16,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Score de la question', style: _title(c)),
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: TextFormField(
-                  controller: controller,
-                  keyboardType: TextInputType.number,
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Ce champ est requis'
-                      : null,
-                  decoration: InputDecoration(
-                    hintText: 'Ex: 80',
-                    filled: true,
-                    fillColor: const Color(0xFFF4F6F8),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _primary,
-                    minimumSize: const Size.fromHeight(44),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onPressed: () {
-                    final v = int.tryParse(controller.text);
-                    setState(() => q.score = v);
-                    Navigator.pop(c);
-                  },
-                  child: Text(
-                    'Valider',
-                    style: GoogleFonts.inter(
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _editResponseText(QuestionResult q) async {
-    final controller = TextEditingController(text: q.text);
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (c) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(c).viewInsets.bottom + 16,
-            left: 16,
-            right: 16,
-            top: 16,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Modifier ma réponse', style: _title(c)),
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: TextFormField(
-                  controller: controller,
-                  minLines: 3,
-                  maxLines: 5,
-                  keyboardType: TextInputType.text,
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Ce champ est requis'
-                      : null,
-                  decoration: InputDecoration(
-                    hintText: 'Texte',
-                    filled: true,
-                    fillColor: const Color(0xFFF4F6F8),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _primary,
-                    minimumSize: const Size.fromHeight(44),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onPressed: controller.text.isEmpty
-                      ? null
-                      : () {
-                          final v = controller.text;
-                          setState(() => q.text = v);
-                          Navigator.pop(c);
-                        },
-                  child: Text(
-                    'Valider',
-                    style: GoogleFonts.inter(
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   // ---------- Conclusion Button ----------
   Widget _conclusionButton() {
     return ElevatedButton(
@@ -769,7 +554,7 @@ class QuestionResult {
   String? text;
   String comment;
   List<String> evidences; // image urls
-  // Optional backend/domain status: 'conform' | 'non_conform' | 'na'
+  // Optional backend/domain status: 'conforme' | 'non_conforme' | 'na'
   final String? status;
   bool get isConform => answer == Answer.oui && (score == null || score! >= 70);
 

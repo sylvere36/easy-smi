@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../gen/assets.gen.dart';
 import '../../_commons_widgets/loading_widget.dart';
 
 class StartInspectionDetailBody extends StatelessWidget {
@@ -101,14 +100,14 @@ class StartInspectionDetailBody extends StatelessWidget {
                                     ),
                                   ),
 
-                                  InkWell(
-                                    onTap: onEdit,
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(6),
-                                      child: Assets.svgs.pen.svg(),
-                                    ),
-                                  ),
+                                  // InkWell(
+                                  //   onTap: onEdit,
+                                  //   borderRadius: BorderRadius.circular(10),
+                                  //   child: Padding(
+                                  //     padding: const EdgeInsets.all(6),
+                                  //     child: Assets.svgs.pen.svg(),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
 

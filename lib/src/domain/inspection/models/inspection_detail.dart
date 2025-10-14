@@ -14,7 +14,7 @@ class InspectionUser {
   });
 
   factory InspectionUser.fromJson(Map<String, dynamic> json) => InspectionUser(
-    id: (json['id'] as num).toInt(),
+    id: (json['id'] as num?)?.toInt() ?? 0,
     name: (json['name'] as String?) ?? '',
     email: (json['email'] as String?) ?? '',
     organizationId: (json['organization_id'] as num?)?.toInt(),
@@ -34,7 +34,7 @@ class InspectionSite {
   });
 
   factory InspectionSite.fromJson(Map<String, dynamic> json) => InspectionSite(
-    id: (json['id'] as num).toInt(),
+    id: (json['id'] as num?)?.toInt() ?? 0,
     organizationId: (json['organization_id'] as num?)?.toInt() ?? 0,
     label: (json['label'] as String?) ?? '',
   );
@@ -61,7 +61,7 @@ class InspectionQuestionLite {
 
   factory InspectionQuestionLite.fromJson(Map<String, dynamic> json) =>
       InspectionQuestionLite(
-        id: (json['id'] as num).toInt(),
+        id: (json['id'] as num?)?.toInt() ?? 0,
         inspectionSectionId:
             (json['inspection_section_id'] as num?)?.toInt() ?? 0,
         order: (json['order'] as num?)?.toInt() ?? 0,
@@ -187,7 +187,7 @@ class InspectionSectionWithQuestions {
 
   factory InspectionSectionWithQuestions.fromJson(Map<String, dynamic> json) =>
       InspectionSectionWithQuestions(
-        id: (json['id'] as num).toInt(),
+        id: (json['id'] as num?)?.toInt() ?? 0,
         inspectionFormId: (json['inspection_form_id'] as num?)?.toInt() ?? 0,
         title: (json['title'] as String?) ?? '',
         questions: (json['questions'] as List<dynamic>? ?? [])
@@ -239,10 +239,16 @@ class InspectionFormFull {
   });
 
   factory InspectionFormFull.fromJson(Map<String, dynamic> json) {
+    int? toInt(dynamic e) {
+      if (e == null) return null;
+      if (e is num) return e.toInt();
+      return int.tryParse(e.toString());
+    }
+
     List<int> toIntList(dynamic v) =>
-        (v as List<dynamic>? ?? []).map((e) => (e as num).toInt()).toList();
+        (v as List<dynamic>? ?? []).map(toInt).whereType<int>().toList();
     return InspectionFormFull(
-      id: (json['id'] as num).toInt(),
+      id: (json['id'] as num?)?.toInt() ?? 0,
       organizationId: (json['organization_id'] as num?)?.toInt() ?? 0,
       label: (json['label'] as String?) ?? '',
       description: json['description'] as String?,
@@ -326,7 +332,7 @@ class InspectionAnswerItem {
 
   factory InspectionAnswerItem.fromJson(Map<String, dynamic> json) =>
       InspectionAnswerItem(
-        id: (json['id'] as num).toInt(),
+        id: (json['id'] as num?)?.toInt() ?? 0,
         inspectionId: (json['inspection_id'] as num?)?.toInt() ?? 0,
         inspectionQuestionId:
             (json['inspection_question_id'] as num?)?.toInt() ?? 0,
@@ -402,8 +408,14 @@ class InspectionDetail {
   });
 
   factory InspectionDetail.fromJson(Map<String, dynamic> json) {
+    int? toInt(dynamic e) {
+      if (e == null) return null;
+      if (e is num) return e.toInt();
+      return int.tryParse(e.toString());
+    }
+
     List<int> toIntList(dynamic v) =>
-        (v as List<dynamic>? ?? []).map((e) => (e as num).toInt()).toList();
+        (v as List<dynamic>? ?? []).map(toInt).whereType<int>().toList();
     final inspMap = <int, InspectionUser>{};
     final rawInspectors = json['inspectors'];
     if (rawInspectors is Map<String, dynamic>) {
@@ -415,7 +427,7 @@ class InspectionDetail {
       });
     }
     return InspectionDetail(
-      id: (json['id'] as num).toInt(),
+      id: (json['id'] as num?)?.toInt() ?? 0,
       inspectionFormId: (json['inspection_form_id'] as num?)?.toInt() ?? 0,
       organizationId: (json['organization_id'] as num?)?.toInt() ?? 0,
       inspectorIds: toIntList(json['inspector_ids']),

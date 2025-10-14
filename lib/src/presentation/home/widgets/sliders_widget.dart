@@ -182,13 +182,14 @@ class _SlidersWidgetState extends State<SlidersWidget> {
                   padding: const EdgeInsets.only(top: 6, right: 6),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: List.generate(
-                      items.length,
-                      (i) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        child: Container(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Spacer(),
+                      for (var i = 0; i < items.length; i++)
+                        Container(
                           width: 8,
                           height: 8,
+                          margin: const EdgeInsets.symmetric(horizontal: 2),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: i == _index
@@ -196,8 +197,46 @@ class _SlidersWidgetState extends State<SlidersWidget> {
                                 : Colors.black26,
                           ),
                         ),
+
+                      const Spacer(flex: 8),
+                      InkWell(
+                        onTap: () {
+                          if (items.isEmpty) return;
+                          final slider = items[_index];
+                          if (slider.type == 'formation' &&
+                              slider.formation != null) {
+                            context.router.push(
+                              FormationDetailRoute(
+                                formationId: slider.formation!.id,
+                              ),
+                            );
+                          } else if (slider.type == 'campaign' &&
+                              slider.campaign != null) {
+                            context.router.push(
+                              FormationsSensibilizationsRoute(initialPage: 3),
+                            );
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.65),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            'Voir détails',
+                            style: GoogleFonts.dmSans(
+                              color: Colors.white70,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
             ],

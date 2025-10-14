@@ -57,19 +57,20 @@ class InspectionResultSavingPage extends StatelessWidget {
                         );
                         return;
                       }
-                      BlocProvider.of<InspectionDetailBloc>(context).add(
-                        InspectionDetailEvent.postAnswers(
-                          id: inspectionId,
-                          body: answers,
-                        ),
-                      );
-                      // ..add(
-                      //   InspectionDetailEvent.addRemark(
-                      //     id: inspectionId,
-                      //     otherRemark: remarks,
-                      //     recommendation: recommendations,
-                      //   ),
-                      // );
+                      BlocProvider.of<InspectionDetailBloc>(context)
+                        ..add(
+                          InspectionDetailEvent.postAnswers(
+                            id: inspectionId,
+                            body: answers,
+                          ),
+                        )
+                        ..add(
+                          InspectionDetailEvent.addRemark(
+                            id: inspectionId,
+                            otherRemark: remarks,
+                            recommendation: recommendations,
+                          ),
+                        );
                     },
                   ),
           );
@@ -243,34 +244,6 @@ class _ResultNotesBodyState extends State<ResultNotesBody> {
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
               child: Row(
                 children: [
-                  // Draft button
-                  // Expanded(
-                  //   child: TextButton(
-                  //     style: TextButton.styleFrom(
-                  //       padding: const EdgeInsets.symmetric(vertical: 18),
-                  //       foregroundColor: _navy,
-                  //       textStyle: GoogleFonts.inter(
-                  //         fontSize: 17,
-                  //         fontWeight: FontWeight.w700,
-                  //       ),
-                  //     ),
-                  //     onPressed: () {
-                  //       FocusScope.of(context).unfocus();
-                  //       widget.onSaveDraft?.call();
-                  //       context.pop();
-                  //       context.pop();
-                  //       context.pop();
-                  //       context.pop();
-                  //       context.pop();
-                  //     },
-                  //     child: const Align(
-                  //       alignment: Alignment.centerLeft,
-                  //       child: Text('Enregistrer brouillon'),
-                  //     ),
-                  //   ),
-                  // ),
-
-                  // Send button
                   Expanded(
                     child: widget.isLoading == true
                         ? const Center(child: LoadingWidget())

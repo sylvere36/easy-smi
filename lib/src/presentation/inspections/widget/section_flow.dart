@@ -22,10 +22,14 @@ class SectionFlowScreen extends StatefulWidget {
     required this.title,
     required this.inspectionId,
     required this.inspectionFormId,
+    this.initialAnswers,
+    this.questionId,
   });
   final String title;
   final int inspectionId;
   final int inspectionFormId;
+  final List<InspectionAnswerPostItem>? initialAnswers;
+  final int? questionId;
 
   @override
   State<SectionFlowScreen> createState() => _SectionFlowScreenState();
@@ -35,6 +39,7 @@ class _SectionFlowScreenState extends State<SectionFlowScreen> {
   List<SectionData> _sections = [];
   int _sectionIndex = 0;
   int _qIndex = -1; // -1 = écran “carte de section”
+  bool _bootstrapped = false; // apply initial answers only once
   final Map<int, List<InspectionAnswerPostItem>> _answersBySection = {};
   final Map<int, String> _sectionTitles = {};
   final Map<int, String> _questionTitles = {};
@@ -52,7 +57,9 @@ class _SectionFlowScreenState extends State<SectionFlowScreen> {
 
   SectionData get current => _sections[_sectionIndex];
 
-  void _toNext() {
+  Future<void> _toNext() async {
+    bool goToResults = false;
+
     setState(() {
       if (_qIndex < 0) {
         _qIndex = 0;
@@ -77,18 +84,31 @@ class _SectionFlowScreenState extends State<SectionFlowScreen> {
           _qIndex = -1;
         } else if (_sectionIndex == _sections.length - 1) {
           _logAnswers();
-          context.router.push(
-            InspectionResultRoute(
-              answersBySection: _answersBySection,
-              sectionTitles: _sectionTitles,
-              questionTitles: _questionTitles,
-              inspectionId: widget.inspectionId,
-              inspectionFormId: widget.inspectionFormId,
-            ),
-          );
+          goToResults = true;
         }
       }
     });
+
+    if (goToResults) {
+      final int? questionId = await context.router.push<int?>(
+        InspectionResultRoute(
+          answersBySection: _answersBySection,
+          sectionTitles: _sectionTitles,
+          questionTitles: _questionTitles,
+          inspectionId: widget.inspectionId,
+          inspectionFormId: widget.inspectionFormId,
+        ),
+      );
+
+      if (questionId != null) {
+        setState(() {
+          _jumpToQuestionId(
+            context.read<InspectionFormBloc>().state.sections,
+            questionId,
+          );
+        });
+      }
+    }
   }
 
   void _toPrev() {
@@ -147,6 +167,15 @@ class _SectionFlowScreenState extends State<SectionFlowScreen> {
               }
             }
           }
+          // Bootstrap initial answers and navigate to provided questionId once
+          if (!_bootstrapped && _sections.isNotEmpty) {
+            _applyInitialAnswersAndNavigate(
+              sections: state.sections,
+              initial: widget.initialAnswers,
+              gotoQuestionId: widget.questionId,
+            );
+            _bootstrapped = true;
+          }
           if (_sections.isEmpty) {
             return const Center(child: Text('Aucune section disponible'));
           }
@@ -190,6 +219,95 @@ class _SectionFlowScreenState extends State<SectionFlowScreen> {
     for (final e in _answersBySection.entries) {
       // ignore: avoid_print
       print('Section ${e.key}: ${e.value.length} réponses');
+    }
+  }
+
+  void _applyInitialAnswersAndNavigate({
+    required List<InspectionSectionWithQuestions> sections,
+    required List<InspectionAnswerPostItem>? initial,
+    required int? gotoQuestionId,
+  }) {
+    if (initial == null || initial.isEmpty) {
+      // only navigate if a question id is given
+      if (gotoQuestionId != null) {
+        _jumpToQuestionId(sections, gotoQuestionId);
+      }
+      return;
+    }
+
+    // Index sectionId -> SectionData
+    final secById = {for (final s in _sections) s.id: s};
+
+    for (final ans in initial) {
+      final qid = ans.inspectionQuestionId;
+      // find section containing this question
+      InspectionSectionWithQuestions? sec;
+      for (final s in sections) {
+        if (s.questions.any((q) => q.id == qid)) {
+          sec = s;
+          break;
+        }
+      }
+      if (sec == null) continue;
+      final secId = sec.id;
+      final list = _answersBySection[secId] ?? <InspectionAnswerPostItem>[];
+      // upsert answer
+      final idx = list.indexWhere((e) => e.inspectionQuestionId == qid);
+      if (idx >= 0) {
+        list[idx] = ans;
+      } else {
+        list.add(ans);
+      }
+      _answersBySection[secId] = list;
+
+      // Also hydrate UI state maps so fields reflect existing answers
+      final sectionData = secById[secId];
+      final Question? q = sectionData?.questions.firstWhere(
+        (x) => x.id == qid,
+        orElse: () => Question(
+          id: qid,
+          title: '',
+          type: QuestionType.text,
+          explanation: '',
+        ),
+      );
+      if (q != null) {
+        if (q.type == QuestionType.boolean) {
+          if (ans.answer == 'na') {
+            _boolAnswers[qid] = null;
+            _naTouched[qid] = true;
+          } else if (ans.answer == 'yes' || ans.answer == 'no') {
+            _boolAnswers[qid] = ans.answer == 'yes';
+          }
+        } else {
+          _textCtrls[qid] = TextEditingController(text: ans.answer);
+        }
+        if ((ans.comment ?? '').isNotEmpty) {
+          _commentCtrls[qid] = TextEditingController(text: ans.comment);
+        }
+        if (ans.imageLinks.isNotEmpty) {
+          _imagesByQuestion[qid] = List<String>.from(ans.imageLinks);
+        }
+      }
+    }
+
+    if (gotoQuestionId != null) {
+      _jumpToQuestionId(sections, gotoQuestionId);
+    }
+  }
+
+  void _jumpToQuestionId(
+    List<InspectionSectionWithQuestions> sections,
+    int questionId,
+  ) {
+    for (var si = 0; si < sections.length; si++) {
+      final s = sections[si];
+      final qi = s.questions.indexWhere((q) => q.id == questionId);
+      if (qi >= 0) {
+        _sectionIndex = si;
+        _qIndex = qi; // go directly to the question view
+        return;
+      }
     }
   }
 
@@ -254,7 +372,7 @@ class _SectionFlowScreenState extends State<SectionFlowScreen> {
     final isOk = q.meta?.isConforme(ans) ?? false;
     final status = q.meta?.isBooleanWithNan == true && ans == 'na'
         ? 'na'
-        : (isOk ? 'conform' : 'non_conform');
+        : (isOk ? 'conforme' : 'non_conforme');
     final item = InspectionAnswerPostItem(
       inspectionId: widget.inspectionId,
       inspectionQuestionId: q.id ?? 0,
@@ -1038,21 +1156,27 @@ class _CommentField extends StatelessWidget {
       maxLines: 2,
       onChanged: onChanged,
       decoration: InputDecoration(
-        hintText: 'Commentaire',
+        label: Text(
+          'Votre Commentaire',
+          style: TextStyle(
+            color: Colors.grey.shade700,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         filled: true,
         fillColor: const Color(0xFFF6F8FA),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 12,
           vertical: 10,
         ),
-        suffixIcon: Padding(
-          padding: const EdgeInsets.only(right: 8, left: 8),
-          child: Icon(
-            Icons.send_rounded,
-            color: Colors.grey.shade700,
-            size: 18,
-          ),
-        ),
+        // suffixIcon: Padding(
+        //   padding: const EdgeInsets.only(right: 8, left: 8),
+        //   child: Icon(
+        //     Icons.send_rounded,
+        //     color: Colors.grey.shade700,
+        //     size: 18,
+        //   ),
+        // ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: Color(0xFFE2E7EB)),

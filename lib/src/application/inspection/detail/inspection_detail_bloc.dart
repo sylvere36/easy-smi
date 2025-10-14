@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -60,16 +62,24 @@ class InspectionDetailBloc
     });
 
     on<_AddRemark>((event, emit) async {
+      log('Adding remark...');
       emit(state.copyWith(isLoading: true, resultOption: none()));
+      log(
+        'Event data - id: ${event.id}, otherRemark: ${event.otherRemark}, recommendation: ${event.recommendation}',
+      );
       final res = await repository.postInspectionRemarks(
         inspectionId: event.id,
         otherRemark: event.otherRemark,
         recommendation: event.recommendation,
       );
+      log('Response remark: $res');
       res.fold(
-        (l) =>
-            emit(state.copyWith(isLoading: false, resultOption: some(left(l)))),
+        (l) {
+          log('Failed to add remark: $l');
+          emit(state.copyWith(isLoading: false, resultOption: some(left(l))));
+        },
         (detail) {
+          log('Remark added successfully: $detail');
           emit(
             state.copyWith(
               isLoading: false,
