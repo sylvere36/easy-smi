@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../application/audit/detail/audit_detail_bloc.dart';
 import '../../../domain/_commons/global_failure.dart';
 import '../../_commons/theming/app_color.dart';
+import '../../_commons_widgets/my_toast.dart';
 
 Future<void> showAddConstatSheet(
   BuildContext context, {
@@ -165,12 +168,12 @@ Future<void> showAddConstatSheet(
                         onPressed: isLoading
                             ? null
                             : () {
+                                log('Adding observation...');
                                 final description = desc.text.trim();
                                 if (description.isEmpty) {
-                                  ScaffoldMessenger.of(ctx).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Description requise'),
-                                    ),
+                                  errorToast(
+                                    context: context,
+                                    msg: 'Description requise',
                                   );
                                   return;
                                 }
