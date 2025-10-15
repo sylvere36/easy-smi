@@ -382,7 +382,7 @@ class AuditRemoteDataSource implements IAuditRemoteDataSource {
       final body = jsonEncode({
         'description': description,
         if (commentaireId != null) 'commentaire_id': commentaireId,
-        // 'documents': documents.isNotEmpty ? documents : null,
+        if (documents.isNotEmpty) 'documents': documents,
       });
 
       log('Sending observation...');

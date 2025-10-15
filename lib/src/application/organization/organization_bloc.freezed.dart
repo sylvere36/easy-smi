@@ -55,12 +55,13 @@ extension OrganizationEventPatterns on OrganizationEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _JoinRequested value)?  joinRequested,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _JoinRequested value)?  joinRequested,TResult Function( _FetchUsers value)?  fetchUsers,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that);case _JoinRequested() when joinRequested != null:
-return joinRequested(_that);case _:
+return joinRequested(_that);case _FetchUsers() when fetchUsers != null:
+return fetchUsers(_that);case _:
   return orElse();
 
 }
@@ -78,12 +79,13 @@ return joinRequested(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _JoinRequested value)  joinRequested,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _JoinRequested value)  joinRequested,required TResult Function( _FetchUsers value)  fetchUsers,}){
 final _that = this;
 switch (_that) {
 case _Fetch():
 return fetch(_that);case _JoinRequested():
-return joinRequested(_that);case _:
+return joinRequested(_that);case _FetchUsers():
+return fetchUsers(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -100,12 +102,13 @@ return joinRequested(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _JoinRequested value)?  joinRequested,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _JoinRequested value)?  joinRequested,TResult? Function( _FetchUsers value)?  fetchUsers,}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that);case _JoinRequested() when joinRequested != null:
-return joinRequested(_that);case _:
+return joinRequested(_that);case _FetchUsers() when fetchUsers != null:
+return fetchUsers(_that);case _:
   return null;
 
 }
@@ -122,11 +125,12 @@ return joinRequested(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String email)?  fetch,TResult Function()?  joinRequested,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String email)?  fetch,TResult Function()?  joinRequested,TResult Function()?  fetchUsers,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that.email);case _JoinRequested() when joinRequested != null:
-return joinRequested();case _:
+return joinRequested();case _FetchUsers() when fetchUsers != null:
+return fetchUsers();case _:
   return orElse();
 
 }
@@ -144,11 +148,12 @@ return joinRequested();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String email)  fetch,required TResult Function()  joinRequested,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String email)  fetch,required TResult Function()  joinRequested,required TResult Function()  fetchUsers,}) {final _that = this;
 switch (_that) {
 case _Fetch():
 return fetch(_that.email);case _JoinRequested():
-return joinRequested();case _:
+return joinRequested();case _FetchUsers():
+return fetchUsers();case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -165,11 +170,12 @@ return joinRequested();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String email)?  fetch,TResult? Function()?  joinRequested,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String email)?  fetch,TResult? Function()?  joinRequested,TResult? Function()?  fetchUsers,}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch(_that.email);case _JoinRequested() when joinRequested != null:
-return joinRequested();case _:
+return joinRequested();case _FetchUsers() when fetchUsers != null:
+return fetchUsers();case _:
   return null;
 
 }
@@ -276,9 +282,42 @@ String toString() {
 
 
 /// @nodoc
+
+
+class _FetchUsers implements OrganizationEvent {
+  const _FetchUsers();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FetchUsers);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'OrganizationEvent.fetchUsers()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
 mixin _$OrganizationState {
 
- bool get showErrorMessages; bool get isSubmitting; Option<Either<GlobalFailure, OrganizationSettingsResult>> get failureOrSuccessOption;
+ bool get showErrorMessages; bool get isSubmitting; Option<Either<GlobalFailure, OrganizationSettingsResult>> get failureOrSuccessOption;// Users
+ bool get isLoadingUsers; List<OrganizationUser> get users; Option<Either<GlobalFailure, List<OrganizationUser>>> get usersResultOption;
 /// Create a copy of OrganizationState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -289,16 +328,16 @@ $OrganizationStateCopyWith<OrganizationState> get copyWith => _$OrganizationStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OrganizationState&&(identical(other.showErrorMessages, showErrorMessages) || other.showErrorMessages == showErrorMessages)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting)&&(identical(other.failureOrSuccessOption, failureOrSuccessOption) || other.failureOrSuccessOption == failureOrSuccessOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OrganizationState&&(identical(other.showErrorMessages, showErrorMessages) || other.showErrorMessages == showErrorMessages)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting)&&(identical(other.failureOrSuccessOption, failureOrSuccessOption) || other.failureOrSuccessOption == failureOrSuccessOption)&&(identical(other.isLoadingUsers, isLoadingUsers) || other.isLoadingUsers == isLoadingUsers)&&const DeepCollectionEquality().equals(other.users, users)&&(identical(other.usersResultOption, usersResultOption) || other.usersResultOption == usersResultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,showErrorMessages,isSubmitting,failureOrSuccessOption);
+int get hashCode => Object.hash(runtimeType,showErrorMessages,isSubmitting,failureOrSuccessOption,isLoadingUsers,const DeepCollectionEquality().hash(users),usersResultOption);
 
 @override
 String toString() {
-  return 'OrganizationState(showErrorMessages: $showErrorMessages, isSubmitting: $isSubmitting, failureOrSuccessOption: $failureOrSuccessOption)';
+  return 'OrganizationState(showErrorMessages: $showErrorMessages, isSubmitting: $isSubmitting, failureOrSuccessOption: $failureOrSuccessOption, isLoadingUsers: $isLoadingUsers, users: $users, usersResultOption: $usersResultOption)';
 }
 
 
@@ -309,7 +348,7 @@ abstract mixin class $OrganizationStateCopyWith<$Res>  {
   factory $OrganizationStateCopyWith(OrganizationState value, $Res Function(OrganizationState) _then) = _$OrganizationStateCopyWithImpl;
 @useResult
 $Res call({
- bool showErrorMessages, bool isSubmitting, Option<Either<GlobalFailure, OrganizationSettingsResult>> failureOrSuccessOption
+ bool showErrorMessages, bool isSubmitting, Option<Either<GlobalFailure, OrganizationSettingsResult>> failureOrSuccessOption, bool isLoadingUsers, List<OrganizationUser> users, Option<Either<GlobalFailure, List<OrganizationUser>>> usersResultOption
 });
 
 
@@ -326,12 +365,15 @@ class _$OrganizationStateCopyWithImpl<$Res>
 
 /// Create a copy of OrganizationState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? showErrorMessages = null,Object? isSubmitting = null,Object? failureOrSuccessOption = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? showErrorMessages = null,Object? isSubmitting = null,Object? failureOrSuccessOption = null,Object? isLoadingUsers = null,Object? users = null,Object? usersResultOption = null,}) {
   return _then(_self.copyWith(
 showErrorMessages: null == showErrorMessages ? _self.showErrorMessages : showErrorMessages // ignore: cast_nullable_to_non_nullable
 as bool,isSubmitting: null == isSubmitting ? _self.isSubmitting : isSubmitting // ignore: cast_nullable_to_non_nullable
 as bool,failureOrSuccessOption: null == failureOrSuccessOption ? _self.failureOrSuccessOption : failureOrSuccessOption // ignore: cast_nullable_to_non_nullable
-as Option<Either<GlobalFailure, OrganizationSettingsResult>>,
+as Option<Either<GlobalFailure, OrganizationSettingsResult>>,isLoadingUsers: null == isLoadingUsers ? _self.isLoadingUsers : isLoadingUsers // ignore: cast_nullable_to_non_nullable
+as bool,users: null == users ? _self.users : users // ignore: cast_nullable_to_non_nullable
+as List<OrganizationUser>,usersResultOption: null == usersResultOption ? _self.usersResultOption : usersResultOption // ignore: cast_nullable_to_non_nullable
+as Option<Either<GlobalFailure, List<OrganizationUser>>>,
   ));
 }
 
@@ -416,10 +458,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool showErrorMessages,  bool isSubmitting,  Option<Either<GlobalFailure, OrganizationSettingsResult>> failureOrSuccessOption)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool showErrorMessages,  bool isSubmitting,  Option<Either<GlobalFailure, OrganizationSettingsResult>> failureOrSuccessOption,  bool isLoadingUsers,  List<OrganizationUser> users,  Option<Either<GlobalFailure, List<OrganizationUser>>> usersResultOption)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OrganizationState() when $default != null:
-return $default(_that.showErrorMessages,_that.isSubmitting,_that.failureOrSuccessOption);case _:
+return $default(_that.showErrorMessages,_that.isSubmitting,_that.failureOrSuccessOption,_that.isLoadingUsers,_that.users,_that.usersResultOption);case _:
   return orElse();
 
 }
@@ -437,10 +479,10 @@ return $default(_that.showErrorMessages,_that.isSubmitting,_that.failureOrSucces
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool showErrorMessages,  bool isSubmitting,  Option<Either<GlobalFailure, OrganizationSettingsResult>> failureOrSuccessOption)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool showErrorMessages,  bool isSubmitting,  Option<Either<GlobalFailure, OrganizationSettingsResult>> failureOrSuccessOption,  bool isLoadingUsers,  List<OrganizationUser> users,  Option<Either<GlobalFailure, List<OrganizationUser>>> usersResultOption)  $default,) {final _that = this;
 switch (_that) {
 case _OrganizationState():
-return $default(_that.showErrorMessages,_that.isSubmitting,_that.failureOrSuccessOption);case _:
+return $default(_that.showErrorMessages,_that.isSubmitting,_that.failureOrSuccessOption,_that.isLoadingUsers,_that.users,_that.usersResultOption);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -457,10 +499,10 @@ return $default(_that.showErrorMessages,_that.isSubmitting,_that.failureOrSucces
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool showErrorMessages,  bool isSubmitting,  Option<Either<GlobalFailure, OrganizationSettingsResult>> failureOrSuccessOption)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool showErrorMessages,  bool isSubmitting,  Option<Either<GlobalFailure, OrganizationSettingsResult>> failureOrSuccessOption,  bool isLoadingUsers,  List<OrganizationUser> users,  Option<Either<GlobalFailure, List<OrganizationUser>>> usersResultOption)?  $default,) {final _that = this;
 switch (_that) {
 case _OrganizationState() when $default != null:
-return $default(_that.showErrorMessages,_that.isSubmitting,_that.failureOrSuccessOption);case _:
+return $default(_that.showErrorMessages,_that.isSubmitting,_that.failureOrSuccessOption,_that.isLoadingUsers,_that.users,_that.usersResultOption);case _:
   return null;
 
 }
@@ -472,12 +514,22 @@ return $default(_that.showErrorMessages,_that.isSubmitting,_that.failureOrSucces
 
 
 class _OrganizationState implements OrganizationState {
-  const _OrganizationState({required this.showErrorMessages, required this.isSubmitting, required this.failureOrSuccessOption});
+  const _OrganizationState({required this.showErrorMessages, required this.isSubmitting, required this.failureOrSuccessOption, required this.isLoadingUsers, required final  List<OrganizationUser> users, required this.usersResultOption}): _users = users;
   
 
 @override final  bool showErrorMessages;
 @override final  bool isSubmitting;
 @override final  Option<Either<GlobalFailure, OrganizationSettingsResult>> failureOrSuccessOption;
+// Users
+@override final  bool isLoadingUsers;
+ final  List<OrganizationUser> _users;
+@override List<OrganizationUser> get users {
+  if (_users is EqualUnmodifiableListView) return _users;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_users);
+}
+
+@override final  Option<Either<GlobalFailure, List<OrganizationUser>>> usersResultOption;
 
 /// Create a copy of OrganizationState
 /// with the given fields replaced by the non-null parameter values.
@@ -489,16 +541,16 @@ _$OrganizationStateCopyWith<_OrganizationState> get copyWith => __$OrganizationS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OrganizationState&&(identical(other.showErrorMessages, showErrorMessages) || other.showErrorMessages == showErrorMessages)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting)&&(identical(other.failureOrSuccessOption, failureOrSuccessOption) || other.failureOrSuccessOption == failureOrSuccessOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OrganizationState&&(identical(other.showErrorMessages, showErrorMessages) || other.showErrorMessages == showErrorMessages)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting)&&(identical(other.failureOrSuccessOption, failureOrSuccessOption) || other.failureOrSuccessOption == failureOrSuccessOption)&&(identical(other.isLoadingUsers, isLoadingUsers) || other.isLoadingUsers == isLoadingUsers)&&const DeepCollectionEquality().equals(other._users, _users)&&(identical(other.usersResultOption, usersResultOption) || other.usersResultOption == usersResultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,showErrorMessages,isSubmitting,failureOrSuccessOption);
+int get hashCode => Object.hash(runtimeType,showErrorMessages,isSubmitting,failureOrSuccessOption,isLoadingUsers,const DeepCollectionEquality().hash(_users),usersResultOption);
 
 @override
 String toString() {
-  return 'OrganizationState(showErrorMessages: $showErrorMessages, isSubmitting: $isSubmitting, failureOrSuccessOption: $failureOrSuccessOption)';
+  return 'OrganizationState(showErrorMessages: $showErrorMessages, isSubmitting: $isSubmitting, failureOrSuccessOption: $failureOrSuccessOption, isLoadingUsers: $isLoadingUsers, users: $users, usersResultOption: $usersResultOption)';
 }
 
 
@@ -509,7 +561,7 @@ abstract mixin class _$OrganizationStateCopyWith<$Res> implements $OrganizationS
   factory _$OrganizationStateCopyWith(_OrganizationState value, $Res Function(_OrganizationState) _then) = __$OrganizationStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool showErrorMessages, bool isSubmitting, Option<Either<GlobalFailure, OrganizationSettingsResult>> failureOrSuccessOption
+ bool showErrorMessages, bool isSubmitting, Option<Either<GlobalFailure, OrganizationSettingsResult>> failureOrSuccessOption, bool isLoadingUsers, List<OrganizationUser> users, Option<Either<GlobalFailure, List<OrganizationUser>>> usersResultOption
 });
 
 
@@ -526,12 +578,15 @@ class __$OrganizationStateCopyWithImpl<$Res>
 
 /// Create a copy of OrganizationState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? showErrorMessages = null,Object? isSubmitting = null,Object? failureOrSuccessOption = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? showErrorMessages = null,Object? isSubmitting = null,Object? failureOrSuccessOption = null,Object? isLoadingUsers = null,Object? users = null,Object? usersResultOption = null,}) {
   return _then(_OrganizationState(
 showErrorMessages: null == showErrorMessages ? _self.showErrorMessages : showErrorMessages // ignore: cast_nullable_to_non_nullable
 as bool,isSubmitting: null == isSubmitting ? _self.isSubmitting : isSubmitting // ignore: cast_nullable_to_non_nullable
 as bool,failureOrSuccessOption: null == failureOrSuccessOption ? _self.failureOrSuccessOption : failureOrSuccessOption // ignore: cast_nullable_to_non_nullable
-as Option<Either<GlobalFailure, OrganizationSettingsResult>>,
+as Option<Either<GlobalFailure, OrganizationSettingsResult>>,isLoadingUsers: null == isLoadingUsers ? _self.isLoadingUsers : isLoadingUsers // ignore: cast_nullable_to_non_nullable
+as bool,users: null == users ? _self._users : users // ignore: cast_nullable_to_non_nullable
+as List<OrganizationUser>,usersResultOption: null == usersResultOption ? _self.usersResultOption : usersResultOption // ignore: cast_nullable_to_non_nullable
+as Option<Either<GlobalFailure, List<OrganizationUser>>>,
   ));
 }
 

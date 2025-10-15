@@ -5,6 +5,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../domain/_commons/global_failure.dart';
 import '../../domain/_commons/pagination.dart';
 import '../../domain/inspection/i_inspection_repository.dart';
+import '../../domain/inspection/models/inspection_create_body.dart';
+import '../../domain/inspection/models/inspection_detail.dart';
 import '../../domain/inspection/models/inspection_form_available_item.dart';
 import '../../domain/inspection/models/inspection_form_item.dart';
 import '../../domain/inspection/models/inspection_item.dart';
@@ -127,6 +129,33 @@ class InspectionsBloc extends Bloc<InspectionsEvent, InspectionsState> {
             formsAvailableResultOption: some(right(forms)),
           ),
         ),
+      );
+    });
+
+    on<_CreateRequested>((event, emit) async {
+      emit(state.copyWith(isCreating: true, createResultOption: none()));
+      final body = InspectionCreateBody(
+        inspectionFormId: event.inspectionFormId,
+        siteIds: event.siteIds,
+        mission: event.mission,
+        inspectorIds: event.inspectorIds,
+        description: event.description,
+      );
+      final res = await repository.createInspection(body: body);
+      res.fold(
+        (l) => emit(
+          state.copyWith(isCreating: false, createResultOption: some(left(l))),
+        ),
+        (detail) {
+          emit(
+            state.copyWith(
+              isCreating: false,
+              createResultOption: some(right(detail)),
+            ),
+          );
+          add(const InspectionsEvent.fetch());
+          add(const InspectionsEvent.fetchInspectionFormsAvailable());
+        },
       );
     });
   }

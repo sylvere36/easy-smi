@@ -2,11 +2,11 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 
-import '../app_http_service.dart';
-import '../user_session.dart';
 import '../../../../../injection_container.dart';
 import '../../../../../src/presentation/_commons/route/app_router.dart';
 import '../../../../../src/presentation/_commons/route/app_router.gr.dart';
+import '../app_http_service.dart';
+import '../user_session.dart';
 
 enum ContentType { json, formData, wwwFormUrlEncode }
 

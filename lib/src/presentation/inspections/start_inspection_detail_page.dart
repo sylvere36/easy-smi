@@ -11,6 +11,7 @@ import '../../domain/inspection/models/inspection_form_detail.dart';
 import '../_commons/route/app_router.gr.dart';
 import '../_commons/theming/app_color.dart';
 import 'widget/start_inspection_detail_body.dart';
+import 'widgets/inspection_create_sheet.dart';
 
 @RoutePage()
 class StartInspectionDetailPage extends StatefulWidget {
@@ -31,6 +32,17 @@ class StartInspectionDetailPage extends StatefulWidget {
 class _StartInspectionDetailPageState extends State<StartInspectionDetailPage> {
   InspectionDetail? inspectionDetail;
   InspectionFormDetail? inspectionFormDetail;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void launchSheet() {
+    if (widget.inspectionId == 0 && inspectionFormDetail != null) {
+      showInspectionCreateSheet(context, formDetail: inspectionFormDetail!);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +93,6 @@ class _StartInspectionDetailPageState extends State<StartInspectionDetailPage> {
         ],
         child: widget.inspectionId == 0
             ? Scaffold(
-                backgroundColor: AppColors.primary,
                 appBar: AppBar(
                   backgroundColor: AppColors.primary,
                   elevation: 0,
@@ -104,10 +115,45 @@ class _StartInspectionDetailPageState extends State<StartInspectionDetailPage> {
                     ),
                   ),
                 ),
-                body: const Center(
-                  child: Text(
-                    'Inspection à demarrer',
-                    style: TextStyle(color: Colors.white),
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Inspection à demarrer'),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 10,
+                        ),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            onPressed: inspectionFormDetail == null
+                                ? null
+                                : () {
+                                    launchSheet();
+                                  },
+                            child: Text(
+                              inspectionFormDetail == null
+                                  ? 'Veuillez patienter…'
+                                  : 'Démarrer l\'inspection',
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               )

@@ -107,6 +107,7 @@ class _HomePageState extends State<HomePage>
                       return InkWell(
                         onTap: () {
                           Navigator.pop(context);
+
                           context.router.push(
                             StartInspectionDetailRoute(
                               inspectionFormId: it.id,

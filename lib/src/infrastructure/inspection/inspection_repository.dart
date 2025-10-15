@@ -4,11 +4,13 @@ import '../../domain/_commons/global_failure.dart';
 import '../../domain/_commons/pagination.dart';
 import '../../domain/inspection/i_inspection_repository.dart';
 import '../../domain/inspection/models/inspection_answers_post.dart';
+import '../../domain/inspection/models/inspection_create_body.dart';
 import '../../domain/inspection/models/inspection_detail.dart';
-import '../../domain/inspection/models/inspection_form_detail.dart';
 import '../../domain/inspection/models/inspection_form_available_item.dart';
+import '../../domain/inspection/models/inspection_form_detail.dart';
 import '../../domain/inspection/models/inspection_form_item.dart';
 import '../../domain/inspection/models/inspection_item.dart';
+import '../../domain/inspection/models/zone.dart';
 import '../_commons/exceptions.dart';
 import '../_commons/network/network_info.dart';
 import 'data_sources/inspection_remote_data_source.dart';
@@ -203,6 +205,46 @@ class InspectionRepository implements IInspectionRepository {
           recommendation: recommendation,
         );
         return right(updated);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
+
+  @override
+  Future<Either<GlobalFailure, InspectionDetail>> createInspection({
+    required InspectionCreateBody body,
+  }) async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        final item = await remoteDataSource.createInspection(
+          body: body.toJson(),
+        );
+        return right(item);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
+
+  @override
+  Future<Either<GlobalFailure, List<ZoneItem>>> getZones() async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        final items = await remoteDataSource.getZones();
+        return right(items);
       } on UnauthorizedException catch (e) {
         return left(GlobalFailure.unauthorized(e.errorText));
       } on ServerException catch (e) {

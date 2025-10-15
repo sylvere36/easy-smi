@@ -8,8 +8,16 @@ abstract class InspectionDetailState with _$InspectionDetailState {
     required Option<Either<GlobalFailure, InspectionDetail>> resultOption,
     bool? answerIsPosted,
     bool? remarkIsPosted,
+    // zones
+    required bool isLoadingZones,
+    required List<ZoneItem> zones,
   }) = _InspectionDetailState;
 
-  factory InspectionDetailState.initial() =>
-      InspectionDetailState(isLoading: false, item: null, resultOption: none());
+  factory InspectionDetailState.initial() => InspectionDetailState(
+    isLoading: false,
+    item: null,
+    resultOption: none(),
+    isLoadingZones: false,
+    zones: const [],
+  );
 }

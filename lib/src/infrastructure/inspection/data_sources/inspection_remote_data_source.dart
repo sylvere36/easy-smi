@@ -6,10 +6,11 @@ import 'package:dio/dio.dart';
 import '../../../domain/_commons/pagination.dart';
 import '../../../domain/inspection/models/inspection_answers_post.dart';
 import '../../../domain/inspection/models/inspection_detail.dart';
-import '../../../domain/inspection/models/inspection_form_detail.dart';
 import '../../../domain/inspection/models/inspection_form_available_item.dart';
+import '../../../domain/inspection/models/inspection_form_detail.dart';
 import '../../../domain/inspection/models/inspection_form_item.dart';
 import '../../../domain/inspection/models/inspection_item.dart';
+import '../../../domain/inspection/models/zone.dart';
 import '../../_commons/exceptions.dart';
 import '../../_commons/files/file_manager.dart';
 import '../../_commons/network/app_requests.dart';
@@ -47,6 +48,12 @@ abstract class IInspectionRemoteDataSource {
     required String otherRemark,
     required String recommendation,
   });
+
+  Future<InspectionDetail> createInspection({
+    required Map<String, dynamic> body,
+  });
+
+  Future<List<ZoneItem>> getZones();
 }
 
 class InspectionRemoteDataSource implements IInspectionRemoteDataSource {
@@ -338,6 +345,63 @@ class InspectionRemoteDataSource implements IInspectionRemoteDataSource {
       }
     } catch (e) {
       log('Error posting inspection remarks: $e');
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<InspectionDetail> createInspection({
+    required Map<String, dynamic> body,
+  }) async {
+    try {
+      const String request = '/conformity/inspections';
+      final Response response = await httpClient.postRequest(
+        request,
+        body: body,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final raw = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final data = raw['data'] as Map<String, dynamic>? ?? {};
+        // Some endpoints might only return partial fields; ensure we have id
+        final id = (data['id'] as num?)?.toInt();
+        if (id != null) {
+          // Optionally fetch full details
+          try {
+            return await getInspection(id: id);
+          } catch (_) {
+            // Fallback to minimal parsing if GET fails
+            return InspectionDetail.fromJson(data);
+          }
+        }
+        return InspectionDetail.fromJson(data);
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<ZoneItem>> getZones() async {
+    try {
+      const String request = '/conformity/zones';
+      final Response response = await httpClient.getRequest(request);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final raw = response.data is String
+            ? json.decode(response.data as String) as Map<String, dynamic>
+            : (response.data as Map<String, dynamic>);
+        final list = (raw['data'] as List<dynamic>? ?? [])
+            .whereType<Map<String, dynamic>>()
+            .map(ZoneItem.fromJson)
+            .toList();
+        return list;
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
       throw ServerException(e.toString());
     }
   }

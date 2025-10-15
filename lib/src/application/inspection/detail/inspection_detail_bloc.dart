@@ -8,6 +8,7 @@ import '../../../domain/_commons/global_failure.dart';
 import '../../../domain/inspection/i_inspection_repository.dart';
 import '../../../domain/inspection/models/inspection_answers_post.dart';
 import '../../../domain/inspection/models/inspection_detail.dart';
+import '../../../domain/inspection/models/zone.dart';
 
 part 'inspection_detail_bloc.freezed.dart';
 part 'inspection_detail_event.dart';
@@ -90,6 +91,15 @@ class InspectionDetailBloc
           );
           emit(state.copyWith(remarkIsPosted: null));
         },
+      );
+    });
+
+    on<_FetchZones>((event, emit) async {
+      emit(state.copyWith(isLoadingZones: true));
+      final res = await repository.getZones();
+      res.fold(
+        (l) => emit(state.copyWith(isLoadingZones: false)),
+        (zones) => emit(state.copyWith(isLoadingZones: false, zones: zones)),
       );
     });
   }

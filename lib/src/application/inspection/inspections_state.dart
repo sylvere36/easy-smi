@@ -23,6 +23,9 @@ abstract class InspectionsState with _$InspectionsState {
     required List<InspectionFormAvailableItem> formsAvailable,
     required Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>>
     formsAvailableResultOption,
+    // Create inspection
+    required bool isCreating,
+    required Option<Either<GlobalFailure, InspectionDetail>> createResultOption,
   }) = _InspectionsState;
 
   factory InspectionsState.initial() => InspectionsState(
@@ -39,5 +42,7 @@ abstract class InspectionsState with _$InspectionsState {
     isLoadingFormsAvailable: false,
     formsAvailable: const [],
     formsAvailableResultOption: none(),
+    isCreating: false,
+    createResultOption: none(),
   );
 }

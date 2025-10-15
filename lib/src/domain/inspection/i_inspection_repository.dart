@@ -3,11 +3,13 @@ import 'package:dartz/dartz.dart';
 import '../_commons/global_failure.dart';
 import '../_commons/pagination.dart';
 import 'models/inspection_answers_post.dart';
+import 'models/inspection_create_body.dart';
 import 'models/inspection_detail.dart';
-import 'models/inspection_form_detail.dart';
 import 'models/inspection_form_available_item.dart';
+import 'models/inspection_form_detail.dart';
 import 'models/inspection_form_item.dart';
 import 'models/inspection_item.dart';
+import 'models/zone.dart';
 
 abstract class IInspectionRepository {
   Future<Either<GlobalFailure, Paginated<InspectionItem>>> getInspections({
@@ -44,4 +46,10 @@ abstract class IInspectionRepository {
     required String otherRemark,
     required String recommendation,
   });
+
+  Future<Either<GlobalFailure, InspectionDetail>> createInspection({
+    required InspectionCreateBody body,
+  });
+
+  Future<Either<GlobalFailure, List<ZoneItem>>> getZones();
 }

@@ -12,5 +12,6 @@ class InspectionDetailEvent with _$InspectionDetailEvent {
     required String otherRemark,
     required String recommendation,
   }) = _AddRemark;
+  const factory InspectionDetailEvent.fetchZones() = _FetchZones;
   const factory InspectionDetailEvent.reset() = _Reset;
 }

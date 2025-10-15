@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import '../../domain/_commons/global_failure.dart';
 import '../../domain/organization/i_organization_repository.dart';
+import '../../domain/organization/models/organization_user.dart';
 import '../_commons/exceptions.dart';
 import '../_commons/network/network_info.dart';
 import '../_commons/network/user_session.dart';
@@ -57,6 +58,25 @@ class OrganizationRepository implements IOrganizationRepository {
           adminEmail: adminEmail,
         );
         return right(message);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
+
+  @override
+  Future<Either<GlobalFailure, List<OrganizationUser>>>
+  getOrganizationUsers() async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        final items = await remoteDataSource.getOrganizationUsers();
+        return right(items);
       } on UnauthorizedException catch (e) {
         return left(GlobalFailure.unauthorized(e.errorText));
       } on ServerException catch (e) {

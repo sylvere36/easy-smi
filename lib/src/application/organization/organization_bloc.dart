@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../domain/_commons/global_failure.dart';
 import '../../domain/organization/i_organization_repository.dart';
+import '../../domain/organization/models/organization_user.dart';
 import '../../infrastructure/_commons/network/user_session.dart';
 
 part 'organization_bloc.freezed.dart';
@@ -16,6 +17,7 @@ class OrganizationBloc extends Bloc<OrganizationEvent, OrganizationState> {
   OrganizationBloc({required this.repository})
     : super(OrganizationState.initial()) {
     on<_Fetch>(_onFetch);
+    on<_FetchUsers>(_onFetchUsers);
   }
 
   Future<void> _onFetch(_Fetch event, Emitter<OrganizationState> emit) async {
@@ -77,6 +79,26 @@ class OrganizationBloc extends Bloc<OrganizationEvent, OrganizationState> {
           ),
         );
       },
+    );
+  }
+
+  Future<void> _onFetchUsers(
+    _FetchUsers event,
+    Emitter<OrganizationState> emit,
+  ) async {
+    emit(state.copyWith(isLoadingUsers: true, usersResultOption: none()));
+    final result = await repository.getOrganizationUsers();
+    result.fold(
+      (l) => emit(
+        state.copyWith(isLoadingUsers: false, usersResultOption: some(left(l))),
+      ),
+      (users) => emit(
+        state.copyWith(
+          isLoadingUsers: false,
+          users: users,
+          usersResultOption: some(right(users)),
+        ),
+      ),
     );
   }
 }

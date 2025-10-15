@@ -55,7 +55,7 @@ extension InspectionsEventPatterns on InspectionsEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _FetchNext value)?  fetchNextPage,TResult Function( _Reset value)?  reset,TResult Function( _FetchForms value)?  fetchInspectionForms,TResult Function( _FetchFormsAvailable value)?  fetchInspectionFormsAvailable,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Fetch value)?  fetch,TResult Function( _FetchNext value)?  fetchNextPage,TResult Function( _Reset value)?  reset,TResult Function( _FetchForms value)?  fetchInspectionForms,TResult Function( _FetchFormsAvailable value)?  fetchInspectionFormsAvailable,TResult Function( _CreateRequested value)?  createRequested,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
@@ -63,7 +63,8 @@ return fetch(_that);case _FetchNext() when fetchNextPage != null:
 return fetchNextPage(_that);case _Reset() when reset != null:
 return reset(_that);case _FetchForms() when fetchInspectionForms != null:
 return fetchInspectionForms(_that);case _FetchFormsAvailable() when fetchInspectionFormsAvailable != null:
-return fetchInspectionFormsAvailable(_that);case _:
+return fetchInspectionFormsAvailable(_that);case _CreateRequested() when createRequested != null:
+return createRequested(_that);case _:
   return orElse();
 
 }
@@ -81,7 +82,7 @@ return fetchInspectionFormsAvailable(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _FetchNext value)  fetchNextPage,required TResult Function( _Reset value)  reset,required TResult Function( _FetchForms value)  fetchInspectionForms,required TResult Function( _FetchFormsAvailable value)  fetchInspectionFormsAvailable,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Fetch value)  fetch,required TResult Function( _FetchNext value)  fetchNextPage,required TResult Function( _Reset value)  reset,required TResult Function( _FetchForms value)  fetchInspectionForms,required TResult Function( _FetchFormsAvailable value)  fetchInspectionFormsAvailable,required TResult Function( _CreateRequested value)  createRequested,}){
 final _that = this;
 switch (_that) {
 case _Fetch():
@@ -89,7 +90,8 @@ return fetch(_that);case _FetchNext():
 return fetchNextPage(_that);case _Reset():
 return reset(_that);case _FetchForms():
 return fetchInspectionForms(_that);case _FetchFormsAvailable():
-return fetchInspectionFormsAvailable(_that);case _:
+return fetchInspectionFormsAvailable(_that);case _CreateRequested():
+return createRequested(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -106,7 +108,7 @@ return fetchInspectionFormsAvailable(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _FetchNext value)?  fetchNextPage,TResult? Function( _Reset value)?  reset,TResult? Function( _FetchForms value)?  fetchInspectionForms,TResult? Function( _FetchFormsAvailable value)?  fetchInspectionFormsAvailable,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Fetch value)?  fetch,TResult? Function( _FetchNext value)?  fetchNextPage,TResult? Function( _Reset value)?  reset,TResult? Function( _FetchForms value)?  fetchInspectionForms,TResult? Function( _FetchFormsAvailable value)?  fetchInspectionFormsAvailable,TResult? Function( _CreateRequested value)?  createRequested,}){
 final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
@@ -114,7 +116,8 @@ return fetch(_that);case _FetchNext() when fetchNextPage != null:
 return fetchNextPage(_that);case _Reset() when reset != null:
 return reset(_that);case _FetchForms() when fetchInspectionForms != null:
 return fetchInspectionForms(_that);case _FetchFormsAvailable() when fetchInspectionFormsAvailable != null:
-return fetchInspectionFormsAvailable(_that);case _:
+return fetchInspectionFormsAvailable(_that);case _CreateRequested() when createRequested != null:
+return createRequested(_that);case _:
   return null;
 
 }
@@ -131,14 +134,15 @@ return fetchInspectionFormsAvailable(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  fetch,TResult Function()?  fetchNextPage,TResult Function()?  reset,TResult Function()?  fetchInspectionForms,TResult Function()?  fetchInspectionFormsAvailable,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  fetch,TResult Function()?  fetchNextPage,TResult Function()?  reset,TResult Function()?  fetchInspectionForms,TResult Function()?  fetchInspectionFormsAvailable,TResult Function( int inspectionFormId,  List<int> siteIds,  String mission,  List<int> inspectorIds,  String? description)?  createRequested,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch();case _FetchNext() when fetchNextPage != null:
 return fetchNextPage();case _Reset() when reset != null:
 return reset();case _FetchForms() when fetchInspectionForms != null:
 return fetchInspectionForms();case _FetchFormsAvailable() when fetchInspectionFormsAvailable != null:
-return fetchInspectionFormsAvailable();case _:
+return fetchInspectionFormsAvailable();case _CreateRequested() when createRequested != null:
+return createRequested(_that.inspectionFormId,_that.siteIds,_that.mission,_that.inspectorIds,_that.description);case _:
   return orElse();
 
 }
@@ -156,14 +160,15 @@ return fetchInspectionFormsAvailable();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  fetch,required TResult Function()  fetchNextPage,required TResult Function()  reset,required TResult Function()  fetchInspectionForms,required TResult Function()  fetchInspectionFormsAvailable,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  fetch,required TResult Function()  fetchNextPage,required TResult Function()  reset,required TResult Function()  fetchInspectionForms,required TResult Function()  fetchInspectionFormsAvailable,required TResult Function( int inspectionFormId,  List<int> siteIds,  String mission,  List<int> inspectorIds,  String? description)  createRequested,}) {final _that = this;
 switch (_that) {
 case _Fetch():
 return fetch();case _FetchNext():
 return fetchNextPage();case _Reset():
 return reset();case _FetchForms():
 return fetchInspectionForms();case _FetchFormsAvailable():
-return fetchInspectionFormsAvailable();case _:
+return fetchInspectionFormsAvailable();case _CreateRequested():
+return createRequested(_that.inspectionFormId,_that.siteIds,_that.mission,_that.inspectorIds,_that.description);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -180,14 +185,15 @@ return fetchInspectionFormsAvailable();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  fetch,TResult? Function()?  fetchNextPage,TResult? Function()?  reset,TResult? Function()?  fetchInspectionForms,TResult? Function()?  fetchInspectionFormsAvailable,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  fetch,TResult? Function()?  fetchNextPage,TResult? Function()?  reset,TResult? Function()?  fetchInspectionForms,TResult? Function()?  fetchInspectionFormsAvailable,TResult? Function( int inspectionFormId,  List<int> siteIds,  String mission,  List<int> inspectorIds,  String? description)?  createRequested,}) {final _that = this;
 switch (_that) {
 case _Fetch() when fetch != null:
 return fetch();case _FetchNext() when fetchNextPage != null:
 return fetchNextPage();case _Reset() when reset != null:
 return reset();case _FetchForms() when fetchInspectionForms != null:
 return fetchInspectionForms();case _FetchFormsAvailable() when fetchInspectionFormsAvailable != null:
-return fetchInspectionFormsAvailable();case _:
+return fetchInspectionFormsAvailable();case _CreateRequested() when createRequested != null:
+return createRequested(_that.inspectionFormId,_that.siteIds,_that.mission,_that.inspectorIds,_that.description);case _:
   return null;
 
 }
@@ -356,11 +362,98 @@ String toString() {
 
 
 /// @nodoc
+
+
+class _CreateRequested implements InspectionsEvent {
+  const _CreateRequested({required this.inspectionFormId, required final  List<int> siteIds, required this.mission, required final  List<int> inspectorIds, this.description}): _siteIds = siteIds,_inspectorIds = inspectorIds;
+  
+
+ final  int inspectionFormId;
+ final  List<int> _siteIds;
+ List<int> get siteIds {
+  if (_siteIds is EqualUnmodifiableListView) return _siteIds;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_siteIds);
+}
+
+ final  String mission;
+ final  List<int> _inspectorIds;
+ List<int> get inspectorIds {
+  if (_inspectorIds is EqualUnmodifiableListView) return _inspectorIds;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_inspectorIds);
+}
+
+ final  String? description;
+
+/// Create a copy of InspectionsEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$CreateRequestedCopyWith<_CreateRequested> get copyWith => __$CreateRequestedCopyWithImpl<_CreateRequested>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateRequested&&(identical(other.inspectionFormId, inspectionFormId) || other.inspectionFormId == inspectionFormId)&&const DeepCollectionEquality().equals(other._siteIds, _siteIds)&&(identical(other.mission, mission) || other.mission == mission)&&const DeepCollectionEquality().equals(other._inspectorIds, _inspectorIds)&&(identical(other.description, description) || other.description == description));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,inspectionFormId,const DeepCollectionEquality().hash(_siteIds),mission,const DeepCollectionEquality().hash(_inspectorIds),description);
+
+@override
+String toString() {
+  return 'InspectionsEvent.createRequested(inspectionFormId: $inspectionFormId, siteIds: $siteIds, mission: $mission, inspectorIds: $inspectorIds, description: $description)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$CreateRequestedCopyWith<$Res> implements $InspectionsEventCopyWith<$Res> {
+  factory _$CreateRequestedCopyWith(_CreateRequested value, $Res Function(_CreateRequested) _then) = __$CreateRequestedCopyWithImpl;
+@useResult
+$Res call({
+ int inspectionFormId, List<int> siteIds, String mission, List<int> inspectorIds, String? description
+});
+
+
+
+
+}
+/// @nodoc
+class __$CreateRequestedCopyWithImpl<$Res>
+    implements _$CreateRequestedCopyWith<$Res> {
+  __$CreateRequestedCopyWithImpl(this._self, this._then);
+
+  final _CreateRequested _self;
+  final $Res Function(_CreateRequested) _then;
+
+/// Create a copy of InspectionsEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? inspectionFormId = null,Object? siteIds = null,Object? mission = null,Object? inspectorIds = null,Object? description = freezed,}) {
+  return _then(_CreateRequested(
+inspectionFormId: null == inspectionFormId ? _self.inspectionFormId : inspectionFormId // ignore: cast_nullable_to_non_nullable
+as int,siteIds: null == siteIds ? _self._siteIds : siteIds // ignore: cast_nullable_to_non_nullable
+as List<int>,mission: null == mission ? _self.mission : mission // ignore: cast_nullable_to_non_nullable
+as String,inspectorIds: null == inspectorIds ? _self._inspectorIds : inspectorIds // ignore: cast_nullable_to_non_nullable
+as List<int>,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+/// @nodoc
 mixin _$InspectionsState {
 
  bool get isLoading; List<InspectionItem>? get items; int get currentPage; int get perPage; int get total; bool get canLoadMore; Option<Either<GlobalFailure, Paginated<InspectionItem>>> get resultOption;// Inspection forms list (non-paginated)
  bool get isLoadingForms; List<InspectionFormItem> get forms; Option<Either<GlobalFailure, List<InspectionFormItem>>> get formsResultOption;// Available forms (with possible ongoing inspection id)
- bool get isLoadingFormsAvailable; List<InspectionFormAvailableItem> get formsAvailable; Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>> get formsAvailableResultOption;
+ bool get isLoadingFormsAvailable; List<InspectionFormAvailableItem> get formsAvailable; Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>> get formsAvailableResultOption;// Create inspection
+ bool get isCreating; Option<Either<GlobalFailure, InspectionDetail>> get createResultOption;
 /// Create a copy of InspectionsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -371,16 +464,16 @@ $InspectionsStateCopyWith<InspectionsState> get copyWith => _$InspectionsStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InspectionsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total)&&(identical(other.canLoadMore, canLoadMore) || other.canLoadMore == canLoadMore)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.isLoadingForms, isLoadingForms) || other.isLoadingForms == isLoadingForms)&&const DeepCollectionEquality().equals(other.forms, forms)&&(identical(other.formsResultOption, formsResultOption) || other.formsResultOption == formsResultOption)&&(identical(other.isLoadingFormsAvailable, isLoadingFormsAvailable) || other.isLoadingFormsAvailable == isLoadingFormsAvailable)&&const DeepCollectionEquality().equals(other.formsAvailable, formsAvailable)&&(identical(other.formsAvailableResultOption, formsAvailableResultOption) || other.formsAvailableResultOption == formsAvailableResultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InspectionsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total)&&(identical(other.canLoadMore, canLoadMore) || other.canLoadMore == canLoadMore)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.isLoadingForms, isLoadingForms) || other.isLoadingForms == isLoadingForms)&&const DeepCollectionEquality().equals(other.forms, forms)&&(identical(other.formsResultOption, formsResultOption) || other.formsResultOption == formsResultOption)&&(identical(other.isLoadingFormsAvailable, isLoadingFormsAvailable) || other.isLoadingFormsAvailable == isLoadingFormsAvailable)&&const DeepCollectionEquality().equals(other.formsAvailable, formsAvailable)&&(identical(other.formsAvailableResultOption, formsAvailableResultOption) || other.formsAvailableResultOption == formsAvailableResultOption)&&(identical(other.isCreating, isCreating) || other.isCreating == isCreating)&&(identical(other.createResultOption, createResultOption) || other.createResultOption == createResultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(items),currentPage,perPage,total,canLoadMore,resultOption,isLoadingForms,const DeepCollectionEquality().hash(forms),formsResultOption,isLoadingFormsAvailable,const DeepCollectionEquality().hash(formsAvailable),formsAvailableResultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(items),currentPage,perPage,total,canLoadMore,resultOption,isLoadingForms,const DeepCollectionEquality().hash(forms),formsResultOption,isLoadingFormsAvailable,const DeepCollectionEquality().hash(formsAvailable),formsAvailableResultOption,isCreating,createResultOption);
 
 @override
 String toString() {
-  return 'InspectionsState(isLoading: $isLoading, items: $items, currentPage: $currentPage, perPage: $perPage, total: $total, canLoadMore: $canLoadMore, resultOption: $resultOption, isLoadingForms: $isLoadingForms, forms: $forms, formsResultOption: $formsResultOption, isLoadingFormsAvailable: $isLoadingFormsAvailable, formsAvailable: $formsAvailable, formsAvailableResultOption: $formsAvailableResultOption)';
+  return 'InspectionsState(isLoading: $isLoading, items: $items, currentPage: $currentPage, perPage: $perPage, total: $total, canLoadMore: $canLoadMore, resultOption: $resultOption, isLoadingForms: $isLoadingForms, forms: $forms, formsResultOption: $formsResultOption, isLoadingFormsAvailable: $isLoadingFormsAvailable, formsAvailable: $formsAvailable, formsAvailableResultOption: $formsAvailableResultOption, isCreating: $isCreating, createResultOption: $createResultOption)';
 }
 
 
@@ -391,7 +484,7 @@ abstract mixin class $InspectionsStateCopyWith<$Res>  {
   factory $InspectionsStateCopyWith(InspectionsState value, $Res Function(InspectionsState) _then) = _$InspectionsStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, List<InspectionItem>? items, int currentPage, int perPage, int total, bool canLoadMore, Option<Either<GlobalFailure, Paginated<InspectionItem>>> resultOption, bool isLoadingForms, List<InspectionFormItem> forms, Option<Either<GlobalFailure, List<InspectionFormItem>>> formsResultOption, bool isLoadingFormsAvailable, List<InspectionFormAvailableItem> formsAvailable, Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>> formsAvailableResultOption
+ bool isLoading, List<InspectionItem>? items, int currentPage, int perPage, int total, bool canLoadMore, Option<Either<GlobalFailure, Paginated<InspectionItem>>> resultOption, bool isLoadingForms, List<InspectionFormItem> forms, Option<Either<GlobalFailure, List<InspectionFormItem>>> formsResultOption, bool isLoadingFormsAvailable, List<InspectionFormAvailableItem> formsAvailable, Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>> formsAvailableResultOption, bool isCreating, Option<Either<GlobalFailure, InspectionDetail>> createResultOption
 });
 
 
@@ -408,7 +501,7 @@ class _$InspectionsStateCopyWithImpl<$Res>
 
 /// Create a copy of InspectionsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? items = freezed,Object? currentPage = null,Object? perPage = null,Object? total = null,Object? canLoadMore = null,Object? resultOption = null,Object? isLoadingForms = null,Object? forms = null,Object? formsResultOption = null,Object? isLoadingFormsAvailable = null,Object? formsAvailable = null,Object? formsAvailableResultOption = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? items = freezed,Object? currentPage = null,Object? perPage = null,Object? total = null,Object? canLoadMore = null,Object? resultOption = null,Object? isLoadingForms = null,Object? forms = null,Object? formsResultOption = null,Object? isLoadingFormsAvailable = null,Object? formsAvailable = null,Object? formsAvailableResultOption = null,Object? isCreating = null,Object? createResultOption = null,}) {
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,items: freezed == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
@@ -423,7 +516,9 @@ as List<InspectionFormItem>,formsResultOption: null == formsResultOption ? _self
 as Option<Either<GlobalFailure, List<InspectionFormItem>>>,isLoadingFormsAvailable: null == isLoadingFormsAvailable ? _self.isLoadingFormsAvailable : isLoadingFormsAvailable // ignore: cast_nullable_to_non_nullable
 as bool,formsAvailable: null == formsAvailable ? _self.formsAvailable : formsAvailable // ignore: cast_nullable_to_non_nullable
 as List<InspectionFormAvailableItem>,formsAvailableResultOption: null == formsAvailableResultOption ? _self.formsAvailableResultOption : formsAvailableResultOption // ignore: cast_nullable_to_non_nullable
-as Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>>,
+as Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>>,isCreating: null == isCreating ? _self.isCreating : isCreating // ignore: cast_nullable_to_non_nullable
+as bool,createResultOption: null == createResultOption ? _self.createResultOption : createResultOption // ignore: cast_nullable_to_non_nullable
+as Option<Either<GlobalFailure, InspectionDetail>>,
   ));
 }
 
@@ -508,10 +603,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<InspectionItem>? items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<InspectionItem>>> resultOption,  bool isLoadingForms,  List<InspectionFormItem> forms,  Option<Either<GlobalFailure, List<InspectionFormItem>>> formsResultOption,  bool isLoadingFormsAvailable,  List<InspectionFormAvailableItem> formsAvailable,  Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>> formsAvailableResultOption)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<InspectionItem>? items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<InspectionItem>>> resultOption,  bool isLoadingForms,  List<InspectionFormItem> forms,  Option<Either<GlobalFailure, List<InspectionFormItem>>> formsResultOption,  bool isLoadingFormsAvailable,  List<InspectionFormAvailableItem> formsAvailable,  Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>> formsAvailableResultOption,  bool isCreating,  Option<Either<GlobalFailure, InspectionDetail>> createResultOption)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _InspectionsState() when $default != null:
-return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_that.total,_that.canLoadMore,_that.resultOption,_that.isLoadingForms,_that.forms,_that.formsResultOption,_that.isLoadingFormsAvailable,_that.formsAvailable,_that.formsAvailableResultOption);case _:
+return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_that.total,_that.canLoadMore,_that.resultOption,_that.isLoadingForms,_that.forms,_that.formsResultOption,_that.isLoadingFormsAvailable,_that.formsAvailable,_that.formsAvailableResultOption,_that.isCreating,_that.createResultOption);case _:
   return orElse();
 
 }
@@ -529,10 +624,10 @@ return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<InspectionItem>? items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<InspectionItem>>> resultOption,  bool isLoadingForms,  List<InspectionFormItem> forms,  Option<Either<GlobalFailure, List<InspectionFormItem>>> formsResultOption,  bool isLoadingFormsAvailable,  List<InspectionFormAvailableItem> formsAvailable,  Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>> formsAvailableResultOption)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<InspectionItem>? items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<InspectionItem>>> resultOption,  bool isLoadingForms,  List<InspectionFormItem> forms,  Option<Either<GlobalFailure, List<InspectionFormItem>>> formsResultOption,  bool isLoadingFormsAvailable,  List<InspectionFormAvailableItem> formsAvailable,  Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>> formsAvailableResultOption,  bool isCreating,  Option<Either<GlobalFailure, InspectionDetail>> createResultOption)  $default,) {final _that = this;
 switch (_that) {
 case _InspectionsState():
-return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_that.total,_that.canLoadMore,_that.resultOption,_that.isLoadingForms,_that.forms,_that.formsResultOption,_that.isLoadingFormsAvailable,_that.formsAvailable,_that.formsAvailableResultOption);case _:
+return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_that.total,_that.canLoadMore,_that.resultOption,_that.isLoadingForms,_that.forms,_that.formsResultOption,_that.isLoadingFormsAvailable,_that.formsAvailable,_that.formsAvailableResultOption,_that.isCreating,_that.createResultOption);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -549,10 +644,10 @@ return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<InspectionItem>? items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<InspectionItem>>> resultOption,  bool isLoadingForms,  List<InspectionFormItem> forms,  Option<Either<GlobalFailure, List<InspectionFormItem>>> formsResultOption,  bool isLoadingFormsAvailable,  List<InspectionFormAvailableItem> formsAvailable,  Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>> formsAvailableResultOption)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<InspectionItem>? items,  int currentPage,  int perPage,  int total,  bool canLoadMore,  Option<Either<GlobalFailure, Paginated<InspectionItem>>> resultOption,  bool isLoadingForms,  List<InspectionFormItem> forms,  Option<Either<GlobalFailure, List<InspectionFormItem>>> formsResultOption,  bool isLoadingFormsAvailable,  List<InspectionFormAvailableItem> formsAvailable,  Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>> formsAvailableResultOption,  bool isCreating,  Option<Either<GlobalFailure, InspectionDetail>> createResultOption)?  $default,) {final _that = this;
 switch (_that) {
 case _InspectionsState() when $default != null:
-return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_that.total,_that.canLoadMore,_that.resultOption,_that.isLoadingForms,_that.forms,_that.formsResultOption,_that.isLoadingFormsAvailable,_that.formsAvailable,_that.formsAvailableResultOption);case _:
+return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_that.total,_that.canLoadMore,_that.resultOption,_that.isLoadingForms,_that.forms,_that.formsResultOption,_that.isLoadingFormsAvailable,_that.formsAvailable,_that.formsAvailableResultOption,_that.isCreating,_that.createResultOption);case _:
   return null;
 
 }
@@ -564,7 +659,7 @@ return $default(_that.isLoading,_that.items,_that.currentPage,_that.perPage,_tha
 
 
 class _InspectionsState implements InspectionsState {
-  const _InspectionsState({required this.isLoading, required final  List<InspectionItem>? items, required this.currentPage, required this.perPage, required this.total, required this.canLoadMore, required this.resultOption, required this.isLoadingForms, required final  List<InspectionFormItem> forms, required this.formsResultOption, required this.isLoadingFormsAvailable, required final  List<InspectionFormAvailableItem> formsAvailable, required this.formsAvailableResultOption}): _items = items,_forms = forms,_formsAvailable = formsAvailable;
+  const _InspectionsState({required this.isLoading, required final  List<InspectionItem>? items, required this.currentPage, required this.perPage, required this.total, required this.canLoadMore, required this.resultOption, required this.isLoadingForms, required final  List<InspectionFormItem> forms, required this.formsResultOption, required this.isLoadingFormsAvailable, required final  List<InspectionFormAvailableItem> formsAvailable, required this.formsAvailableResultOption, required this.isCreating, required this.createResultOption}): _items = items,_forms = forms,_formsAvailable = formsAvailable;
   
 
 @override final  bool isLoading;
@@ -602,6 +697,9 @@ class _InspectionsState implements InspectionsState {
 }
 
 @override final  Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>> formsAvailableResultOption;
+// Create inspection
+@override final  bool isCreating;
+@override final  Option<Either<GlobalFailure, InspectionDetail>> createResultOption;
 
 /// Create a copy of InspectionsState
 /// with the given fields replaced by the non-null parameter values.
@@ -613,16 +711,16 @@ _$InspectionsStateCopyWith<_InspectionsState> get copyWith => __$InspectionsStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InspectionsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total)&&(identical(other.canLoadMore, canLoadMore) || other.canLoadMore == canLoadMore)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.isLoadingForms, isLoadingForms) || other.isLoadingForms == isLoadingForms)&&const DeepCollectionEquality().equals(other._forms, _forms)&&(identical(other.formsResultOption, formsResultOption) || other.formsResultOption == formsResultOption)&&(identical(other.isLoadingFormsAvailable, isLoadingFormsAvailable) || other.isLoadingFormsAvailable == isLoadingFormsAvailable)&&const DeepCollectionEquality().equals(other._formsAvailable, _formsAvailable)&&(identical(other.formsAvailableResultOption, formsAvailableResultOption) || other.formsAvailableResultOption == formsAvailableResultOption));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InspectionsState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total)&&(identical(other.canLoadMore, canLoadMore) || other.canLoadMore == canLoadMore)&&(identical(other.resultOption, resultOption) || other.resultOption == resultOption)&&(identical(other.isLoadingForms, isLoadingForms) || other.isLoadingForms == isLoadingForms)&&const DeepCollectionEquality().equals(other._forms, _forms)&&(identical(other.formsResultOption, formsResultOption) || other.formsResultOption == formsResultOption)&&(identical(other.isLoadingFormsAvailable, isLoadingFormsAvailable) || other.isLoadingFormsAvailable == isLoadingFormsAvailable)&&const DeepCollectionEquality().equals(other._formsAvailable, _formsAvailable)&&(identical(other.formsAvailableResultOption, formsAvailableResultOption) || other.formsAvailableResultOption == formsAvailableResultOption)&&(identical(other.isCreating, isCreating) || other.isCreating == isCreating)&&(identical(other.createResultOption, createResultOption) || other.createResultOption == createResultOption));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(_items),currentPage,perPage,total,canLoadMore,resultOption,isLoadingForms,const DeepCollectionEquality().hash(_forms),formsResultOption,isLoadingFormsAvailable,const DeepCollectionEquality().hash(_formsAvailable),formsAvailableResultOption);
+int get hashCode => Object.hash(runtimeType,isLoading,const DeepCollectionEquality().hash(_items),currentPage,perPage,total,canLoadMore,resultOption,isLoadingForms,const DeepCollectionEquality().hash(_forms),formsResultOption,isLoadingFormsAvailable,const DeepCollectionEquality().hash(_formsAvailable),formsAvailableResultOption,isCreating,createResultOption);
 
 @override
 String toString() {
-  return 'InspectionsState(isLoading: $isLoading, items: $items, currentPage: $currentPage, perPage: $perPage, total: $total, canLoadMore: $canLoadMore, resultOption: $resultOption, isLoadingForms: $isLoadingForms, forms: $forms, formsResultOption: $formsResultOption, isLoadingFormsAvailable: $isLoadingFormsAvailable, formsAvailable: $formsAvailable, formsAvailableResultOption: $formsAvailableResultOption)';
+  return 'InspectionsState(isLoading: $isLoading, items: $items, currentPage: $currentPage, perPage: $perPage, total: $total, canLoadMore: $canLoadMore, resultOption: $resultOption, isLoadingForms: $isLoadingForms, forms: $forms, formsResultOption: $formsResultOption, isLoadingFormsAvailable: $isLoadingFormsAvailable, formsAvailable: $formsAvailable, formsAvailableResultOption: $formsAvailableResultOption, isCreating: $isCreating, createResultOption: $createResultOption)';
 }
 
 
@@ -633,7 +731,7 @@ abstract mixin class _$InspectionsStateCopyWith<$Res> implements $InspectionsSta
   factory _$InspectionsStateCopyWith(_InspectionsState value, $Res Function(_InspectionsState) _then) = __$InspectionsStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, List<InspectionItem>? items, int currentPage, int perPage, int total, bool canLoadMore, Option<Either<GlobalFailure, Paginated<InspectionItem>>> resultOption, bool isLoadingForms, List<InspectionFormItem> forms, Option<Either<GlobalFailure, List<InspectionFormItem>>> formsResultOption, bool isLoadingFormsAvailable, List<InspectionFormAvailableItem> formsAvailable, Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>> formsAvailableResultOption
+ bool isLoading, List<InspectionItem>? items, int currentPage, int perPage, int total, bool canLoadMore, Option<Either<GlobalFailure, Paginated<InspectionItem>>> resultOption, bool isLoadingForms, List<InspectionFormItem> forms, Option<Either<GlobalFailure, List<InspectionFormItem>>> formsResultOption, bool isLoadingFormsAvailable, List<InspectionFormAvailableItem> formsAvailable, Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>> formsAvailableResultOption, bool isCreating, Option<Either<GlobalFailure, InspectionDetail>> createResultOption
 });
 
 
@@ -650,7 +748,7 @@ class __$InspectionsStateCopyWithImpl<$Res>
 
 /// Create a copy of InspectionsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? items = freezed,Object? currentPage = null,Object? perPage = null,Object? total = null,Object? canLoadMore = null,Object? resultOption = null,Object? isLoadingForms = null,Object? forms = null,Object? formsResultOption = null,Object? isLoadingFormsAvailable = null,Object? formsAvailable = null,Object? formsAvailableResultOption = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? items = freezed,Object? currentPage = null,Object? perPage = null,Object? total = null,Object? canLoadMore = null,Object? resultOption = null,Object? isLoadingForms = null,Object? forms = null,Object? formsResultOption = null,Object? isLoadingFormsAvailable = null,Object? formsAvailable = null,Object? formsAvailableResultOption = null,Object? isCreating = null,Object? createResultOption = null,}) {
   return _then(_InspectionsState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,items: freezed == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
@@ -665,7 +763,9 @@ as List<InspectionFormItem>,formsResultOption: null == formsResultOption ? _self
 as Option<Either<GlobalFailure, List<InspectionFormItem>>>,isLoadingFormsAvailable: null == isLoadingFormsAvailable ? _self.isLoadingFormsAvailable : isLoadingFormsAvailable // ignore: cast_nullable_to_non_nullable
 as bool,formsAvailable: null == formsAvailable ? _self._formsAvailable : formsAvailable // ignore: cast_nullable_to_non_nullable
 as List<InspectionFormAvailableItem>,formsAvailableResultOption: null == formsAvailableResultOption ? _self.formsAvailableResultOption : formsAvailableResultOption // ignore: cast_nullable_to_non_nullable
-as Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>>,
+as Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>>,isCreating: null == isCreating ? _self.isCreating : isCreating // ignore: cast_nullable_to_non_nullable
+as bool,createResultOption: null == createResultOption ? _self.createResultOption : createResultOption // ignore: cast_nullable_to_non_nullable
+as Option<Either<GlobalFailure, InspectionDetail>>,
   ));
 }
 
