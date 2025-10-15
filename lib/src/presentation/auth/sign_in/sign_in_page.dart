@@ -108,7 +108,10 @@ class SignInPage extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        context.router.pop();
+                        AutoRouter.of(context).pushAndPopUntil(
+                          const JoinOrganisationRoute(),
+                          predicate: (predicate) => predicate.isFirst,
+                        );
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,

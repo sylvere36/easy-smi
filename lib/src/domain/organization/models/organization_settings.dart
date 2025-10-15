@@ -2,8 +2,8 @@ class OrganizationSettings {
   final int id;
   final String adminEmail;
   final String baseUrl;
-  final String createdAt;
-  final String updatedAt;
+  final String? createdAt;
+  final String? updatedAt;
 
   const OrganizationSettings({
     required this.id,
@@ -18,8 +18,8 @@ class OrganizationSettings {
       id: (json['id'] as num).toInt(),
       adminEmail: json['admin_email'] as String,
       baseUrl: json['base_url'] as String,
-      createdAt: json['created_at'] as String,
-      updatedAt: json['updated_at'] as String,
+      createdAt: json['created_at'] as String?,
+      updatedAt: json['updated_at'] as String?,
     );
   }
 

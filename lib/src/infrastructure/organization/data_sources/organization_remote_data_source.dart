@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 
@@ -50,15 +51,19 @@ class OrganizationRemoteDataSource implements IOrganizationRemoteDataSource {
         final OrganizationLicense license = OrganizationLicense.fromJson(
           data['license'] as Map<String, dynamic>,
         );
+        log('Settings: ${settings.toString()}');
+        log('License: ${license.toString()}');
         return OrganizationSettingsResult(
           settings: settings,
           license: license,
           message: message,
         );
       } else {
+        log('Error: ${response.statusCode} - ${response.statusMessage}');
         throw ServerException(errorThrow(response));
       }
     } catch (e) {
+      log('Error: $e');
       throw ServerException(e.toString());
     }
   }

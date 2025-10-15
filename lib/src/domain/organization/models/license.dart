@@ -7,8 +7,8 @@ class OrganizationLicense {
   final String dateStarted;
   final String dateEnd;
   final String typeLicense;
-  final String createdAt;
-  final String updatedAt;
+  final String? createdAt;
+  final String? updatedAt;
 
   const OrganizationLicense({
     required this.id,
@@ -33,8 +33,8 @@ class OrganizationLicense {
       dateStarted: json['date_started'] as String,
       dateEnd: json['date_end'] as String,
       typeLicense: json['type_license'] as String,
-      createdAt: json['created_at'] as String,
-      updatedAt: json['updated_at'] as String,
+      createdAt: json['created_at'] as String?,
+      updatedAt: json['updated_at'] as String?,
     );
   }
 
