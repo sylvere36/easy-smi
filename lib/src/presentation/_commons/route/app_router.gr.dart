@@ -1877,11 +1877,16 @@ class StartInspectionDetailRoute
     extends _i53.PageRouteInfo<StartInspectionDetailRouteArgs> {
   StartInspectionDetailRoute({
     _i54.Key? key,
-    required _i67.InspectionItem inspection,
+    required int inspectionId,
+    required int inspectionFormId,
     List<_i53.PageRouteInfo>? children,
   }) : super(
          StartInspectionDetailRoute.name,
-         args: StartInspectionDetailRouteArgs(key: key, inspection: inspection),
+         args: StartInspectionDetailRouteArgs(
+           key: key,
+           inspectionId: inspectionId,
+           inspectionFormId: inspectionFormId,
+         ),
          initialChildren: children,
        );
 
@@ -1893,33 +1898,43 @@ class StartInspectionDetailRoute
       final args = data.argsAs<StartInspectionDetailRouteArgs>();
       return _i51.StartInspectionDetailPage(
         key: args.key,
-        inspection: args.inspection,
+        inspectionId: args.inspectionId,
+        inspectionFormId: args.inspectionFormId,
       );
     },
   );
 }
 
 class StartInspectionDetailRouteArgs {
-  const StartInspectionDetailRouteArgs({this.key, required this.inspection});
+  const StartInspectionDetailRouteArgs({
+    this.key,
+    required this.inspectionId,
+    required this.inspectionFormId,
+  });
 
   final _i54.Key? key;
 
-  final _i67.InspectionItem inspection;
+  final int inspectionId;
+
+  final int inspectionFormId;
 
   @override
   String toString() {
-    return 'StartInspectionDetailRouteArgs{key: $key, inspection: $inspection}';
+    return 'StartInspectionDetailRouteArgs{key: $key, inspectionId: $inspectionId, inspectionFormId: $inspectionFormId}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! StartInspectionDetailRouteArgs) return false;
-    return key == other.key && inspection == other.inspection;
+    return key == other.key &&
+        inspectionId == other.inspectionId &&
+        inspectionFormId == other.inspectionFormId;
   }
 
   @override
-  int get hashCode => key.hashCode ^ inspection.hashCode;
+  int get hashCode =>
+      key.hashCode ^ inspectionId.hashCode ^ inspectionFormId.hashCode;
 }
 
 /// generated route for

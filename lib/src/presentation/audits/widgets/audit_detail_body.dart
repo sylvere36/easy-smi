@@ -71,17 +71,19 @@ class _AuditDetailBodyState extends State<AuditDetailBody>
         builder: (context, state) {
           return Scaffold(
             backgroundColor: Colors.white,
-            floatingActionButton: addContact
-                ? FloatingActionButton(
-                    backgroundColor: blue,
-                    shape: const CircleBorder(),
-                    onPressed: () => showAddConstatSheet(
-                      context,
-                      auditId: widget.audit.id,
-                      auditBloc: context.read<AuditDetailBloc>(),
-                    ),
-                    child: const Icon(Icons.add),
-                  )
+            floatingActionButton: widget.audit.enCours
+                ? addContact
+                      ? FloatingActionButton(
+                          backgroundColor: blue,
+                          shape: const CircleBorder(),
+                          onPressed: () => showAddConstatSheet(
+                            context,
+                            auditId: widget.audit.id,
+                            auditBloc: context.read<AuditDetailBloc>(),
+                          ),
+                          child: const Icon(Icons.add),
+                        )
+                      : null
                 : null,
             body: DefaultTabController(
               length: 4,
@@ -225,35 +227,36 @@ class _Header extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              SizedBox(
-                height: 44,
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: blue, width: 1.6),
-                    foregroundColor: blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+          if (!audit.enCours)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                SizedBox(
+                  height: 44,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: blue, width: 1.6),
+                      foregroundColor: blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: Text(
-                    'Soumettre a la validation',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14.5,
+                    onPressed: () {},
+                    child: Text(
+                      'Soumettre a la validation',
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14.5,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
         ],
       ),
     );

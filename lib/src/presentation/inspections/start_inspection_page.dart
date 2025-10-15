@@ -134,7 +134,10 @@ class _StartInspectionPageState extends State<StartInspectionPage>
                         _toggle();
                         if (_running) {
                           context.router.push(
-                            StartInspectionDetailRoute(inspection: inspection),
+                            StartInspectionDetailRoute(
+                              inspectionFormId: inspection.inspectionFormId,
+                              inspectionId: inspection.id,
+                            ),
                           );
                         }
                       },

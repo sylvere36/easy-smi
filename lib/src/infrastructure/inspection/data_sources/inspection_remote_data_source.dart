@@ -7,6 +7,7 @@ import '../../../domain/_commons/pagination.dart';
 import '../../../domain/inspection/models/inspection_answers_post.dart';
 import '../../../domain/inspection/models/inspection_detail.dart';
 import '../../../domain/inspection/models/inspection_form_detail.dart';
+import '../../../domain/inspection/models/inspection_form_available_item.dart';
 import '../../../domain/inspection/models/inspection_form_item.dart';
 import '../../../domain/inspection/models/inspection_item.dart';
 import '../../_commons/exceptions.dart';
@@ -21,6 +22,8 @@ abstract class IInspectionRemoteDataSource {
   });
 
   Future<List<InspectionFormItem>> getInspectionForms();
+
+  Future<List<InspectionFormAvailableItem>> getInspectionFormsAvailable();
 
   Future<InspectionDetail> getInspection({required int id});
 
@@ -108,6 +111,30 @@ class InspectionRemoteDataSource implements IInspectionRemoteDataSource {
             .whereType<Map<String, dynamic>>()
             .toList();
         return listJson.map(InspectionFormItem.fromJson).toList();
+      } else {
+        throw ServerException(errorThrow(response));
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<InspectionFormAvailableItem>>
+  getInspectionFormsAvailable() async {
+    try {
+      const String request = '/conformity/inspection-forms-available';
+      final Response response = await httpClient.getRequest(request);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Raw response is an array of objects per sample
+        final raw = response.data;
+        final List<dynamic> list = raw is String
+            ? (json.decode(raw) as List<dynamic>)
+            : (raw as List<dynamic>);
+        return list
+            .whereType<Map<String, dynamic>>()
+            .map(InspectionFormAvailableItem.fromJson)
+            .toList();
       } else {
         throw ServerException(errorThrow(response));
       }

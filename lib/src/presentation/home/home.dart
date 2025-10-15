@@ -12,7 +12,7 @@ import '../../application/auth/user/authenticated_user_bloc.dart';
 import '../../application/events/events_bloc.dart';
 import '../../application/inspection/inspections_bloc.dart';
 import '../../application/permit/permits_bloc.dart';
-import '../../domain/inspection/models/inspection_item.dart';
+import '../../domain/inspection/models/inspection_form_available_item.dart';
 import '../../domain/permit/models/permit_item.dart';
 import '../_commons/route/app_router.gr.dart';
 import '../_commons/theming/app_color.dart';
@@ -88,15 +88,14 @@ class _HomePageState extends State<HomePage>
     await showDialog<void>(
       context: context,
       builder: (_) => _RoundedDialog(
-        title: 'Veuillez choisir l’inspection à demarrer',
+        title: 'Veuillez choisir l’inspection à demarrer ou continuer',
         child: BlocBuilder<InspectionsBloc, InspectionsState>(
           builder: (context, state) {
-            if (state.items == null) {
+            if (state.isLoadingFormsAvailable) {
               return const LoadingWidget();
             }
-            final List<InspectionItem> items = state.items!
-                .where((item) => item.cardAction != null)
-                .toList();
+            final List<InspectionFormAvailableItem> items =
+                state.formsAvailable;
             return items.isEmpty
                 ? const LoadingWidget()
                 : ListView.separated(
@@ -105,15 +104,14 @@ class _HomePageState extends State<HomePage>
                     separatorBuilder: (_, _) => const Divider(height: 12),
                     itemBuilder: (_, i) {
                       final it = items[i];
-                      final c = it.isLate
-                          ? Colors.red
-                          : const Color(0xFF00A651);
                       return InkWell(
                         onTap: () {
                           Navigator.pop(context);
-                          if (it.cardAction == null) return;
                           context.router.push(
-                            StartInspectionRoute(inspection: it),
+                            StartInspectionDetailRoute(
+                              inspectionFormId: it.id,
+                              inspectionId: it.ongoingInspectionId ?? 0,
+                            ),
                           );
                         },
                         child: Padding(
@@ -123,30 +121,30 @@ class _HomePageState extends State<HomePage>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // due label
-                              Row(
-                                spacing: 10,
-                                children: [
-                                  Text(
-                                    it.dueLabel,
-                                    style: GoogleFonts.mulish(
-                                      color: c,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  Text(
-                                    it.dueDate,
-                                    style: GoogleFonts.mulish(
-                                      color: Colors.black54,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              // Row(
+                              //   spacing: 10,
+                              //   children: [
+                              //     Text(
+                              //       it.dueLabel,
+                              //       style: GoogleFonts.mulish(
+                              //         color: c,
+                              //         fontSize: 14,
+                              //         fontWeight: FontWeight.w400,
+                              //       ),
+                              //     ),
+                              //     Text(
+                              //       it.dueDate,
+                              //       style: GoogleFonts.mulish(
+                              //         color: Colors.black54,
+                              //         fontSize: 14,
+                              //         fontWeight: FontWeight.w700,
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
                               Text(
                                 () {
-                                  final text = it.mission;
+                                  final text = it.label;
                                   final words = text.trim().split(
                                     RegExp(r'\s+'),
                                   );
@@ -156,6 +154,23 @@ class _HomePageState extends State<HomePage>
                                 style: GoogleFonts.dmSans(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              // Chip Demarrer ou Continuer
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: Chip(
+                                  label: it.ongoingInspectionId != null
+                                      ? const Text(
+                                          'Continuer',
+                                          style: TextStyle(color: Colors.white),
+                                        )
+                                      : const Text(
+                                          'Démarrer',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                  backgroundColor: AppColors.primary,
+                                  surfaceTintColor: AppColors.primary,
                                 ),
                               ),
                             ],
@@ -292,7 +307,9 @@ class _HomePageState extends State<HomePage>
         onFocusGained: () {
           context.read<EventsBloc>().add(const EventsEvent.fetch());
           context.read<ActionsBloc>().add(const ActionsEvent.fetch());
-          context.read<InspectionsBloc>().add(const InspectionsEvent.fetch());
+          context.read<InspectionsBloc>()
+            ..add(const InspectionsEvent.fetch())
+            ..add(const InspectionsEvent.fetchInspectionFormsAvailable());
           context.read<AuditsBloc>().add(const AuditsEvent.fetch());
         },
         child: const HomeBody(),

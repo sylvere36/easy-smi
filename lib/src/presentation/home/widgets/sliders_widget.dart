@@ -206,9 +206,7 @@ class _SlidersWidgetState extends State<SlidersWidget> {
                           if (slider.type == 'formation' &&
                               slider.formation != null) {
                             context.router.push(
-                              FormationDetailRoute(
-                                formationId: slider.formation!.id,
-                              ),
+                              FormationsSensibilizationsRoute(initialPage: 1),
                             );
                           } else if (slider.type == 'campaign' &&
                               slider.campaign != null) {
@@ -227,7 +225,7 @@ class _SlidersWidgetState extends State<SlidersWidget> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            'Voir détails',
+                            'Voir Plus',
                             style: GoogleFonts.dmSans(
                               color: Colors.white70,
                               fontSize: 11,

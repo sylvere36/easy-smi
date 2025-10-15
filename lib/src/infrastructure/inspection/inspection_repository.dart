@@ -6,6 +6,7 @@ import '../../domain/inspection/i_inspection_repository.dart';
 import '../../domain/inspection/models/inspection_answers_post.dart';
 import '../../domain/inspection/models/inspection_detail.dart';
 import '../../domain/inspection/models/inspection_form_detail.dart';
+import '../../domain/inspection/models/inspection_form_available_item.dart';
 import '../../domain/inspection/models/inspection_form_item.dart';
 import '../../domain/inspection/models/inspection_item.dart';
 import '../_commons/exceptions.dart';
@@ -70,6 +71,25 @@ class InspectionRepository implements IInspectionRepository {
     if (await networkInfo.checkConnection()) {
       try {
         final items = await remoteDataSource.getInspectionForms();
+        return right(items);
+      } on UnauthorizedException catch (e) {
+        return left(GlobalFailure.unauthorized(e.errorText));
+      } on ServerException catch (e) {
+        if (e.errorText.isNotEmpty) {
+          return left(GlobalFailure.serverError(e.errorText));
+        }
+        return left(const GlobalFailure.serverError(null));
+      }
+    }
+    return left(const GlobalFailure.noNetwork());
+  }
+
+  @override
+  Future<Either<GlobalFailure, List<InspectionFormAvailableItem>>>
+  getInspectionFormsAvailable() async {
+    if (await networkInfo.checkConnection()) {
+      try {
+        final items = await remoteDataSource.getInspectionFormsAvailable();
         return right(items);
       } on UnauthorizedException catch (e) {
         return left(GlobalFailure.unauthorized(e.errorText));

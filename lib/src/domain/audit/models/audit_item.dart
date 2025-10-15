@@ -118,6 +118,10 @@ class AuditItem {
     if (type == null) return '';
     return humanReadableType(type!);
   }
+
+  bool get enCours {
+    return status == 'inProgress' || status == 'inProgress_Revision';
+  }
 }
 
 class AuditProcess {

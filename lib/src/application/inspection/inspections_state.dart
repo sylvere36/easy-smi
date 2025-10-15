@@ -18,6 +18,11 @@ abstract class InspectionsState with _$InspectionsState {
     required List<InspectionFormItem> forms,
     required Option<Either<GlobalFailure, List<InspectionFormItem>>>
     formsResultOption,
+    // Available forms (with possible ongoing inspection id)
+    required bool isLoadingFormsAvailable,
+    required List<InspectionFormAvailableItem> formsAvailable,
+    required Option<Either<GlobalFailure, List<InspectionFormAvailableItem>>>
+    formsAvailableResultOption,
   }) = _InspectionsState;
 
   factory InspectionsState.initial() => InspectionsState(
@@ -31,5 +36,8 @@ abstract class InspectionsState with _$InspectionsState {
     isLoadingForms: false,
     forms: const [],
     formsResultOption: none(),
+    isLoadingFormsAvailable: false,
+    formsAvailable: const [],
+    formsAvailableResultOption: none(),
   );
 }
